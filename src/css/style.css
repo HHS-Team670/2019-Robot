@@ -98,44 +98,6 @@ text {
     stroke: none;
     fill: white;
 }
-#gyro {
-    width: 175px;
-    height: 175px;
-    margin-left: 30px;
-    margin-top: 15px;
-}
-#gyro-arm {
-    -webkit-transform-origin: bottom;
-    -ms-transform-origin: bottom;
-    transform-origin: bottom;
-}
-#gyro-number {
-    font-size: 25px;
-    text-anchor: middle;
-}
-#robot-diagram {
-    position: absolute;
-    bottom: 1px;
-    right: 1vw;
-}
-#robot-arm {
-    -webkit-transform-origin: right;
-    -ms-transform-origin: right;
-    transform-origin: right;
-}
-#team {
-    font-size: 28px;
-    letter-spacing: -1px;
-}
-aside {
-    right: 0;
-    top: 0;
-    width: 15vw;
-    height: 100vh;
-}
-aside > * {
-    margin-bottom: 20px;
-}
 #login {
     position: fixed;
     display: none;
@@ -161,9 +123,6 @@ body.login #login {
     margin-left: 5px;
 }
 #test-key {
-  position: relative;
-  top: 0;
-  left: 0;
-  right: 50;
-  bottom: 0;
+  width: 25%;
+  max-width: 25%;
 }
