@@ -1,10 +1,13 @@
 let ipc = require('electron').ipcRenderer;
 
+console.log('in networktables.js')
+
 var NetworkTables =
     (() => {
-        let keys = {}, connectionListeners = [], connected = false, globalListeners = [], keyListeners = {}, robotAddress = '127.0.0.1';
+        let keys = {}, connectionListeners = [], connected = false, globalListeners = [], keyListeners = {}, robotAddress = '10.0.0.231';
         ipc.send('ready');
         ipc.on('connected', (ev, con) => {
+          console.log('networktables connected')
             connected = con;
             connectionListeners.map(e => e(con));
         });

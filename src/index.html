@@ -8,12 +8,16 @@
 </head>
 
 <body>
-    <div id="timer">2:15</div>
+    <div id="timer">1:00</div>
     <header>
         <!-- Tells whether robot is connected to dashboard. -->
         <div id="robot-state">Unknown state</div>
         <button id="connect-button">Connect</button>
     </header>
+    <div id="test-key">
+      <text id="key" x="100" y="20">key</text>
+    </div>
+
     <!-- You'll need to mess around with the CSS of #camera (found in css/style.css) to get it to work.
         More explanation in that CSS rule. -->
     <div id="camera"></div>
@@ -62,9 +66,11 @@
         <input id="connect-address" type="text" value="localhost" disabled>
         <button id="connect" disabled>Connecting</button>
     </div>
-    <script src="networktables/networktables.js"></script>
-    <script src="connection.js"></script>
-    <script src="ui.js"></script>
+
+    <script src="./networktables/networktables.js"></script>
+    <script src="./connection.js"></script>
+    <script src="./ui.js"></script>
+
 </body>
 
 </html>
