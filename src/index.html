@@ -9,21 +9,24 @@
 
 <body>
     <div id="timer">1:00</div>
+
     <header>
         <!-- Tells whether robot is connected to dashboard. -->
         <div id="robot-state">Unknown state</div>
         <button id="connect-button">Connect</button>
     </header>
-    <div id="from-nt">
-      <text id="key">key</text>
-    </div>
+
     <div id="multicam-debug">
       <p id="multicam-id">id</p>
       <p id="multicam-src">src</p>
     </div>
 
-    <!-- You'll need to mess around with the CSS of #camera (found in css/style.css) to get it to work.
-        More explanation in that CSS rule. -->
+    <div id="robot-info">
+      <p id="gyro">gyro</p>
+      <p id="velocity">velocity</p>
+      <p id="acceleration">acceleration</p>
+    </div>
+
     <div id="camera"></div>
 
     <div id="login">

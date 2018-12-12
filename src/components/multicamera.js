@@ -7,7 +7,6 @@ ui.camera = {
     ]
 };
 
-ui.multiCamID.innerHTML = ui.camera.id;
 ui.multiCamSRC.innerHTML = ui.camera.srcs[ui.camera.id];
 ui.camera.viewer.style.backgroundImage = 'url(' + ui.camera.srcs[ui.camera.id] + ')';
 
@@ -15,7 +14,6 @@ ui.camera.viewer.style.backgroundImage = 'url(' + ui.camera.srcs[ui.camera.id] +
 ui.camera.viewer.onclick = function() {
   ui.camera.id += 1;
 	if (ui.camera.id === ui.camera.srcs.length) ui.camera.id = 0;
-  ui.multiCamID.innerHTML = ui.camera.id;
   ui.multiCamSRC.innerHTML = ui.camera.srcs[ui.camera.id];
 	ui.camera.viewer.style.backgroundImage = 'url(' + ui.camera.srcs[ui.camera.id] + ')';
 };

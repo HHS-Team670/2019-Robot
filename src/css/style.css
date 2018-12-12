@@ -108,7 +108,8 @@ text {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.8)
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 2;
 }
 body.login #login {
     display: flex;
@@ -122,12 +123,12 @@ body.login #login {
 #login > button {
     margin-left: 5px;
 }
-#from-nt {
-  width: 25%;
-  max-width: 25%;
-  left: 50vw;
-}
 #multicam-debug {
-  left: 50vw;
-  top: 10vw;
+  bottom: 0vh;
+  z-index: 1;
+}
+#robot-info {
+  bottom: 0vw;
+  right: 0vh;
+  font-size: 12pt;
 }
