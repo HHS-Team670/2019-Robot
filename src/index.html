@@ -21,10 +21,20 @@
     </div>
 
     <div id="robot-info">
-      <p id="gyro">gyro</p>
       <p id="velocity">velocity</p>
       <p id="acceleration">acceleration</p>
     </div>
+
+    <svg id="navx">
+      <circle id="navx-circle" cx="50" cy="50" r="50"></circle>
+      <rect x="50" y="0" width="1" height="2"></rect>
+      <rect x="50" y="100" width="1" height="2"></rect>
+      <rect x="0" y="50" width="2" height="1"></rect>
+      <rect x="100" y="50" width="2" height="1"></rect>
+      <rect id="navx-arm" x="50" y="0" width="2" height="50"></rect>
+      <text id="navx-number" x="100" y="10">0º</text>
+      <text id="navx-name">NavX</text>
+    </svg>
 
     <div id="camera"></div>
 

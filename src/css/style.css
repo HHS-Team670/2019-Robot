@@ -132,3 +132,14 @@ body.login #login {
   right: 0vh;
   font-size: 12pt;
 }
+#navx {
+  top: 0.2vh;
+  right: 0.4vw;
+  color: green;
+}
+#navx-name {
+  text-align: center;
+}
+#navx-arm {
+  transform-origin: bottom center;
+}
