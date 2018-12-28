@@ -1,6 +1,5 @@
 let address = document.getElementById('connect-address'),
-  connect = document.getElementById('connect'),
-  buttonConnect = document.getElementById('connect-button');
+  connect = document.getElementById('connect')
 
 let loginShown = true;
 
@@ -30,10 +29,6 @@ function onRobotConnection(connected) {
   console.log(state);
   ui.robotState.textContent = state;
 
-  buttonConnect.onclick = () => {
-    document.body.classList.toggle('login', true);
-    loginShown = true;
-  };
   if (connected) {
     // On connect hide the connect popup
     document.body.classList.toggle('login', false);
