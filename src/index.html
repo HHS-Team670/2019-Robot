@@ -25,14 +25,25 @@
     </div>
 
     <svg id="navx">
-      <circle id="navx-circle" cx="50" cy="50" r="50"></circle>
-      <rect x="50" y="0" width="1" height="2"></rect>
-      <rect x="50" y="100" width="1" height="2"></rect>
-      <rect x="0" y="50" width="2" height="1"></rect>
-      <rect x="100" y="50" width="2" height="1"></rect>
-      <rect id="navx-arm" x="50" y="0" width="2" height="50"></rect>
-      <text id="navx-number" x="100" y="10">0º</text>
-      <text id="navx-name">NavX</text>
+      <circle id="navx-circle" r="50"></circle>
+      <rect id="navx-toptick" width="1" height="2"></rect>
+      <rect id="navx-bottomtick" width="1" height="2"></rect>
+      <rect id="navx-lefttick" width="2" height="1"></rect>
+      <rect id="navx-righttick" width="2" height="1"></rect>
+      <rect id="navx-arm" y="0" width="2" style="transform-origin: bottom center"></rect>
+      <text id="navx-number">0º</text>
+      <text id="navx-name" style="text-align:center">NavX</text>
+    </svg>
+
+    <svg id="turret">
+      <circle id="turret-circle" r="50"></circle>
+      <rect id="turret-toptick" width="1" height="2"></rect>
+      <rect id="turret-bottomtick" width="1" height="2"></rect>
+      <rect id="turret-lefttick" width="2" height="1"></rect>
+      <rect id="turret-righttick" width="2" height="1"></rect>
+      <rect id="turret-arm" y="0" width="2" style="transform-origin: bottom center"></rect>
+      <text id="turret-number">0º</text>
+      <text id="turret-name" style="text-align:center">Turret</text>
     </svg>
 
     <div id="camera"></div>

@@ -68,8 +68,8 @@ header {
 }
 #camera {
     padding: 0;
-    position: fixed;
-    bottom: 0;
+    position: absolute;
+    bottom: 0vh;
     left: 10;
     width: 50vw;
     height: 80vh;
@@ -133,13 +133,10 @@ body.login #login {
   font-size: 12pt;
 }
 #navx {
-  top: 0.2vh;
-  right: 0.4vw;
-  color: green;
+  top: 2vh;
+  right: 8vw;
 }
-#navx-name {
-  text-align: center;
-}
-#navx-arm {
-  transform-origin: bottom center;
+#turret {
+  top: 30vh;
+  right: 8vw;
 }
