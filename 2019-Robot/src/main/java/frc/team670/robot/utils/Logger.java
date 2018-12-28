@@ -1,6 +1,5 @@
 package frc.team670.robot.utils;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -16,6 +15,10 @@ import java.util.logging.LogRecord;
 
 import edu.wpi.first.wpilibj.DriverStation;
 
+
+/**
+ * Implements a logging system for the robot. Code taken from http://stemrobotics.cs.pdx.edu/node/7150
+ */
 public class Logger
 {
     /**
