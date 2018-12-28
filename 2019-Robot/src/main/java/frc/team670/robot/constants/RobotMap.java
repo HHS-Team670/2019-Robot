@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.constants;
+package frc.team670.robot.constants;
 
 /**
  * The RobotMap is a mapping from the ports sensors and actuators are wired into
