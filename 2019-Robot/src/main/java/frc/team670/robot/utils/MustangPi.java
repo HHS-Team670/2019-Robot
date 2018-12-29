@@ -2,16 +2,15 @@ package frc.team670.robot.utils;
 
 import java.util.HashMap;
 
-import javax.lang.model.util.ElementScanner6;
-
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.NetworkTableType;
 
 /**
- * Stores values off of NetworkTables for easy retrieval and gives them Listeners to update the stored values when they are changed
+ * Stores values off of NetworkTables for easy retrieval and gives them
+ * Listeners to update the stored values when they are changed
  */
 public class MustangPi {
 
@@ -21,6 +20,8 @@ public class MustangPi {
     private static final String[] raspiKeys = new String[] {};
     // The name of the subtable set on the raspberry pi
     private static final String tableName = "raspberryPi";
+
+    // TODO Literally all of this code below needs a review from someone who knows what they're talking about - Shaylan
 
     public MustangPi() {
         this(raspiKeys);
@@ -42,7 +43,7 @@ public class MustangPi {
          */
         public NetworkTableObject(String key) {
             NetworkTableInstance instance = NetworkTableInstance.getDefault();
-            NetworkTable table = instance.getTable(key);
+            NetworkTable table = instance.getTable(tableName);
             entry = instance.getEntry(key);
             table.addEntryListener(key, (table2, key2, entry, value, flags) -> {
                 this.entry = entry;
@@ -51,7 +52,7 @@ public class MustangPi {
         }
 
         /**
-         * Gets the value of the entry, this will be returned as a Double Array. 
+         * Gets the value of the entry, this will be returned as a Double Array. Make sure to have a try/catch block for the Exception
          * @return A Double Array with the value or values last received from the pi.
          * @exception IllegalStateException Throws if the value received from the pi was Unassigned or not a Double or Double Array
          */
