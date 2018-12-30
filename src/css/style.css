@@ -133,10 +133,14 @@ body.login #login {
   font-size: 12pt;
 }
 #navx {
-  top: 2vh;
-  right: 8vw;
+  position: absolute;
+  transform: translate(70vw);
+  width: 150px;
+  height: 150px;
 }
 #turret {
-  top: 30vh;
-  right: 8vw;
+  position: absolute;
+  transform: translate(85vw);
+  width: 150px;
+  height: 150px;
 }
