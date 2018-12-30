@@ -43,9 +43,14 @@ function setLogin() {
   address.disabled = connect.disabled = false;
   connect.textContent = 'Connect';
   // Add the default address and select xxxx
-  address.value = 'roborio-xxxx-frc.local';
+  // address.value = '10.6.70.26'; // on network 670
+  address.value = '10.0.0.231'; // on Kishore's home network
   address.focus();
   address.setSelectionRange(8, 12);
+
+  ipc.send('connect', address.value);
+  address.disabled = connect.disabled = true;
+  connect.textContent = 'Connecting...';
 }
 // On click try to connect and disable the input and the button
 connect.onclick = () => {
@@ -53,6 +58,7 @@ connect.onclick = () => {
   address.disabled = connect.disabled = true;
   connect.textContent = 'Connecting...';
 };
+
 address.onkeydown = ev => {
   if (ev.key === 'Enter') {
     connect.click();

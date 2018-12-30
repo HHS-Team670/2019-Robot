@@ -2,10 +2,11 @@
 ui.camera = {
 	viewer: document.getElementById('camera'),
 	id: 0,
-	srcs: [
-        ui.cameraURL
-    ]
+	// srcs: ['http://' + address.value + ':8080/?action=stream', 'http://' + address.value + ':8000/?action=stream']
+	srcs: ['http://' + address.value + ':8080/?action=stream']
 };
+
+ui.test.innerHTML = ui.camera.id;
 
 ui.multiCamSRC.innerHTML = ui.camera.srcs[ui.camera.id];
 ui.camera.viewer.style.backgroundImage = 'url(' + ui.camera.srcs[ui.camera.id] + ')';

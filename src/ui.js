@@ -3,6 +3,7 @@ var ui = {
     timer: document.getElementById('timer'),
     robotState: document.getElementById('robot-state'),
     cameraURL: 'http://10.0.0.231:8080/?action=stream', // can be changed
+    // cameraURL: 'http://10.6.70.26:8080/?action=stream',
     multiCamSRC: document.getElementById('multicam-src'),
     navx: {
       container: document.getElementById('navx'),
@@ -25,12 +26,20 @@ var ui = {
       righttick: document.getElementById('turret-righttick'),
       bottomtick: document.getElementById('turret-bottomtick'),
       lefttick: document.getElementById('turret-lefttick')
-    }
+    },
+    test: document.getElementById('test'),
+    cameraButton: document.getElementById('camera-button'),
+    cameraURLs : ['http://10.6.70.26:8080/?action=stream', 'http://10.6.70.26:8000/?action=stream']
+
 };
 
+var i = 0;
+
 // position NavX
-var navxR = ui.navx.circle.getAttribute('r');
-ui.navx.name.setAttribute('x', navxR/2);
+var navxR = ui.navx.circle.getAttribute('r'); // radius of circle showing navx
+ui.navx.container.setAttribute('width', 2*navxR);
+ui.navx.container.setAttribute('height', 2*navxR);
+ui.navx.name.setAttribute('x', ((navxR > 50) ? navxR-25 : navxR/2));
 ui.navx.name.setAttribute('y', navxR/2);
 ui.navx.circle.setAttribute('cx', navxR);
 ui.navx.circle.setAttribute('cy', navxR);
@@ -44,12 +53,15 @@ ui.navx.lefttick.setAttribute('x', 0);
 ui.navx.lefttick.setAttribute('y', navxR);
 ui.navx.arm.setAttribute('x', navxR);
 ui.navx.arm.setAttribute('height', navxR);
-ui.navx.number.setAttribute('x', 2*navxR);
-ui.navx.number.setAttribute('y', navxR/5);
+// ui.navx.number.setAttribute('x', 50%);
+// ui.navx.number.setAttribute('y', 50%);
+// ui.navx.number.setAttribute('width', 0);
+// ui.navx.number.setAttribute('style', 'left:50%;transform:translate(-50%,0)');
+// ui.navx.test.innerHTML = ui.navx.number.getAttribute('x');
 
 // position Turret
-var turretR = ui.turret.circle.getAttribute('r');
-ui.turret.name.setAttribute('x', turretR/2);
+var turretR = ui.turret.circle.getAttribute('r'); // radius of circle showing turret
+ui.turret.name.setAttribute('x', ((turretR > 50) ? turretR-25 : turretR/2));
 ui.turret.name.setAttribute('y', turretR/2);
 ui.turret.circle.setAttribute('cx', turretR);
 ui.turret.circle.setAttribute('cy', turretR);
@@ -63,8 +75,8 @@ ui.turret.lefttick.setAttribute('x', 0);
 ui.turret.lefttick.setAttribute('y', turretR);
 ui.turret.arm.setAttribute('x', turretR);
 ui.turret.arm.setAttribute('height', turretR);
-ui.turret.number.setAttribute('x', 2*turretR);
-ui.turret.number.setAttribute('y', turretR/5);
+ui.turret.number.setAttribute('x', turretR);
+ui.turret.number.setAttribute('y', 3*turretR/2);
 
 NetworkTables.addKeyListener('/SmartDashboard/robotTime', (key, value) => {
   var minutes = ~~(value / 60); // converts to integer
@@ -80,4 +92,13 @@ NetworkTables.addKeyListener('/SmartDashboard/gyro', (key, value) => {
   var angle = value % 360;
   ui.navx.number.innerHTML = angle + 'º';
   ui.navx.arm.style.transform = `rotate(${angle}deg)`;
-})
+});
+
+// function switchStreams() {
+//   i++;
+//   i = i %(ui.cameraURLs.length);
+//   ui.test.innerHTML = ui.cameraURLs[i];
+//   ui.multiCamSRC.innerHTML = ui.cameraURLs[i];
+// };
+
+ui.test.innerHTML = 'changed';
