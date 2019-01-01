@@ -2,8 +2,8 @@
 ui.camera = {
 	viewer: document.getElementById('camera'),
 	id: 0,
-	srcs: ['http://' + '10.0.0.231' + ':8080/?action=stream',
-		'http://' + '10.0.0.231' + ':8000/?action=stream']
+	srcs: ['http://' + address.value + ':8000/?action=stream',
+		'http://' + address.value + ':8001/?action=stream']
 };
 
 // document.getElementById('test').innerHTML = '>>>' + address.value;

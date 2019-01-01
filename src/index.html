@@ -25,26 +25,26 @@
       <p id="test">test</p>
     </div>
 
-    <svg id="navx">
-      <circle id="navx-circle" r="50"></circle>
-      <rect id="navx-toptick" width="1" height="2"></rect>
-      <rect id="navx-bottomtick" width="1" height="2"></rect>
-      <rect id="navx-lefttick" width="2" height="1"></rect>
-      <rect id="navx-righttick" width="2" height="1"></rect>
-      <rect id="navx-arm" y="0" width="2" style="transform-origin: bottom center"></rect>
-      <text id="navx-number" x="50%" y="50%" dominant-baseline="middle" text-anchor="middle">0º</text>
-      <text id="navx-name" style="text-align:center">NavX</text>
+    <svg id="navx" width="120" height="120">
+      <circle cx="50%" cy="50%" r="50%"/>
+      <rect x="50%" y="0%" width="1" height="2"/>
+      <rect class="bottom-tick" x="50%" y="100%" width="1" height="2"/>
+      <rect x="0%" y="50%" width="2" height="1"/>
+      <rect class="right-tick" x="100%" y="50%" width="2" height="1"/>
+      <rect id="navx-arm" class="needle" x="50%" y="0" width="2" height="50%"/>
+      <text id="navx-number" x="50%" y="75%" style="text-anchor: middle">0º</text>
+      <text x="50%" y="25%" style="text-anchor: middle">NavX</text>
     </svg>
 
-    <svg id="turret">
-      <circle id="turret-circle" r="50"></circle>
-      <rect id="turret-toptick" width="1" height="2"></rect>
-      <rect id="turret-bottomtick" width="1" height="2"></rect>
-      <rect id="turret-lefttick" width="2" height="1"></rect>
-      <rect id="turret-righttick" width="2" height="1"></rect>
-      <rect id="turret-arm" y="0" width="2" style="transform-origin: bottom center"></rect>
-      <text id="turret-number" x="50%" y="50%" dominant-baseline="middle" text-anchor="middle">0º</text>
-      <text id="turret-name" style="text-align:center">Turret</text>
+    <svg id="turret" width="120" height="120">
+      <circle cx="50%" cy="50%" r="50%"/>
+      <rect x="50%" y="0%" width="1" height="2"/>
+      <rect class="bottom-tick" x="50%" y="100%" width="1" height="2"/>
+      <rect x="0%" y="50%" width="2" height="1"/>
+      <rect class="right-tick" x="100%" y="50%" width="2" height="1"/>
+      <rect id="turret-arm" class="needle" x="50%" y="0" width="2" height="50%"/>
+      <text id="turret-number" x="50%" y="75%" style="text-anchor: middle">0º</text>
+      <text x="50%" y="25%" style="text-anchor: middle">Turret</text>
     </svg>
 
     <div id="camera"></div>

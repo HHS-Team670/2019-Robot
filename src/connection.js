@@ -43,7 +43,10 @@ function setLogin() {
   address.disabled = connect.disabled = false;
   connect.textContent = 'Connect';
   // Add the default address and select xxxx
-  address.value = '';
+  address.value = '10.0.0.231';
+  // ipc.send('connect', address.value);
+  // address.disabled = connect.disabled = true;
+
   address.focus();
   address.setSelectionRange(8, 12);
 }

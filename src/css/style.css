@@ -135,12 +135,19 @@ body.login #login {
 #navx {
   position: absolute;
   transform: translate(70vw);
-  width: 150px;
-  height: 150px;
 }
 #turret {
   position: absolute;
   transform: translate(85vw);
-  width: 150px;
-  height: 150px;
+}
+.bottom-tick {
+  transform-origin: top center;
+  transform: rotate(180deg);
+}
+.right-tick {
+  transform-origin: left center;
+  transform: rotate(180deg);
+}
+.needle {
+  transform-origin: bottom center;
 }
