@@ -110,6 +110,7 @@ function createWindow() {
     // Once the python server is ready, load window contents.
     mainWindow.once('ready-to-show', () => {
         console.log('main window is ready to be shown');
+        mainWindow.webContents.reload();
         mainWindow.show();
     });
 
