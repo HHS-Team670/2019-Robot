@@ -71,12 +71,12 @@ header {
     position: absolute;
     bottom: 0vh;
     left: 10;
-    width: 50vw;
-    height: 80vh;
+    width: 50%;
+    height: 80%;
+    object-fit: fill;
     overflow: hidden;
     background-color: #333;
-    /* You'll need to mess with this a bit to get your camera to work. Replace the url with a live-updating image feed from your camera. Using other camera streaming systems will require some tweaking. */
-    background-image: url(ui.cameraURL);
+    background-size: cover;
 }
 article {
     top: 0;

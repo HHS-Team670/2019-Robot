@@ -2,7 +2,6 @@
 var ui = {
     timer: document.getElementById('timer'),
     robotState: document.getElementById('robot-state'),
-    cameraURL: 'http://10.0.0.231:8080/?action=stream', // can be changed
     multiCamSRC: document.getElementById('multicam-src'),
     navx: {
       arm: document.getElementById('navx-arm'),
