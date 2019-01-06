@@ -1,4 +1,4 @@
-package frc.team670.robot.utils;
+package frc.team670.robot.utils.dataCollection;
 
 import java.util.HashMap;
 

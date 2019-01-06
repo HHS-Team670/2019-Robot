@@ -10,7 +10,7 @@
  * FRC Team 957
 **/
 
-package frc.team670.robot.utils;
+package frc.team957;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
