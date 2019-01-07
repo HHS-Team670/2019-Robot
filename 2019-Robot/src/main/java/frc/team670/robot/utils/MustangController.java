@@ -1,4 +1,4 @@
-package frc.team670.robot.constants.controllers;
+package frc.team670.robot.utils;
 
 import edu.wpi.first.wpilibj.Joystick;
 
