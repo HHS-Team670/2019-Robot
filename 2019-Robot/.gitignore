@@ -155,7 +155,6 @@ gradle-app.setting
 .project
 .settings/
 bin/
-.vscode
 
 
 # End of https://www.gitignore.io/api/c++,java,linux,macos,gradle,windows,visualstudiocode

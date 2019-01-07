@@ -3,24 +3,24 @@ package frc.team670.robot.utils;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.TimeZone;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Handler;
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.FileHandler;
 import java.util.logging.Formatter;
+import java.util.logging.Handler;
+import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
 import edu.wpi.first.wpilibj.DriverStation;
 
-
 /**
- * Implements a logging system for the robot. Code taken from http://stemrobotics.cs.pdx.edu/node/7150
+ * Implements a logging system for the robot. Code taken from
+ * http://stemrobotics.cs.pdx.edu/node/7150
  */
-public class Logger
-{
+public class Logger {
     /**
      * Open print stream that writes to the log file. Example of use:
      * exception.printStackTrace(Util.logPrintStream);
@@ -83,7 +83,9 @@ public class Logger
             //if (true) throw new IOException("Test Exception");
             
             DriverStation ds = DriverStation.getInstance();
-            fileTxt = new FileHandler(String.format("/home/lvuser/Log_%s_%s.txt", ds.getEventName(), ds.getMatchNumber()));    
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd:HH:mm:ss");
+	        Date date = new Date();
+            fileTxt = new FileHandler(String.format("/home/lvuser/Log_%s_%s_%s.txt", ds.getEventName(), ds.getMatchNumber(), dateFormat.format(date)));    
             
             fileTxt.setFormatter(logFormatter);
 
