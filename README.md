@@ -1,7 +1,7 @@
 # 2019-Robot
 Code for Team 670's 2019 "Destination: Deep Space" FIRST Robotics Competition Robot.
 
-Directory Summary:
+Directory Summary:<br/>
 /2019-Robot: Java code and files to be deployed to run on the RoboRIO that are organized and deployed with GradleRIO<br/>
 /Raspi: Code and files to be used on a raspberry pi coprocessor<br/>
 /LED-Arduino: Arduino code to run on an arduino coprocessor to run LED lights that interface with the RoboRIO<br/>
