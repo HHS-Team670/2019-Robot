@@ -18,6 +18,9 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
  */
 public class DriveBase extends Subsystem {
 
+  // TODO declare all of the correct motor controllers. Add them to ArrayLists for easily changing parameters for all of them. 
+  // Make helper methods to change them and access sensor data. Set a DefaultCommand
+
   private SpeedControllerGroup left, right;
   private DifferentialDrive driveTrain;
 

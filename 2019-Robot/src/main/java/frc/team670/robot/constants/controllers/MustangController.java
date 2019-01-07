@@ -58,4 +58,9 @@ public class MustangController extends Joystick {
         return super.getRawButton(XboxButtons.a);
     }
 
+    /*
+    * TODO Continue these functions for all of the buttons and triggers. Additionally, it would be good to be able to convert the POV
+    * value received from the D-Pad into an angle.
+    */
+
 }
