@@ -83,6 +83,9 @@ public class DriveBase extends Subsystem {
     arcadeDrive(xSpeed, zRotation, false);
   }
 
+  public void stop() {
+    tankDrive(0, 0);
+  }
 
   @Override
   public void initDefaultCommand() {
