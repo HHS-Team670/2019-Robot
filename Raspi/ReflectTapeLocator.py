@@ -1,4 +1,4 @@
-# Kyle Fu
+# Kyle Fu & Rishab Borah
 # OpenCV - Mono Depth / Angle Detection
 
 # Capabilities (Uses one camera):
