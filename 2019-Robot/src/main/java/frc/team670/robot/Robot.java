@@ -14,7 +14,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.ExampleCommand;
 import frc.team670.robot.constants.OI;
+import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.utils.Logger;
+import frc.team670.robot.utils.dataCollection.MustangPi;
+import frc.team670.robot.utils.dataCollection.MustangSensors;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -25,6 +28,9 @@ import frc.team670.robot.utils.Logger;
  */
 public class Robot extends TimedRobot {
   public static OI oi;
+  public static MustangSensors sensors = new MustangSensors();
+  public static MustangPi visionPi = new MustangPi();
+  public static DriveBase driveBase = new DriveBase();
 
   Command autonomousCommand;
   SendableChooser<Command> auton_chooser = new SendableChooser<>();

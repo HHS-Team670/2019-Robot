@@ -7,6 +7,8 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.NetworkTableType;
+import edu.wpi.first.wpilibj.PIDSource;
+import edu.wpi.first.wpilibj.PIDSourceType;
 
 /**
  * Stores values off of NetworkTables for easy retrieval and gives them
@@ -15,6 +17,8 @@ import edu.wpi.first.networktables.NetworkTableType;
 public class MustangPi {
 
     private HashMap<String, NetworkTableObject> entries;
+
+    private PidSource_VisionValue angleToTarget, distanceToTarget; 
 
     // The keys for the NetworkTable entries that the raspberry pi is putting up
     private static final String[] raspiKeys = new String[] {};
@@ -33,7 +37,7 @@ public class MustangPi {
         }
     }
 
-    public static class NetworkTableObject {
+    public class NetworkTableObject {
 
         private NetworkTableEntry entry;
         private String key;
@@ -72,5 +76,53 @@ public class MustangPi {
 
     }
 
+    /** 
+     * 
+     * Angle to the vision target in degrees, in a PIDSource.
+     *  
+     */
+    public PidSource_VisionValue getAngleToTarget() {
+    
+        return angleToTarget;
+    }
 
+
+    /**
+     * 
+     * Distance to vision target in inches, in a PIDSource.
+     * @return
+     */
+
+    public PidSource_VisionValue getDistanceToTarget() {
+        return distanceToTarget;
+    }
+
+
+
+
+    public class PidSource_VisionValue implements PIDSource {
+
+        private PIDSourceType pidSourceType;
+        private String keyName;
+        
+        public PidSource_VisionValue(String keyName) {
+            pidSourceType = PIDSourceType.kDisplacement;
+            this.keyName = keyName;
+        }
+
+        @Override
+        public PIDSourceType getPIDSourceType() {
+            return pidSourceType;
+        }
+
+        @Override
+        public void setPIDSourceType(PIDSourceType pidSource) {
+            pidSourceType = pidSource;
+        }
+
+        @Override
+        public double pidGet() {
+            return entries.get(keyName).getValue()[0]; // Gets the 0th value of the array. Make sure that is the correct one.
+        }
+    }
 }
