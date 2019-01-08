@@ -27,4 +27,8 @@ NetworkTables.addKeyListener('/SmartDashboard/gyro', (key, value) => {
   var angle = value % 360;
   ui.navx.number.innerHTML = angle + 'º';
   ui.navx.arm.style.transform = `rotate(${angle}deg)`;
+});
+
+NetworkTables.addKeyListener('/SmartDashboard/cameraSource', (key, value) => {
+  document.getElementById('test').innerHTML = value;
 })
