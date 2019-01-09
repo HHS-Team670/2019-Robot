@@ -9,6 +9,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.NetworkTableType;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
+import frc.team670.robot.utils.functions.MathUtils;
 
 /**
  * Stores values off of NetworkTables for easy retrieval and gives them
@@ -16,12 +17,14 @@ import edu.wpi.first.wpilibj.PIDSourceType;
  */
 public class MustangPi {
 
+    public static final double VISION_ERROR_CODE = -99999;
+
     private HashMap<String, NetworkTableObject> entries;
 
     private PidSource_VisionValue angleToTarget, distanceToTarget; 
 
     // The keys for the NetworkTable entries that the raspberry pi is putting up
-    private static final String[] raspiKeys = new String[] {};
+    private static final String[] raspiKeys = new String[] {"angleToTarget", "distanceToTarget"};
     // The name of the subtable set on the raspberry pi
     private static final String tableName = "raspberryPi";
 
@@ -37,7 +40,7 @@ public class MustangPi {
         }
     }
 
-    public class NetworkTableObject {
+    private class NetworkTableObject {
 
         private NetworkTableEntry entry;
         private String key;
@@ -77,35 +80,28 @@ public class MustangPi {
     }
 
     /** 
-     * 
-     * Angle to the vision target in degrees, in a PIDSource.
-     *  
+     * Angle to the vision target in degrees, as a PIDSource. Provides the VISION_ERROR_CODE if no value found.
      */
     public PidSource_VisionValue getAngleToTarget() {
-    
         return angleToTarget;
     }
 
-
     /**
-     * 
-     * Distance to vision target in inches, in a PIDSource.
-     * @return
+     * Distance to the vision target in inches, as a PIDSource. Provides the VISION_ERROR_CODE if no value found.
      */
-
     public PidSource_VisionValue getDistanceToTarget() {
         return distanceToTarget;
     }
 
-
-
-
-    public class PidSource_VisionValue implements PIDSource {
+    /**
+     * Represents a value received off the raspberry pi through vision processing as a PIDSource for WPILib PIDControllers
+     */
+    private class PidSource_VisionValue implements PIDSource {
 
         private PIDSourceType pidSourceType;
         private String keyName;
         
-        public PidSource_VisionValue(String keyName) {
+        private PidSource_VisionValue(String keyName) {
             pidSourceType = PIDSourceType.kDisplacement;
             this.keyName = keyName;
         }
@@ -120,9 +116,28 @@ public class MustangPi {
             pidSourceType = pidSource;
         }
 
+        /**
+         * Returns the PID Value given by this source. If no vision target can be located, returns VISION_ERROR_CODE
+         */
         @Override
         public double pidGet() {
-            return entries.get(keyName).getValue()[0]; // Gets the 0th value of the array. Make sure that is the correct one.
+            double entry = getEntry();
+            if(MathUtils.doublesEqual(entry, VISION_ERROR_CODE)) {
+                return VISION_ERROR_CODE;
+            } else {
+                return entry;
+            }
+        }
+
+        private double getEntry() {
+            return entries.get(keyName).getValue()[0]; // Gets the 0th value of the array. Make sure that is the correct one if vision software provides an array.
+        }
+
+        /**
+         * Returns true if a vision target is able to be located in the raspberry pi camera
+         */
+        public boolean canSeeVisionTarget() {
+            return !MathUtils.doublesEqual(getEntry(), VISION_ERROR_CODE);
         }
     }
 }
