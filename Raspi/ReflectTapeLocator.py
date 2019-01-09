@@ -1,4 +1,6 @@
 # Kyle Fu & Rishab Borah
+#Any of Kyle's new work with finding depth and angles is not on here
+#I will put comments near changed code
 # OpenCV - Mono Depth / Angle Detection
 
 # Capabilities (Uses one camera):
@@ -38,11 +40,11 @@ import cv2
 import numpy as np
 import math
 import copy
-from threading import Thread
+from threading import Thread## EDIT new importations from here down
 import imutils
 import datetime
 
-class FPS:
+class FPS: ## EDIT 2 new classes
     def __init__(self):
         '''Store the start time, end time, and number of frames
         that were examined between start and end intervals
@@ -355,13 +357,13 @@ def main():
     screen_resize = 1  # Scale that the GUI image should be scaled to
 
     # Video capture / resizing stuff
-    fps = FPS().start()
-    vs = ThreadedVideo(screen_resize, capture_source).start()
+    fps = FPS().start() # EDIT framerate checker
+    vs = ThreadedVideo(screen_resize, capture_source).start() ## EDIT thread implementation (any instances of 'capture' from here down are written as 'vs.stream'
     resize_value = get_resize_values(vs.stream, image_width)
     
     while True:
         # Read input image from video
-        input_image = vs.read()
+        input_image = vs.read() # EDIT vs.read rather than read_input_image [this method, however, is implemented in the thread video class]
         if input_image is None:
             print("Error: Capture source not found or broken.")
             key = cv2.waitKey(1) & 0xFF
