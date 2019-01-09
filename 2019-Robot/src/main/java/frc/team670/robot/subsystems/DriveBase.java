@@ -90,6 +90,29 @@ public class DriveBase extends Subsystem {
     tankDrive(0, 0);
   }
 
+/**
+ * return the left encoder
+ */
+
+  public double getLeftEncoder() {
+    return 0;
+
+  }
+
+/**
+ * Return the right encoder
+ */
+
+  public double getRightEncoder(){
+    return 0;
+  }
+
+  public double getAngle() 
+  {
+    return 0;
+
+  }
+
   @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.

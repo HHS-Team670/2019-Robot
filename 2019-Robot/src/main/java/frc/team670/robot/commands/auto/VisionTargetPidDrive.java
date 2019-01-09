@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.Robot;
 import frc.team670.robot.utils.Logger;
-import frc.team670.robot.utils.SensorCollection_PIDSource;
 
 /**
  * Drives towards the vision target on the field using distance and angle from the raspberry pi vision
@@ -20,31 +19,40 @@ import frc.team670.robot.utils.SensorCollection_PIDSource;
  */
 public class VisionTargetPidDrive extends Command {
 
-  private PIDController  distanceController, headingController;
+  private PIDController  visionDistanceController, visionHeadingController, distanceControllerEncoders;
   private static final double P = 0.01, I = 0.0, D = 0.0, F = 0.0;
   private static final double degreeTolerance = 0.05; //degrees
   private static final double distanceTolerance = 0.05; //inches
-  private double headingControllerLowerBound = -.15, headingControllerUpperBound = .15;
-  private double distanceControllerLowerBound = -.7, distanceControllerUpperBound = .7;
+  private double visionHeadingControllerLowerBound = -.15, visionHeadingControllerUpperBound = .15;
+  private double visionDistanceControllerLowerBound = -.7, visionDistanceControllerUpperBound = .7;
+
+  private double distanceControllerLowerBound = 0.05, distanceControllerUpperBound = 0.05;
+
+
   private final double cameraOffset = 2.5; //distance from camera to front of the robot in inches.
   private int executeCount;
   private final double minimumAngleAdjustment = 0.03;
 
+  private double leftEncoder, rightEncoder;
+
   public VisionTargetPidDrive() {
 
     requires(Robot.driveBase);
-    distanceController = new PIDController(P, I, D, F, Robot.visionPi.getDistanceToTarget(), null);
+    visionDistanceController = new PIDController(P, I, D, F, Robot.visionPi.getDistanceToTarget(), null);
 
-    headingController = new PIDController (P, I, D, F, Robot.visionPi.getAngleToTarget(), null);
+    visionHeadingController = new PIDController (P, I, D, F, Robot.visionPi.getAngleToTarget(), null);
+
+    //distanceControllerEncoders = new PIDController (P, I, D, F, Robot.driveBase.getLeftEncoder(), null);
     
-    headingController.setInputRange(-30.0,  30.0);
-    headingController.setOutputRange(headingControllerLowerBound, headingControllerUpperBound);
-    headingController.setAbsoluteTolerance(degreeTolerance);
-    headingController.setContinuous(false);
+    visionHeadingController.setInputRange(-30.0,  30.0);
+    visionHeadingController.setOutputRange(visionHeadingControllerLowerBound, visionHeadingControllerUpperBound);
+    visionHeadingController.setAbsoluteTolerance(degreeTolerance);
+    visionHeadingController.setContinuous(false);
 
-    distanceController.setOutputRange(distanceControllerLowerBound, distanceControllerUpperBound);
-    distanceController.setAbsoluteTolerance(distanceTolerance);
-    distanceController.setContinuous(false);
+    PIDController distanceController2 = visionDistanceController;
+    distanceController2.setOutputRange(visionDistanceControllerLowerBound, visionDistanceControllerUpperBound);
+    distanceController2.setAbsoluteTolerance(distanceTolerance);
+    distanceController2.setContinuous(false);
     
   }
 
@@ -54,8 +62,8 @@ public class VisionTargetPidDrive extends Command {
 
     Logger.consoleLog("Initialized VisionTargetPidDrive");
 
-    headingController.setSetpoint(0);
-    distanceController.setSetpoint(0 + cameraOffset);
+    visionHeadingController.setSetpoint(0);
+    visionDistanceController.setSetpoint(0 + cameraOffset);
 
     executeCount = 0;
 
@@ -65,13 +73,14 @@ public class VisionTargetPidDrive extends Command {
   @Override
   protected void execute() {
 
-    double headingOutput = headingController.get();
-    double distanceOutput = distanceController.get();
+    double headingOutput = visionHeadingController.get();
+    double distanceOutput = visionDistanceController.get();
 
     if(headingOutput >=0) {
       headingOutput += minimumAngleAdjustment;
     } else {
       headingOutput -=  minimumAngleAdjustment;
+      
     }
 
     double leftSpeed = distanceOutput - headingOutput;
@@ -89,16 +98,16 @@ public class VisionTargetPidDrive extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return distanceController.onTarget();
+    return visionDistanceController.onTarget();
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Logger.consoleLog("Ended VisionTargetPidDrive: headingOutput:%s, distanceOutput:%s", headingController.get(), distanceController.get());
+    Logger.consoleLog("Ended VisionTargetPidDrive: headingOutput:%s, distanceOutput:%s", visionHeadingController.get(), visionDistanceController.get());
     Robot.driveBase.stop();
-    releaseController(distanceController);
-    releaseController(headingController);
+    releaseController(visionDistanceController);
+    releaseController(visionHeadingController);
   }
 
   // Called when another command which requires one or more of the same
@@ -115,6 +124,12 @@ public class VisionTargetPidDrive extends Command {
   private void releaseController(PIDController controller) {
     controller.disable();
     controller.free();
+  }
+
+  protected double getAverageOfEncoders(double leftEncoder, double rightEncoder){
+
+    leftEncoder = Robot.pose.getLeftEncoderTick;
+
   }
 
 }
