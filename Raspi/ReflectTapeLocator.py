@@ -75,7 +75,7 @@ def find_colored_object(image, capture_color='y', debug=False):
         masked_image = cv2.inRange(hsv_image, np.array([95, 50, 50]),
                                    np.array([125, 255, 255]))  # Blue
     elif capture_color == 'g':
-        masked_image = cv2.inRange(hsv_image, np.array([45, 50, 50]),
+        masked_image = cv2.inRange(hsv_image, np.array([35, 50, 50]),
                                    np.array([80, 255, 255]))  # Green
     else:
         mask_1 = cv2.inRange(hsv_image, np.array([0, 50, 50]),
@@ -108,7 +108,7 @@ def find_largest_contour(image, debug=False): ##edited
         conarea = []
         for i in contours:
             conarea.append(cv2.contourArea(i))
-        ##biggest_contour = max(contours, key=cv2.contourArea)
+        #biggest_contour = max(contours, key=cv2.contourArea)
         contours2 = copy.deepcopy(contours)
         biggest_contour=max(conarea)
         del contours2[conarea.index(biggest_contour)]
@@ -142,8 +142,9 @@ def find_largest_contour(image, debug=False): ##edited
         return [-1, -1]
 
 
-def find_depth(image, rectangle, focal_length, known_diagonal):
+def __find_depth(image, rectangle, focal_length, known_diagonal):
     '''
+    DEPRECATED USE AT YOUR OWN RISK
     Returns the depth of the given rectangle in an image (in feet). Needs the
     original image (to get its size), the rectangle itself, the focal length
     of the camera (in ???), and the length of the object's diagonal (in feet).
@@ -160,20 +161,58 @@ def find_depth(image, rectangle, focal_length, known_diagonal):
     else:
         return 0
 
-
-def find_angle(image, rectangle, fov):
+def depth_from_angle(image, rectangles, angle, known_height):
     '''
-    Returns the angle of the given rectangle in an image. This is the angle
+    Returns the depth of the tape when given the height of the tape (from the
+    center of the camera to the middle of the tape), the angle to the center
+    of the tape, the focal length, and the original image (to get its size).
+    '''
+    # Keep tangent from being undefined
+    if angle == 0:
+        angle += 0.0001
+    # Do some calculations
+        
+    depth = known_height / abs(math.tan(math.radians(angle)))
+    return depth
+
+def find_horizontal_angle(image, rectangles, horizontal_fov):
+    '''
+    Returns the horizontal angle of the given rectangles in an image. This is the angle
     that the robot needs to turn in order to directly face the image.
-    Requires the FOV of the camera.
+    Requires the horizontal FOV of the camera.
     '''
     # Find image width
     width = image.shape[:2][1]
-    # Find midpoint of given rectangle
-    box_points = cv2.boxPoints(rectangle)
-    mid_x = (box_points[0][0] + box_points[2][0]) / 2
+    # Find x midpoint of given rectangles
+    mid_x = 0
+    for rectangle in rectangles:
+        box_points = cv2.boxPoints(rectangle)
+        mid_x += (box_points[0][0] + box_points[2][0]) / 2
+    mid_x /= len(rectangles)
     # Calculate angle based on image width, fov, and rectangle midpoint
-    angle = (mid_x / width - 0.5) * fov
+    angle = (mid_x / width - 0.5) * horizontal_fov
+    return angle
+
+def find_vertical_angle(image, rectangles, vertical_fov):
+    '''
+    Returns the vertical angle of the given rectangles in an image. This is the angle
+    that the robot needs to look up / down in order to directly face the image.
+    Requires the vertical FOV of the camera.
+    '''
+    # Find image height
+    height = image.shape[:2][0]
+    # Find tallest y point of given rectangles
+    min_y = 0
+    for rectangle in rectangles:
+        box_points = cv2.boxPoints(rectangle)
+        temp_min_y = box_points[0][1]
+        for box_point in box_points[1:]:
+            if box_point[1] < temp_min_y:
+                temp_min_y = box_point[1]
+        min_y += temp_min_y
+    min_y /= len(rectangles)
+    # Calculate angle based on image height, fov, and rectangle midpoint
+    angle = (min_y / height - 0.5) * vertical_fov
     return angle
 
 
@@ -219,7 +258,10 @@ def mouse_click_handler(event, x, y, flags, params):
     Useful for figuring out precise hsv ranges / troubleshooting detection.
     '''
     if event == cv2.EVENT_LBUTTONDOWN:
-        hsv_image = cv2.cvtColor(input_image, cv2.COLOR_BGR2HSV)
+        try:
+            hsv_image = cv2.cvtColor(input_image, cv2.COLOR_BGR2HSV)
+        except NameError:
+            print("Input image not found!")
         norm_x, norm_y = round(x/screen_resize), round(y/screen_resize)
         h, s, v = hsv_image[norm_y][norm_x]
         print("HSV value of point ({}, {}) is ({}, {}, {})".format(norm_x, norm_y, h, s, v))
@@ -239,103 +281,111 @@ def draw_output_image(image, rectanglelist, depth, angle): ##edited
         box_points = np.int0(box_points)
         cv2.drawContours(output_image, [box_points], 0, (0, 255, 0), 2)
     # Draw the depth / angle of the object
-    cv2.putText(output_image, "%.2f ft" % depth, (10, height - 10),
+    cv2.putText(output_image, "%.2f inches" % depth, (10, height - 10),
                 cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 0, 255), 3)
     cv2.putText(output_image, "%.2f degrees" % angle, (10, height - 60),
                 cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 255), 3)
     return output_image
 
+def main():
+    '''
+    Main.
+    '''
+    # Variables (These should be changed to reflect the camera)
+    capture_source = 0  # 0 for camera, file path for video
+    capture_color = 'g'  # Possible: r (Red), g (Green), b (Blue), y (Yellow)
+    known_object_height = 12  # The height of the tape from the ground (in inches)
+    focal_length = 0.71  # Focal length of the camera (in inches)
+    camera_fov = 50  # FOV of the camera (in degrees)
+    image_width = 1080  # Desired width of inputted image (for processing speed)
+    screen_resize = 1  # Scale that the GUI image should be scaled to
 
-# Variables (These should be changed to reflect the camera)
-capture_source = 0  # 0 for camera, file path for video
-capture_color = 'g'  # Possible: r (Red), g (Green), b (Blue), y (Yellow)
-known_object_diagonal = 1.5  # Length of the diagonal of the object (in feet)
-focal_length = 0.71  # Focal length of the camera (in inches)
-camera_fov = 50  # FOV of the camera (in degrees)
-image_width = 1080  # Desired width of inputted image (for processing speed)
-screen_resize = 1  # Scale that the GUI image should be scaled to
-
-# Video capture / resizing stuff
-capture = cv2.VideoCapture(capture_source)
-resize_value = get_resize_values(capture, image_width)
-while True:
-    # Read input image from video
-    input_image = read_video_image(capture, resize_value)
-    if input_image is None:
-        print("Error: Capture source not found or broken.")
-        key = cv2.waitKey(1) & 0xFF
-        if key == ord('q'):
-            # Quit if q key is pressed
-            break
-        continue
-
-    # Find colored object / box it with a rectangle
-    masked_image = find_colored_object(input_image, capture_color, debug=False)
-    object_rect = find_largest_contour(masked_image, debug=False)
-    obj_r_2 = object_rect[1]
-    object_rect=object_rect[0]
-    if object_rect == -1:
-        # print("No contours found. Assuming no colored object was found.")
-        output_image = cv2.resize(input_image, (0, 0), fx=screen_resize, fy=screen_resize)
-        cv2.imshow("Output", output_image)
-        key = cv2.waitKey(1) & 0xFF
-        if key == ord('q'):
-            # Quit if q key is pressed
-            break
-        continue
-
-    # Find the depth / angle of the object
-    angle = find_angle(input_image, object_rect, camera_fov)
-    depth = find_depth(input_image, object_rect, focal_length, known_object_diagonal)
-    adjusted_depth = adjust_depth(depth, angle)
-
-    # Create output image to display
-    output_image = draw_output_image(input_image, [object_rect, obj_r_2], adjusted_depth, angle)
-    ##output2=draw_output_image(input_image, obj_r_2, adjusted_depth, angle)
-    # Some debug text that was used to see if the adjusted distance was working
-    # cv2.putText(output_image, "%.2f ft (not adjusted)" % depth, (10, 535),
-    #            cv2.FONT_HERSHEY_SIMPLEX, 1+0.5, (0, 0, 255), 2+2)
-    # cv2.putText(output_image, "%.2f ft difference" % (adjusted_depth - depth), (10, 485),
-    #            cv2.FONT_HERSHEY_SIMPLEX, 1+0.5, (0, 0, 255), 2+2)
-    if screen_resize != 1:
-        output_image = cv2.resize(output_image, (0, 0), fx=screen_resize, fy=screen_resize)
-        ##output2 = cv2.resize(output_2, (0, 0), fx=screen_resize, fy=screen_resize)
-    cv2.imshow("Output", output_image)
-    ##cv2.imshow("out2", output2)
-
-    # Check for key presses
-    key = cv2.waitKey(1) & 0xFF
-    if key == ord('q'):
-        # Quit if q key is pressed
-        break
-    elif key == ord('c'):
-        # Calibrate if c key is pressed
-        # Currently calibrates focal length, but can easily be changed to
-        # calibrate known diagonal instead
-        # Comment this out if unneeded for maximum efficiency
-        print("Make sure the object is CENTERED in the camera (should be ~0 degrees)! If it isn't, abort the calibration.")
-        calibrate_distance = input("How far away is the detected object (in feet)? Type q to abort the calibration.\n-> ")
-        try:
-            calibrate_distance = float(calibrate_distance)
-        except ValueError:
-            print("Aborting calibration...")
+    # Video capture / resizing stuff
+    capture = cv2.VideoCapture(capture_source)
+    resize_value = get_resize_values(capture, image_width)
+    while True:
+        # Read input image from video
+        input_image = read_video_image(capture, resize_value)
+        if input_image is None:
+            print("Error: Capture source not found or broken.")
+            key = cv2.waitKey(1) & 0xFF
+            if key == ord('q'):
+                # Quit if q key is pressed
+                break
             continue
-        choice = input("Calibrate (f)ocal length or (d)iagonal? Type q to abort the calibration.\n-> ")
-        if choice == 'f':
-            focal_length = round(calibrate_camera(input_image, object_rect, calibrate_distance, known_diagonal=known_object_diagonal), 3)
-            print("Calibrated! New focal length: {}".format(focal_length))
-            print("Take this value down if needed: It will revert back after the program is stopped!")
-        elif choice == 'd':
-            known_object_diagonal = round(calibrate_camera(input_image, object_rect, calibrate_distance, focal_length=focal_length), 3)
-            print("Calibrated! New known object diagonal: {}".format(known_object_diagonal))
-            print("Take this value down if needed: It will revert back after the program is stopped!")
-        else:
-            print("Aborting calibration...")
 
-    # Handle mouse clicks
-    # Comment this out if unneeded for maximum efficiency
-    cv2.setMouseCallback("Output", mouse_click_handler)
+        # Find colored object / box it with a rectangle
+        masked_image = find_colored_object(input_image, capture_color, debug=False)
+        # Find the two biggest colored objects (two pieces of tape)
+        object_rects = find_largest_contour(masked_image, debug=False)
+        object_rect, object_rect_2 = object_rects
+        if object_rect == -1 or object_rect_2 == -1:
+            # print("No contours found. Assuming no colored object was found.")
+            output_image = cv2.resize(input_image, (0, 0), fx=screen_resize, fy=screen_resize)
+            cv2.imshow("Output", output_image)
+            key = cv2.waitKey(1) & 0xFF
+            if key == ord('q'):
+                # Quit if q key is pressed
+                break
+            continue
 
-# Release & close when done
-capture.release()
-cv2.destroyAllWindows()
+        # Find the depth / angle of the object
+        # find_horizontal_angle finds horizontal angle to object if needed
+        angle = find_vertical_angle(input_image, object_rects, camera_fov)
+        depth = depth_from_angle(input_image, object_rects, angle, known_object_height)
+        # adjusted_depth = adjust_depth(depth, angle)
+        adjusted_depth = depth
+
+        # Create output image to display
+        output_image = draw_output_image(input_image, [object_rect, object_rect_2], adjusted_depth, angle)
+        ##output2=draw_output_image(input_image, object_rect_2, adjusted_depth, angle)
+        # Some debug text that was used to see if the adjusted distance was working
+        # cv2.putText(output_image, "%.2f ft (not adjusted)" % depth, (10, 535),
+        #            cv2.FONT_HERSHEY_SIMPLEX, 1+0.5, (0, 0, 255), 2+2)
+        # cv2.putText(output_image, "%.2f ft difference" % (adjusted_depth - depth), (10, 485),
+        #            cv2.FONT_HERSHEY_SIMPLEX, 1+0.5, (0, 0, 255), 2+2)
+        if screen_resize != 1:
+            output_image = cv2.resize(output_image, (0, 0), fx=screen_resize, fy=screen_resize)
+            ##output2 = cv2.resize(output_2, (0, 0), fx=screen_resize, fy=screen_resize)
+        cv2.imshow("Output", output_image)
+        ##cv2.imshow("out2", output2)
+
+        # Check for key presses
+        key = cv2.waitKey(1) & 0xFF
+        if key == ord('q'):
+            # Quit if q key is pressed
+            break
+        elif key == ord('c'):
+            # Calibrate if c key is pressed
+            # Currently calibrates focal length, but can easily be changed to
+            # calibrate known diagonal instead
+            # Comment this out if unneeded for maximum efficiency
+            print("Make sure the object is CENTERED in the camera (should be ~0 degrees)! If it isn't, abort the calibration.")
+            calibrate_distance = input("How far away is the detected object (in feet)? Type q to abort the calibration.\n-> ")
+            try:
+                calibrate_distance = float(calibrate_distance)
+            except ValueError:
+                print("Aborting calibration...")
+                continue
+            choice = input("Calibrate (f)ocal length or (d)iagonal? Type q to abort the calibration.\n-> ")
+            if choice == 'f':
+                focal_length = round(calibrate_camera(input_image, object_rect, calibrate_distance, known_diagonal=known_object_height), 3)
+                print("Calibrated! New focal length: {}".format(focal_length))
+                print("Take this value down if needed: It will revert back after the program is stopped!")
+            elif choice == 'd':
+                known_object_height = round(calibrate_camera(input_image, object_rect, calibrate_distance, focal_length=focal_length), 3)
+                print("Calibrated! New known object diagonal: {}".format(known_object_height))
+                print("Take this value down if needed: It will revert back after the program is stopped!")
+            else:
+                print("Aborting calibration...")
+
+        # Handle mouse clicks
+        # Comment this out if unneeded for maximum efficiency
+        cv2.setMouseCallback("Output", mouse_click_handler)
+
+    # Release & close when done
+    capture.release()
+    cv2.destroyAllWindows()
+
+if __name__ == "__main__":
+    main()
