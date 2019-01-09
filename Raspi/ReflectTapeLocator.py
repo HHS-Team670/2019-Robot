@@ -1,4 +1,6 @@
 # Kyle Fu & Rishab Borah
+#Any of Kyle's new work with finding depth and angles is not on here
+#I will put comments near changed code
 # OpenCV - Mono Depth / Angle Detection
 
 # Capabilities (Uses one camera):
@@ -38,7 +40,61 @@ import cv2
 import numpy as np
 import math
 import copy
+from threading import Thread## EDIT new importations from here down
+import imutils
+import datetime
 
+class FPS: ## EDIT 2 new classes
+    def __init__(self):
+        '''Store the start time, end time, and number of frames
+        that were examined between start and end intervals
+        '''
+        self._start = None
+        self._end = None
+        self._numFrames = 0
+
+    def start(self):
+        '''start timer'''
+        self._start = datetime.datetime.now()
+        return self
+
+    def stop(self):
+        '''stop timer'''
+        self._end = datetime.datetime.now()
+
+    def update(self):
+        '''increment frames examined'''
+        self._numFrames += 1
+
+    def elapsed(self):
+        '''return total seconds between start and end'''
+        return (self._end - self._start).total_seconds()
+
+    def fps(self):
+        '''compute approximate fps'''
+        return self._numFrames / self.elapsed()
+
+
+class ThreadedVideo:
+    def __init__(self, resize_value, src):
+        self.stream = cv2.VideoCapture(src)
+        self.grabbed = read_video_image(self.stream, resize_value)
+        self.frame=imutils.resize(self.grabbed, width=400)
+        self.stopped=False
+        self.resize = resize_value
+    def start(self):
+        Thread(target=self.update, args=()).start()
+        return self
+    def stop(self):
+        self.stopped=True
+    def read(self):
+        return self.frame
+    def update(self):
+        while True:
+            if self.stopped:
+                return
+            self.grabbed = read_video_image(self.stream, self.resize)
+            self.frame=imutils.resize(self.grabbed, width=400)
 
 def get_resize_values(capture, width=1920):
     '''
@@ -309,11 +365,13 @@ def main():
     calibrate_angle = 0  # Test to calibrate the angle and see if that works
 
     # Video capture / resizing stuff
-    capture = cv2.VideoCapture(capture_source)
-    resize_value = get_resize_values(capture, image_width)
+    fps = FPS().start() # EDIT framerate checker
+    vs = ThreadedVideo(screen_resize, capture_source).start() ## EDIT thread implementation (any instances of 'capture' from here down are written as 'vs.stream'
+    resize_value = get_resize_values(vs.stream, image_width)
+    
     while True:
         # Read input image from video
-        input_image = read_video_image(capture, resize_value)
+        input_image = vs.read() # EDIT vs.read rather than read_input_image [this method, however, is implemented in the thread video class]
         if input_image is None:
             print("Error: Capture source not found or broken.")
             key = cv2.waitKey(1) & 0xFF
@@ -391,10 +449,15 @@ def main():
         # Handle mouse clicks
         # Comment this out if unneeded for maximum efficiency
         cv2.setMouseCallback("Output", mouse_click_handler)
+        fps.update()
 
     # Release & close when done
-    capture.release()
+    vs.stream.release()
     cv2.destroyAllWindows()
+    vs.stop()
+    fps.stop()
+    print("ELAPSED TIME: {:.2f}".format(fps.elapsed()))
+    print("APPROX. FPS: {:.2f}".format(fps.fps()))
 
 if __name__ == "__main__":
     main()
