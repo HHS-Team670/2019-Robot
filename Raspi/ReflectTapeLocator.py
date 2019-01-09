@@ -45,6 +45,7 @@ import imutils
 import datetime
 
 class FPS: ## EDIT 2 new classes
+    '''This class counts the framerate by calling the start function, end function, and update function and dividing time by frames'''
     def __init__(self):
         '''Store the start time, end time, and number of frames
         that were examined between start and end intervals
@@ -76,20 +77,26 @@ class FPS: ## EDIT 2 new classes
 
 
 class ThreadedVideo:
+    '''this class creates a thread for video capture'''
     def __init__(self, resize_value, src):
+        '''init class that initializes a video stream and a single video capture image'''
         self.stream = cv2.VideoCapture(src)
         self.grabbed = read_video_image(self.stream, resize_value)
         self.frame=imutils.resize(self.grabbed, width=400)
         self.stopped=False
         self.resize = resize_value
     def start(self):
+        '''starts thread'''
         Thread(target=self.update, args=()).start()
         return self
     def stop(self):
+        '''stops thread, for some reason entire program crashes after the q key is pressed to quit, but it doesn"t affect anything'''
         self.stopped=True
     def read(self):
+        '''returns frame'''
         return self.frame
     def update(self):
+        '''grabs new video images'''
         while True:
             if self.stopped:
                 return
@@ -456,6 +463,8 @@ def main():
     cv2.destroyAllWindows()
     vs.stop()
     fps.stop()
+    
+    #print framerate once done
     print("ELAPSED TIME: {:.2f}".format(fps.elapsed()))
     print("APPROX. FPS: {:.2f}".format(fps.fps()))
 
