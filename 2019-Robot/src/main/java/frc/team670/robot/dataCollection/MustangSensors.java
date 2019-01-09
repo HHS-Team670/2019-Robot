@@ -1,8 +1,5 @@
 package frc.team670.robot.dataCollection;
 
-import com.kauailabs.navx.frc.AHRS;
-
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team254.lib.util.drivers.NavX;
