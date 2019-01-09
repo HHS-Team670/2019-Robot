@@ -28,7 +28,6 @@ public class VisionTargetPidDrive extends Command {
 
   private double distanceControllerLowerBound = 0.05, distanceControllerUpperBound = 0.05;
 
-
   private final double cameraOffset = 2.5; //distance from camera to front of the robot in inches.
   private int executeCount;
   private final double minimumAngleAdjustment = 0.03;
@@ -52,8 +51,7 @@ public class VisionTargetPidDrive extends Command {
     PIDController distanceController2 = visionDistanceController;
     distanceController2.setOutputRange(visionDistanceControllerLowerBound, visionDistanceControllerUpperBound);
     distanceController2.setAbsoluteTolerance(distanceTolerance);
-    distanceController2.setContinuous(false);
-    
+    distanceController2.setContinuous(false);    
   }
 
   // Called just before this Command runs the first time
@@ -73,8 +71,9 @@ public class VisionTargetPidDrive extends Command {
   @Override
   protected void execute() {
 
+    /** changed output range to insure that the distanceController isn't going into a negative range */
+    double distanceOutput = distanceController.get() * -1;
     double headingOutput = visionHeadingController.get();
-    double distanceOutput = visionDistanceController.get();
 
     if(headingOutput >=0) {
       headingOutput += minimumAngleAdjustment;
