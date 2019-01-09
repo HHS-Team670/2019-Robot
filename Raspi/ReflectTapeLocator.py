@@ -172,7 +172,7 @@ def depth_from_angle(image, rectangles, angle, known_height):
         angle += 0.0001
     # Do some calculations
         
-    depth = known_height / abs(math.tan(math.radians(angle)))
+    depth = known_height / math.tan(math.radians(abs(angle)))
     return depth
 
 def find_horizontal_angle(image, rectangles, horizontal_fov):
@@ -201,18 +201,25 @@ def find_vertical_angle(image, rectangles, vertical_fov):
     '''
     # Find image height
     height = image.shape[:2][0]
-    # Find tallest y point of given rectangles
+    # Find tallest / shortest y point of given rectangles
     min_y = 0
+    max_y = 0
     for rectangle in rectangles:
         box_points = cv2.boxPoints(rectangle)
         temp_min_y = box_points[0][1]
+        temp_max_y = box_points[0][1]
         for box_point in box_points[1:]:
             if box_point[1] < temp_min_y:
                 temp_min_y = box_point[1]
+            if box_point[1] > temp_max_y:
+                temp_max_y = box_point[1]
         min_y += temp_min_y
+        max_y += temp_max_y
     min_y /= len(rectangles)
+    max_y /= len(rectangles)
     # Calculate angle based on image height, fov, and rectangle midpoint
-    angle = (min_y / height - 0.5) * vertical_fov
+    # Remove 0 to make it relative (also change -1)
+    angle = (0 * (max_y / height - 0.5) * vertical_fov) - (-1 * (min_y / height - 0.5) * vertical_fov)
     return angle
 
 
@@ -294,11 +301,12 @@ def main():
     # Variables (These should be changed to reflect the camera)
     capture_source = 0  # 0 for camera, file path for video
     capture_color = 'g'  # Possible: r (Red), g (Green), b (Blue), y (Yellow)
-    known_object_height = 12  # The height of the tape from the ground (in inches)
+    known_object_height = 13.8  # The height of the tape from the ground (in inches)
     focal_length = 0.71  # Focal length of the camera (in inches)
     camera_fov = 50  # FOV of the camera (in degrees)
     image_width = 1080  # Desired width of inputted image (for processing speed)
     screen_resize = 1  # Scale that the GUI image should be scaled to
+    calibrate_angle = 0  # Test to calibrate the angle and see if that works
 
     # Video capture / resizing stuff
     capture = cv2.VideoCapture(capture_source)
@@ -332,6 +340,7 @@ def main():
         # Find the depth / angle of the object
         # find_horizontal_angle finds horizontal angle to object if needed
         angle = find_vertical_angle(input_image, object_rects, camera_fov)
+        angle -= calibrate_angle
         depth = depth_from_angle(input_image, object_rects, angle, known_object_height)
         # adjusted_depth = adjust_depth(depth, angle)
         adjusted_depth = depth
@@ -357,10 +366,10 @@ def main():
             break
         elif key == ord('c'):
             # Calibrate if c key is pressed
-            # Currently calibrates focal length, but can easily be changed to
-            # calibrate known diagonal instead
+            # Currently calibrates angle so that distance is 24 inches
             # Comment this out if unneeded for maximum efficiency
-            print("Make sure the object is CENTERED in the camera (should be ~0 degrees)! If it isn't, abort the calibration.")
+            calibrate_angle = math.atan(math.radians(known_object_height * 24)) + angle
+            '''print("Make sure the object is CENTERED in the camera (should be ~0 degrees)! If it isn't, abort the calibration.")
             calibrate_distance = input("How far away is the detected object (in feet)? Type q to abort the calibration.\n-> ")
             try:
                 calibrate_distance = float(calibrate_distance)
@@ -377,7 +386,7 @@ def main():
                 print("Calibrated! New known object diagonal: {}".format(known_object_height))
                 print("Take this value down if needed: It will revert back after the program is stopped!")
             else:
-                print("Aborting calibration...")
+                print("Aborting calibration...")'''
 
         # Handle mouse clicks
         # Comment this out if unneeded for maximum efficiency
