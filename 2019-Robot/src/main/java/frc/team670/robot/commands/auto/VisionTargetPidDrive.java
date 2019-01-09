@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.Robot;
 import frc.team670.robot.utils.Logger;
-import frc.team670.robot.utils.SensorCollection_PIDSource;
 
 /**
  * Drives towards the vision target on the field using distance and angle from the raspberry pi vision
@@ -25,7 +24,10 @@ public class VisionTargetPidDrive extends Command {
   private static final double degreeTolerance = 0.05; //degrees
   private static final double distanceTolerance = 0.05; //inches
   private double headingControllerLowerBound = -.15, headingControllerUpperBound = .15;
-  private double distanceControllerLowerBound = -.7, distanceControllerUpperBound = .7;
+
+
+  
+  private double distanceControllerLowerBound = -.7, distanceControllerUpperBound = .7; 
   private final double cameraOffset = 2.5; //distance from camera to front of the robot in inches.
   private int executeCount;
   private final double minimumAngleAdjustment = 0.03;
@@ -42,7 +44,7 @@ public class VisionTargetPidDrive extends Command {
     headingController.setAbsoluteTolerance(degreeTolerance);
     headingController.setContinuous(false);
 
-    distanceController.setOutputRange(distanceControllerLowerBound, distanceControllerUpperBound);
+    distanceController.setOutputRange((distanceControllerLowerBound), (distanceControllerUpperBound));
     distanceController.setAbsoluteTolerance(distanceTolerance);
     distanceController.setContinuous(false);
     
@@ -66,7 +68,9 @@ public class VisionTargetPidDrive extends Command {
   protected void execute() {
 
     double headingOutput = headingController.get();
-    double distanceOutput = distanceController.get();
+
+    /** changed output range to insure that the distanceController isn't going into a negative range */
+    double distanceOutput = distanceController.get() * -1;
 
     if(headingOutput >=0) {
       headingOutput += minimumAngleAdjustment;
