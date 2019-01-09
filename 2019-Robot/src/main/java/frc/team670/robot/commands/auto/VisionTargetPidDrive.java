@@ -48,6 +48,7 @@ public class VisionTargetPidDrive extends Command {
     visionHeadingController.setAbsoluteTolerance(degreeTolerance);
     visionHeadingController.setContinuous(false);
 
+    // TODO Note from Shaylan, you need to set this controller as a field, not here! I think this is supposed to be distanceControllerEncoders???
     PIDController distanceController2 = visionDistanceController;
     distanceController2.setOutputRange(visionDistanceControllerLowerBound, visionDistanceControllerUpperBound);
     distanceController2.setAbsoluteTolerance(distanceTolerance);
@@ -72,7 +73,7 @@ public class VisionTargetPidDrive extends Command {
   protected void execute() {
 
     /** changed output range to insure that the distanceController isn't going into a negative range */
-    double distanceOutput = distanceController.get() * -1;
+    double distanceOutput = visionDistanceController.get() * -1;
     double headingOutput = visionHeadingController.get();
 
     if(headingOutput >=0) {
