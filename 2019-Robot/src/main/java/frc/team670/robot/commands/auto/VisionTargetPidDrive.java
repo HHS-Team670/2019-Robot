@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.Robot;
 import frc.team670.robot.utils.Logger;
-import frc.team670.robot.utils.SensorCollection_PIDSource;
 
 /**
  * Drives towards the vision target on the field using distance and angle from the raspberry pi vision

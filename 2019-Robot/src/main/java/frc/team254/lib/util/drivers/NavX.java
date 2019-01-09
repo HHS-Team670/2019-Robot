@@ -1,15 +1,15 @@
 package frc.team254.lib.util.drivers;
 
-import edu.wpi.first.wpilibj.SPI;
-
 import com.kauailabs.navx.AHRSProtocol.AHRSUpdateBase;
 import com.kauailabs.navx.frc.AHRS;
 import com.kauailabs.navx.frc.ITimestampedDataSubscriber;
+
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.SerialPort;
 import frc.team254.lib.util.math.Rotation2d;
 
 /**
- * yes
- * Driver for a NavX board. Basically a wrapper for the {@link AHRS} class
+ * yes Driver for a NavX board. Basically a wrapper for the {@link AHRS} class
  */
 public class NavX {
     protected class Callback implements ITimestampedDataSubscriber {
@@ -38,6 +38,12 @@ public class NavX {
 
     public NavX(SPI.Port spi_port_id) {
         mAHRS = new AHRS(spi_port_id, (byte) 200);
+        resetState();
+        mAHRS.registerCallback(new Callback(), null);
+    }
+
+    public NavX(SerialPort.Port port) {
+        mAHRS = new AHRS(port);
         resetState();
         mAHRS.registerCallback(new Callback(), null);
     }
