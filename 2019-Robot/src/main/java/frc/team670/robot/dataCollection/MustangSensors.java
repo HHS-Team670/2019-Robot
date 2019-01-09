@@ -42,6 +42,21 @@ public class MustangSensors extends Subsystem {
     }
 	}
 
+  /**
+   * Returns the rate of change of the yaw angle in degrees per second.
+   */
+  public double getYawRateDegreesPerSecond() {
+    if(navXMicro != null) {
+      return navXMicro.getYawRateDegreesPerSec();
+    } else{
+      return NAVX_ERROR_CODE;
+    }
+  }
+
+  /**
+   * Returns the yaw of the robot as a double in accordance with its adjustment based on Robot starting position.
+   * @return The yaw of the robot if the navX is connected. Otherwise returns NAVX_ERROR_CODE
+   */
   public double getYawDouble(){
     if(navXMicro != null) {
       return navXMicro.getYaw().getDegrees();
@@ -50,6 +65,9 @@ public class MustangSensors extends Subsystem {
     }
   }
 
+  /**
+   * Gets the yaw as one of 254's Rotation2d Objects (a point on the unit circle).
+   */
   public Rotation2d getYaw() {
     if(navXMicro != null) {
     return navXMicro.getYaw();
@@ -58,6 +76,9 @@ public class MustangSensors extends Subsystem {
     }
   }
 
+  /**
+   * Resets the yaw angle to zero and the acceleration of the angle to zero.
+   */
   public void zeroYaw(){
     if(navXMicro != null){
       navXMicro.zeroYaw();

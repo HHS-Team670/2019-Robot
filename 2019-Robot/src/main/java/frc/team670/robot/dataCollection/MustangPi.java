@@ -12,8 +12,8 @@ import edu.wpi.first.wpilibj.PIDSourceType;
 import frc.team670.robot.utils.functions.MathUtils;
 
 /**
- * Stores values off of NetworkTables for easy retrieval and gives them
- * Listeners to update the stored values when they are changed
+ * Stores values off of NetworkTables for easy retrieval and gives them Listeners to update the stored values
+ * as they are changed.
  */
 public class MustangPi {
 
@@ -23,7 +23,7 @@ public class MustangPi {
 
     private PidSource_VisionValue angleToTarget, distanceToTarget; 
 
-    // The keys for the NetworkTable entries that the raspberry pi is putting up
+    // The keys for the NetworkTable entries that the raspberry pi is putting up. Ensure that these are placed on the raspi also. Maybe make a shared config file
     private static final String[] raspiKeys = new String[] {"angleToTarget", "distanceToTarget"};
     // The name of the subtable set on the raspberry pi
     private static final String tableName = "raspberryPi";
