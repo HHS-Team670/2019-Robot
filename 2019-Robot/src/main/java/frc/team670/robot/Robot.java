@@ -31,7 +31,6 @@ public class Robot extends TimedRobot {
   public static MustangSensors sensors = new MustangSensors();
   public static MustangPi visionPi = new MustangPi();
   public static DriveBase driveBase = new DriveBase();
-  public static Pose pose = new Pose();
 
   Command autonomousCommand;
   SendableChooser<Command> auton_chooser = new SendableChooser<>();

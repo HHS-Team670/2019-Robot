@@ -126,10 +126,4 @@ public class VisionTargetPidDrive extends Command {
     controller.free();
   }
 
-  protected double getAverageOfEncoders(double leftEncoder, double rightEncoder){
-
-    leftEncoder = Robot.pose.getLeftEncoderTick;
-
-  }
-
 }

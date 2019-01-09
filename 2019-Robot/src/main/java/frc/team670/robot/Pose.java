@@ -7,6 +7,8 @@
 
 package frc.team670.robot;
 
+import frc.team670.robot.utils.functions.MathUtils;
+
 public class Pose {
 
   private static double leftEncoderTick, rightEncoderTick; 
@@ -21,33 +23,36 @@ public class Pose {
     
   }
 
-  private double getLeftEncoderTick(){
+  public double getLeftEncoderTick(){
     return leftEncoderTick;
   }
 
-  private double getRightEncoderTick(){
+  public double getRightEncoderTick(){
     return rightEncoderTick;
   }
-  private double getRobotAngle(){
+  public double getRobotAngle(){
     return robotAngle;
   }
 
 
 
-  private void setLeftEncoderTick(double leftEncoderTick) {
+  public void setLeftEncoderTick(double leftEncoderTick) {
     this.leftEncoderTick = leftEncoderTick;
   }
 
-  private void setRightEncoderTick(double rightEncoderTick) 
+  public void setRightEncoderTick(double rightEncoderTick) 
   {
     this.rightEncoderTick = rightEncoderTick;
 
   }
 
-  private void setRobotAngle(double robotAngle) {
+  public void setRobotAngle(double robotAngle) {
     this.robotAngle = robotAngle;
   }
 
+  public double averageOfEncoders() {
+    return MathUtils.average(leftEncoderTick, rightEncoderTick);
+  }
   
 
   

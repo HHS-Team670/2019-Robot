@@ -10,7 +10,7 @@ package frc.team670.robot.utils.functions;
 /**
  * Provides useful math-related functions.
  * 
- * @author shaylandias
+ * @author shaylandias, meganchoy, varunjoshi
  */
 public class MathUtils {
 
@@ -33,6 +33,35 @@ public class MathUtils {
      */
     public static boolean doublesEqual(double d1, double d2, double comparator) {
         return (Math.abs(d1-d2) < comparator);
+    }
+
+    /**
+     * Returns the average value of the input doubles.
+     */
+    public static double average(double[] nums) {
+        if(nums.length == 0) {
+            return 0;
+        }
+        double sum = 0;
+        for(int i = 0; i < nums.length; i++) {
+            sum += nums[i];
+        }
+        return sum/nums.length;
+    }
+
+
+    /**
+     * Returns the average value of the input doubles.
+     */
+    public static double average(Double ... nums) {
+        if(nums.length == 0) {
+            return 0;
+        }
+        double sum = 0;
+        for(int i = 0; i < nums.length; i++) {
+            sum += nums[i];
+        }
+        return sum/nums.length;
     }
 
     /*
