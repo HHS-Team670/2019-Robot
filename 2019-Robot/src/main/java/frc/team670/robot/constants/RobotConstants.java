@@ -16,4 +16,15 @@ public class RobotConstants {
     public static final double pathFollowingMaxAccel = 0; //TODO: set value of this
     public static final double segmentCompletionTolerance = 0; //TODO: set value of this
 
+    // Pure Pursuit Path Following Constants TODO set these and make them final.
+    public static double kMinLookAhead, 
+    kMaxLookAhead,
+    kMinLookAheadSpeed, kMaxLookAheadSpeed,
+    kInertiaSteeringGain, kPathFollowingProfileKp,
+    kPathFollowingProfileKi, kPathFollowingProfileKv,
+    kPathFollowingProfileKffv, kPathFollowingProfileKffa,
+    kPathFollowingMaxVel, kPathFollowingMaxAccel,
+    kPathFollowingGoalPosTolerance, kPathFollowingGoalVelTolerance,
+    kPathStopSteeringDistance;
+
 }

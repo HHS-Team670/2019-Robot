@@ -86,8 +86,15 @@ public class DriveBase extends Subsystem {
     arcadeDrive(xSpeed, zRotation, false);
   }
 
+  /**
+   * Stops the motors on the drive base (sets them to 0).
+   */
   public void stop() {
     tankDrive(0, 0);
+  }
+
+  public void setVelocityControl(double leftVel, double rightVel) {
+    // TODO implement this lol.... Should just be setControlMode(Velocity) on whatever motor controller we decide on
   }
 
   @Override
