@@ -7,6 +7,8 @@
 
 package frc.team670.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.SensorCollection;
+
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -109,6 +111,14 @@ public class DriveBase extends Subsystem {
   {
     return 0;
 
+  }
+
+  public SensorCollection leftEncoderCollection() {
+    return null;
+  }
+
+  public SensorCollection rightEncoderCollection() {
+    return null;
   }
 
   @Override
