@@ -9,7 +9,6 @@ package frc.team670.robot;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Assert;
 import org.junit.Test;
 import frc.team670.robot.Pose;
 
