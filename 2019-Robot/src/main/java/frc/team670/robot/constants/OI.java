@@ -49,4 +49,8 @@ public class OI {
   public MustangController getDriverController() {
     return driverController;
   }
+
+  public boolean isQuickTurnPressed() {
+    return driverController.getLeftBumper();
+  }
 }
