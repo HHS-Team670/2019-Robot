@@ -9,7 +9,6 @@ package frc.team670.robot.commands.drive;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team670.robot.Robot;
-import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.utils.functions.JoystickUtils;
 // import frc.robot.utils.XboxButtons;
  
@@ -19,14 +18,15 @@ import frc.team670.robot.utils.functions.JoystickUtils;
  * @author lakshbhambhani
  */
 public class XboxRocketLeagueDrive extends InstantCommand {
-  /**
-   * Add your docs here.
-   */
 
-   boolean smoothRocketLeagueSteer, smoothRocketLeagueTrigger;
+   private final boolean smoothRocketLeagueSteer, smoothRocketLeagueTrigger;
+   private static boolean reversed;
 
   public XboxRocketLeagueDrive() {
     super();
+    smoothRocketLeagueSteer = true;
+    smoothRocketLeagueTrigger = true;
+    reversed = false;
     requires(Robot.driveBase);
   }
 
@@ -47,6 +47,11 @@ public class XboxRocketLeagueDrive extends InstantCommand {
       speed = JoystickUtils.smoothInput(speed);
     }
 
+    if(reversed) {
+      steer *= -1;
+      speed *= -1;
+    }
+
     if(Robot.oi.isQuickTurnPressed()){
       Robot.driveBase.curvatureDrive(speed, steer, Robot.oi.isQuickTurnPressed());
     } else {
@@ -56,6 +61,14 @@ public class XboxRocketLeagueDrive extends InstantCommand {
         Robot.driveBase.curvatureDrive(speed, steer, Robot.oi.isQuickTurnPressed());
       }
     }
-
   }
+
+  public static boolean isDriveReversed() {
+    return reversed;
+  }
+
+  public static void setDriveReversed(boolean reversed) {
+    XboxRocketLeagueDrive.reversed = reversed;
+  }
+
 }
