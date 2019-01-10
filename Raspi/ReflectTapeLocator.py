@@ -101,7 +101,7 @@ class ThreadedVideo:
             if self.stopped:
                 return
             self.grabbed = read_video_image(self.stream, self.resize)
-            self.frame=imutils.resize(self.grabbed, width=400)
+            self.frame=imutils.resize(self.grabbed, width=1000)
 
 def get_resize_values(capture, width=1920):
     '''
@@ -284,7 +284,22 @@ def find_vertical_angle(image, rectangles, vertical_fov):
     # Remove 0 to make it relative (also change -1)
     angle = (0 * (max_y / height - 0.5) * vertical_fov) - (-1 * (min_y / height - 0.5) * vertical_fov)
     return angle
-
+'''
+def find_big_rect(rectangles):
+    '''makes big rect from rectangles'''
+    min_y=0
+    min_x=0
+    max_x=0
+    max_y=0
+    box_points = []
+    for rectangle in rectangles:
+        bp = cv2.boxPoints(rectangle)
+        for i in bp:
+            box_points.append(i)
+    for c in box_points:
+        
+    return rect
+'''
 
 def adjust_depth(depth, angle):
     '''
@@ -362,7 +377,7 @@ def main():
     Main.
     '''
     # Variables (These should be changed to reflect the camera)
-    capture_source = 0  # 0 for camera, file path for video
+    capture_source = 1  # 0 for camera, file path for video
     capture_color = 'g'  # Possible: r (Red), g (Green), b (Blue), y (Yellow)
     known_object_height = 13.8  # The height of the tape from the ground (in inches)
     focal_length = 0.71  # Focal length of the camera (in inches)
@@ -433,7 +448,9 @@ def main():
             # Calibrate if c key is pressed
             # Currently calibrates angle so that distance is 24 inches
             # Comment this out if unneeded for maximum efficiency
-            calibrate_angle = math.atan(math.radians(known_object_height * 24)) + angle
+            #calibrate_angle = math.atan(math.radians(known_object_height * 24)) + angle
+
+            
             '''print("Make sure the object is CENTERED in the camera (should be ~0 degrees)! If it isn't, abort the calibration.")
             calibrate_distance = input("How far away is the detected object (in feet)? Type q to abort the calibration.\n-> ")
             try:
