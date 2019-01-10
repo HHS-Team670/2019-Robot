@@ -104,156 +104,25 @@ void loop() {                                       //Ran indefinitly after setu
   for(int i = 0; i < strip.numPixels(); i++){       //Resets the full LED strip...
     strip.setPixelColor(i,0,0,0);                   //...by setting each LED to black
   }
-  
-  if(alliance == "blue "){                        //If the alliance is blue, set the base LED color to blue
-    r = 0;
-    b = 255;
-  }
-  if(alliance == "red    "){                        //If the alliance is red, set the base LED color to red
-    r = 255;
-    b = 0;
-  }
-  if(alliance == "invalid"){                        //If no alliance is specified, set the base LED color to purple
-    r = 255;
-    b = 255;
-  }
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  //light show for if climbing
-  while(climbing = "true"){                          //If the robot is climbing, make the LEDs climb upward
-    for(int i = 0; i < numberOfPixels; i = i++){      //Lights up one side with Leds moving down the strip in yellow
-        strip.setPixelColor(i,76,156,20);
+void reset(){
+  strip.begin();
+  strip.show(); //initialize all pixels to "off"
+}
+
+void ClimbLights() { 
+  while(climbing == "true"){
+    for(int i = 0; i < numberOfPixels; i++;){
+      strip.setPixelColor(i,76,156,20);
+      strip.show();
     }
-    strip.show();
-  }
-
-  while(visionLocked == "locked"){
-    for(int i=0;i <= numberOfPixels; i++){
-        strip.setPixelColor(i,r,g,0);
-      }
-    if(time % 2 == 0){
-      strip.setBrightness(0);
-    else{
-    }
-      
-    }
-    strip.show();
-  }
-    
-    for(int i = 25; i < 60; i++){                   //Lights up the top with our alliance color
-      strip.setPixelColor(i,r,0,b);
-    }
-    
-    for(int i = -chaseOffset; i < 120; i = i+3){    //Lights the other side with Leds moving up the strip in yellow
-      if(i > 59 && i < 120){
-        strip.setPixelColor(i,255,255,0);
-      }
-    }
-  
-  //colors for if robot locks onto vision 
-  
-    while(visionLocked == "locked"){
-    for(int i=1;i<100;i++){
-      if(i%2 != 0){
-        strip.setPixelColor(r,b,0);
-      }
-      else{
-        strip.setPixelColor(0,0,0);
-      }
-    }
-  }
-  
-
-
-
-  
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  }else{                                            //If the robot is not climbing, perform all our other LED actions
-    if(gear == "true "){                            //If the robot has a gear, have the top part of our strip illuminate green
-      for(int i = 26; i < 60; i++){                 //and perform an animation depending on the location of the peg.
-        strip.setPixelColor(i,255,0,0);             
-      }                       
-      for(int i = 0; i < 26; i++){       
-        strip.setPixelColor(i,r,0,b);               
-      }
-      for(int i = 60; i < 119; i++){       
-        strip.setPixelColor(i,r,0,b);               
-      }      
-    }else{
-      for(int i = 0; i < strip.numPixels(); i++){   //Sets the full LED strip to our alliance color
-        strip.setPixelColor(i,r,0,b);                       
-      }
-    }
-  } 
-  strip.show();                                     //Update the LED strip with colors set above
-
-  if(chaseOffset == 2){ 
-    chaseOffset = 0;                               
-  }else{
-    chaseOffset++;
-  }
-  delay(50);
-
-  if(connectionTimer > 20){                         //About 1 second has passed since the last packet when one should come in every 1/4 of a second
-    connectionTimer = 0;                            //Resets the timer
-    robotClient.stop();                             //Forces a socket disconnect from the RoboRio
-    robotClient.connect(robotIp, 5801);             //Re-initalizes socket communication with the Rio
+    strip.reset();
   }
 }
 
-char asciiConvert(EthernetClient client){           //Changes an ASCII byte from a socket to a string
-
-  int data = client.read();                         //Reads the socket for data from server
-  int dataPoint = -666;                             //Defaults the point that the recived bytes equal a char in asciiArray[]
-  for(int i=0; i < 37 -1; i++){                     //Runs the length of asciiArray[]
-    if(asciiArray[i] == data){                      //If the data recived equals a point in asciiArray[]...
-      dataPoint = i;                                //...the program sets dataPoint to the point of equality
+void visionLock(){
+  while(visionLocked == "locked"){
+    for(int i = 0; i < numberOfPixels; i++;){
+      strip.setPixelColor(i,r,b,0);
     }
-  }
-
-  char finalData = translationArray[dataPoint];     //Sets the final character 
-  if(dataPoint != -666){                            //If the data point is not null...
-    return finalData;                               //Returns the transcribed ASCII character
-  }else{
-    char defaultchar[] = {"E"};                     //Sets a default char if there is an error
-    return defaultchar[0];                          //Returns the default error char
   }
 }
