@@ -9,6 +9,7 @@ package frc.team670.robot.commands.auto;
 
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.Command;
+import frc.team670.robot.Pose;
 import frc.team670.robot.Robot;
 import frc.team670.robot.utils.Logger;
 
@@ -26,13 +27,14 @@ public class VisionTargetPidDrive extends Command {
   private double visionHeadingControllerLowerBound = -.15, visionHeadingControllerUpperBound = .15;
   private double visionDistanceControllerLowerBound = -.7, visionDistanceControllerUpperBound = .7;
 
+
   private double distanceControllerLowerBound = 0.05, distanceControllerUpperBound = 0.05;
 
   private final double cameraOffset = 2.5; //distance from camera to front of the robot in inches.
   private int executeCount;
   private final double minimumAngleAdjustment = 0.03;
 
-  private double leftEncoder, rightEncoder;
+  private Pose robotPosition, currentPose;
 
   public VisionTargetPidDrive() {
 
@@ -48,16 +50,16 @@ public class VisionTargetPidDrive extends Command {
     visionHeadingController.setAbsoluteTolerance(degreeTolerance);
     visionHeadingController.setContinuous(false);
 
-    // TODO Note from Shaylan, you need to set this controller as a field, not here! I think this is supposed to be distanceControllerEncoders???
-    PIDController distanceController2 = visionDistanceController;
-    distanceController2.setOutputRange(visionDistanceControllerLowerBound, visionDistanceControllerUpperBound);
-    distanceController2.setAbsoluteTolerance(distanceTolerance);
-    distanceController2.setContinuous(false);    
+    visionDistanceController.setOutputRange(visionDistanceControllerLowerBound, visionDistanceControllerUpperBound);
+    visionDistanceController.setAbsoluteTolerance(distanceTolerance);
+    visionDistanceController.setContinuous(false);    
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+
+    robotPosition = new Pose();
 
     Logger.consoleLog("Initialized VisionTargetPidDrive");
 
@@ -71,6 +73,7 @@ public class VisionTargetPidDrive extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    currentPose = new Pose();
 
     /** changed output range to insure that the distanceController isn't going into a negative range */
     double distanceOutput = visionDistanceController.get() * -1;
@@ -89,6 +92,8 @@ public class VisionTargetPidDrive extends Command {
     if (executeCount % 5 == 0) {
       Logger.consoleLog("Executing VisionTargetPidDrive: headingOutput:%s, distanceOutput:%s, leftSpeed:%s, rightSpeed:%s", headingOutput, distanceOutput, leftSpeed, rightSpeed);
     }
+
+    robotPosition.update(Robot.driveBase.getLeftEncoder(), Robot.driveBase.getRightEncoder(), Robot.driveBase.getAngle());
 
     executeCount ++;
 

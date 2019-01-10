@@ -24,7 +24,7 @@ public class PoseTest {
     public void getPoseTest() {
 
         Pose poseTest = new Pose(0, 0, 0);
-        poseTest.updatePose(100, 100, 60);
+        poseTest.update(100, 100, 60);
         assertEquals(86,  poseTest.getPosX(), 1);
         assertEquals(50,  poseTest.getPosY(), 1);
     }

@@ -10,33 +10,39 @@ package frc.team670.robot;
 public class Pose {
 
   private long leftEncoderTick, rightEncoderTick; 
-  private double robotAngle;
+  private double currentAngle;
 
   private long currRobotX, currRobotY;
   
+  /**
+   * Makes new pose using current robot encoder values and angles
+   */
+  public Pose() {
+    this(Robot.driveBase.getLeftEncoder(), Robot.driveBase.getRightEncoder(), Robot.sensors.getAngle());
+  }
 
   public Pose(long lEncoderTick, long rEncoderTick, double angle) {
     leftEncoderTick = lEncoderTick;
     rightEncoderTick = rEncoderTick;
-    robotAngle = angle;
+    currentAngle = angle;
   }
  
 
   //Updates the robot's position and angle every time updatePose is called
-  public void updatePose(long lEncoderTick, long rEncoderTick, double angle){
+  public void update(long newLeftEncoderTick, long newRightEncoderTick, double newAngle){
     
-    long lDeltaTick = lEncoderTick - leftEncoderTick;
-    long rDeltaTick = rEncoderTick - rightEncoderTick;
+    long lDeltaTick = newLeftEncoderTick - leftEncoderTick;
+    long rDeltaTick = newRightEncoderTick - rightEncoderTick;
     long hypotenuse = (lDeltaTick+rDeltaTick)/2;
     
-    double deltaAngle = (angle - robotAngle)/2;
+    double deltaAngle = (newAngle - currentAngle)/2;
 
     currRobotX = (long) (Math.cos(deltaAngle*(Math.PI/180)) * hypotenuse);
     currRobotY = (long) (Math.sin(deltaAngle*(Math.PI/180)) * hypotenuse);
 
-    leftEncoderTick = lEncoderTick;
-    rightEncoderTick = rEncoderTick;
-    robotAngle = angle;
+    leftEncoderTick = newLeftEncoderTick;
+    rightEncoderTick = newRightEncoderTick;
+    currentAngle = newAngle;
   }
 
   public long getPosX(){
@@ -55,6 +61,6 @@ public class Pose {
     return rightEncoderTick;
   }
   public double getRobotAngle(){
-    return robotAngle;
+    return currentAngle;
   }
 }

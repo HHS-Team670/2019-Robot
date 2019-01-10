@@ -93,8 +93,7 @@ public class DriveBase extends Subsystem {
 /**
  * return the left encoder
  */
-
-  public double getLeftEncoder() {
+  public long getLeftEncoder() {
     return 0;
 
   }
@@ -102,8 +101,7 @@ public class DriveBase extends Subsystem {
 /**
  * Return the right encoder
  */
-
-  public double getRightEncoder(){
+  public long getRightEncoder(){
     return 0;
   }
 
