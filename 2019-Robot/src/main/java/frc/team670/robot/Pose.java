@@ -7,23 +7,47 @@
 
 package frc.team670.robot;
 
-import frc.team670.robot.utils.functions.MathUtils;
-
 public class Pose {
 
-  private static double leftEncoderTick, rightEncoderTick; 
-  private static double robotAngle;
+  private long leftEncoderTick, rightEncoderTick; 
+  private double robotAngle;
+
+  private long currRobotX, currRobotY;
   
 
-  public Pose(double leftEncoderTick, double rightEncoderTick, double robotAngle) {
+  public Pose(long lEncoderTick, long rEncoderTick, double angle) {
+    leftEncoderTick = lEncoderTick;
+    rightEncoderTick = rEncoderTick;
+    robotAngle = angle;
+  }
+ 
+
+  //Updates the robot's position and angle every time updatePose is called
+  public void updatePose(long lEncoderTick, long rEncoderTick, double angle){
     
-    setLeftEncoderTick(leftEncoderTick);
-    setRightEncoderTick(rightEncoderTick);
-    setRobotAngle(robotAngle);
+    long lDeltaTick = lEncoderTick - leftEncoderTick;
+    long rDeltaTick = rEncoderTick - rightEncoderTick;
+    long hypotenuse = (lDeltaTick+rDeltaTick)/2;
     
+    double deltaAngle = (angle - robotAngle)/2;
+
+    currRobotX = (long) (Math.cos(deltaAngle*(Math.PI/180)) * hypotenuse);
+    currRobotY = (long) (Math.sin(deltaAngle*(Math.PI/180)) * hypotenuse);
+
+    leftEncoderTick = lEncoderTick;
+    rightEncoderTick = rEncoderTick;
+    robotAngle = angle;
   }
 
-  public double getLeftEncoderTick(){
+  public long getPosX(){
+    return currRobotX;
+  }
+
+  public long getPosY(){
+    return currRobotY;
+  }
+
+ public double getLeftEncoderTick(){
     return leftEncoderTick;
   }
 
@@ -33,27 +57,4 @@ public class Pose {
   public double getRobotAngle(){
     return robotAngle;
   }
-
-
-
-  public void setLeftEncoderTick(double leftEncoderTick) {
-    this.leftEncoderTick = leftEncoderTick;
-  }
-
-  public void setRightEncoderTick(double rightEncoderTick) 
-  {
-    this.rightEncoderTick = rightEncoderTick;
-
-  }
-
-  public void setRobotAngle(double robotAngle) {
-    this.robotAngle = robotAngle;
-  }
-
-  public double averageOfEncoders() {
-    return MathUtils.average(leftEncoderTick, rightEncoderTick);
-  }
-  
-
-  
 }

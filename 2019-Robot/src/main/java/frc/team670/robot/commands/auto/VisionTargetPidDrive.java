@@ -79,8 +79,7 @@ public class VisionTargetPidDrive extends Command {
     if(headingOutput >=0) {
       headingOutput += minimumAngleAdjustment;
     } else {
-      headingOutput -=  minimumAngleAdjustment;
-      
+      headingOutput -=  minimumAngleAdjustment; 
     }
 
     double leftSpeed = distanceOutput - headingOutput;
