@@ -77,6 +77,7 @@ header {
     overflow: hidden;
     background-color: #333;
     background-size: cover;
+    background-image: url(ui.camera.src);
 }
 article {
     top: 0;
