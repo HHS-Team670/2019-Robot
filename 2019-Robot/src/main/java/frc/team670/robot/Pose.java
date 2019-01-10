@@ -18,9 +18,15 @@ public class Pose {
    * Makes new pose using current robot encoder values and angles
    */
   public Pose() {
-    this(Robot.driveBase.getLeftEncoder(), Robot.driveBase.getRightEncoder(), Robot.sensors.getAngle());
+    this(Robot.driveBase.getLeftEncoder(), Robot.driveBase.getRightEncoder(), Robot.sensors.getYaw().getDegrees());
   }
 
+  /**
+   * 
+   * @param lEncoderTick Encoder ticks -> forward = positive, backwards = negative
+   * @param rEncoderTick Encoder ticks -> forward = positive, backwards = negative
+   * @param angle Angle in degrees -> left = negative, right = positive
+   */
   public Pose(long lEncoderTick, long rEncoderTick, double angle) {
     leftEncoderTick = lEncoderTick;
     rightEncoderTick = rEncoderTick;

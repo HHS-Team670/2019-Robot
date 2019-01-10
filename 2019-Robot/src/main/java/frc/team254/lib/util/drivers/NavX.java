@@ -19,11 +19,11 @@ public class NavX {
             synchronized (NavX.this) {
                 // This handles the fact that the sensor is inverted from our coordinate conventions.
                 if (mLastSensorTimestampMs != kInvalidTimestamp && mLastSensorTimestampMs < sensor_timestamp) {
-                    mYawRateDegreesPerSecond = 1000.0 * (-mYawDegrees - update.yaw)
+                    mYawRateDegreesPerSecond = -1 * 1000.0 * (-mYawDegrees - update.yaw) // Multiply by -1 because our system is opposite of Bellarmine's
                             / (double) (sensor_timestamp - mLastSensorTimestampMs);
                 }
                 mLastSensorTimestampMs = sensor_timestamp;
-                mYawDegrees = -update.yaw;
+                mYawDegrees = update.yaw; // This used to be multiplied by -1 to flip it, but our coord system is the opposite of Bellarmine's
             }
         }
     }
