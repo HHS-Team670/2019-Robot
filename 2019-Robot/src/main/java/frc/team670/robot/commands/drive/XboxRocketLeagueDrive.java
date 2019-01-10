@@ -10,6 +10,7 @@ package frc.team670.robot.commands.drive;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team670.robot.Robot;
 import frc.team670.robot.utils.functions.JoystickUtils;
+import frc.team670.robot.constants.OI;
 // import frc.robot.utils.XboxButtons;
  
 
@@ -48,7 +49,7 @@ public class XboxRocketLeagueDrive extends InstantCommand {
       speed = JoystickUtils.smoothInput(speed);
     }
 
-    if(Robot.oi.isReversed()) {
+    if(Robot.oi.getDriverController().getLeftBumper()){
       if(state.equals("enabled")) {
         XboxRocketLeagueDrive.setDriveForward();
       }
@@ -77,7 +78,7 @@ public class XboxRocketLeagueDrive extends InstantCommand {
     if(state.equals("enabled")) {
       reversed = true;
     }
-    else if(state.equals("disabled"){
+    else if(state.equals("disabled")){
       reversed = false;
     }
     return reversed;
