@@ -54,6 +54,8 @@ dependencies {
     compile 'org.ghrobotics:FalconLibrary:2019.1.5'
     // compile 'junit:junit:4.12'
     testCompile 'junit:junit:4.12'
+    compile fileTree(include: ['*.jar'], dir: 'lib')
+
 }
 
 // Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')
