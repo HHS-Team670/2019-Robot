@@ -21,6 +21,7 @@ public class XboxRocketLeagueDrive extends InstantCommand {
 
    private final boolean smoothRocketLeagueSteer, smoothRocketLeagueTrigger;
    private static boolean reversed;
+   private static String state;
 
   public XboxRocketLeagueDrive() {
     super();
@@ -47,6 +48,15 @@ public class XboxRocketLeagueDrive extends InstantCommand {
       speed = JoystickUtils.smoothInput(speed);
     }
 
+    if(Robot.oi.isReversed()) {
+      if(state.equals("enabled")) {
+        XboxRocketLeagueDrive.setDriveForward();
+      }
+      else if(state.equals("disabled")) {
+        XboxRocketLeagueDrive.setDriveReversed();
+      }
+    }
+
     if(reversed) {
       steer *= -1;
       speed *= -1;
@@ -64,11 +74,23 @@ public class XboxRocketLeagueDrive extends InstantCommand {
   }
 
   public static boolean isDriveReversed() {
+    if(state.equals("enabled")) {
+      reversed = true;
+    }
+    else if(state.equals("disabled"){
+      reversed = false;
+    }
     return reversed;
   }
 
-  public static void setDriveReversed(boolean reversed) {
-    XboxRocketLeagueDrive.reversed = reversed;
+  public static void setDriveReversed() {
+    reversed = true;
+    state = "enabled";
+  }
+
+  public static void setDriveForward() {
+    reversed = false;
+    state = "disabled";
   }
 
 }
