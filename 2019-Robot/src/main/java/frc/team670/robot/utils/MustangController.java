@@ -16,8 +16,6 @@ public class MustangController extends Joystick {
         public static final int start = 8;
         public static final int leftJoystickButton = 9;
         public static final int rightJoystickButton = 10;
-        public static final int leftStickButton = 11;
-        public static final int rightStickButton = 12;
 
         // Controller Axes
         /**

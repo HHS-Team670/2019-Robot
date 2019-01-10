@@ -8,6 +8,7 @@
 package frc.team670.robot.constants;
 
 import edu.wpi.first.wpilibj.Joystick;
+import frc.team670.robot.utils.MustangController;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -43,5 +44,9 @@ public class OI {
   // button.whenReleased(new ExampleCommand());
 
   private Joystick leftStick, rightStick, operatorStick, arcadeButtons;
+  private MustangController driverController;
 
+  public MustangController getDriverController() {
+    return driverController;
+  }
 }
