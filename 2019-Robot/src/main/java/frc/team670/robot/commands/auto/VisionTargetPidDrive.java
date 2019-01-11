@@ -8,10 +8,15 @@
 package frc.team670.robot.commands.auto;
 
 import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.PIDSource;
+import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.Pose;
 import frc.team670.robot.Robot;
+import frc.team670.robot.constants.RobotConstants;
+import frc.team670.robot.dataCollection.MustangPi.VisionValue_PIDSource;
 import frc.team670.robot.utils.Logger;
+import frc.team670.robot.utils.functions.MathUtils;
 
 /**
  * Drives towards the vision target on the field using distance and angle from the raspberry pi vision
@@ -73,7 +78,8 @@ public class VisionTargetPidDrive extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    currentPose = new Pose();
+
+    robotPosition.update(Robot.driveBase.getLeftEncoder(), Robot.driveBase.getRightEncoder(), Robot.sensors.getYawDouble());
 
     /** changed output range to insure that the distanceController isn't going into a negative range */
     double distanceOutput = visionDistanceController.get() * -1;
@@ -128,6 +134,76 @@ public class VisionTargetPidDrive extends Command {
   private void releaseController(PIDController controller) {
     controller.disable();
     controller.free();
+  }
+
+  public class VisionAndPose_PIDSource implements PIDSource {
+
+    private VisionValue_PIDSource visionSource;
+    private PIDSourceType pidSourceType;
+    private long poseX , poseY;
+    
+    private boolean isDistance;
+
+    private boolean errorCalled;
+
+    public VisionAndPose_PIDSource(VisionValue_PIDSource visionSource, boolean isDistance) {
+      this.visionSource = visionSource;
+      this.isDistance = isDistance;
+    }
+
+    @Override
+    public PIDSourceType getPIDSourceType() {
+        return pidSourceType;
+    }
+
+    @Override
+    public void setPIDSourceType(PIDSourceType pidSource) {
+        pidSourceType = pidSource;
+    }
+
+    @Override
+    public double pidGet() {
+      double visionValue = visionSource.pidGet();
+
+      
+      if (MathUtils.doublesEqual(visionValue, RobotConstants.VISION_ERROR_CODE)) {
+        // there was an error in the vision
+        if(isDistance) {
+          
+          robotPosition
+
+
+
+
+          long lastPoseX = robotPosition.getPosX();
+          long lastPoseY = robotPosition.getPosY();
+          double lastPoseAngle = robotPosition.getRobotAngle();
+          
+          robotPosition.update(Robot.driveBase.getLeftEncoder(), Robot.driveBase.getRightEncoder(), Robot.sensors.getYawDouble());
+          
+          long newPoseX = pose.getPosX();
+          long newPoseY = pose.getPosY();
+          double newPoseAngle = pose.getRobotAngle();
+
+          long targetX = (long)(visionValue * Math.cos(Math.toRadians(lastPoseAngle)));
+          long targetY = (long)(visionValue * Math.sin(Math.toRadians(lastPoseAngle)));
+
+          long difX = targetX - (newPoseX - lastPoseX);
+          long difY = targetY - (newPoseY - lastPoseY);
+
+          return Math.sqrt(difX * difX + difY);
+        }
+        // isAngle being returned
+        else {
+          return ;
+        }
+      }
+      // if there is no error
+      errorCalled = false;
+      return visionValue;
+      
+    }
+
   }
 
 }
