@@ -42,7 +42,7 @@ public class Pose {
   }
  
   /**
-   * Updates the Pose's position and angle every time updatePose is called
+   * Updates the Pose's position and angle corresponding to the drivebase's ticks and NavX gyro reading.
    */
   public void update(long newLeftEncoderTick, long newRightEncoderTick, double newAngle){
     

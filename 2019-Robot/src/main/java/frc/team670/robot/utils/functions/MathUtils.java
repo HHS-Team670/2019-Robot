@@ -7,6 +7,8 @@
 
 package frc.team670.robot.utils.functions;
 
+import java.awt.geom.Point2D;
+
 import frc.team670.robot.constants.RobotConstants;
 
 /**
@@ -80,6 +82,17 @@ public class MathUtils {
     public static int convertInchesToDriveBaseTicks(double inches) {
         double rotations = inches / (Math.PI * RobotConstants.WHEEL_DIAMETER_INCHES);
         return (int)(rotations * RobotConstants.TICKS_PER_ROTATION);
+    }
+
+    /**
+     * Returns the distance (always positive) between two points in a coordinate system.
+     * @param x1 The x-coord of point 1
+     * @param y1 The y-coord of point 1
+     * @param x1 The x-coord of point 2
+     * @param y2 The y-coord of point 2
+     */
+    public static double findDistance(double x1, double y1, double x2, double y2) {
+        return Math.sqrt(Math.pow((x1-x2), 2) + Math.pow(y2-y1, 2));
     }
 
     /*
