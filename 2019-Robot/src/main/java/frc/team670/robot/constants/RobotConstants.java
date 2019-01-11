@@ -25,4 +25,15 @@ public class RobotConstants {
     public static final Lookahead lookahead = new Lookahead(minLookahead, maxLookahead,
     minLookaheadSpeed, maxLookaheadSpeed);
 
+    // Pure Pursuit Path Following Constants TODO set these and make them final.
+    public static double kMinLookAhead, 
+    kMaxLookAhead,
+    kMinLookAheadSpeed, kMaxLookAheadSpeed,
+    kInertiaSteeringGain, kPathFollowingProfileKp,
+    kPathFollowingProfileKi, kPathFollowingProfileKv,
+    kPathFollowingProfileKffv, kPathFollowingProfileKffa,
+    kPathFollowingMaxVel, kPathFollowingMaxAccel,
+    kPathFollowingGoalPosTolerance, kPathFollowingGoalVelTolerance,
+    kPathStopSteeringDistance;
+
 }
