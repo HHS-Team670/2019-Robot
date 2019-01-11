@@ -71,7 +71,7 @@ public class VisionTargetPidDrive extends Command {
     Logger.consoleLog("Initialized VisionTargetPidDrive");
 
     visionHeadingController.setSetpoint(0);
-    visionDistanceController.setSetpoint(0 - cameraOffset);
+    visionDistanceController.setSetpoint(0 + cameraOffset);
 
     executeCount = 0;
 
