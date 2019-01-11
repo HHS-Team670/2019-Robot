@@ -144,7 +144,6 @@ public class VisionTargetPidDrive extends Command {
     private double targetAngle, targetDistance;
     
     private boolean isDistance;
-    private boolean errorCalled;
 
 
     public VisionAndPose_PIDSource(VisionValue_PIDSource visionSource, boolean isDistance) {
@@ -174,18 +173,8 @@ public class VisionTargetPidDrive extends Command {
           long lastPoseX = robotPosition.getPosX();
           long lastPoseY = robotPosition.getPosY();
           double lastPoseAngle = robotPosition.getRobotAngle();
-          
-          robotPosition.update(Robot.driveBase.getLeftEncoder(), Robot.driveBase.getRightEncoder(), Robot.sensors.getYawDouble());
-          
-          // long newPoseX = pose.getPosX();
-          // long newPoseY = pose.getPosY();
-          // double newPoseAngle = pose.getRobotAngle();
 
-          long targetX = (long)(visionValue * Math.cos(Math.toRadians(lastPoseAngle)));
-          long targetY = (long)(visionValue * Math.sin(Math.toRadians(lastPoseAngle)));
-
-          long difX = targetX - (newPoseX - lastPoseX);
-          long difY = targetY - (newPoseY - lastPoseY);
+          // to-do everything from here
 
           return Math.sqrt(difX * difX + difY);
         }
@@ -196,7 +185,6 @@ public class VisionTargetPidDrive extends Command {
       }
       else {
         // if there is no error
-        errorCalled = false;
         if (isDistance) {
           targetDistance = visionValue;
         } 
