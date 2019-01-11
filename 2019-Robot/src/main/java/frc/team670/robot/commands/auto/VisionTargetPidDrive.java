@@ -17,6 +17,7 @@ import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangPi.VisionValue_PIDSource;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.functions.MathUtils;
+import frc.team670.robot.utils.functions.SettingUtils;
 
 /**
  * Drives towards the vision target on the field using distance and angle from the raspberry pi vision
@@ -114,8 +115,8 @@ public class VisionTargetPidDrive extends Command {
   protected void end() {
     Logger.consoleLog("Ended VisionTargetPidDrive: headingOutput:%s, distanceOutput:%s", visionHeadingController.get(), visionDistanceController.get());
     Robot.driveBase.stop();
-    releaseController(visionDistanceController);
-    releaseController(visionHeadingController);
+    SettingUtils.releaseController(visionDistanceController);
+    SettingUtils.releaseController(visionHeadingController);
   }
 
   // Called when another command which requires one or more of the same
@@ -124,14 +125,6 @@ public class VisionTargetPidDrive extends Command {
   protected void interrupted() {
     Logger.consoleLog("Interrupted VisionTargetPidDrive");
     end();
-  }
-
-  /**
-   * Disables controller and releases its resources.
-   */
-  private void releaseController(PIDController controller) {
-    controller.disable();
-    controller.free();
   }
 
   public class VisionAndPose_PIDSource implements PIDSource {
