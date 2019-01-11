@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.constants;
+package frc.team670.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 

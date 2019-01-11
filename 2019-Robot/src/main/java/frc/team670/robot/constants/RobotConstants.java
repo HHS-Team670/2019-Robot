@@ -8,8 +8,8 @@ public class RobotConstants {
     // Robot Dimensions
     public static final double ROBOT_LENGTH = 0, ROBOT_WIDTH = 0;
 
-    //TODO set wheel diameter.
-    public static final double WHEEL_DIAMETER = 5;
+    //TODO set wheel diameter and ticks per rotation.
+    public static final double WHEEL_DIAMETER_INCHES = 5, TICKS_PER_ROTATION = 4690;
 
     // Pathfinder Required Values
     private static final double PATHFINDER_DT = 0.02, GENERATION_MAX_VELOCITY = 1.3, MAX_VELOCITY = 1.7, MAX_ACCELERATION = 2.0, 
