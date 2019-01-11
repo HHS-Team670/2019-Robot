@@ -91,5 +91,4 @@ public class Pose {
   public Pose clone() {
     return new Pose(leftEncoderTick, rightEncoderTick, currentAngle, currRobotX, currRobotY);
   }
-
 }

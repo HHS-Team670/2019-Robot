@@ -101,7 +101,6 @@ public class VisionTargetPidDrive extends Command {
       Logger.consoleLog("Executing VisionTargetPidDrive: headingOutput:%s, distanceOutput:%s, leftSpeed:%s, rightSpeed:%s", headingOutput, distanceOutput, leftSpeed, rightSpeed);
     }
     executeCount ++;
-
   }
 
   // Make this return true when this Command no longer needs to run execute()

@@ -7,8 +7,6 @@
 
 package frc.team670.robot.utils.functions;
 
-import java.awt.geom.Point2D;
-
 import frc.team670.robot.constants.RobotConstants;
 
 /**
