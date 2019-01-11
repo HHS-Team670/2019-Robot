@@ -52,15 +52,15 @@ int r;                                              //Alliance color red value
 int b;                                              //Alliance color blue value
 
 
-enum lightState{
-  successfulClimb,
+enum robotState{
+  climbing,
   visionLocked,
-  duringMovement,
-  succesfulOutake,
+  forwardDrive,
+  reverseDrive,
   still,
 };
 
-lightState robot = successfulClimb;
+robotState robotState = still;
   
 void setup() {                                      //Sets up constants before program begins     
   Ethernet.begin(mac,ip);                           //Initalizes an Ethernet instance
@@ -108,21 +108,48 @@ void reset(){
   strip.begin();
   strip.show(); //initialize all pixels to "off"
 }
-
-void ClimbLights() { 
-  while(climbing == "true"){
+//light show for climbing
+void climbing() { 
+  while(robotState == "climbing"){
     for(int i = 0; i < numberOfPixels; i++;){
       strip.setPixelColor(i,76,156,20);
       strip.show();
     }
-    strip.reset();
+    strip.reset();//allows strip to reset and display LEDs again – allows the LEDs to "snake around the strip"
   }
 }
-
+//light show for vision lock
 void visionLock(){
-  while(visionLocked == "locked"){
+  while(robotState == "visionLocked"){
     for(int i = 0; i < numberOfPixels; i++;){
       strip.setPixelColor(i,r,b,0);
     }
+    strip.show();
   }
+  
+}
+//light show for forward drive
+void forwardDrive(){
+  while(robotState == "forwardDrive"){
+    for(int i = 0; i < numberOfPixels; i++){
+      strip.setPixelColor(i,200,200,0)
+    }
+    strip.show();
+  }
+}
+//light show for reverse drive 
+void reverseDrive(){
+while(robotState == "reverseDrive"){
+    for(int i = 0; i < numberOfPixels; i++){
+      strip.setPixelColor(i,200,200,200)
+    }
+    strip.show();
+  }
+}
+
+while(true){
+  climbing();
+  visionLock();
+  forwardDrive();
+  reverseDrive();
 }
