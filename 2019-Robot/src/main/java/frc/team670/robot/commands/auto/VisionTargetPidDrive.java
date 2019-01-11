@@ -79,7 +79,7 @@ public class VisionTargetPidDrive extends Command {
   @Override
   protected void execute() {
 
-    robotPosition.update(Robot.driveBase.getLeftEncoder(), Robot.driveBase.getRightEncoder(), Robot.sensors.getYawDouble());
+
 
     /** changed output range to insure that the distanceController isn't going into a negative range */
     double distanceOutput = visionDistanceController.get() * -1;
@@ -140,11 +140,12 @@ public class VisionTargetPidDrive extends Command {
 
     private VisionValue_PIDSource visionSource;
     private PIDSourceType pidSourceType;
-    private long poseX , poseY;
+    private Pose storedPose;
+    private double targetAngle, targetDistance;
     
     private boolean isDistance;
-
     private boolean errorCalled;
+
 
     public VisionAndPose_PIDSource(VisionValue_PIDSource visionSource, boolean isDistance) {
       this.visionSource = visionSource;
@@ -163,14 +164,24 @@ public class VisionTargetPidDrive extends Command {
 
     @Override
     public double pidGet() {
+      // return distance left, or angle left
       double visionValue = visionSource.pidGet();
 
       
       if (MathUtils.doublesEqual(visionValue, RobotConstants.VISION_ERROR_CODE)) {
         // there was an error in the vision
-        if(isDistance) {
+        if (!errorCalled) {
+          storedPose = robotPosition.clone();
+          if (isDistance){
+            return targetDistance;
+          }
+          else {
+            return targetAngle;
+          }
+        }
+        if (isDistance) {
+
           
-          robotPosition
 
 
 
@@ -181,9 +192,9 @@ public class VisionTargetPidDrive extends Command {
           
           robotPosition.update(Robot.driveBase.getLeftEncoder(), Robot.driveBase.getRightEncoder(), Robot.sensors.getYawDouble());
           
-          long newPoseX = pose.getPosX();
-          long newPoseY = pose.getPosY();
-          double newPoseAngle = pose.getRobotAngle();
+          // long newPoseX = pose.getPosX();
+          // long newPoseY = pose.getPosY();
+          // double newPoseAngle = pose.getRobotAngle();
 
           long targetX = (long)(visionValue * Math.cos(Math.toRadians(lastPoseAngle)));
           long targetY = (long)(visionValue * Math.sin(Math.toRadians(lastPoseAngle)));
@@ -200,6 +211,13 @@ public class VisionTargetPidDrive extends Command {
       }
       // if there is no error
       errorCalled = false;
+      if (isDistance) {
+        targetDistance = visionValue;
+      } 
+      else {
+        targetAngle = visionValue;
+      }
+
       return visionValue;
       
     }

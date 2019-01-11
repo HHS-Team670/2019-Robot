@@ -80,4 +80,8 @@ public class Pose {
     Robot.driveBase.resetEncoders();
   }
 
+  public Pose clone() {
+    return new Pose(leftEncoderTick, rightEncoderTick, currentAngle);
+  }
+
 }
