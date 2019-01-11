@@ -13,5 +13,10 @@ public class RobotConstants {
                          MAX_JERK = 60. ;
     private static final int PATHFINDER_SAMPLES = Trajectory.Config.SAMPLES_HIGH;
     private static final FitMethod PATHFINDER_FIT_METHOD = Trajectory.FitMethod.HERMITE_CUBIC;
+    public static final double pathFollowingMaxAccel = 0; //TODO: set value of this
+    public static final double segmentCompletionTolerance = 0; //TODO: set value of this
+
+    // LEDs
+    public static final int LED_PORT = 5810;
 
 }

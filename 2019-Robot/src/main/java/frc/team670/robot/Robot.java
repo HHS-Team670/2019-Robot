@@ -14,10 +14,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.ExampleCommand;
 import frc.team670.robot.constants.OI;
+import frc.team670.robot.constants.RobotConstants;
+import frc.team670.robot.dataCollection.MustangPi;
+import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.DriveBase;
+import frc.team670.robot.subsystems.MustangLEDs;
 import frc.team670.robot.utils.Logger;
-import frc.team670.robot.utils.dataCollection.MustangPi;
-import frc.team670.robot.utils.dataCollection.MustangSensors;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -31,6 +33,7 @@ public class Robot extends TimedRobot {
   public static MustangSensors sensors = new MustangSensors();
   public static MustangPi visionPi = new MustangPi();
   public static DriveBase driveBase = new DriveBase();
+  private MustangLEDs leds = new MustangLEDs();
 
   Command autonomousCommand;
   SendableChooser<Command> auton_chooser = new SendableChooser<>();
@@ -127,6 +130,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+
     Logger.consoleLog("Teleop Started");
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
@@ -135,6 +139,8 @@ public class Robot extends TimedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
+    leds.socketSetup(RobotConstants.LED_PORT);
+
   }
 
   /**
