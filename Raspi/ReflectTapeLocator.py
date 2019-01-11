@@ -44,6 +44,7 @@ from threading import Thread## EDIT new importations from here down
 import imutils
 import datetime
 
+
 class FPS: ## EDIT 2 new classes
     '''This class counts the framerate by calling the start function, end function, and update function and dividing time by frames'''
     def __init__(self):
@@ -386,7 +387,7 @@ def main():
     calibrate_angle = 0  # Test to calibrate the angle and see if that works
 
     # Video capture / resizing stuff
-    fps = FPS().start() # EDIT framerate checker
+    ##fps = FPS().start() # EDIT framerate checker
     vs = ThreadedVideo(screen_resize, capture_source).start() ## EDIT thread implementation (any instances of 'capture' from here down are written as 'vs.stream'
     resize_value = get_resize_values(vs.stream, image_width)
     
@@ -472,17 +473,17 @@ def main():
         # Handle mouse clicks
         # Comment this out if unneeded for maximum efficiency
         cv2.setMouseCallback("Output", mouse_click_handler)
-        fps.update()
+        ##fps.update()
 
     # Release & close when done
     vs.stream.release()
     cv2.destroyAllWindows()
     vs.stop()
-    fps.stop()
+    ##fps.stop()
     
     #print framerate once done
-    print("ELAPSED TIME: {:.2f}".format(fps.elapsed()))
-    print("APPROX. FPS: {:.2f}".format(fps.fps()))
+    ##print("ELAPSED TIME: {:.2f}".format(fps.elapsed()))
+    ##print("APPROX. FPS: {:.2f}".format(fps.fps()))
 
 if __name__ == "__main__":
     main()
