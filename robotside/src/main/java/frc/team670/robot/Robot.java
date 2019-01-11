@@ -23,6 +23,9 @@ public class Robot extends IterativeRobot {
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
+  private MustangLEDs leds = new MustangLEDs();
+  private long changeTime;
+  boolean gearData = false;
 
   /**
    * This function is run when the robot is first started up and should be
@@ -30,9 +33,18 @@ public class Robot extends IterativeRobot {
    */
   @Override
   public void robotInit() {
+
+    System.out.println("Robot init");
+
+    leds.socketSetup(5801);
+    System.out.println("LED Setup Run");
+
     m_chooser.addDefault("Default Auto", kDefaultAuto);
     m_chooser.addObject("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
+    changeTime = System.currentTimeMillis();
+    leds.update_xFinal(0);
+    leds.updateClimbingBoolean(gearData);
   }
 
   /**
@@ -45,6 +57,16 @@ public class Robot extends IterativeRobot {
    */
   @Override
   public void robotPeriodic() {
+    //System.out.println("Test");
+    if(System.currentTimeMillis() > changeTime + 4 * 1000) {
+      changeTime = System.currentTimeMillis();
+      leds.updateGearData(!gearData);
+      System.out.println("Gear Data: " + gearData);
+      leds.changeAlliance(gearData);
+      gearData = !gearData;
+      leds.update_xFinal((int)(Math.random() * 3));
+    }
+
   }
 
   /**
@@ -94,5 +116,6 @@ public class Robot extends IterativeRobot {
    */
   @Override
   public void testPeriodic() {
+
   }
 }

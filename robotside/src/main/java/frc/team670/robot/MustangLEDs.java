@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import org.opencv.core.MatOfPoint;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 /**
  * Modify this class to collect data to send based on this year's game.
@@ -44,6 +45,15 @@ public class MustangLEDs {
 		
 	}
 	
+	public void changeAlliance(boolean b) {
+		if(b) {
+			alliance = "blue   ";
+		}
+		else {
+			alliance = "red    ";
+		}
+	}
+
 	public void updateAlliance(){ // Updates the Alliance Color in data transmission
 		
 		DriverStation.Alliance color = DriverStation.getInstance().getAlliance();
@@ -95,6 +105,8 @@ public class MustangLEDs {
 			DataOutputStream output = null;
 			ArrayList<MatOfPoint> gpgArray = new ArrayList<MatOfPoint>();
 			while(socketClient == null){ // Attempts until client is found
+
+				System.out.println("Socket Client null");
 				try {
 					socketClient = serverSocket.accept();
 				} catch (IOException e) {
@@ -103,7 +115,7 @@ public class MustangLEDs {
 			}
 			
 			while(output == null){	// Attempts until Data Output Stream declared
-				
+				System.out.println("Output Null");
 				try {
 					output = new DataOutputStream(socketClient.getOutputStream());
 					output.flush();
@@ -131,6 +143,8 @@ public class MustangLEDs {
 						output.close();
 						socketClient.close();
 						serverSocket = null;
+						socketClient = null;
+						socketSetup(5801);
 					}catch(Exception E){
 					}
 					
