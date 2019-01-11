@@ -8,7 +8,10 @@
 package frc.team670.robot.constants;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import frc.team670.robot.commands.drive.XboxRocketLeagueDrive;
 import frc.team670.robot.utils.MustangController;
+import frc.team670.robot.utils.MustangController.XboxButtons;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -43,14 +46,25 @@ public class OI {
   // until it is finished as determined by it's isFinished method.
   // button.whenReleased(new ExampleCommand());
 
+  // Controllers/Joysticks
   private Joystick leftStick, rightStick, operatorStick, arcadeButtons;
   private MustangController driverController;
+
+  // Buttons
+  private JoystickButton toggleReverseDrive;
+
+
+  public OI() {
+    driverController = new MustangController(RobotMap.DRIVER_CONTROLLER_PORT);
+    toggleReverseDrive = new JoystickButton(driverController, XboxButtons.leftBumper);
+    toggleReverseDrive.whenPressed(new XboxRocketLeagueDrive());
+  }
 
   public MustangController getDriverController() {
     return driverController;
   }
 
   public boolean isQuickTurnPressed() {
-    return driverController.getLeftBumper();
+    return driverController.getRightBumper();
   }
 }

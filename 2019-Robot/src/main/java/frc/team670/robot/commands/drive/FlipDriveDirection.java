@@ -8,23 +8,23 @@
 package frc.team670.robot.commands.drive;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
+import frc.team670.robot.utils.Logger;
 
 /**
- * Add your docs here.
+ * Flips the direction of the drive: forward or reversed.
  */
-public class ReverseDrive extends InstantCommand {
-  /**
-   * Add your docs here.
-   */
-  public ReverseDrive() {
+public class FlipDriveDirection extends InstantCommand {
+
+  public FlipDriveDirection() {
     super();
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
   }
 
   // Called once when the command executes
   @Override
   protected void initialize() {
+    boolean isReversed = XboxRocketLeagueDrive.isDriveReversed();
+    XboxRocketLeagueDrive.setDriveReversed(!isReversed);
+    Logger.consoleLog("Flipped Drive: %s", isReversed);
   }
 
 }

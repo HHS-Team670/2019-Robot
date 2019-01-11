@@ -24,5 +24,6 @@ public class RobotMap {
   public final static Port navXPort = SerialPort.Port.kUSB;
 
   // Joysticks
+  public static final int DRIVER_CONTROLLER_PORT = 0;
 
 }

@@ -10,8 +10,6 @@ package frc.team670.robot.commands.drive;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team670.robot.Robot;
 import frc.team670.robot.utils.functions.JoystickUtils;
-import frc.team670.robot.constants.OI;
-// import frc.robot.utils.XboxButtons;
  
 
 /**
@@ -21,14 +19,13 @@ import frc.team670.robot.constants.OI;
 public class XboxRocketLeagueDrive extends InstantCommand {
 
    private final boolean smoothRocketLeagueSteer, smoothRocketLeagueTrigger;
-   private static boolean reversed;
-   private static String state;
+   private static boolean isReversed;
 
   public XboxRocketLeagueDrive() {
     super();
     smoothRocketLeagueSteer = true;
     smoothRocketLeagueTrigger = true;
-    reversed = false;
+    isReversed = false;
     requires(Robot.driveBase);
   }
 
@@ -49,16 +46,7 @@ public class XboxRocketLeagueDrive extends InstantCommand {
       speed = JoystickUtils.smoothInput(speed);
     }
 
-    if(Robot.oi.getDriverController().getLeftBumper()){
-      if(state.equals("enabled")) {
-        XboxRocketLeagueDrive.setDriveForward();
-      }
-      else if(state.equals("disabled")) {
-        XboxRocketLeagueDrive.setDriveReversed();
-      }
-    }
-
-    if(reversed) {
+    if(isReversed) {
       steer *= -1;
       speed *= -1;
     }
@@ -75,23 +63,11 @@ public class XboxRocketLeagueDrive extends InstantCommand {
   }
 
   public static boolean isDriveReversed() {
-    if(state.equals("enabled")) {
-      reversed = true;
-    }
-    else if(state.equals("disabled")){
-      reversed = false;
-    }
-    return reversed;
+    return isReversed;
   }
 
-  public static void setDriveReversed() {
-    reversed = true;
-    state = "enabled";
-  }
-
-  public static void setDriveForward() {
-    reversed = false;
-    state = "disabled";
+  public static void setDriveReversed(boolean reversed) {
+    XboxRocketLeagueDrive.isReversed = reversed;
   }
 
 }
