@@ -24,7 +24,7 @@ public class FlipDriveDirection extends InstantCommand {
   protected void initialize() {
     boolean isReversed = XboxRocketLeagueDrive.isDriveReversed();
     XboxRocketLeagueDrive.setDriveReversed(!isReversed);
-    Logger.consoleLog("Flipped Drive: %s", isReversed);
+    Logger.consoleLog("Flipped Drive: %s", (!isReversed));
   }
 
 }
