@@ -32,9 +32,17 @@ public class Pose {
     rightEncoderTick = rEncoderTick;
     currentAngle = angle;
   }
+
+  private Pose(long lEncoderTick, long rEncoderTick, double angle, long currRobotX, long currRobotY) {
+    leftEncoderTick = lEncoderTick;
+    rightEncoderTick = rEncoderTick;
+    currentAngle = angle;
+    this.currRobotX = currRobotX;
+    this.currRobotY = currRobotY;
+  }
  
   /**
-   * Updates the Pose's position and angle every time updatePose is called
+   * Updates the Pose's position and angle corresponding to the drivebase's ticks and NavX gyro reading.
    */
   public void update(long newLeftEncoderTick, long newRightEncoderTick, double newAngle){
     
@@ -80,4 +88,7 @@ public class Pose {
     Robot.driveBase.resetEncoders();
   }
 
+  public Pose clone() {
+    return new Pose(leftEncoderTick, rightEncoderTick, currentAngle, currRobotX, currRobotY);
+  }
 }

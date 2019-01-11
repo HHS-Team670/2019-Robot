@@ -44,6 +44,16 @@ public class MathUtilsTest {
         assertEquals(0, MathUtils.average(), 0.0001);
     }
 
+    @Test
+    public void findDistanceTest() {
+        assertEquals(1, MathUtils.findDistance(0, 0, 0, 1), 0.000001);
+        assertEquals(1, MathUtils.findDistance(0, 0, 0, -1), 0.000001);
+        assertEquals(5, MathUtils.findDistance(0, 0, 3, 4), 0.000001);
+        assertEquals(1, MathUtils.findDistance(1, 0, 0, 0), 0.000001);
+        assertEquals(1, MathUtils.findDistance(0, 1, 0, 0), 0.000001);
+        assertEquals(1, MathUtils.findDistance(0, 0, 1, 0), 0.000001);
+    }
+
     /*
      * Add in more tests for all Util methods here.
      */ 
