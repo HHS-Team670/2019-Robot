@@ -93,7 +93,7 @@ public class DriveBase extends Subsystem {
   }
 
 /**
- * return the left encoder
+ * Return the left encoder's position
  */
   public long getLeftEncoder() {
     return 0;
@@ -101,24 +101,25 @@ public class DriveBase extends Subsystem {
   }
 
 /**
- * Return the right encoder
+ * Return the right encoder's position
  */
   public long getRightEncoder(){
     return 0;
   }
 
-  public double getAngle() 
-  {
-    return 0;
-
-  }
-
-  public SensorCollection leftEncoderCollection() {
+  public SensorCollection getLeftEncoderCollection() {
     return null;
   }
 
-  public SensorCollection rightEncoderCollection() {
+  public SensorCollection getRightEncoderCollection() {
     return null;
+  }
+
+  /**
+   * Resets the encoder values to zero.
+   */
+  public void resetEncoders() {
+
   }
 
   @Override

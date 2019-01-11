@@ -7,6 +7,8 @@
 
 package frc.team670.robot.utils.functions;
 
+import frc.team670.robot.constants.RobotConstants;
+
 /**
  * Provides useful math-related functions.
  * 
@@ -62,6 +64,22 @@ public class MathUtils {
             sum += nums[i];
         }
         return sum/nums.length;
+    }
+
+    /**
+     * Converts a tick value taken from the drive base encoders to inches.
+     */
+    public static double convertDriveBaseTicksToInches(double ticks) {
+       double rotations = ticks / RobotConstants.TICKS_PER_ROTATION;
+       return rotations * Math.PI * RobotConstants.WHEEL_DIAMETER_INCHES;
+    }
+
+    /**
+     * Converts an inch value for the drive base to drive into ticks.
+     */
+    public static int convertInchesToDriveBaseTicks(double inches) {
+        double rotations = inches / (Math.PI * RobotConstants.WHEEL_DIAMETER_INCHES);
+        return (int)(rotations * RobotConstants.TICKS_PER_ROTATION);
     }
 
     /*

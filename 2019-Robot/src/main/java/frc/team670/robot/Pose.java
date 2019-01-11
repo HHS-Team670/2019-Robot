@@ -33,8 +33,9 @@ public class Pose {
     currentAngle = angle;
   }
  
-
-  //Updates the robot's position and angle every time updatePose is called
+  /**
+   * Updates the Pose's position and angle every time updatePose is called
+   */
   public void update(long newLeftEncoderTick, long newRightEncoderTick, double newAngle){
     
     long lDeltaTick = newLeftEncoderTick - leftEncoderTick;
@@ -69,4 +70,14 @@ public class Pose {
   public double getRobotAngle(){
     return currentAngle;
   }
+
+  /**
+   * Resets the Robot's NavX angle and the drive base encoders to 0, essentially changing the Pose inputs to zero.
+   * Use this before you create a new Pose for a driving Command that utilizes it to ensure accuracy.
+   */
+  public static void resetPoseInputs() {
+    Robot.sensors.resetNavX();
+    Robot.driveBase.resetEncoders();
+  }
+
 }
