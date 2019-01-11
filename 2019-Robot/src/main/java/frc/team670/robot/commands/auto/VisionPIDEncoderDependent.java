@@ -60,8 +60,7 @@ public class VisionPIDEncoderDependent extends Command {
     robotPosition = new Pose();
     Logger.consoleLog("Initialized VisionPIDEncoderDependent");
 
-    headingController.setSetpoint(0);
-    distanceController.setSetpoint(0 + cameraOffset);
+    setSetpoints(0, 0);
 
     executeCount = 0;
   }
@@ -113,6 +112,11 @@ public class VisionPIDEncoderDependent extends Command {
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+  }
+
+  private void setSetpoints(double distance, double angle) {
+    distanceController.setSetpoint(distance + cameraOffset);
+    headingController.setSetpoint(angle);
   }
 
   private class TwoEncoder_PIDSource implements PIDSource {

@@ -25,8 +25,14 @@ public class PoseTest {
 
         Pose poseTest = new Pose(0, 0, 0);
         poseTest.update(100, 100, 60);
-        assertEquals(86,  poseTest.getPosX(), 1);
-        assertEquals(50,  poseTest.getPosY(), 1);
+        assertEquals(86.0,  poseTest.getPosX(), 0.0001);
+        assertEquals(49.0,  poseTest.getPosY(), 0.0001);
+        assertEquals(60.0,  poseTest.getRobotAngle(), 0.0001);
+        poseTest = new Pose(0, 0, 0);
+        poseTest.update(-100, -100, 0);
+        assertEquals(-100.0,  poseTest.getPosX(), 0.0001);
+        poseTest.update(0, 0, -40);
+        assertEquals(-40.0,  poseTest.getRobotAngle(), 0.0001);
     }
 
 
