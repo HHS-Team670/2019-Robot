@@ -192,11 +192,11 @@ public class MustangLEDs {
     public LEDState getCurrentState() {
         return state;
     }
-
-	/**
-	 * Sets the LEDState to the given LEDState.
-	 */
+	 /**
+	  * Sets the LEDState to the given LEDState.
+	  */
     public void setLEDState(LEDState state) {
         this.state = state;
     }
+
 }
