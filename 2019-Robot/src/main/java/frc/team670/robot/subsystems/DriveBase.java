@@ -29,6 +29,14 @@ public class DriveBase extends Subsystem {
   }
 
   /**
+   * Sets velocity (Talons) 
+   * TODO fill this out
+   */
+  public void setVelocity(){
+
+  }
+
+  /**
    * 
    * Drives the Robot using a tank drive configuration (two joysticks, or auton)
    * 

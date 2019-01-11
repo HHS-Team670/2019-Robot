@@ -12,7 +12,8 @@ import frc.team254.lib.util.motion.ProfileFollower;
  * A PathFollower follows a predefined path using a combination of feedforward and feedback control. It uses an
  * AdaptivePurePursuitController to choose a reference pose and generate a steering command (curvature), and then a
  * ProfileFollower to generate a profile (displacement and velocity) command.
- */
+ * 
+ *  */
 public class PathFollower {
     private static final double kReallyBigNumber = 1E6;
 
