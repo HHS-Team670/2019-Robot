@@ -32,6 +32,14 @@ public class Pose {
     rightEncoderTick = rEncoderTick;
     currentAngle = angle;
   }
+
+  private Pose(long lEncoderTick, long rEncoderTick, double angle, long currRobotX, long currRobotY) {
+    leftEncoderTick = lEncoderTick;
+    rightEncoderTick = rEncoderTick;
+    currentAngle = angle;
+    this.currRobotX = currRobotX;
+    this.currRobotY = currRobotY;
+  }
  
   /**
    * Updates the Pose's position and angle every time updatePose is called
@@ -81,7 +89,7 @@ public class Pose {
   }
 
   public Pose clone() {
-    return new Pose(leftEncoderTick, rightEncoderTick, currentAngle);
+    return new Pose(leftEncoderTick, rightEncoderTick, currentAngle, currRobotX, currRobotY);
   }
 
 }
