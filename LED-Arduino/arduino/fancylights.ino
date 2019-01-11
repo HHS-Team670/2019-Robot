@@ -13,14 +13,14 @@
 #include <Adafruit_NeoPixel.h>                      //Adafruit's NeoPixel library for controlling NeoPixels
 
 Adafruit_NeoPixel strip =                           //Defines an Adafruit Neopixel strip, containing 120 LEDs, using 
-  Adafruit_NeoPixel(120, 6, NEO_GRB + NEO_KHZ800);  //Arduino pin #6, and using the GRB format at 800KHZ bitstream
+  Adafruit_NeoPixel(16, 6, NEO_GRB + NEO_KHZ800);  //Arduino pin #6, and using the GRB format at 800KHZ bitstream
   
 EthernetClient robotClient;                         //Defines a client to be used to connect to the Robo Rio
 byte mac[] = {                                      //Creates a mac address for use in defining an Ethernet instance
   0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED
 };
-IPAddress ip(10,9,57,6);                            //Defines a static IP for the Arduino/Ethernet Shield
-IPAddress robotIp(10,9,57,2);                       //Defines the robot's IP
+IPAddress ip(10,6,70,3);                            //Defines a static IP for the Arduino/Ethernet Shield
+IPAddress robotIp(10,6,70,2);                       //Defines the robot's IP
 
 int connectionTimer = 0;                            //Sets a connection timer to see if the program should reconnect to the RoboRio in case it becomes disconnected
 
