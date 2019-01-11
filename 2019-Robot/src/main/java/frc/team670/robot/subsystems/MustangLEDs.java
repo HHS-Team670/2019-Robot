@@ -1,10 +1,3 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2018 FIRST. All Rights Reserved.                             */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package frc.team670.robot.subsystems;
 
 import java.io.DataOutputStream;
@@ -18,20 +11,22 @@ import org.opencv.core.MatOfPoint;
 import edu.wpi.first.wpilibj.DriverStation;
 
 /**
- * Code for communicating LED strip changes to the RoboRIO. You will need to
- * modify this to interface with its superclass (LEDControl) so that it has an
- * enum. Based off Team 957's NeoPixel Library.
+ * Modify this class to collect data to send to the Arduino to control LEDs based on this year's game.
+ * 
+ * Credit to team 957 for the sample code.
+ * 
+ * @author ctchen, shaylandias
  */
 public class MustangLEDs {
 
-    /**
+ 	/**
      * Represents the different patterns that can be displayed by the strip.
      */
     public enum LEDState{FORWARD, REVERSED, VISION_DRIVE, CLIMBING};
 
-    private LEDState state;
+    private LEDState state = LEDState.FORWARD;
 
-    // Data Init. This is the data we end up passing to the arduino, so change it to match what it expects to read in.
+	// Data Init. Change this to work with what we want to send to the Arduino.
 	String alliance = "Invalid";
 	String climbing = "false";
 	String gearData = "false";
@@ -50,6 +45,7 @@ public class MustangLEDs {
 		try {
 			serverSocket = null;
 			serverSocket = new ServerSocket(server);
+			client = new clientManagement();
 			client.start();
 		} catch (IOException e) {
 			System.out.println("Unable to init Arduino server");
@@ -57,6 +53,9 @@ public class MustangLEDs {
 		
 	}
 	
+	/**
+	 * Changes alliance. True = blue, False = red.
+	 */
 	public void changeAlliance(boolean b) {
 		if(b) {
 			alliance = "blue   ";
@@ -66,6 +65,9 @@ public class MustangLEDs {
 		}
 	}
 
+	/**
+	 * Updates the alliance for the LEDs using the DriverStation given alliance
+	 */
 	public void updateAlliance(){ // Updates the Alliance Color in data transmission
 		
 		DriverStation.Alliance color = DriverStation.getInstance().getAlliance();
@@ -81,6 +83,9 @@ public class MustangLEDs {
 		}
 	}
 	
+	/**
+	 * @deprecated
+	 */
 	public void updateClimbingBoolean(boolean trigger){ // Updates if we are climbing
 		if(trigger == true){
 			climbing = "true ";
@@ -89,6 +94,9 @@ public class MustangLEDs {
 		}
 	}
 	
+	/**
+	 * @deprecated
+	 */
 	public void updateGearData(boolean trigger){ // Updates if we have a gear
 		if(trigger == true){
 			gearData = "true ";
@@ -97,6 +105,9 @@ public class MustangLEDs {
 		}
 	}
 	
+	/**
+	 * @deprecated
+	 */
 	public void update_xFinal(double acceptedXFinal){ // Updates xFinal in data
 		if(acceptedXFinal > 10 && acceptedXFinal != -666){
 			xFinal = 3;
@@ -138,8 +149,8 @@ public class MustangLEDs {
 			
 			while(true){
 				
-                // Compiles data into one nice neat string. Modify this to match with arduino-side stuff.
-                // I suggest alliance + LEDState (forward, reversed, visiondrive, climb) + modifiers (turning, celebrating, etc.)
+				// Compiles data into one nice neat string. Change this to match what we want to display and change the arduino to match.
+				 // I suggest alliance + LEDState (forward, reversed, visiondrive, climb) + modifiers (turning, celebrating, etc.)
 				data = alliance + "," + gearData + "," + climbing + "," + xFinal + "," + "false";
 				
 				System.out.println(data);
@@ -175,15 +186,17 @@ public class MustangLEDs {
 		}			
 	}	
 
-    /**
+	 /**
      * Returns the current state of the LED strip (the pattern currently being displayed)
      */
     public LEDState getCurrentState() {
         return state;
     }
 
+	/**
+	 * Sets the LEDState to the given LEDState.
+	 */
     public void setLEDState(LEDState state) {
         this.state = state;
     }
-
 }
