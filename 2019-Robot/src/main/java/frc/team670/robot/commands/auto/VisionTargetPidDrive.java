@@ -169,22 +169,7 @@ public class VisionTargetPidDrive extends Command {
 
       
       if (MathUtils.doublesEqual(visionValue, RobotConstants.VISION_ERROR_CODE)) {
-        // there was an error in the vision
-        if (!errorCalled) {
-          storedPose = robotPosition.clone();
-          if (isDistance){
-            return targetDistance;
-          }
-          else {
-            return targetAngle;
-          }
-        }
         if (isDistance) {
-
-          
-
-
-
 
           long lastPoseX = robotPosition.getPosX();
           long lastPoseY = robotPosition.getPosY();
@@ -209,16 +194,18 @@ public class VisionTargetPidDrive extends Command {
           return ;
         }
       }
-      // if there is no error
-      errorCalled = false;
-      if (isDistance) {
-        targetDistance = visionValue;
-      } 
       else {
-        targetAngle = visionValue;
+        // if there is no error
+        errorCalled = false;
+        if (isDistance) {
+          targetDistance = visionValue;
+        } 
+        else {
+          targetAngle = visionValue;
+        }
+        storedPose = robotPosition.clone();
+        return visionValue;
       }
-
-      return visionValue;
       
     }
 
