@@ -27,8 +27,7 @@ public class NavXOffSetTest {
         assertEquals(-135, getYawOffSet(-45, 90), 0);
         assertEquals(135, getYawOffSet(-135, 90), 0);
         assertEquals(178, getYawOffSet(-5, 177), 0);
-
-
+        assertEquals(40, getYawOffSet(400, 0), 0);
     }
 
     /**
@@ -36,10 +35,10 @@ public class NavXOffSetTest {
      */
     public double getYawOffSet(double rawAngle, double offSet) {
         double rtrnAngle = rawAngle - offSet;
-        if (rtrnAngle > 180) { 
+        while(rtrnAngle > 180) { 
             rtrnAngle = rtrnAngle - 360; // returns the same angle but in range [-180, 180]
         }
-        else if (rtrnAngle < -180) {
+        while (rtrnAngle < -180) {
             rtrnAngle = rtrnAngle + 360; 
         }
         return rtrnAngle;

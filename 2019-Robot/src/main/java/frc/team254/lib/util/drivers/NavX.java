@@ -98,10 +98,10 @@ public class NavX {
      */
     public double getYawOffSet() {
         double rtrnAngle = getRawYawDegrees() - offSet;
-        if (rtrnAngle > 180) { 
+        while (rtrnAngle > 180) { 
             rtrnAngle = rtrnAngle - 360; // returns the same angle but in range [-180, 180]
         }
-        else if (rtrnAngle < -180) {
+        while (rtrnAngle < -180) {
             rtrnAngle = rtrnAngle + 360; 
         }
         return rtrnAngle;
