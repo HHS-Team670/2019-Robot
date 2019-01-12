@@ -4,6 +4,10 @@ import edu.wpi.first.wpilibj.Joystick;
 
 public class MustangController extends Joystick {
 
+   public enum DPadState {
+        NEUTRAl, UP, UP_RIGHT, RIGHT, DOWN_RIGHT, DOWN, DOWN_LEFT, LEFT, UP_LEFT;
+   }
+
     public static class XboxButtons {
         // Controller Buttons
         public static final int a = 1;
@@ -16,8 +20,6 @@ public class MustangController extends Joystick {
         public static final int start = 8;
         public static final int leftJoystickButton = 9;
         public static final int rightJoystickButton = 10;
-        public static final int leftStickButton = 11;
-        public static final int rightStickButton = 12;
 
         // Controller Axes
         /**
@@ -50,17 +52,109 @@ public class MustangController extends Joystick {
         super(port);
     }
 
+    // helps you get varoius axis and buttons on the XBox controller
     public double getLeftStickX() {
         return super.getRawAxis(XboxButtons.leftStickX);
+    }
+
+    public double getLeftStickY() {
+        return super.getRawAxis(XboxButtons.leftStickY);
+    }
+
+    public double getLeftTriggerAxis() {
+        return super.getRawAxis(XboxButtons.leftTriggerAxis);
+    }
+
+    public double getRightTriggerAxis() {
+        return super.getRawAxis(XboxButtons.rightTriggerAxis);
+    }
+
+    public double getRightStickX() {
+        return super.getRawAxis(XboxButtons.rightStickX);
+    }
+
+    public double getRightStickY() {
+        return super.getRawAxis(XboxButtons.rightStickY);
     }
 
     public boolean getAButton() {
         return super.getRawButton(XboxButtons.a);
     }
 
-    /*
-    * TODO Continue these functions for all of the buttons and triggers. Additionally, it would be good to be able to convert the POV
-    * value received from the D-Pad into an angle.
-    */
+    public boolean getBButton() {
+        return super.getRawButton(XboxButtons.b);
+    }
+
+    public boolean getXButton() {
+        return super.getRawButton(XboxButtons.x);
+    }
+
+    public boolean getYButton() {
+        return super.getRawButton(XboxButtons.y);
+    }
+
+    public boolean getLeftBumper() {
+        return super.getRawButton(XboxButtons.leftBumper);
+    }
+
+    public boolean getRightBumper() {
+        return super.getRawButton(XboxButtons.rightBumper);
+    }
+
+    public boolean getBackButton() {
+        return super.getRawButton(XboxButtons.back);
+    }
+
+    public boolean getStartButton() {
+        return super.getRawButton(XboxButtons.start);
+    }
+
+    public boolean getLeftJoystickButton() {
+        return super.getRawButton(XboxButtons.leftJoystickButton);
+    }
+
+    public boolean getRightJoystickButton() {
+        return super.getRawButton(XboxButtons.rightJoystickButton);
+    }
+
+    public int getPOVValue() {
+        return super.getPOV();
+    }
+
+    // gets angle of the DPad on the XBox controller pressed with increments of 45 degree angle. 
+    // returns neutal or -1 when nothing is pressed
+    public DPadState getDPadState() {
+        
+        int angle = super.getPOV();
+
+        if(angle == 0) {
+            return DPadState.UP;
+        } 
+        else if(angle == 45){
+            return DPadState.UP_RIGHT;
+        }
+        else if(angle == 90) {
+            return DPadState.RIGHT;
+        }
+        else if(angle == 135){
+            return DPadState.DOWN_RIGHT;
+        }
+        else if(angle == 180) {
+            return DPadState.DOWN;
+        }
+        else if(angle == 225){
+            return DPadState.DOWN_LEFT;
+        }
+        else if(angle == 270) {
+            return DPadState.LEFT;
+        }
+        else if(angle == 315){
+            return DPadState.UP_LEFT;
+        } 
+        else {
+            return DPadState.NEUTRAl;
+        }
+        
+       }
 
 }

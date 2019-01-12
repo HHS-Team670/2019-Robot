@@ -8,10 +8,9 @@ import frc.team670.robot.constants.RobotMap;
 
 /**
  * Instantiates sensor representation objects and contains methods for accessing the sensor data.
+ * @author shaylandias
  */
 public class MustangSensors extends Subsystem {
-  // Put methods for controlling this subsystem
-  // here. Call these from Commands.
 
   // NavX
   private NavX navXMicro = null;
@@ -19,7 +18,6 @@ public class MustangSensors extends Subsystem {
 
 
   public MustangSensors(){
-
     try {
 			navXMicro = new NavX(RobotMap.navXPort);
 		} catch (RuntimeException ex) {
@@ -34,7 +32,7 @@ public class MustangSensors extends Subsystem {
   }
 
   /**
-   * Resets the NavX Angle
+   * Resets the NavX. This means that the NavX performs a shut-down and recalibration, taking time. Use this if it significantly drifs.
    */
   public void resetNavX() {
 		if(navXMicro != null) {
@@ -43,7 +41,7 @@ public class MustangSensors extends Subsystem {
 	}
 
   /**
-   * Returns the rate of change of the yaw angle in degrees per second.
+   * Returns the rate of change of the yaw angle in degrees per second. If NavX not connected, returns NAVX_ERROR_CODE. 
    */
   public double getYawRateDegreesPerSecond() {
     if(navXMicro != null) {
@@ -54,7 +52,7 @@ public class MustangSensors extends Subsystem {
   }
 
   /**
-   * Returns the yaw of the robot as a double in accordance with its adjustment based on Robot starting position.
+   * Returns the yaw of the robot as a double in accordance with its adjustment based on Robot starting position. (-180, 180)
    * @return The yaw of the robot if the navX is connected. Otherwise returns NAVX_ERROR_CODE
    */
   public double getYawDouble(){
@@ -66,7 +64,17 @@ public class MustangSensors extends Subsystem {
   }
 
   /**
-   * Gets the yaw as one of 254's Rotation2d Objects (a point on the unit circle).
+   * 
+   * Gets the yaw for Pathfinder since it needs it mirrored from the normal way. (180, -180). If NavX not connected, returns NAVX_ERROR_CODE
+   * 
+   * @return Yaw as a double (180, -180)
+   */
+  public double getYawDoubleForPathfinder(){
+   return -1 * getYawDouble();
+  }
+
+  /**
+   * Gets the yaw as one of 254's Rotation2d Objects (a point on the unit circle). Returns null if the navX is not connected.
    */
   public Rotation2d getYaw() {
     if(navXMicro != null) {
@@ -77,7 +85,7 @@ public class MustangSensors extends Subsystem {
   }
 
   /**
-   * Resets the yaw angle to zero and the acceleration of the angle to zero.
+   * Adds a "user-offset" variable to the NavX, effectively zeroing the value you will receive at this point.
    */
   public void zeroYaw(){
     if(navXMicro != null){

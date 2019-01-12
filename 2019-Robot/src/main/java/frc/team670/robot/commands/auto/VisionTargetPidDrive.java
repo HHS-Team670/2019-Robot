@@ -32,9 +32,6 @@ public class VisionTargetPidDrive extends Command {
   private double visionHeadingControllerLowerBound = -.15, visionHeadingControllerUpperBound = .15;
   private double visionDistanceControllerLowerBound = -.7, visionDistanceControllerUpperBound = .7;
 
-
-  private double distanceControllerLowerBound = 0.05, distanceControllerUpperBound = 0.05;
-
   private final double cameraOffset = 2.5; //distance from camera to front of the robot in inches. TODO set this
   private int executeCount;
   private final double minimumAngleAdjustment = 0.03;
