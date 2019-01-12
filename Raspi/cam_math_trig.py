@@ -308,11 +308,12 @@ def find_vert_angle(image, y, focal_length):
     '''
 
     # Find center y point
-    height = image.shape[:2][0]
-    center_y = height / 2
+    image_height = image.shape[:2][0]
+    center_y = image_height / 2
+    y_from_bottom = image_height-y
 
     # Calculate the angle using fancy formula
-    vertical_angle = -1 * math.degrees(math.atan((y - center_y) / focal_length))
+    vertical_angle = -1 * math.degrees(math.atan((y_from_bottom - center_y) / focal_length))
     return vertical_angle
 
 
@@ -436,11 +437,11 @@ def main():
     Main.
     '''
     # Variables (These should be changed to reflect the camera)
-    capture_source = 0  # 0 for camera, file path for video
+    capture_source = 0 # 0 for camera, file path for video
     capture_color = 'g'  # Possible: r (Red), g (Green), b (Blue), y (Yellow)
-    known_object_height = 8.5  # The height of the tape from the ground (in inches)
-    known_camera_height = 4.25
-    camera_fov = 40.7  # FOV of the camera (in degrees)
+    known_object_height = 9  # The height of the tape from the ground (in inches)
+    known_camera_height = 1.5
+    camera_fov = 40.7 # FOV of the camera (in degrees)
     image_width = 1080  # Desired width of inputted image (for processing speed)
     screen_resize = 1  # Scale that the GUI image should be scaled to
     calibrate_angle = 0  # Test to calibrate the angle and see if that works

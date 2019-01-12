@@ -1,5 +1,4 @@
 # Kyle Fu & Rishab Borah and Navaneet Kadaba and Eshan Jain
-#Any of Kyle's new work with finding depth and angles is not on here
 #I will put comments near changed code
 # OpenCV - Mono Depth / Angle Detection
 
@@ -347,7 +346,7 @@ def mouse_click_handler(event, x, y, flags, params):
             hsv_image = cv2.cvtColor(input_image, cv2.COLOR_BGR2HSV)
         except NameError:
             print("Input image not found!")
-        norm_x, norm_y = round(x/screen_resize), round(y/screen_resize)
+        norm_x, norm_y = round(x), round(y)
         h, s, v = hsv_image[norm_y][norm_x]
         print("HSV value of point ({}, {}) is ({}, {}, {})".format(norm_x, norm_y, h, s, v))
 
