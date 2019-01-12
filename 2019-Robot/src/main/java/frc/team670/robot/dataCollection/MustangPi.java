@@ -64,7 +64,7 @@ public class MustangPi {
          */
         public double[] getValue() throws IllegalStateException {
             if(entry.getType().equals(NetworkTableType.kDouble)) {
-                return new double[] {entry.getDouble(0)};
+                return new double[] {entry.getDouble(RobotConstants.VISION_ERROR_CODE)};
             } else if(entry.getType().equals(NetworkTableType.kDoubleArray)) {
                 return entry.getDoubleArray(new double[]{});
             } else {
@@ -129,7 +129,11 @@ public class MustangPi {
         }
 
         private double getEntry() {
-            return entries.get(keyName).getValue()[0]; // Gets the 0th value of the array. Make sure that is the correct one if vision software provides an array.
+            return entries.get(keyName).getValue()[0]; // Gets the 0th value of the array from getValue(). This should be the vision data
+        }
+
+        public double getTimeStamp() {
+            return entries.get(keyName).getValue()[1]; // Gets the second value of the array from getValue(). This should be the timestamp.
         }
 
         /**

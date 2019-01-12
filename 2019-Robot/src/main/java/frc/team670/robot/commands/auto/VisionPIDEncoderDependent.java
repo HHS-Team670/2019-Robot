@@ -201,15 +201,32 @@ public class VisionPIDEncoderDependent extends Command {
       // return distance left, or angle left
       double visionValue = visionSource.pidGet();
       Pose currentPose = robotPosition.clone();
+      Pose lastPose = lastPoses.get(0);
+      
       lastPoses.add(currentPose);
+      double visionTimeStamp = visionSource.getTimeStamp();
+      for (int i = 1; i < lastPoses.size(); i++) {
+        Pose nPose = lastPoses.get(i);
+        if (nPose != null) {
+          if(Math.abs(nPose.getTimeOfPose() - visionTimeStamp) < Math.abs(lastPose.getTimeOfPose() - visionTimeStamp))  {
+            lastPose = nPose;
+          }
+        }
+      }
 
       if (MathUtils.doublesEqual(visionValue, RobotConstants.VISION_ERROR_CODE)) { // If vision cannot find a target
         
-        for(int i = lastPoses.size() - 1; i >= 0; i--) {
-          Pose p = lastPoses.get(i);
-          if(p != null) {
-            poseAtVisionLoss = p;
-            break;
+        // Grabbing the pose from the moment we lost vision if we don't already have one. If it is already not null, we already set it before.
+        if (poseAtVisionLoss == null) {
+          for(int i = lastPoses.size() - 1; i >= 0; i--) {
+            Pose p = lastPoses.get(i);
+            if(p != null) {
+              poseAtVisionLoss = p;
+              break;
+            }
+          }
+          if(poseAtVisionLoss == null) { // If we do not have any poses in the array besides the currentPose.
+            poseAtVisionLoss = currentPose; // TODO this might need to give an error code that ends the Command (for this to be true, we have to have never had vision data at all).
           }
         }
         
@@ -233,6 +250,8 @@ public class VisionPIDEncoderDependent extends Command {
         }
       }
       else {  // if there is no error
+        lastPose = null;
+        lastPoses.remove(0);
         if (isDistance) {
           targetDistance = visionValue;
         } 
