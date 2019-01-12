@@ -1,9 +1,5 @@
 package frc.team254.lib.util;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -12,17 +8,21 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
 /**
  * ConstantsBase
  * 
- * Base class for storing robot constants. Anything stored as a public static field will be reflected and be able to set
- * externally
+ * Base class for storing robot constants. Anything stored as a public static
+ * field will be reflected and be able to set externally
  */
 public abstract class ConstantsBase {
     HashMap<String, Boolean> modifiedKeys = new HashMap<String, Boolean>();
