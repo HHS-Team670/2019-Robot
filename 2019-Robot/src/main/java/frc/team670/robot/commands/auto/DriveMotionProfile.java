@@ -15,6 +15,7 @@ import java.io.File;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
+import frc.team670.robot.utils.Logger;
 import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Trajectory;
 import jaci.pathfinder.Waypoint;
@@ -129,7 +130,6 @@ public class DriveMotionProfile extends Command {
     // TODO make sure angle actually serts to zero (firmware update NavX)
     // TODO Think through what we want out of angle, maybe go off an initial angle
     Robot.sensors.resetNavX();
-    System.out.println("START ANGLE: " + Pathfinder.boundHalfDegrees(Robot.sensors.getYawDoubleForPathfinder()));
 
     initialLeftEncoder = -1 * Robot.driveBase.getLeftEncoderPosition();
     initialRightEncoder = Robot.driveBase.getRightEncoderPosition();
@@ -153,8 +153,9 @@ public class DriveMotionProfile extends Command {
     left.configurePIDVA(1.0, 0.0, 0.0, (1) / (generation_MaxVelocity), (0.0));
     right.configurePIDVA(1.0, 0.0, 0.0, (1) / (generation_MaxVelocity), (0.0));
 
-    executeCount = 0;
+    Logger.consoleLog("Initialized DriveMotionProfile: InitialLeftEncoder: %s, InitialRightEncoder: %s, InitialAngle: %s", initialLeftEncoder, initialRightEncoder, Robot.sensors.getYawDouble());
 
+    executeCount = 0;
    
   }
 
@@ -176,12 +177,7 @@ public class DriveMotionProfile extends Command {
     double gyroHeading = Pathfinder.boundHalfDegrees(Robot.sensors.getYawDoubleForPathfinder());   // Assuming the gyro is giving a value in degrees
     double desiredHeading = Pathfinder.boundHalfDegrees(Pathfinder.r2d(left.getHeading()));  // Should also be in degrees 
     // Make sure gyro and desired angle match up [-180, 180], navX reports the opposite orientation as Pathfinder expects
-    double angleDifference = Pathfinder.boundHalfDegrees(desiredHeading - gyroHeading);
-
- 
-
-    // Depending on motor orientation this -1 might need to be positive
-    
+    double angleDifference = Pathfinder.boundHalfDegrees(desiredHeading - gyroHeading);    
     
     // Making this constant higher helps prevent the robot from overturning (overturning also will make it not drive far enough in the correct direction)
     double angleDivideConstant = 240.0; // Default = 80
@@ -195,19 +191,13 @@ public class DriveMotionProfile extends Command {
     double max = Math.max(leftOutput, rightOutput);
     double min = Math.min(leftOutput, rightOutput);
 
-    // TODO think through all the possible cases here or rethink this to normalize
-    if(max > 1.0){
-
-    }
-    if(min < -1.0){
-      
-    }
-
-
     // Drives the bot based on the input
-    Robot.driveBase.tankDrive(leftOutput, rightOutput);
+    Robot.driveBase.tankDrive(leftOutput, rightOutput); 
 
-    
+    if(executeCount % 5 == 0) {
+      Logger.consoleLog("Execute: gyroHeading: %s desiredHeading: %s  angleDifference: %s angleDivideConstant: %s turn: %s leftOuput: %s rightOutput: %s max: %s min: %s", gyroHeading, desiredHeading, angleDifference, angleDivideConstant, turn, leftOutput , rightOutput, max, min ) ;
+    }
+
     executeCount++;
   }
 
@@ -222,6 +212,7 @@ public class DriveMotionProfile extends Command {
   @Override
   protected void end() {
     end(false);
+    Robot.driveBase.tankDrive(0, 0);
   }
 
   // Called when another command which requires one or more of the same
@@ -229,6 +220,9 @@ public class DriveMotionProfile extends Command {
   @Override
   protected void interrupted() {
     end(true);
+    Robot.driveBase.tankDrive(0, 0);
+    Logger.consoleLog("The Program has ended ") ;
+
   }
 
   //Called in end/interrupted to differentiate between them for logging purposes
@@ -238,9 +232,6 @@ public class DriveMotionProfile extends Command {
     System.out.println("Number of ticks traveled right: " + (Robot.driveBase.getRightEncoderPosition() - initialRightEncoder));
 
     Robot.driveBase.tankDrive(0, 0);
-
-
-
   }
 
 }
