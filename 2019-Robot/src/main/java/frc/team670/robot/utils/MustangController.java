@@ -127,27 +127,27 @@ public class MustangController extends Joystick {
         if(angle == 0) {
             return DPadState.UP;
         } 
-        else if(angle == 180) {
-            return DPadState.DOWN;
-        }
-        else if(angle == 270) {
-            return DPadState.LEFT;
+        else if(angle == 45){
+            return DPadState.UP_RIGHT;
         }
         else if(angle == 90) {
             return DPadState.RIGHT;
         }
-        else if(angle > 0 && angle < 90) {
-            return DPadState.UP_RIGHT;
-        }
-        else if(angle >= 270 && angle != 0) {
-            return DPadState.UP_LEFT;
-        }
-        else if(angle > 90 && angle < 180) {
+        else if(angle == 135){
             return DPadState.DOWN_RIGHT;
         }
-        else if(angle > 180 && angle < 270) {
+        else if(angle == 180) {
+            return DPadState.DOWN;
+        }
+        else if(angle == 225){
             return DPadState.DOWN_LEFT;
         }
+        else if(angle == 270) {
+            return DPadState.LEFT;
+        }
+        else if(angle == 315){
+            return DPadState.UP_LEFT;
+        } 
         else {
             return DPadState.NEUTRAl;
         }
