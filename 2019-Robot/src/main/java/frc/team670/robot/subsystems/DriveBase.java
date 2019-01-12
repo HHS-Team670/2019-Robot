@@ -178,6 +178,19 @@ public class DriveBase extends Subsystem {
     }
   }
 
+  /*
+   * Gets the voltage fed into the motor controller
+   */
+  public double getVoltage(CANSparkMax motorController){
+    return  motorController.getBusVoltage();
+  }
+
+  /*
+   * Gets the motor controller's output voltage
+   */
+  public double getOutput(CANSparkMax motorController) {
+    return motorController.getAppliedOutput();
+  }
   /**
    * 
    * Drives the Robot using an arcade drive configuration (single joystick with twist)
