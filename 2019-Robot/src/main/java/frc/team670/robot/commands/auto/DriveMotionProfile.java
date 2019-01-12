@@ -67,7 +67,7 @@ public class DriveMotionProfile extends Command {
 
   /**
    * Creates a DriveMotionProfile from a text file
-   * @param fileName path to trajectory file inside the deploy folder
+   * @param fileName path to trajectory file inside the output folder in the deploy directory
    */
   public DriveMotionProfile(String fileName) {
 
@@ -76,7 +76,7 @@ public class DriveMotionProfile extends Command {
     
     requires(Robot.driveBase);
 
-    String pathname = Filesystem.getDeployDirectory() + fileName;
+    String pathname = Filesystem.getDeployDirectory() + "/output/" + fileName;
     System.out.println("Path Name: " + pathname);
     File file = new File(pathname);
 
