@@ -4,10 +4,10 @@ Code for using an Arduino to interface with the RoboRIO over and Ethernet shield
 
 ## Parts List
 
-..* RoboRIO
-..* Arduino with Ethernet. This can be an Arduino with an Ethernet shield, or something like the Yun which has it built in
-..* Neopixel strip (WS2812 Integrated Light Source)
-..* Ethernet switch for extra Ethernet ports, so you can use Ethernet on RoboRio both for all your necessities and the fancy lights too
+* RoboRIO
+* Arduino with Ethernet. This can be an Arduino with an Ethernet shield, or something like the Yun which has it built in
+* Neopixel strip (WS2812 Integrated Light Source)
+* Ethernet switch for extra Ethernet ports, so you can use Ethernet on RoboRio both for all your necessities and the fancy lights too
 
 ## Setting up for your team / Code checklist
 
