@@ -1,10 +1,14 @@
 package frc.team670.robot.dataCollection;
 
+
+import com.kauailabs.navx.frc.AHRS;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team254.lib.util.drivers.NavX;
 import frc.team254.lib.util.math.Rotation2d;
 import frc.team670.robot.constants.RobotMap;
+
 
 /**
  * Instantiates sensor representation objects and contains methods for accessing the sensor data.
@@ -54,7 +58,7 @@ public class MustangSensors extends Subsystem {
   }
 
   /**
-   * Returns the yaw of the robot as a double in accordance with its adjustment based on Robot starting position.
+   * Returns the yaw of the robot as a double in accordance with its adjustment based on Robot starting position. (-180, 180)
    * @return The yaw of the robot if the navX is connected. Otherwise returns NAVX_ERROR_CODE
    */
   public double getYawDouble(){
@@ -63,6 +67,16 @@ public class MustangSensors extends Subsystem {
     } else{
       return NAVX_ERROR_CODE;
     }
+  }
+
+  /**
+   * 
+   * Gets the yaw for Pathfinder since it needs it mirrored from the normal way. (180, -180)
+   * 
+   * @return Yaw as a double (180, -180)
+   */
+  public double getYawDoubleForPathfinder(){
+   return -1 * getYawDouble();
   }
 
   /**
@@ -76,6 +90,8 @@ public class MustangSensors extends Subsystem {
     }
   }
 
+
+
   /**
    * Resets the yaw angle to zero and the acceleration of the angle to zero.
    */
@@ -84,5 +100,6 @@ public class MustangSensors extends Subsystem {
       navXMicro.zeroYaw();
     }
   }
-
+  
+  
 }

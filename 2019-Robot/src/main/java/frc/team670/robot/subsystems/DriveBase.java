@@ -7,9 +7,14 @@
 
 package frc.team670.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.SensorCollection;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import frc.team670.robot.constants.RobotMap;
 
 /**
  * Represents a tank drive base.
@@ -26,7 +31,7 @@ public class DriveBase extends Subsystem {
 
   public DriveBase() {
     driveTrain = new DifferentialDrive(left, right);
-  }
+     }
 
   /**
    * 
@@ -37,6 +42,10 @@ public class DriveBase extends Subsystem {
    */
   public void tankDrive(double leftSpeed, double rightSpeed) {
     tankDrive(leftSpeed, rightSpeed, false);
+  }
+
+  public void initAutonDrive(){
+    //TODO -- make this set up the auton drive's settings
   }
 
   /**
@@ -74,6 +83,19 @@ public class DriveBase extends Subsystem {
   public void arcadeDrive(double xSpeed, double zRotation, boolean squaredInputs) {
     driveTrain.arcadeDrive(xSpeed, zRotation, squaredInputs);
   }
+
+  public int getLeftEncoderPosition(){
+    return 0; // TODO make this work
+  }
+
+  /**
+   * Gets the position of the front right motor, this encoder gets more positive as it goes forward
+   */
+  public int getRightEncoderPosition(){
+    return 0; // TODO make this work.
+  }
+
+
 
   /**
    * 

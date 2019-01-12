@@ -16,7 +16,16 @@ public class RobotConstants {
     public static final double pathFollowingMaxAccel = 0; //TODO: set value of this
     public static final double segmentCompletionTolerance = 0; //TODO: set value of this
 
+    public static final double KU = 0.275; //Original P value
+	public static final double TU = 4.46; //Oscillation in seconds
+	public static final double PROPORTION = 0.2*KU;
+	public static final double INTEGRAL = 0;//0.05*KU/TU;
+    public static final double DERIVATIVE = 5*KU*TU/40;
+    public static final double DRIVEBASE_TRACK_WIDTH = 0; //TODO set this value
+	public static final double WHEEL_DIAMETER = 6;
+
     // LEDs
     public static final int LED_PORT = 5810;
+
 
 }
