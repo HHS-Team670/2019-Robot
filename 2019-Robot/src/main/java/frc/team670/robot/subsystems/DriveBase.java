@@ -75,7 +75,7 @@ public class DriveBase extends Subsystem {
   }
 
   public void initAutonDrive(){
-    //TODO -- make this set up the auton drive's settings
+    setMotorsBrakeMode(allMotors, IdleMode.kBrakeMode);
   }
 
   /**
@@ -154,7 +154,7 @@ public class DriveBase extends Subsystem {
   /**
    * Sets array of motors to be of a specified mode
    */
-  private void setMotorsNeutralMode(IdleMode mode){
+  public void setMotorsNeutralMode(IdleMode mode){
     for(CANSparkMax m:allMotors){
       m.setIdleMode(mode);
     }
