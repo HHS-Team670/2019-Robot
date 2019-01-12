@@ -13,9 +13,7 @@ package frc.team670.robot.commands.auto;
 import java.io.File;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.Robot;
-import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.constants.RobotConstants;
 import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Trajectory;
@@ -46,7 +44,7 @@ public class DriveMotionProfile extends Command {
   // Max Velocities in m/s. For generation, we need it to be lower than the actual max velocity, 
   // otherwise we get motor outputs >1.0 and <-1.0 which makes us unable to turn properly.
   private static final double real_maxVelocity = 0.8, generation_MaxVelocity = 0.8;
-  private static final String BASE_PATH_NAME = "home/lvuser/paths/";
+  private static final String BASE_PATH_NAME = "home/deploy/";
   // Values for logging purposes
   private final int executeLogInterval = 8;
   private long executeCount;
@@ -81,6 +79,7 @@ public class DriveMotionProfile extends Command {
    * @param fileName path to trajectory file inside the trajectory_files folder
    */
   public DriveMotionProfile(String fileName) {
+
     String binary = "traj";
     String csv = "csv";
     
