@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import org.opencv.core.MatOfPoint;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 /**
  * Modify this class to collect data to send based on this year's game.
@@ -21,11 +20,13 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 public class MustangLEDs {
 	// Data Init
 	String alliance = "Invalid";
-	String climbing = "false";
-	String gearData = "false";
-	
+	String climbing = "false  ";
+	String forwardDrive="false  ";
+	String reverseDrive="false  ";
+	String still="false  ";
+	String visionLock="false  ";
 	int xFinal = 2;
-	String data = "Invalid,false,false,2";
+	String data = "Invalid,false,false,";
 	
 	// Socket Init
 	ServerSocket serverSocket = null;
@@ -71,17 +72,41 @@ public class MustangLEDs {
 	
 	public void updateClimbingBoolean(boolean trigger){ // Updates if we are climbing
 		if(trigger == true){
-			climbing = "true ";
+			climbing = "true   ";
 		}else{
-			climbing = "false";
+			climbing = "false  ";
 		}
 	}
 	
-	public void updateGearData(boolean trigger){ // Updates if we have a gear
+	public void updateVisionData(boolean trigger){ //updates if we lock onto a vision target
 		if(trigger == true){
-			gearData = "true ";
+			visionLock = "true   ";
 		}else{
-			gearData = "false";
+			visionLock = "false  ";
+		}
+	}
+	public void updateForwardDrive(boolean trigger){//update if we are driving forward
+		if(trigger=true){
+			forwardDrive="true   ";
+		}
+		else{
+			forwardDrive="false  ";
+		}
+	}
+	public void updateReverseDrive(boolean trigger){
+		if(trigger=true){
+			reverseDrive="true   ";
+		}
+		else{
+			reverseDrive="false  ";
+		}
+	}
+	public void updateStillDrive(boolean trigger){
+		if(trigger=true){
+			still="true   ";
+		}
+		else{
+			still="false  ";
 		}
 	}
 	
@@ -128,8 +153,8 @@ public class MustangLEDs {
 				
 				// Compiles data into one nice neat string
 				
-				data = alliance + "," + gearData + "," + climbing + "," + xFinal + "," + "false";
-				
+				data = alliance + "," + climbing + "," + forwardDrive+ "," +reverseDrive + "," + still+ "," +visionLock+","+xFinal;
+	
 				System.out.println(data);
 				
 				// Sends data to the Arduino/Ethernet Shield
