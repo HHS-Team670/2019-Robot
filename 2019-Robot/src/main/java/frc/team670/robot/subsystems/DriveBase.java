@@ -7,14 +7,10 @@
 
 package frc.team670.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.SensorCollection;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import frc.team670.robot.constants.RobotMap;
+import com.revrobotics.CANSparkMax;
 
 /**
  * Represents a tank drive base.
@@ -26,6 +22,7 @@ public class DriveBase extends Subsystem {
   // TODO declare all of the correct motor controllers. Add them to ArrayLists for easily changing parameters for all of them. 
   // Make helper methods to change them and access sensor data. Set a DefaultCommand
 
+  private CANSparkMax left1, left2, right1, right2;
   private SpeedControllerGroup left, right;
   private DifferentialDrive driveTrain;
 
