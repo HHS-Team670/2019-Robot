@@ -1,0 +1,247 @@
+
+/*----------------------------------------------------------------------------*/
+/* Copyright (c) 2018 FIRST. All Rights Reserved.                             */
+/* Open Source Software - may be modified and shared by FRC teams. The code   */
+/* must be accompanied by the FIRST BSD license file in the root directory of */
+/* the project.                                                               */
+/*----------------------------------------------------------------------------*/
+
+
+
+package frc.team670.robot.commands.auto;
+
+import java.io.File;
+
+import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team670.robot.Robot;
+import frc.team670.robot.subsystems.DriveBase;
+import frc.team670.robot.constants.RobotConstants;
+import jaci.pathfinder.Pathfinder;
+import jaci.pathfinder.Trajectory;
+import jaci.pathfinder.Waypoint;
+import jaci.pathfinder.followers.EncoderFollower;
+import jaci.pathfinder.modifiers.TankModifier;
+
+/**
+ * Testing the code with the robot notes:
+ *  Robot thinks forward is 180 degrees
+ *  Don't use stupid waypoints because code crashes if Pathfinder fails
+ */
+
+public class DriveMotionProfile extends Command {
+/** changed the conversion factor of INCHES_PER_METER
+ * , Aditya Senthilvel */
+  private Waypoint[] waypoints = new Waypoint[]{new Waypoint(0, 0, 0)};
+  // private final double INCHES_PER_METER = 39.3701;
+  /**  Set this to true if you want to do commands in inches */
+  public static final boolean CONVERT_TO_INCHES = false; 
+  
+  // private double unitConversion;
+  private Trajectory.Config config;
+  private Trajectory trajectory;
+  private TankModifier modifier;
+  private EncoderFollower left, right;
+  private final int TICKS_PER_ROTATION = 4096;
+  // Max Velocities in m/s. For generation, we need it to be lower than the actual max velocity, 
+  // otherwise we get motor outputs >1.0 and <-1.0 which makes us unable to turn properly.
+  private static final double real_maxVelocity = 0.8, generation_MaxVelocity = 0.8;
+  private static final String BASE_PATH_NAME = "home/lvuser/paths/";
+  // Values for logging purposes
+  private final int executeLogInterval = 8;
+  private long executeCount;
+
+  int initialLeftEncoder, initialRightEncoder;
+  
+  /**
+   * Drives a Pathfinder Motion Profile using set Waypoints
+   */
+  
+  /** changed values of dt, max acceleration, and max velocity from meters to inches using the variable INCHES_PER_METER
+   * , (Aditya Senthilvel)*/
+  public DriveMotionProfile(Waypoint[] waypoints) {
+    // Use requires() here to declare subsystem dependencies
+    // eg. requires(chassis);
+    requires(Robot.driveBase);
+
+    this.waypoints = waypoints.clone();
+
+    config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, (0.02), (generation_MaxVelocity), (2.0), 60.0);
+    trajectory = Pathfinder.generate(waypoints, config);
+    modifier = new TankModifier(trajectory).modify(RobotConstants.DRIVEBASE_TRACK_WIDTH );
+
+     // TODO In the future maybe do this in initialize so when the Command is rerun it starts over
+    left = new EncoderFollower(modifier.getLeftTrajectory());
+    right= new EncoderFollower(modifier.getRightTrajectory());
+  }
+
+
+  /**
+   * Creates a DriveMotionProfile from a text file
+   * @param fileName path to trajectory file inside the trajectory_files folder
+   */
+  public DriveMotionProfile(String fileName) {
+    String binary = "traj";
+    String csv = "csv";
+    
+    // unitConversion = (CONVERT_TO_INCHES) ? RoboConstants.INCHES_PER_METER : 1;
+
+    requires(Robot.driveBase);
+
+    String pathname = BASE_PATH_NAME + fileName;
+    System.out.println("Path Name: " + pathname);
+    File file = new File(pathname);
+
+    String extension = "";
+    int i = fileName.lastIndexOf('.');
+    if (i > 0) {
+        extension = fileName.substring(i+1);
+    }
+
+
+    if (extension.equals(csv)){
+      System.out.println("File Name: " + file.getName());
+      trajectory = Pathfinder.readFromCSV(file);
+    }
+    else if (extension.equals(binary))
+      trajectory = Pathfinder.readFromFile(file);
+    else {
+      // Set the max velocity to something lower than the actual max velocity, otherwise we get motor outputs >1.0 and <-1.0 which makes us unable to turn properly
+      // For here let's set it to 
+      config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, (0.02), (generation_MaxVelocity), (2.0), 60.0);
+      trajectory = Pathfinder.generate(waypoints, config);
+      
+    }
+
+    // TODO set track width
+    modifier = new TankModifier(trajectory).modify(RobotConstants.DRIVEBASE_TRACK_WIDTH);
+    left = new EncoderFollower(modifier.getLeftTrajectory());
+    right= new EncoderFollower(modifier.getRightTrajectory());
+
+    // Robot.logger.log(this.getClass().getName(), "constructor", new HashMap<String, Object>(){{
+    //   put("File Run", fileName);
+    // }});
+  }
+
+  // Called just before this Command runs the first time
+  @Override
+  protected void initialize() {
+
+    // TODO make sure angle actually serts to zero (firmware update NavX)
+    // TODO Think through what we want out of angle, maybe go off an initial angle
+    Robot.sensors.resetNavX();
+    System.out.println("START ANGLE: " + Pathfinder.boundHalfDegrees(Robot.sensors.getYawDoubleForPathfinder()));
+
+    initialLeftEncoder = -1 * Robot.driveBase.getLeftEncoderPosition();
+    initialRightEncoder = Robot.driveBase.getRightEncoderPosition();
+
+    // Set up Robot for Auton Driving
+    Robot.driveBase.initAutonDrive();
+
+    // Encoder Position is the current, cumulative position of your encoder. If you're using an SRX, this will be the
+    // 'getEncPosition' function.
+    // 1000 is the amount of encoder ticks per full revolution
+    // Wheel Diameter is the diameter of your wheels (or pulley for a track system) in meters
+    left.configureEncoder(-1 * Robot.driveBase.getLeftEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.WHEEL_DIAMETER);
+    right.configureEncoder(Robot.driveBase.getRightEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.WHEEL_DIAMETER);
+
+    // The first argument is the proportional gain. Usually this will be quite high
+    // The second argument is the integral gain. This is unused for motion profiling
+    // The third argument is the derivative gain. Tweak this if you are unhappy with the tracking of the trajectory
+    // The fourth argument is the velocity ratio. This is 1 over the maximum velocity you provided in the 
+    //      trajectory configuration (it translates m/s to a -1 to 1 scale that your motors can read)
+    // The fifth argument is your acceleration gain. Tweak this if you want to get to a higher or lower speed quicker
+    left.configurePIDVA(1.0, 0.0, 0.0, (1) / (generation_MaxVelocity), (0.0));
+    right.configurePIDVA(1.0, 0.0, 0.0, (1) / (generation_MaxVelocity), (0.0));
+
+    executeCount = 0;
+
+   
+  }
+
+  // Called repeatedly when this Command is scheduled to run
+  @Override
+  protected void execute() {
+
+    // Example code from Jaci's Motion profiling, calculates distance for PID
+    /*
+    * LEFT ENCODER IS BACKWARDS SO WE MULTIPLY IT'S VALUE BY -1 TO FLIP IT
+    */
+    int leftEncoder = -1 * Robot.driveBase.getLeftEncoderPosition();
+    int rightEncoder = Robot.driveBase.getRightEncoderPosition();
+    // System.out.println("Right Encoder: " + rightEncoder + ", LeftEncoder: " + leftEncoder);
+    double l = left.calculate(leftEncoder);
+    double r = right.calculate(rightEncoder);
+    
+    // Calculates the angle offset for PID
+    double gyroHeading = Pathfinder.boundHalfDegrees(Robot.sensors.getYawDoubleForPathfinder());   // Assuming the gyro is giving a value in degrees
+    double desiredHeading = Pathfinder.boundHalfDegrees(Pathfinder.r2d(left.getHeading()));  // Should also be in degrees 
+    // Make sure gyro and desired angle match up [-180, 180], navX reports the opposite orientation as Pathfinder expects
+    double angleDifference = Pathfinder.boundHalfDegrees(desiredHeading - gyroHeading);
+
+ 
+
+    // Depending on motor orientation this -1 might need to be positive
+    
+    
+    // Making this constant higher helps prevent the robot from overturning (overturning also will make it not drive far enough in the correct direction)
+    double angleDivideConstant = 240.0; // Default = 80
+    // TODO MAKE THE -1 HERE MATCH uP WITH THE DIRECTION THE ROBOT SHOULD TURN
+    double turn = 0.8 * (-1.0/angleDivideConstant) * angleDifference;
+
+    
+    double leftOutput = l + turn;
+    double rightOutput = r - turn;
+    // System.out.println("LeftOutput: " + leftOutput + ", RightOutput: " + rightOutput);
+    double max = Math.max(leftOutput, rightOutput);
+    double min = Math.min(leftOutput, rightOutput);
+
+    // TODO think through all the possible cases here or rethink this to normalize
+    if(max > 1.0){
+
+    }
+    if(min < -1.0){
+      
+    }
+
+
+    // Drives the bot based on the input
+    Robot.driveBase.tankDrive(leftOutput, rightOutput);
+
+    
+    executeCount++;
+  }
+
+  // Make this return true when this Command no longer needs to run execute()
+  @Override
+  protected boolean isFinished() {
+    //This should probably be made to take into account robot speed as well in case the robot hits something and is unable to move further.
+    return left.isFinished() && right.isFinished();
+  }
+
+  // Called once after isFinished returns true
+  @Override
+  protected void end() {
+    end(false);
+  }
+
+  // Called when another command which requires one or more of the same
+  // subsystems is scheduled to run
+  @Override
+  protected void interrupted() {
+    end(true);
+  }
+
+  //Called in end/interrupted to differentiate between them for logging purposes
+  private void end(boolean isInterrupted){
+    System.out.println("Ending Angle: " + Pathfinder.boundHalfDegrees(Robot.sensors.getYawDoubleForPathfinder()));
+    System.out.println("Number of ticks traveled left: " + (-1 * Robot.driveBase.getLeftEncoderPosition() - initialLeftEncoder));
+    System.out.println("Number of ticks traveled right: " + (Robot.driveBase.getRightEncoderPosition() - initialRightEncoder));
+
+    Robot.driveBase.tankDrive(0, 0);
+
+
+
+  }
+
+}
