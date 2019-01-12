@@ -2,7 +2,8 @@
 
 Uses GradleRIO to build and deploy code.
 
-Directory Hierarchy goes as follows:
+## Directory Hierarchy ##
+
 </b>/main</b>
 <br><br>
 &nbsp;&nbsp;&nbsp;&nbsp;```/deploy```: Files to be deployed to the RoboRIO (ex. Pathfinder .traj or .csv paths)</b>
@@ -25,6 +26,8 @@ Directory Hierarchy goes as follows:
 <br><br>
 &nbsp;&nbsp;&nbsp;&nbsp;```/java/frc/teamXXX```: Any code written not by Team 670</b>
 
-Build with ```./gradlew build``` </b>
-Deploy while connected to the robot with ```./gradlew deploy``` You may need to build while connected to WiFi before being able to deploy </b>
+## Use ##
+
+Build with ```./gradlew build``` </b> <br><br>
+Deploy while connected to the robot with ```./gradlew deploy``` You may need to build while connected to WiFi before being able to deploy </b> <br><br>
 Launch the SmartDashboard with ```./gradlew smartdashboard```
