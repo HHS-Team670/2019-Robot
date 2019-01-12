@@ -6,33 +6,28 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
+import org.junit.experimental.theories.FromDataPoints;
 import org.opencv.core.MatOfPoint;
 
 import edu.wpi.first.wpilibj.DriverStation;
 
 /**
- * Modify this class to collect data to send to the Arduino to control LEDs based on this year's game.
+ * Modify this class to collect data to send based on this year's game.
  * 
  * Credit to team 957 for the sample code.
  * 
  * @author ctchen, shaylandias
  */
 public class MustangLEDs {
-
- 	/**
-     * Represents the different patterns that can be displayed by the strip.
-     */
-    public enum LEDState{FORWARD, REVERSED, VISION_DRIVE, CLIMBING};
-
-    private LEDState state = LEDState.FORWARD;
-
-	// Data Init. Change this to work with what we want to send to the Arduino.
+	// Data Init
 	String alliance = "Invalid";
-	String climbing = "false";
-	String gearData = "false";
-	
+	String climbing = "false  ";
+	String forwardDrive="false  ";
+	String reverseDrive="false  ";
+	String still="false  ";
+	String visionLock="false  ";
 	int xFinal = 2;
-	String data = "Invalid,false,false,2";
+	String data = "Invalid,false,false,";
 	
 	// Socket Init
 	ServerSocket serverSocket = null;
@@ -45,7 +40,6 @@ public class MustangLEDs {
 		try {
 			serverSocket = null;
 			serverSocket = new ServerSocket(server);
-			client = new clientManagement();
 			client.start();
 		} catch (IOException e) {
 			System.out.println("Unable to init Arduino server");
@@ -53,9 +47,6 @@ public class MustangLEDs {
 		
 	}
 	
-	/**
-	 * Changes alliance. True = blue, False = red.
-	 */
 	public void changeAlliance(boolean b) {
 		if(b) {
 			alliance = "blue   ";
@@ -65,9 +56,6 @@ public class MustangLEDs {
 		}
 	}
 
-	/**
-	 * Updates the alliance for the LEDs using the DriverStation given alliance
-	 */
 	public void updateAlliance(){ // Updates the Alliance Color in data transmission
 		
 		DriverStation.Alliance color = DriverStation.getInstance().getAlliance();
@@ -83,31 +71,72 @@ public class MustangLEDs {
 		}
 	}
 	
-	/**
-	 * @deprecated
-	 */
 	public void updateClimbingBoolean(boolean trigger){ // Updates if we are climbing
 		if(trigger == true){
-			climbing = "true ";
+			climbing = "true   ";
+			visionLock="false  ";
+			forwardDrive="false  ";
+			reverseDrive="false  ";
+			still="false  ";
+			String alliance = "Invalid";
+	// String climbing = "false  ";
+	// String forwardDrive="false  ";
+	// String reverseDrive="false  ";
+	// String still="false  ";
+	// String visionLock="false  ";
 		}else{
-			climbing = "false";
+			climbing = "false  ";
 		}
 	}
 	
-	/**
-	 * @deprecated
-	 */
-	public void updateGearData(boolean trigger){ // Updates if we have a gear
+	public void updateVisionData(boolean trigger){ //updates if we lock onto a vision target
 		if(trigger == true){
-			gearData = "true ";
+			visionLock = "true   ";
+			climbing = "false  ";
+			forwardDrive="false  ";
+			reverseDrive="false  ";
+			still="false  ";
 		}else{
-			gearData = "false";
+			visionLock = "false  ";
+		}
+	}
+	public void updateForwardDrive(boolean trigger){//update if we are driving forward
+		if(trigger=true){
+			forwardDrive="true   ";
+			climbing="false  ";
+			reverseDrive="false  ";
+			still="false  ";
+			visionLock="false  ";
+		}
+		else{
+			forwardDrive="false  ";
+		}
+	}
+	public void updateReverseDrive(boolean trigger){
+		if(trigger=true){
+			forwardDrive="false  ";
+			climbing="false  ";
+			reverseDrive="true  ";
+			still="false  ";
+			visionLock="false  ";
+		}
+		else{
+			reverseDrive="false  ";
+		}
+	}
+	public void updateStillDrive(boolean trigger){
+		if(trigger=true){
+			forwardDrive="false  ";
+			climbing="false  ";
+			reverseDrive="false  ";
+			still="true  ";
+			visionLock="false  ";
+		}
+		else{
+			still="false  ";
 		}
 	}
 	
-	/**
-	 * @deprecated
-	 */
 	public void update_xFinal(double acceptedXFinal){ // Updates xFinal in data
 		if(acceptedXFinal > 10 && acceptedXFinal != -666){
 			xFinal = 3;
@@ -149,10 +178,10 @@ public class MustangLEDs {
 			
 			while(true){
 				
-				// Compiles data into one nice neat string. Change this to match what we want to display and change the arduino to match.
-				 // I suggest alliance + LEDState (forward, reversed, visiondrive, climb) + modifiers (turning, celebrating, etc.)
-				data = alliance + "," + gearData + "," + climbing + "," + xFinal + "," + "false";
+				// Compiles data into one nice neat string
 				
+				data = alliance + "," + climbing + "," + forwardDrive+ "," +reverseDrive + "," + still+ "," +visionLock+","+xFinal;
+	
 				System.out.println(data);
 				
 				// Sends data to the Arduino/Ethernet Shield
@@ -185,18 +214,4 @@ public class MustangLEDs {
 			
 		}			
 	}	
-
-	 /**
-     * Returns the current state of the LED strip (the pattern currently being displayed)
-     */
-    public LEDState getCurrentState() {
-        return state;
-    }
-	 /**
-	  * Sets the LEDState to the given LEDState.
-	  */
-    public void setLEDState(LEDState state) {
-        this.state = state;
-    }
-
 }

@@ -35,6 +35,8 @@ public class Robot extends TimedRobot {
   public static DriveBase driveBase = new DriveBase();
   private MustangLEDs leds = new MustangLEDs();
 
+  private long savedTime;
+
   Command autonomousCommand;
   SendableChooser<Command> auton_chooser = new SendableChooser<>();
 
@@ -61,6 +63,9 @@ public class Robot extends TimedRobot {
     // chooser.addObject("My Auto", new MyAutoCommand());
     SmartDashboard.putData("Auto mode", auton_chooser);
     Logger.consoleLog();
+    savedTime = System.currentTimeMillis();
+
+    leds.socketSetup(RobotConstants.LED_PORT);
 
   }
 
@@ -74,6 +79,20 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+
+    if(System.currentTimeMillis() > savedTime + 1000) {
+      leds.updateClimbingBoolean(true);
+    }
+    else if(System.currentTimeMillis() > savedTime + 2000) {
+      leds.updateForwardDrive(true);
+    }
+    else if(System.currentTimeMillis() > savedTime + 3000) {
+      leds.updateReverseDrive(true);
+    }
+    else if(System.currentTimeMillis() > savedTime + 4000) {
+      leds.updateVisionData(true);
+      savedTime = System.currentTimeMillis();
+    }
   }
 
   /**

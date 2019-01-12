@@ -19,7 +19,8 @@ EthernetClient robotClient;                         //Defines a client to be use
 byte mac[] = {                                      //Creates a mac address for use in defining an Ethernet instance
   0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED
 };
-IPAddress ip(10,9,57,6);                            //Defines a static IP for the Arduino/Ethernet Shield
+I
+PAddress ip(10,9,57,6);                            //Defines a static IP for the Arduino/Ethernet Shield
 IPAddress robotIp(10,9,57,2);                       //Defines the robot's IP
 
 int connectionTimer = 0;                            //Sets a connection timer to see if the program should reconnect to the RoboRio in case it becomes disconnected
@@ -27,14 +28,20 @@ int connectionTimer = 0;                            //Sets a connection timer to
 char dataChar;                                      //Used for storing a character before inputing it into dataArray[]
 String dataString = "";                             //Used for building a string to then splice into multiple parts to control the LEDs
 String alliance = "invalid";                        //Sets a default alliance,
-String gear = "false";                              //Gear state,
-String climbing = "false";                          //Climbing state,
 String xFinal = "2";                                //data for where the peg is via vision program,
 String truexFinal = "center";
-String inTeleOp = "false";  
-String visionLocked = "false"; 
 String outake = "succesful";                        //If the robot is in driver controlled mode
 const int numberOfPixels=strip.numPixels;
+
+
+String alliance = "Invalid";
+String climbing = "false  ";
+String forwardDrive="false  "
+String reverseDrive-="false  ";
+String still="false  ";
+String visionLock="false  ";
+String data = "Invalid,false,false,"
+int xFinal = 2;
 
 
 int asciiArray[] = {                                //Please use the ASCII converter at https://www.arduino.cc/en/Reference/ASCIIchart
@@ -52,14 +59,6 @@ int r;                                              //Alliance color red value
 int b;                                              //Alliance color blue value
 
 
-enum robotState{
-  climbing,
-  visionLocked,
-  forwardDrive,
-  reverseDrive,
-  still,
-};
-
 robotState robotState = still;
   
 void setup() {                                      //Sets up constants before program begins     
@@ -71,6 +70,7 @@ void setup() {                                      //Sets up constants before p
 
 void loop() {                                       //Ran indefinitly after setup()
   connectionTimer++;                                //Adds a count to the ConnectionTimer
+  
   if(robotClient.available()){                      //Runs when bytes are available to read
     connectionTimer = 0;                            //Sets the connectionTimer countdown to zero
     dataString = "";                                //Resets our final data string
@@ -80,23 +80,31 @@ void loop() {                                       //Ran indefinitly after setu
     }
     dataString.remove(0,2);                         //Removes two garbage characters from the start of the string
 
+
     alliance = dataString.substring(0,7);           //Grabs the expected location of various data, puts it in variables
-    gear = dataString.substring(8,13);              
-    climbing = dataString.substring(14,19);         
-    xFinal = dataString.substring(20,21);
-    inTeleOp = dataString.substring(22,26);
-    if(xFinal == "1"){                              //If xFinal is equal to 1, it is to the left of the camera
+    climbing = dataString.substring(8,15);              
+    forwardDrive = dataString.substring(16,23);         
+    reverseDrive = dataString.substring(24,31);
+    still = dataString.substring(25,32);
+    visionLock = dataString.substring(33,40);
+    still = dataString.substring(41,48);
+
+
+    
+    if(xFinal.equals("1")){                              //If xFinal is equal to 1, it is to the left of the camera
       truexFinal = "left";
     }
-    if(xFinal == "2"){                              //If xFinal is equal to 2, it is centered to the camera
+    if(xFinal.equals("2")){                              //If xFinal is equal to 2, it is centered to the camera
       truexFinal = "center";
     }
-    if(xFinal == "3"){                              //If xFinal is equal to 3, it is to the right of the camera
+    if(xFinal.equals("3")){                              //If xFinal is equal to 3, it is to the right of the camera
       truexFinal = "right";
     }
+   //				data = alliance + "," + climbing + "," + forwardDrive+ "," +reverseDrive + "," + still+ "," +visionLock+","+xFinal;
+
     Serial.println("Alliance?: " + alliance +       //Prints out the data above to the serial console
-      ", Gear?: "  + gear + ", Climbing?: " + 
-      climbing + ", xFinal?: " + truexFinal + ", " inTeleOp); 
+      ", Climbing?: "  + climbing + ", forwardDrive?: " + 
+      forwardDrive + ", reverseDrive?: " + reverseDrive + ", still?:" still+", visionLock?:"+visionLock+", xFinal?:"+xFinal); 
   }
       
   //Below here is code to control the LED's from the data obtained above
@@ -104,52 +112,62 @@ void loop() {                                       //Ran indefinitly after setu
   for(int i = 0; i < strip.numPixels(); i++){       //Resets the full LED strip...
     strip.setPixelColor(i,0,0,0);                   //...by setting each LED to black
   }
-void reset(){
+  void reset(){
   strip.begin();
   strip.show(); //initialize all pixels to "off"
-}
-//light show for climbing
-void climbing() { 
-  while(robotState == "climbing"){
-    for(int i = 0; i < numberOfPixels; i++;){
-      strip.setPixelColor(i,76,156,20);
-      strip.show();
+  
+  }
+  //light show for climbing
+  void climbing() { 
+    while(climbing.equals("climbing")){
+      for(int i = 0; i < numberOfPixels; i++;){
+        trip.setPixelColor(i,76,156,20);
+        strip.show();
     }
-    strip.reset();//allows strip to reset and display LEDs again – allows the LEDs to "snake around the strip"
+          strip.reset();//allows strip to reset and display LEDs again – allows the LEDs to "snake around the strip"
   }
 }
 //light show for vision lock
-void visionLock(){
-  while(robotState == "visionLocked"){
-    for(int i = 0; i < numberOfPixels; i++;){
-      strip.setPixelColor(i,r,b,0);
+  void visionLock(){
+    while(visionLock.equals("visionLocked")){
+      for(int i = 0; i < numberOfPixels; i++;){
+        strip.setPixelColor(i,r,b,0);
     }
-    strip.show();
+          strip.show();
   }
   
 }
 //light show for forward drive
-void forwardDrive(){
-  while(robotState == "forwardDrive"){
-    for(int i = 0; i < numberOfPixels; i++){
-      strip.setPixelColor(i,200,200,0)
+  void forwardDrive(){
+    while(forwardDrive.equals("forwardDrive")){
+      for(int i = 0; i < numberOfPixels; i++){
+        strip.setPixelColor(i,200,200,0)
     }
-    strip.show();
+          strip.show();
   }
 }
 //light show for reverse drive 
-void reverseDrive(){
-while(robotState == "reverseDrive"){
-    for(int i = 0; i < numberOfPixels; i++){
-      strip.setPixelColor(i,200,200,200)
+  void reverseDrive(){
+    while(reverseDrive.equals("reverseDrive")) {
+      for(int i = 0; i < numberOfPixels; i++)
+      {
+        strip.setPixelColor(i,200,200,200)
     }
-    strip.show();
+          strip.show();
   }
 }
 
-while(true){
-  climbing();
-  visionLock();
-  forwardDrive();
-  reverseDrive();
+  void  stillDrive(){
+   while(still.equals("true"))
+      for(int i = 0; i < numberOfPixels; i++)
+      {
+       strip.setPixelColor(i,200,200,200)
+}
+
+  while(true){
+    climbing();
+    visionLock();
+    forwardDrive();
+    reverseDrive();
+    stillDrive();
 }
