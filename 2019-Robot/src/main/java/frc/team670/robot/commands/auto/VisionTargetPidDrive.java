@@ -21,7 +21,7 @@ import frc.team670.robot.utils.functions.MathUtils;
 /**
  * Drives towards the vision target on the field using distance and angle from the raspberry pi vision
  * code to feed a PID loop.
- * @author hanyun, shaylandias, meganchoy, pallavidas
+ * @author hanyun, shaylandias, meganchoy, pallavidas, kabirbatra, varunjoshi
  */
 public class VisionTargetPidDrive extends Command {
 
