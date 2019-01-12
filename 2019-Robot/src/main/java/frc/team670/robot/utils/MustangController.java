@@ -52,6 +52,7 @@ public class MustangController extends Joystick {
         super(port);
     }
 
+    // helps you get varoius axis and buttons on the XBox controller
     public double getLeftStickX() {
         return super.getRawAxis(XboxButtons.leftStickX);
     }
@@ -120,6 +121,8 @@ public class MustangController extends Joystick {
         return super.getPOV();
     }
 
+    // gets angle of the DPad on the XBox controller pressed with increments of 45 degree angle. 
+    // returns neutal or -1 when nothing is pressed
     public DPadState getDPadState() {
         
         int angle = super.getPOV();
