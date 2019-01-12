@@ -139,7 +139,7 @@ public class MustangController extends Joystick {
         else if(angle > 0 && angle < 90) {
             return DPadState.UP_RIGHT;
         }
-        else if(angle >= 315 && angle != 0) {
+        else if(angle >= 270 && angle != 0) {
             return DPadState.UP_LEFT;
         }
         else if(angle > 90 && angle < 180) {
