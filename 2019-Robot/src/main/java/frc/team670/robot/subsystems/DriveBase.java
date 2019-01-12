@@ -179,18 +179,77 @@ public class DriveBase extends Subsystem {
   }
 
   /*
-   * Gets the voltage fed into the motor controller
+   * Gets the voltage fed into the motor controllers on the left side of the robot
    */
-  public double getVoltage(CANSparkMax motorController){
-    return  motorController.getBusVoltage();
+  public double getLeftInputVoltage(){
+    double output = left1.getBusVoltage() + left2.getBusVoltage();
+    return output;
   }
 
   /*
-   * Gets the motor controller's output voltage
+   *Get the voltage fed into the motor controllers on the right side of the robot
    */
-  public double getOutput(CANSparkMax motorController) {
-    return motorController.getAppliedOutput();
+  public double getRightInputVoltage(){
+    double output = right1.getBusVoltage() + right2.getBusVoltage();
+    return output;
   }
+  
+  /*
+   * Gets the output voltage of the motor controllers on the left side of the robot
+   */
+  public double getLeftOutputVoltage() {
+    double output = left1.getAppliedOutput() + left2.getAppliedOutput();
+    return output;
+  }
+
+  /*
+   * Gets the output voltage of the motor controllers on the right side of the robot
+   */ 
+  public double getRightOutputVoltage(){
+    double output = right1.getAppliedOutput() + right2.getAppliedOutput();
+    return output;
+  }
+
+  /*
+   * Gets the output current (in amps) of the motor controllers on the left side of the robot
+   */
+  public double getLeftOutputCurrent() {
+    double output = left1.getOutputCurrent() + left2.getOutputCurrent();
+    return output;
+  }
+
+  /*
+   * Gets the output current (in amps) of the motor controllers on the right side of the robot
+   */
+  public double getRightOutputCurrent(){
+    double output = right1.getOutputCurrent() + right2.getOutputCurrent();
+    return output;
+  }
+
+  /*
+   * Gets the input voltage of all the motor controllers on the robot
+   */
+  public double getRobotInputVoltage(){
+    double output = left1.getBusVoltage() + left2.getBusVoltage() + right1.getBusVoltage() + right2.getBusVoltage();
+    return output;
+  }
+
+  /*
+   * Gets the output voltage of all the motor controllers on the robot
+   */
+  public double getRobotOutputVoltage(){
+    double output = left1.getAppliedOutput() + left2.getAppliedOutput() + right1.getAppliedOutput() + right2.getAppliedOutput();
+    return output;
+  }
+
+  /*
+   * Gets the output current of all the motor controllers on the robot
+   */
+  public double getRobotOutputCurrent(){
+    double output = left1.getOutputCurrent() + left2.getOutputCurrent() + right1.getOutputCurrent() + right2.getOutputCurrent();
+    return output;
+  }
+
   /**
    * 
    * Drives the Robot using an arcade drive configuration (single joystick with twist)
