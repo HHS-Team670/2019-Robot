@@ -175,7 +175,6 @@ public class VisionPIDEncoderDependent extends Command {
     private PIDSourceType pidSourceType;
     private Pose poseAtVisionLoss;
     private ArrayList<Pose> lastPoses; // ArrayList to contain the last 5 poses for cross-referencing with vision.
-    private double targetAngle, targetDistance;
     
     private boolean isDistance;
 
@@ -201,15 +200,15 @@ public class VisionPIDEncoderDependent extends Command {
       // return distance left, or angle left
       double visionValue = visionSource.pidGet();
       Pose currentPose = robotPosition.clone();
-      Pose lastPose = lastPoses.get(0);
+      Pose poseAtTimeOfVisionData = lastPoses.get(0);
       
       lastPoses.add(currentPose);
       double visionTimeStamp = visionSource.getTimeStamp();
       for (int i = 1; i < lastPoses.size(); i++) {
         Pose nPose = lastPoses.get(i);
         if (nPose != null) {
-          if(Math.abs(nPose.getTimeOfPose() - visionTimeStamp) < Math.abs(lastPose.getTimeOfPose() - visionTimeStamp))  {
-            lastPose = nPose;
+          if(Math.abs(nPose.getTimeOfPose() - visionTimeStamp) < Math.abs(poseAtTimeOfVisionData.getTimeOfPose() - visionTimeStamp))  {
+            poseAtTimeOfVisionData = nPose;
           }
         }
       }
@@ -232,17 +231,19 @@ public class VisionPIDEncoderDependent extends Command {
         
         if (isDistance) {
           // This can be made more efficient by calculating this only once. Gets the target Coordinate Values.
-          long targetX = poseAtVisionLoss.getPosX() + (int)(Math.cos(Math.toRadians(targetAngle)) * targetDistance);
-          long targetY = poseAtVisionLoss.getPosY() + (int)(Math.sin(Math.toRadians(targetAngle)) * targetDistance);
+          long visionTimePoseX = poseAtTimeOfVisionData.getPosX();
+          long visionTimePoseY = poseAtTimeOfVisionData.getPosY();
+          
+          long targetX = visionTimePoseX + (int)(Math.cos(Math.toRadians(targetAngle)) * targetDistance);
+          long targetY = visionTimePoseY + (int)(Math.sin(Math.toRadians(targetAngle)) * targetDistance);
 
           // Current Coordinate Values
           long currentPoseX = currentPose.getPosX();
           long currentPoseY = currentPose.getPosY();
 
-          // Distance from current coordinate values to target coordinate values.
-          double distance = MathUtils.findDistance(currentPoseX, currentPoseY, targetX, targetY);
+          double timeAccountedDistanceFromRobot = MathUtils.findDistance(targetX, targetY, currentPoseX, currentPoseY);
 
-          return distance;
+          return timeAccountedDistanceFromRobot;
         }
         else { // Needs to return an angle
           double currentAngle = currentPose.getRobotAngle();
@@ -250,11 +251,21 @@ public class VisionPIDEncoderDependent extends Command {
         }
       }
       else {  // if there is no error
-        lastPose = null;
+        poseAtTimeOfVisionData = null;
         lastPoses.remove(0);
         if (isDistance) {
-          targetDistance = visionValue;
-        } 
+          // This can be made more efficient by calculating this only once. Gets the target Coordinate Values.
+          long visionTimePoseX = poseAtTimeOfVisionData.getPosX();
+          long visionTimePoseY = poseAtTimeOfVisionData.getPosY();
+          
+          long targetX = visionTimePoseX + (int)(Math.cos(Math.toRadians(targetAngle)) * targetDistance);
+          long targetY = visionTimePoseY + (int)(Math.sin(Math.toRadians(targetAngle)) * targetDistance);
+
+          // Current Coordinate Values
+          long currentPoseX = currentPose.getPosX();
+          long currentPoseY = currentPose.getPosY();
+
+          visionValue = MathUtils.findDistance(targetX, targetY, currentPoseX, currentPoseY);        } 
         else {
           targetAngle = visionValue;
         }

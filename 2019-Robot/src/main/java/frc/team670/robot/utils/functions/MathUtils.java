@@ -86,7 +86,7 @@ public class MathUtils {
      * Returns the distance (always positive) between two points in a coordinate system.
      * @param x1 The x-coord of point 1
      * @param y1 The y-coord of point 1
-     * @param x1 The x-coord of point 2
+     * @param x2 The x-coord of point 2
      * @param y2 The y-coord of point 2
      */
     public static double findDistance(double x1, double y1, double x2, double y2) {
