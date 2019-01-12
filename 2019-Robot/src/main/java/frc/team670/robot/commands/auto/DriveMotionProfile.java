@@ -12,6 +12,7 @@ package frc.team670.robot.commands.auto;
 
 import java.io.File;
 
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
@@ -29,14 +30,8 @@ import jaci.pathfinder.modifiers.TankModifier;
  */
 
 public class DriveMotionProfile extends Command {
-/** changed the conversion factor of INCHES_PER_METER
- * , Aditya Senthilvel */
+
   private Waypoint[] waypoints = new Waypoint[]{new Waypoint(0, 0, 0)};
-  // private final double INCHES_PER_METER = 39.3701;
-  /**  Set this to true if you want to do commands in inches */
-  public static final boolean CONVERT_TO_INCHES = false; 
-  
-  // private double unitConversion;
   private Trajectory.Config config;
   private Trajectory trajectory;
   private TankModifier modifier;
@@ -55,12 +50,7 @@ public class DriveMotionProfile extends Command {
   /**
    * Drives a Pathfinder Motion Profile using set Waypoints
    */
-  
-  /** changed values of dt, max acceleration, and max velocity from meters to inches using the variable INCHES_PER_METER
-   * , (Aditya Senthilvel)*/
   public DriveMotionProfile(Waypoint[] waypoints) {
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
     requires(Robot.driveBase);
 
     this.waypoints = waypoints.clone();
@@ -77,18 +67,16 @@ public class DriveMotionProfile extends Command {
 
   /**
    * Creates a DriveMotionProfile from a text file
-   * @param fileName path to trajectory file inside the trajectory_files folder
+   * @param fileName path to trajectory file inside the deploy folder
    */
   public DriveMotionProfile(String fileName) {
 
     String binary = "traj";
     String csv = "csv";
     
-    // unitConversion = (CONVERT_TO_INCHES) ? RoboConstants.INCHES_PER_METER : 1;
-
     requires(Robot.driveBase);
 
-    String pathname = BASE_PATH_NAME + fileName;
+    String pathname = Filesystem.getDeployDirectory() + fileName;
     System.out.println("Path Name: " + pathname);
     File file = new File(pathname);
 
@@ -110,17 +98,12 @@ public class DriveMotionProfile extends Command {
       // For here let's set it to 
       config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, (0.02), (generation_MaxVelocity), (2.0), 60.0);
       trajectory = Pathfinder.generate(waypoints, config);
-      
     }
 
-    // TODO set track width
     modifier = new TankModifier(trajectory).modify(RobotConstants.DRIVEBASE_TRACK_WIDTH);
     left = new EncoderFollower(modifier.getLeftTrajectory());
     right= new EncoderFollower(modifier.getRightTrajectory());
 
-    // Robot.logger.log(this.getClass().getName(), "constructor", new HashMap<String, Object>(){{
-    //   put("File Run", fileName);
-    // }});
   }
 
   // Called just before this Command runs the first time
@@ -183,19 +166,15 @@ public class DriveMotionProfile extends Command {
     double angleDivideConstant = 240.0; // Default = 80
     // TODO MAKE THE -1 HERE MATCH uP WITH THE DIRECTION THE ROBOT SHOULD TURN
     double turn = 0.8 * (-1.0/angleDivideConstant) * angleDifference;
-
     
     double leftOutput = l + turn;
     double rightOutput = r - turn;
-    // System.out.println("LeftOutput: " + leftOutput + ", RightOutput: " + rightOutput);
-    double max = Math.max(leftOutput, rightOutput);
-    double min = Math.min(leftOutput, rightOutput);
 
     // Drives the bot based on the input
     Robot.driveBase.tankDrive(leftOutput, rightOutput); 
 
     if(executeCount % 5 == 0) {
-      Logger.consoleLog("Execute: gyroHeading: %s desiredHeading: %s  angleDifference: %s angleDivideConstant: %s turn: %s leftOuput: %s rightOutput: %s max: %s min: %s", gyroHeading, desiredHeading, angleDifference, angleDivideConstant, turn, leftOutput , rightOutput, max, min ) ;
+      Logger.consoleLog("Execute: gyroHeading: %s, desiredHeading: %s, angleDifference: %s, angleDivideConstant: %s, turn: %s, leftOuput: %s, rightOutput: %s", gyroHeading, desiredHeading, angleDifference, angleDivideConstant, turn, leftOutput , rightOutput) ;
     }
 
     executeCount++;
@@ -211,27 +190,17 @@ public class DriveMotionProfile extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    end(false);
     Robot.driveBase.tankDrive(0, 0);
+    Logger.consoleLog("Ended. EndingAngle: %s, EndingLeftTicks: %s, EndingRightTicks: %s", Pathfinder.boundHalfDegrees(Robot.sensors.getYawDoubleForPathfinder()), 
+                     (-1 * Robot.driveBase.getLeftEncoderPosition() - initialLeftEncoder), (Robot.driveBase.getRightEncoderPosition() - initialRightEncoder));
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    end(true);
-    Robot.driveBase.tankDrive(0, 0);
-    Logger.consoleLog("The Program has ended ") ;
-
-  }
-
-  //Called in end/interrupted to differentiate between them for logging purposes
-  private void end(boolean isInterrupted){
-    System.out.println("Ending Angle: " + Pathfinder.boundHalfDegrees(Robot.sensors.getYawDoubleForPathfinder()));
-    System.out.println("Number of ticks traveled left: " + (-1 * Robot.driveBase.getLeftEncoderPosition() - initialLeftEncoder));
-    System.out.println("Number of ticks traveled right: " + (Robot.driveBase.getRightEncoderPosition() - initialRightEncoder));
-
-    Robot.driveBase.tankDrive(0, 0);
+    Logger.consoleLog("Interrupted") ;
+    end();
   }
 
 }
