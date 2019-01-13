@@ -25,10 +25,10 @@ int connectionTimer = 0;                            //Sets a connection timer to
 
 char dataChar;                                      //Used for storing a character before inputing it into dataArray[]
 
-String dataString = "";                             //Used for building a string to then splice into multiple parts to control the LEDs
-String xFinal = "2";                                //data for where the peg is via vision program,
-String truexFinal = "center";
-String alliance = "Invalid";
+// String dataString = "";                             //Used for building a string to then splice into multiple parts to control the LEDs
+// String xFinal = "2";                                //data for where the peg is via vision program,
+// String truexFinal = "center";
+// String alliance = "Invalid";
 // String climbing = "false  ";
 // String forwardDrive="false  ";
 // String reverseDrive="false  ";
@@ -36,20 +36,33 @@ String alliance = "Invalid";
 // String visionLock="false  ";
 
 //enum robot state declarations
-enum robotState 
-{   
-    climbing, 
-    forwardDrive,
-    reverseDrive,
-    still,
-    visionLock,
+
+enum RobotState{
+	FORWARD_DRIVE,
+  REVERSE_DRIVE,
+  VISION_LOCK,
+  STILL_DRIVE,
+  CLIMBING,
 };
-//assigning enums to variables
-robotState climbingValue=climbing;
-robotState forwardDriveValue=forwardDrive;
-robotState reverseDriveValue=reverseDrive;
-robotState stillValue=still;
-robotState visionLockValue=visionLock;
+
+enum XFinal{
+	XFINAL1,
+  XFINAL2,
+  XFINAL3,
+};
+enum AllianceColor{
+	RED,
+  BLUE,
+  INVALID,
+};
+
+RobotState robotData= = STILL_DRIVE;
+XFinal xFinal=XFINAL2;
+AllianceColor allianceColor=INVALID;
+	
+String stateData;
+String allianceData;
+String xFinalData;
 
 
 int numberOfPixels=strip.numPixels();
@@ -88,16 +101,11 @@ void loop() {
       dataChar = asciiConvert(robotClient);         //Processes an ASCII byte into a readable character        
       dataString = dataString + dataChar;           //Combines the character with the full data string    
     }
+    //parses dataString and receives corresponding values from Java program
     dataString.remove(0,2);                         //Removes two garbage characters from the start of the string
-
-
-    alliance = dataString.substring(0,7);           //Grabs the expected location of various data, puts it in variables
-    climbing = dataString.substring(8,15);              
-    forwardDrive = dataString.substring(16,23);         
-    reverseDrive = dataString.substring(24,31);
-    still = dataString.substring(25,32);
-    visionLock = dataString.substring(33,40);
-    xFinal = dataString.substring(41,42);
+    robotData = dataString.substring(0,2);           //Grabs the expected location of various data, puts it in variables
+    allianceData = dataString.substring(3,5);              
+    xFinalData=dataString.substring(6,8)
 
 
     
