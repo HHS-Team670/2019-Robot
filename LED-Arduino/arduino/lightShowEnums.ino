@@ -37,29 +37,9 @@ char dataChar;                                      //Used for storing a charact
 
 //enum robot state declarations
 
-enum RobotState{
-	FORWARD_DRIVE,
-  REVERSE_DRIVE,
-  VISION_LOCK,
-  STILL_DRIVE,
-  CLIMBING,
-};
 
-enum XFinal{
-	XFINAL1,
-  XFINAL2,
-  XFINAL3,
-};
-enum AllianceColor{
-	RED,
-  BLUE,
-  INVALID,
-};
 
-RobotState robotData= = STILL_DRIVE;
-XFinal xFinal=XFINAL2;
-AllianceColor allianceColor=INVALID;
-	
+]
 String stateData;
 String allianceData;
 String xFinalData;
@@ -105,46 +85,44 @@ void loop() {
     dataString.remove(0,2);                         //Removes two garbage characters from the start of the string
     stateData = dataString.substring(0,2);           //Grabs the expected location of various data, puts it in variables
     allianceData = dataString.substring(3,5);              
-    xFinalData=dataString.substring(6,8)
-
+    xFinalData=dataString.substring(6,8);
 
     
+    
     if(xFinalData=="1X"){                              //If xFinal is equal to 1, it is to the left of the camera
-      XFinal=XFINAL1;
+      strip.setPixelColor(11,100,200,255);
     }
     if(xFinalData=="2X"){                              //If xFinal is equal to 2, it is centered to the camera
-      XFinal=XFINAL2;
+      strip.setPixelColor(12,150,20,130)
     }
     if(xFinalData=="3X"){                              //If xFinal is equal to 3, it is to the right of the camera
-      XFinal=XFINAL3;
+      strip.setPixelColor(13,10,255,100);
     }
 
-    Serial.println("Alliance?: " + alliance +       //Prints out the data above to the serial console
-      ", Climbing?: "  + climbing + ", forwardDrive?: " + 
-      forwardDrive + ", reverseDrive?: " + reverseDrive + ", still?:" +still+", visionLock?:"+visionLock+", xFinal?:"+xFinal); 
+    // Serial.println("Alliance?: " + alliance +       //Prints out the data above to the serial console
+    //   ", Climbing?: "  + climbing + ", forwardDrive?: " + 
+    //   forwardDrive + ", reverseDrive?: " + reverseDrive + ", still?:" +still+", visionLock?:"+visionLock+", xFinal?:"+xFinal); 
   
   }
 
   //Below here is code to control the LED's from the data obtained above
-  
+  void reset(){
   for(int i = 0; i < numberOfPixels; i++){       //Resets the full LED strip...
     strip.setPixelColor(i,0,0,0);                   //...by setting each LED to black
+  }
   }
 //  void reset(){
 //  strip.begin();
 //  strip.show(); //initialize all pixels to "off"
 //  }
- if(allianceData== "1A"){                        //If the alliance is blue, set the base LED color to blue
-    r = 0;
-    b = 255;
+ if(allianceData=="1A"){                        //If the alliance is blue, set the base LED color to blue
+    AllianceColor=BLUE;
   }
-  if(alliance == "2A"){                        //If the alliance is red, set the base LED color to red
-    r = 255;
-    b = 0;
+  if(allianceData=="2A"){                        //If the alliance is red, set the base LED color to red
+    AllianceColor=RED;
   }
-  if(alliance == "3A"){                        //If no alliance is specified, set the base LED color to purple
-    r =1;
-    b = 100;
+  if(allianceData== "3A"){                        //If no alliance is specified, set the base LED color to purple
+    AllianceColor=INVALID;
   }
   
  
