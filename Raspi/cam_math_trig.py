@@ -229,18 +229,19 @@ def __find_depth(image, rectangle, focal_length, known_diagonal):
     else:
         return 0
 
-def depth_from_angle(image, rectangles, angle, known_height):
+def depth_from_angle(image, rectangles, vangle, hangle, known_height):
     '''
     Returns the depth of the tape when given the height of the tape (from the
     center of the camera to the middle of the tape), the angle to the center
     of the tape, the focal length, and the original image (to get its size).
     '''
     # Keep tangent from being undefined
-    if angle == 0:
-        angle += 0.0001
+    if vangle == 0:
+        vangle = 0.0001
     # Do some calculations
-
-    depth = known_height / math.tan(math.radians(abs(angle)))
+        
+    depth = known_height / math.tan(abs(vangle))
+    #depth = depth / math.cos(abs(hangle))
     return depth
 
 def find_horizontal_angle(image, rectangles, horizontal_fov):
@@ -271,6 +272,12 @@ def find_vert_focal_length(image, vert_fov):
     height = image.shape[:2][0]
 
     calc_focal_length = height / (2 * math.tan(math.radians(vert_fov / 2)))
+    return calc_focal_length
+
+def find_hor_focal_length(image, hor_fov):
+    width = image.shape[:2][1]
+
+    calc_focal_length = width / (2 * math.tan(math.radians(hor_fov / 2)))
     return calc_focal_length
 
 
@@ -316,6 +323,23 @@ def find_vert_angle(image, y, focal_length):
     vertical_angle = -1 * math.degrees(math.atan((y_from_bottom - center_y) / focal_length))
     return vertical_angle
 
+def find_hor_angle(image, x, focal_length):
+    '''
+    Returns the ACTUAL vertical angle of the given y point in an image.
+    This is the angle that the robot needs to look up / down in order to
+    directly face the image. Requires the actual image and focal
+    length of the camera.
+    '''
+
+    # Find center y point
+    image_width = image.shape[:2][1]
+    center_x = image_width / 2
+    x_from_bottom = image_width-x
+
+    # Calculate the angle using fancy formula
+    horizontal_angle = -1 * math.degrees(math.atan((x_from_bottom - center_x) / focal_length))
+    return horizontal_angle
+
 
 def __find_vertical_angle(image, rectangles, vertical_fov):
     '''
@@ -357,7 +381,6 @@ def find_big_rect(rectangles):
         for i in bp:
             box_points.append(i)
     for c in box_points:
-
     return rect
 '''
 
@@ -412,7 +435,7 @@ def mouse_click_handler(event, x, y, flags, params):
         print("HSV value of point ({}, {}) is ({}, {}, {})".format(norm_x, norm_y, h, s, v))
 
 
-def draw_output_image(image, rectanglelist, depth, angle): ##edited
+def draw_output_image(image, rectanglelist, depth, vangle, hangle): ##edited
     '''
     Draws everything on the original image, and returns an image with
     all the information found by this program.
@@ -428,7 +451,9 @@ def draw_output_image(image, rectanglelist, depth, angle): ##edited
     # Draw the depth / angle of the object
     cv2.putText(output_image, "%.2f inches" % depth, (10, height - 10),
                 cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 0, 255), 3)
-    cv2.putText(output_image, "%.2f degrees" % angle, (10, height - 60),
+    cv2.putText(output_image, "%.2f degrees v" % vangle, (10, height - 60),
+                cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 255), 3)
+    cv2.putText(output_image, "%.2f degrees h" % hangle, (10, height - 110),
                 cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 255), 3)
     return output_image
 
@@ -439,18 +464,23 @@ def main():
     # Variables (These should be changed to reflect the camera)
     capture_source = 0 # 0 for camera, file path for video
     capture_color = 'g'  # Possible: r (Red), g (Green), b (Blue), y (Yellow)
-    known_object_height = 9  # The height of the tape from the ground (in inches)
-    known_camera_height = 1.5
-    camera_fov = 40.7 # FOV of the camera (in degrees)
+    known_object_height = 12.75  # The height of the tape from the ground (in inches)
+    known_camera_height = 2.0
+    camera_fov_vertical = 39.7 # FOV of the camera (in degrees)
+    camera_fov_horizontal = 60.0
     image_width = 1080  # Desired width of inputted image (for processing speed)
     screen_resize = 1  # Scale that the GUI image should be scaled to
-    calibrate_angle = 0  # Test to calibrate the angle and see if that works
+    calibrate_angle = 0  # Test to calibrate the angle and see if that works    exposure = -10
+    exposure = -8
+
 
     # Video capture / resizing stuff
     ##fps = FPS().start() # EDIT framerate checker
+    cv2.VideoCapture(capture_source).set(cv2.CAP_PROP_EXPOSURE, exposure)
     vs = ThreadedVideo(screen_resize, capture_source).start() ## EDIT thread implementation (any instances of 'capture' from here down are written as 'vs.stream'
     resize_value = get_resize_values(vs.stream, image_width)
-    vert_focal_length = find_vert_focal_length(vs.raw_read(), camera_fov)
+    vert_focal_length = find_vert_focal_length(vs.raw_read(), camera_fov_vertical)
+    hor_focal_length = find_hor_focal_length(vs.raw_read(), camera_fov_horizontal)
 
     while True:
         # Read input image from video
@@ -483,13 +513,15 @@ def main():
         # angle = find_vertical_angle(input_image, object_rects, camera_fov)
         # angle -= calibrate_angle
         high_point = find_rectangle_highpoint(input_image, object_rects)[1]
-        angle = find_vert_angle(input_image, high_point, vert_focal_length)
-        depth = depth_from_angle(input_image, object_rects, angle, known_object_height - known_camera_height)
+        vangle = find_vert_angle(input_image, high_point, vert_focal_length)
+        high_point = find_rectangle_highpoint(input_image, object_rects)[0]
+        hangle = find_hor_angle(input_image, high_point, hor_focal_length)
+        depth = depth_from_angle(input_image, object_rects, vangle, hangle, known_object_height - known_camera_height)
         # adjusted_depth = adjust_depth(depth, angle)
         adjusted_depth = depth
 
         # Create output image to display
-        output_image = draw_output_image(input_image, [object_rect, object_rect_2], adjusted_depth, angle)
+        output_image = draw_output_image(input_image, [object_rect, object_rect_2], adjusted_depth, vangle, hangle)
         ##output2=draw_output_image(input_image, object_rect_2, adjusted_depth, angle)
         # Some debug text that was used to see if the adjusted distance was working
         # cv2.putText(output_image, "%.2f ft (not adjusted)" % depth, (10, 535),
