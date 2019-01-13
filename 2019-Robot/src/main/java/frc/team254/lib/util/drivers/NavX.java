@@ -55,8 +55,7 @@ public class NavX {
     }
 
     public synchronized void zeroYaw() {
-        mAHRS.zeroYaw();
-        resetState();
+        setOffSetAngle();
     }
 
     private void resetState() {
@@ -73,8 +72,19 @@ public class NavX {
         return mYawDegrees;
     }
 
-    public Rotation2d getYaw() {
-        return mAngleAdjustment.rotateBy(Rotation2d.fromDegrees(getRawYawDegrees()));
+    // public Rotation2d getYaw() {
+    //     return mAngleAdjustment.rotateBy(Rotation2d.fromDegrees(getRawYawDegrees()));
+    // }
+
+    public double getYawDouble() {
+        double rtrnAngle = getRawYawDegrees() - offSet;
+        while (rtrnAngle > 180) { 
+            rtrnAngle = rtrnAngle - 360; // returns the same angle but in range [-180, 180]
+        }
+        while (rtrnAngle < -180) {
+            rtrnAngle = rtrnAngle + 360; 
+        }
+        return rtrnAngle;
     }
 
     public double getYawRateDegreesPerSec() {
@@ -89,22 +99,12 @@ public class NavX {
         return mAHRS.getRawAccelX();
     }
 
-    public void setOffSetAngle() {
+    private void setOffSetAngle() {
         offSet = getRawYawDegrees();
     }
 
-    /**
-     * @return The angle after offSet
-     */
-    public double getYawOffSet() {
-        double rtrnAngle = getRawYawDegrees() - offSet;
-        while (rtrnAngle > 180) { 
-            rtrnAngle = rtrnAngle - 360; // returns the same angle but in range [-180, 180]
-        }
-        while (rtrnAngle < -180) {
-            rtrnAngle = rtrnAngle + 360; 
-        }
-        return rtrnAngle;
+    public double getYawFieldCentric() {
+        return getRawYawDegrees();
     }
 
 
