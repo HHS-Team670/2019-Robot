@@ -37,7 +37,6 @@ String forwardDrive="false  ";
 String reverseDrive="false  ";
 String still="false  ";
 String visionLock="false  ";
-String data = "Invalid,false,false,";
 int numberOfPixels=strip.numPixels();
 
 int asciiArray[] = {                                //Please use the ASCII converter at https://www.arduino.cc/en/Reference/ASCIIchart
@@ -121,8 +120,8 @@ void loop() {
     b = 0;
   }
   if(alliance == "Invalid"){                        //If no alliance is specified, set the base LED color to purple
-    r = 255;
-    b = 255;
+    r =1;
+    b = 100;
   }
   
  
