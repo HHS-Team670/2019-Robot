@@ -11,10 +11,10 @@ import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.command.Command;
-import frc.team670.robot.Pose;
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangPi.VisionValue_PIDSource;
+import frc.team670.robot.dataCollection.Pose;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.functions.MathUtils;
 import frc.team670.robot.utils.functions.SettingUtils;
@@ -45,8 +45,8 @@ public class VisionTargetPidDrive extends Command {
 
     // Distance is in positive numbers, so it outputs a negative number as it tries to go to zero.
     // This is offset by having the robot drive the output * -1
-    visionDistanceController = new PIDController(P, I, D, F, new VisionAndPose_PIDSource(Robot.visionPi.getDistanceToTarget(), true), null);
-    visionHeadingController = new PIDController (P, I, D, F, new VisionAndPose_PIDSource(Robot.visionPi.getAngleToTarget(), false), null);
+    visionDistanceController = new PIDController(P, I, D, F, new VisionAndPose_PIDSource(Robot.visionPi.getDistanceToWallTarget(), true), null);
+    visionHeadingController = new PIDController (P, I, D, F, new VisionAndPose_PIDSource(Robot.visionPi.getAngleToWallTarget(), false), null);
     
     visionHeadingController.setInputRange(-30.0,  30.0);
     visionHeadingController.setOutputRange(visionHeadingControllerLowerBound, visionHeadingControllerUpperBound);
@@ -79,7 +79,7 @@ public class VisionTargetPidDrive extends Command {
   @Override
   protected void execute() {
 
-    robotPosition.update(Robot.driveBase.getLeftEncoder(), Robot.driveBase.getRightEncoder(), Robot.sensors.getYawDouble());
+    robotPosition.update((long)Robot.driveBase.getLeftEncoderPosition(), (long)Robot.driveBase.getRightEncoderPosition(), Robot.sensors.getYawDouble());
 
     /** changed output range to insure that the distanceController isn't going into a negative range */
     double distanceOutput = visionDistanceController.get() * -1;
@@ -187,67 +187,68 @@ public class VisionTargetPidDrive extends Command {
     }
   }
 
-  public class VisionAndPose_PIDSource implements PIDSource {
+  // Duplicate class???
+  // public class VisionAndPose_PIDSource implements PIDSource {
 
-    private VisionValue_PIDSource visionSource;
-    private PIDSourceType pidSourceType;
-    private Pose storedPose;
-    private double targetAngle, targetDistance;
+  //   private VisionValue_PIDSource visionSource;
+  //   private PIDSourceType pidSourceType;
+  //   private Pose storedPose;
+  //   private double targetAngle, targetDistance;
     
-    private boolean isDistance;
+  //   private boolean isDistance;
 
 
-    public VisionAndPose_PIDSource(VisionValue_PIDSource visionSource, boolean isDistance) {
-      this.visionSource = visionSource;
-      this.isDistance = isDistance;
-    }
+  //   public VisionAndPose_PIDSource(VisionValue_PIDSource visionSource, boolean isDistance) {
+  //     this.visionSource = visionSource;
+  //     this.isDistance = isDistance;
+  //   }
 
-    @Override
-    public PIDSourceType getPIDSourceType() {
-        return pidSourceType;
-    }
+  //   @Override
+  //   public PIDSourceType getPIDSourceType() {
+  //       return pidSourceType;
+  //   }
 
-    @Override
-    public void setPIDSourceType(PIDSourceType pidSource) {
-        pidSourceType = pidSource;
-    }
+  //   @Override
+  //   public void setPIDSourceType(PIDSourceType pidSource) {
+  //       pidSourceType = pidSource;
+  //   }
 
-    @Override
-    public double pidGet() {
-      // return distance left, or angle left
-      double visionValue = visionSource.pidGet();
+  //   @Override
+  //   public double pidGet() {
+  //     // return distance left, or angle left
+  //     double visionValue = visionSource.pidGet();
 
-      if (MathUtils.doublesEqual(visionValue, RobotConstants.VISION_ERROR_CODE)) { // If vision cannot find a target
-        if (isDistance) {
-          // This can be made more efficient by calculating this only once. Gets the target Coordinate Values.
-          long targetX = storedPose.getPosX() + (int)(Math.cos(Math.toRadians(targetAngle)) * targetDistance);
-          long targetY = storedPose.getPosY() + (int)(Math.sin(Math.toRadians(targetAngle)) * targetDistance);
+  //     if (MathUtils.doublesEqual(visionValue, RobotConstants.VISION_ERROR_CODE)) { // If vision cannot find a target
+  //       if (isDistance) {
+  //         // This can be made more efficient by calculating this only once. Gets the target Coordinate Values.
+  //         long targetX = storedPose.getPosX() + (int)(Math.cos(Math.toRadians(targetAngle)) * targetDistance);
+  //         long targetY = storedPose.getPosY() + (int)(Math.sin(Math.toRadians(targetAngle)) * targetDistance);
 
-          // Current Coordinate Values
-          long currentPoseX = robotPosition.getPosX();
-          long currentPoseY = robotPosition.getPosY();
+  //         // Current Coordinate Values
+  //         long currentPoseX = robotPosition.getPosX();
+  //         long currentPoseY = robotPosition.getPosY();
 
-          // Distance from current coordinate values to target coordinate values.
-          double distance = MathUtils.findDistance(currentPoseX, currentPoseY, targetX, targetY);
+  //         // Distance from current coordinate values to target coordinate values.
+  //         double distance = MathUtils.findDistance(currentPoseX, currentPoseY, targetX, targetY);
 
-          return distance;
-        }
-        else { // Needs to return an angle
-          double currentAngle = robotPosition.getRobotAngle();
-          return targetAngle - currentAngle;
-        }
-      }
-      else {  // if there is no error
-        if (isDistance) {
-          targetDistance = visionValue;
-        } 
-        else {
-          targetAngle = visionValue;
-        }
-        storedPose = robotPosition.clone();
-        return visionValue;
-      } 
-    }
-  }
+  //         return distance;
+  //       }
+  //       else { // Needs to return an angle
+  //         double currentAngle = robotPosition.getRobotAngle();
+  //         return targetAngle - currentAngle;
+  //       }
+  //     }
+  //     else {  // if there is no error
+  //       if (isDistance) {
+  //         targetDistance = visionValue;
+  //       } 
+  //       else {
+  //         targetAngle = visionValue;
+  //       }
+  //       storedPose = robotPosition.clone();
+  //       return visionValue;
+  //     } 
+  //   }
+  // }
 
 }

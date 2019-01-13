@@ -10,6 +10,7 @@ package frc.team670.robot.subsystems;
 import java.util.Arrays;
 import java.util.List;
 
+import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel;
@@ -17,7 +18,8 @@ import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import com.revrobotics.CANSparkMax;
+
+import frc.team670.robot.constants.RobotMap;
 
 /**
  * Represents a tank drive base.
@@ -75,7 +77,7 @@ public class DriveBase extends Subsystem {
   }
 
   public void initAutonDrive(){
-    setMotorsBrakeMode(allMotors, IdleMode.kBrakeMode);
+    setMotorsBrakeMode(allMotors, IdleMode.kBrake);
   }
 
   /**
@@ -268,24 +270,16 @@ public class DriveBase extends Subsystem {
 /**
  * Return the left encoder's position
  */
-  public long getLeftEncoder() {
-    return 0;
+  public CANEncoder getLeftEncoder() {
+    return left1.getEncoder();
 
   }
 
 /**
  * Return the right encoder's position
  */
-  public long getRightEncoder(){
-    return 0;
-  }
-
-  public SensorCollection getLeftEncoderCollection() {
-    return null;
-  }
-
-  public SensorCollection getRightEncoderCollection() {
-    return null;
+  public CANEncoder getRightEncoder(){
+    return right1.getEncoder();
   }
 
   /**

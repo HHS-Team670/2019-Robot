@@ -5,7 +5,9 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot;
+package frc.team670.robot.dataCollection;
+
+import frc.team670.robot.Robot;
 
 public class Pose {
 
@@ -20,10 +22,10 @@ public class Pose {
    * Makes new pose using current robot encoder values and angles
    */
   public Pose() {
-    this(Robot.driveBase.getLeftEncoder(), Robot.driveBase.getRightEncoder(), Robot.sensors.getYaw().getDegrees());
+    this(Robot.driveBase.getLeftEncoderPosition(), Robot.driveBase.getRightEncoderPosition(), Robot.sensors.getYawDouble());
   }
 
-/**
+  /**
    * 
    * @param lEncoderTick Encoder ticks -> forward = positive, backwards = negative
    * @param rEncoderTick Encoder ticks -> forward = positive, backwards = negative
@@ -31,6 +33,13 @@ public class Pose {
    */
   public Pose(long lEncoderTick, long rEncoderTick, double angle) {
     this(lEncoderTick, rEncoderTick, angle, 0, 0, System.currentTimeMillis());
+  }
+
+  public Pose(double x, double y, double angle) {
+    currRobotX = (long)x;
+    currRobotY = (long)y;
+    currentAngle = angle;
+    timeOfPose = System.currentTimeMillis();
   }
 
   private Pose(long lEncoderTick, long rEncoderTick, double angle, long currRobotX, long currRobotY, long timeOfPose) {

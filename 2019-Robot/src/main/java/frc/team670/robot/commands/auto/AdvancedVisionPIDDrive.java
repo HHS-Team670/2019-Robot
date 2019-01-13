@@ -9,23 +9,28 @@ package frc.team670.robot.commands.auto;
 
 import java.util.ArrayList;
 
-import com.ctre.phoenix.motorcontrol.SensorCollection;
-
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.command.Command;
-import frc.team670.robot.Pose;
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
-import frc.team670.robot.dataCollection.MustangPi.VisionValue_PIDSource;
+import frc.team670.robot.dataCollection.MustangPi.VisionValues;
+import frc.team670.robot.dataCollection.Pose;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.functions.MathUtils;
 import frc.team670.robot.utils.functions.SettingUtils;
+import com.revrobotics.CANEncoder;
 
-public class VisionPIDEncoderDependent extends Command {
-
-  private Pose pose;
+/**
+ * 
+ * Implements a PID Drive based on Vision by constantly setting setpoint and driving them using the NavX gyroscope
+ * and encoders. Takes into account time for vision data to be sent and continues off the last seen target if the
+ * vision can no longer find it.
+ * 
+ * @author shaylandias
+ */
+public class AdvancedVisionPIDDrive extends Command {
 
   private PIDController  distanceController, headingController;
   private static final double P = 0.01, I = 0.0, D = 0.0, F = 0.0;
@@ -37,16 +42,14 @@ public class VisionPIDEncoderDependent extends Command {
   private final double cameraOffset = 2.5; //distance from camera to front of the robot in inches.
   private int executeCount;
   private final double minimumAngleAdjustment = 0.03;
-
-  private VisionAndPose_PIDSource visionDistance, visionHeading;
-
+  private VisionAngleAndDistanceWithPose visionDistanceAndPose;
   private Pose robotPosition;
 
 
-  public VisionPIDEncoderDependent() {
+  public AdvancedVisionPIDDrive() {
     requires(Robot.driveBase);
-    distanceController = new PIDController(P, I, D, F, new TwoEncoder_PIDSource(Robot.driveBase.getLeftEncoderCollection(), Robot.driveBase.getRightEncoderCollection()), null);
-    headingController = new PIDController (P, I, D, F, Robot.visionPi.getAngleToTarget(), null);
+    distanceController = new PIDController(P, I, D, F, new TwoEncoder_PIDSource(Robot.driveBase.getLeftEncoder(), Robot.driveBase.getRightEncoder()), null);
+    // headingController = new PIDController (P, I, D, F, Robot.sensors.get, null);
     
     headingController.setInputRange(-180.0,  180.0);
     headingController.setOutputRange(visionHeadingControllerLowerOutput, visionHeadingControllerUpperOutput);
@@ -57,8 +60,8 @@ public class VisionPIDEncoderDependent extends Command {
     distanceController.setAbsoluteTolerance(distanceTolerance);
     distanceController.setContinuous(false);   
 
-    visionDistance = new VisionAndPose_PIDSource(Robot.visionPi.getDistanceToTarget(), true);
-    visionHeading = new VisionAndPose_PIDSource(Robot.visionPi.getAngleToTarget(), false);
+    // visionDistance = new VisionAndPose_PIDSource(Robot.visionPi.getDistanceToTarget(), true);
+    // visionHeading = new VisionAndPose_PIDSource(Robot.visionPi.getAngleToTarget(), false);
 
   }
 
@@ -78,6 +81,13 @@ public class VisionPIDEncoderDependent extends Command {
   @Override
   protected void execute() {
 
+    robotPosition.update((long)Robot.driveBase.getLeftEncoderPosition(), (long)Robot.driveBase.getRightEncoderPosition(), Robot.sensors.getYawDouble());
+
+    double[] visionData = visionDistanceAndPose.getAngleAndDistance();
+
+    headingController.setSetpoint(visionData[0]);
+    distanceController.setSetpoint(visionData[1]);
+
     double distanceOutput = distanceController.get();
     double headingOutput = headingController.get();
 
@@ -95,10 +105,6 @@ public class VisionPIDEncoderDependent extends Command {
       Logger.consoleLog("Executing VisionTargetPidDrive: headingOutput:%s, distanceOutput:%s, leftSpeed:%s, rightSpeed:%s", headingOutput, distanceOutput, leftSpeed, rightSpeed);
     }
 
-    robotPosition.update(Robot.driveBase.getLeftEncoder(), Robot.driveBase.getRightEncoder(), Robot.sensors.getYawDouble());
-
-
-
     executeCount ++;
 
   }
@@ -106,7 +112,7 @@ public class VisionPIDEncoderDependent extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return false;
+    return distanceController.onTarget() && headingController.onTarget();
   }
 
   // Called once after isFinished returns true
@@ -137,17 +143,17 @@ public class VisionPIDEncoderDependent extends Command {
   }
 
   private class TwoEncoder_PIDSource implements PIDSource {
-    private SensorCollection left, right;
+    private CANEncoder left, right;
 
-    private int initialLeft, initialRight;
+    private double initialLeft, initialRight;
 
     private PIDSourceType pidSourceType; 
 
-    public TwoEncoder_PIDSource(SensorCollection left, SensorCollection right) {
+    public TwoEncoder_PIDSource(CANEncoder left, CANEncoder right) {
         this.left = left;
         this.right = right;
-        initialLeft = left.getQuadraturePosition();
-        initialRight = right.getQuadraturePosition();
+        initialLeft = left.getPosition();
+        initialRight = right.getPosition();
         pidSourceType = PIDSourceType.kDisplacement;
     }
     
@@ -158,8 +164,8 @@ public class VisionPIDEncoderDependent extends Command {
 
     @Override
     public double pidGet() {
-        int displacementLeft = left.getQuadraturePosition() - initialLeft;
-        int displacementRight = right.getQuadraturePosition() - initialRight;
+        double displacementLeft = left.getPosition() - initialLeft;
+        double displacementRight = right.getPosition() - initialRight;
         return MathUtils.convertDriveBaseTicksToInches((displacementLeft + displacementRight) / 2);
     }
 
@@ -169,39 +175,26 @@ public class VisionPIDEncoderDependent extends Command {
     }
   }
 
-  public class VisionAndPose_PIDSource implements PIDSource {
+  public class VisionAngleAndDistanceWithPose {
 
-    private VisionValue_PIDSource visionSource;
-    private PIDSourceType pidSourceType;
-    private Pose poseAtVisionLoss;
+    private VisionValues visionSource;
+    private Pose poseAtVisionLoss, lastTarget;
     private ArrayList<Pose> lastPoses; // ArrayList to contain the last 5 poses for cross-referencing with vision.
-    
-    private boolean isDistance;
 
-
-    public VisionAndPose_PIDSource(VisionValue_PIDSource visionSource, boolean isDistance) {
+    public VisionAngleAndDistanceWithPose (VisionValues visionSource) {
       this.visionSource = visionSource;
-      this.isDistance = isDistance;
-      lastPoses = new ArrayList<Pose>(5);
     }
 
-    @Override
-    public PIDSourceType getPIDSourceType() {
-        return pidSourceType;
-    }
-
-    @Override
-    public void setPIDSourceType(PIDSourceType pidSource) {
-        pidSourceType = pidSource;
-    }
-
-    @Override
-    public double pidGet() {
-      // return distance left, or angle left
-      double visionValue = visionSource.pidGet();
+    /**
+     * Returns the angle and distance the robot needs to drive as a double[] in the format [angle (degrees), distance (inches)]
+     */
+    public double[] getAngleAndDistance() {
+      double targetAngle, targetDistance;
+      double visionValue = visionSource.getAngle();
       Pose currentPose = robotPosition.clone();
       Pose poseAtTimeOfVisionData = lastPoses.get(0);
-      
+       
+      // Getting the closest robot Pose to the time the vision data was taken.
       lastPoses.add(currentPose);
       double visionTimeStamp = visionSource.getTimeStamp();
       for (int i = 1; i < lastPoses.size(); i++) {
@@ -212,10 +205,9 @@ public class VisionPIDEncoderDependent extends Command {
           }
         }
       }
-
+ 
       if (MathUtils.doublesEqual(visionValue, RobotConstants.VISION_ERROR_CODE)) { // If vision cannot find a target
-        
-        // Grabbing the pose from the moment we lost vision if we don't already have one. If it is already not null, we already set it before.
+        // Grabbing the pose from the moment we lost vision if we don't already have one. If it is already not null, we had set it before so we don't want to overwrite it.
         if (poseAtVisionLoss == null) {
           for(int i = lastPoses.size() - 1; i >= 0; i--) {
             Pose p = lastPoses.get(i);
@@ -225,53 +217,42 @@ public class VisionPIDEncoderDependent extends Command {
             }
           }
           if(poseAtVisionLoss == null) { // If we do not have any poses in the array besides the currentPose.
-            poseAtVisionLoss = currentPose; // TODO this might need to give an error code that ends the Command (for this to be true, we have to have never had vision data at all).
+            poseAtVisionLoss = currentPose; // TODO this might need to give an error code that ends the Command (for this to be true, we have to have never had vision data, and thus have no target).
           }
         }
-        
-        if (isDistance) {
-          // This can be made more efficient by calculating this only once. Gets the target Coordinate Values.
-          long visionTimePoseX = poseAtTimeOfVisionData.getPosX();
-          long visionTimePoseY = poseAtTimeOfVisionData.getPosY();
-          
-          long targetX = visionTimePoseX + (int)(Math.cos(Math.toRadians(targetAngle)) * targetDistance);
-          long targetY = visionTimePoseY + (int)(Math.sin(Math.toRadians(targetAngle)) * targetDistance);
 
-          // Current Coordinate Values
-          long currentPoseX = currentPose.getPosX();
-          long currentPoseY = currentPose.getPosY();
-
-          double timeAccountedDistanceFromRobot = MathUtils.findDistance(targetX, targetY, currentPoseX, currentPoseY);
-
-          return timeAccountedDistanceFromRobot;
-        }
-        else { // Needs to return an angle
-          double currentAngle = currentPose.getRobotAngle();
-          return targetAngle - currentAngle;
-        }
+        // Calculate target angle and target distance.
+        targetAngle = calcAngleWithTimeAdjustment(lastTarget.getPosY(), lastTarget.getPosX(), currentPose.getPosY(), currentPose.getPosX());
+        targetDistance = calcDistanceWithTimeAdjustment(lastTarget.getPosY(), lastTarget.getPosX(), currentPose.getPosY(), currentPose.getPosX());
       }
-      else {  // if there is no error
+      else {    // if there is no error
         poseAtTimeOfVisionData = null;
-        lastPoses.remove(0);
-        if (isDistance) {
-          // This can be made more efficient by calculating this only once. Gets the target Coordinate Values.
-          long visionTimePoseX = poseAtTimeOfVisionData.getPosX();
-          long visionTimePoseY = poseAtTimeOfVisionData.getPosY();
-          
-          long targetX = visionTimePoseX + (int)(Math.cos(Math.toRadians(targetAngle)) * targetDistance);
-          long targetY = visionTimePoseY + (int)(Math.sin(Math.toRadians(targetAngle)) * targetDistance);
+        double angle = visionSource.getAngle();
+        double distance = visionSource.getDistance();
+        double targetX = Math.cos(Math.toRadians(angle)) * distance;
+        double targetY = Math.sin(Math.toRadians(angle))* distance;
 
-          // Current Coordinate Values
-          long currentPoseX = currentPose.getPosX();
-          long currentPoseY = currentPose.getPosY();
+        // Calculate target angle and target distance.
+        targetAngle = calcAngleWithTimeAdjustment(targetY, targetX, currentPose.getPosY(), currentPose.getPosX());
+        targetDistance = calcDistanceWithTimeAdjustment(targetY, targetX, currentPose.getPosY(), currentPose.getPosX());
 
-          visionValue = MathUtils.findDistance(targetX, targetY, currentPoseX, currentPoseY);        } 
-        else {
-          targetAngle = visionValue;
-        }
-        return visionValue;
-      } 
+        // Stores the lastTarget in case we lose it.
+        lastTarget = new Pose(currentPose.getPosX() + targetDistance * Math.cos(Math.toRadians(targetAngle)),
+                              currentPose.getPosY() + targetDistance * Math.sin(Math.toRadians(targetAngle)),
+                              currentPose.getRobotAngle());
+      }
+      lastPoses.remove(0); // Remove the oldes Pose from lastPoses so we don't accumulate too many.
+      return new double[]{targetAngle, targetDistance};
+    }  
+
+    private double calcAngleWithTimeAdjustment(double yGoal, double xGoal, double yCurrent, double xCurrent) {
+      return Math.toDegrees(Math.atan2(yGoal - yCurrent, xGoal - xCurrent));
     }
+
+    private double calcDistanceWithTimeAdjustment(double yGoal, double xGoal, double yCurrent, double xCurrent) {
+      return MathUtils.findDistance(xGoal, yGoal, xCurrent, yCurrent);
+    }
+
   }
 
 }

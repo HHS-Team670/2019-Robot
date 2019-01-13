@@ -1,15 +1,17 @@
-package frc.team254.lib.util.drivers;
+package frc.team670.robot.dataCollection;
 
 import com.kauailabs.navx.AHRSProtocol.AHRSUpdateBase;
 import com.kauailabs.navx.frc.AHRS;
 import com.kauailabs.navx.frc.ITimestampedDataSubscriber;
 
+import edu.wpi.first.wpilibj.PIDSource;
+import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SerialPort;
 import frc.team254.lib.util.math.Rotation2d;
 
 /**
- * yes Driver for a NavX board. Basically a wrapper for the {@link AHRS} class
+ * Driver for a NavX board. Basically a wrapper for the AHRS class. Much of this was taken from 254's code release.
  */
 public class NavX {
     protected class Callback implements ITimestampedDataSubscriber {
@@ -49,11 +51,18 @@ public class NavX {
         mAHRS.registerCallback(new Callback(), null);
     }
 
+    /**
+     * Resets and recalibrates the NavX (yaw will go back to zero and offset cleared). Call this right at the beginning of the match.
+     */
     public synchronized void reset() {
         mAHRS.reset();
         resetState();
+        offSet = 0;
     }
 
+    /**
+     * Zeroes the yaw for getYawDouble()
+     */
     public synchronized void zeroYaw() {
         setOffSetAngle();
         resetState();
@@ -65,15 +74,21 @@ public class NavX {
         mYawRateDegreesPerSecond = 0.0;
     }
 
-    public synchronized void setAngleAdjustment(Rotation2d adjustment) {
-        mAngleAdjustment = adjustment;
-    }
+    // public synchronized void setAngleAdjustment(Rotation2d adjustment) {
+    //     mAngleAdjustment = adjustment;
+    // }
 
-    protected synchronized double getRawYawDegrees() {
+    /**
+     * The Field Centric Yaw
+     */
+    private synchronized double getRawYawDegrees() {
         return mYawDegrees;
     }
 
-    public double getYawDouble() {
+    /**
+     * Gets the yaw with offset taken into account. Offset sets the zero of the gyro to the point where zeroYaw() was last called.
+     */
+    public synchronized double getYawDouble() {
         double rtrnAngle = getRawYawDegrees() - offSet;
         while (rtrnAngle > 180) { 
             rtrnAngle = rtrnAngle - 360; // returns the same angle but in range [-180, 180]
@@ -84,25 +99,72 @@ public class NavX {
         return rtrnAngle;
     }
 
-    public double getYawRateDegreesPerSec() {
+    /**
+     * The rate of change of the NavX angle in degrees per second.
+     */
+    public synchronized double getYawRateDegreesPerSec() {
         return mYawRateDegreesPerSecond;
     }
 
-    public double getYawRateRadiansPerSec() {
+    /**
+     * The rate of change of the NavX angle in radians per second.
+     */
+    public synchronized double getYawRateRadiansPerSec() {
         return 180.0 / Math.PI * getYawRateDegreesPerSec();
     }
 
-    public double getRawAccelX() {
+    public synchronized double getRawAccelX() {
         return mAHRS.getRawAccelX();
     }
 
-    private void setOffSetAngle() {
+    private synchronized void setOffSetAngle() {
         offSet = getRawYawDegrees();
     }
 
-    public double getYawFieldCentric() {
-        return getRawYawDegrees();
+    /**
+     * Gets the NavX as a PIDSource that responds to the NavX being zeroed.
+     */
+    public synchronized ZeroableNavX_PIDSource getZeroableNavXPIDSource() {
+        return new ZeroableNavX_PIDSource();
     }
 
+    /**
+     * Gets the NavX object itself so be careful with it and don't reset it. This will be field centric.
+     */
+    public synchronized AHRS getFieldCentricNavXPIDSource () {
+        return mAHRS;
+    }
+
+    /**
+     * Gets the field centric yaw (0 degrees is forward for the robot from its starting position),
+     * @return The Yaw (-180, 180) with -180 and 180 being directly backwards.
+     */
+    public synchronized double getYawFieldCentric() {
+        return getRawYawDegrees();
+    }
+    private class ZeroableNavX_PIDSource implements PIDSource{
+
+        private PIDSourceType type;
+
+        public ZeroableNavX_PIDSource() {
+            type = PIDSourceType.kDisplacement;
+        }
+
+        @Override
+        public void setPIDSourceType(PIDSourceType pidSource) {
+            type = pidSource;
+        }
+
+        @Override
+        public PIDSourceType getPIDSourceType() {
+            return type;
+        }
+
+        @Override
+        public double pidGet() {
+            return getYawDouble();
+        }
+
+    }
 
 }
