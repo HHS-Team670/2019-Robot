@@ -22,6 +22,7 @@ import frc.team670.robot.dataCollection.Pose;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.functions.MathUtils;
 import frc.team670.robot.utils.functions.SettingUtils;
+import com.revrobotics.CANEncoder;
 
 public class VisionPIDEncoderDependent extends Command {
 
@@ -43,7 +44,7 @@ public class VisionPIDEncoderDependent extends Command {
 
   public VisionPIDEncoderDependent() {
     requires(Robot.driveBase);
-    distanceController = new PIDController(P, I, D, F, new TwoEncoder_PIDSource(Robot.driveBase.getLeftEncoderCollection(), Robot.driveBase.getRightEncoderCollection()), null);
+    distanceController = new PIDController(P, I, D, F, new TwoEncoder_PIDSource(Robot.driveBase.getLeftEncoder(), Robot.driveBase.getRightEncoder()), null);
     // headingController = new PIDController (P, I, D, F, Robot.sensors.get, null);
     
     headingController.setInputRange(-180.0,  180.0);
@@ -76,7 +77,7 @@ public class VisionPIDEncoderDependent extends Command {
   @Override
   protected void execute() {
 
-    robotPosition.update(Robot.driveBase.getLeftEncoder(), Robot.driveBase.getRightEncoder(), Robot.sensors.getYawDouble());
+    robotPosition.update((long)Robot.driveBase.getLeftEncoderPosition(), (long)Robot.driveBase.getRightEncoderPosition(), Robot.sensors.getYawDouble());
 
     double distanceOutput = distanceController.get();
     double headingOutput = headingController.get();
@@ -133,17 +134,17 @@ public class VisionPIDEncoderDependent extends Command {
   }
 
   private class TwoEncoder_PIDSource implements PIDSource {
-    private SensorCollection left, right;
+    private CANEncoder left, right;
 
-    private int initialLeft, initialRight;
+    private double initialLeft, initialRight;
 
     private PIDSourceType pidSourceType; 
 
-    public TwoEncoder_PIDSource(SensorCollection left, SensorCollection right) {
+    public TwoEncoder_PIDSource(CANEncoder left, CANEncoder right) {
         this.left = left;
         this.right = right;
-        initialLeft = left.getQuadraturePosition();
-        initialRight = right.getQuadraturePosition();
+        initialLeft = left.getPosition();
+        initialRight = right.getPosition();
         pidSourceType = PIDSourceType.kDisplacement;
     }
     
@@ -154,8 +155,8 @@ public class VisionPIDEncoderDependent extends Command {
 
     @Override
     public double pidGet() {
-        int displacementLeft = left.getQuadraturePosition() - initialLeft;
-        int displacementRight = right.getQuadraturePosition() - initialRight;
+        double displacementLeft = left.getPosition() - initialLeft;
+        double displacementRight = right.getPosition() - initialRight;
         return MathUtils.convertDriveBaseTicksToInches((displacementLeft + displacementRight) / 2);
     }
 

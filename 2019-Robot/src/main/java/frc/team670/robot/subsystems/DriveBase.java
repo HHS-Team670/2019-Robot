@@ -10,6 +10,7 @@ package frc.team670.robot.subsystems;
 import java.util.Arrays;
 import java.util.List;
 
+import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel;
@@ -75,7 +76,7 @@ public class DriveBase extends Subsystem {
   }
 
   public void initAutonDrive(){
-    setMotorsBrakeMode(allMotors, IdleMode.kBrakeMode);
+    setMotorsBrakeMode(allMotors, IdleMode.kBrake);
   }
 
   /**
@@ -268,16 +269,16 @@ public class DriveBase extends Subsystem {
 /**
  * Return the left encoder's position
  */
-  public long getLeftEncoder() {
-    return 0;
+  public CANEncoder getLeftEncoder() {
+    return left1.getEncoder();
 
   }
 
 /**
  * Return the right encoder's position
  */
-  public long getRightEncoder(){
-    return 0;
+  public CANEncoder getRightEncoder(){
+    return right1.getEncoder();
   }
 
   /**
