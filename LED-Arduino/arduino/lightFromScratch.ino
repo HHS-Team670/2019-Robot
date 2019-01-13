@@ -83,7 +83,7 @@ void loop() {
     reverseDrive = dataString.substring(24,31);
     still = dataString.substring(25,32);
     visionLock = dataString.substring(33,40);
-    still = dataString.substring(41,48);
+    xFinal = dataString.substring(41,42);
 
 
     
@@ -126,8 +126,8 @@ void loop() {
   }
   
  
-if(climbing.equals("climbing")){
-    while(climbing.equals("climbing"))
+if(climbing.equals("true   ")){
+    while(climbing.equals("true   "))
     {
       for(int i = 0; i < numberOfPixels; i++){
         strip.setPixelColor(i,76,156,20);
@@ -138,8 +138,8 @@ if(climbing.equals("climbing")){
 }
 //}
 //light show for vision lock
-  if(visionLock.equals("visionlocked")){
-    while(visionLock.equals("visionLocked")){
+  if(visionLock.equals("true   ")){
+    while(visionLock.equals("true   ")){
       for(int i = 0; i < numberOfPixels; i++){
         strip.setPixelColor(i,r,b,0);
     }
@@ -148,8 +148,8 @@ if(climbing.equals("climbing")){
 
 }
 //light show for forward drive
-  if(forwardDrive.equals("forwardDrive")){
-    while(forwardDrive.equals("forwardDrive")){
+  if(forwardDrive.equals("true   ")){
+    while(forwardDrive.equals("true   ")){
       for(int i = 0; i < numberOfPixels; i++){
         strip.setPixelColor(i,200,200,0);
     }
@@ -157,8 +157,8 @@ if(climbing.equals("climbing")){
   }
 }
 //light show for reverse drive 
-  if(reverseDrive.equals("reverseDrive")){
-    while(reverseDrive.equals("reverseDrive")) {
+  if(reverseDrive.equals("true   ")){
+    while(reverseDrive.equals("true   ")) {
       for(int i = 0; i < numberOfPixels; i++)
       {
         strip.setPixelColor(i,200,200,200);
@@ -167,8 +167,8 @@ if(climbing.equals("climbing")){
   }
 }
 
-  if(still.equals("still")){
-   while(still.equals("true")){
+  if(still.equals("true   ")){
+   while(still.equals("true   ")){
       for(int i = 0; i < numberOfPixels; i++)
       {
        strip.setPixelColor(i,200,200,200);

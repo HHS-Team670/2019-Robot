@@ -26,7 +26,7 @@ public class MustangLEDs {
 	String reverseDrive="false  ";
 	String still="false  ";
 	String visionLock="false  ";
-	int xFinal = 2;
+	String xFinal = "2";
 	String data = "Invalid,false,false,";
 	
 	// Socket Init
@@ -79,11 +79,7 @@ public class MustangLEDs {
 			reverseDrive="false  ";
 			still="false  ";
 			String alliance = "Invalid";
-	// String climbing = "false  ";
-	// String forwardDrive="false  ";
-	// String reverseDrive="false  ";
-	// String still="false  ";
-	// String visionLock="false  ";
+	
 		}else{
 			climbing = "false  ";
 		}
@@ -116,7 +112,7 @@ public class MustangLEDs {
 		if(trigger=true){
 			forwardDrive="false  ";
 			climbing="false  ";
-			reverseDrive="true  ";
+			reverseDrive="true   ";
 			still="false  ";
 			visionLock="false  ";
 		}
@@ -129,7 +125,7 @@ public class MustangLEDs {
 			forwardDrive="false  ";
 			climbing="false  ";
 			reverseDrive="false  ";
-			still="true  ";
+			still="true   ";
 			visionLock="false  ";
 		}
 		else{
@@ -139,12 +135,12 @@ public class MustangLEDs {
 	
 	public void update_xFinal(double acceptedXFinal){ // Updates xFinal in data
 		if(acceptedXFinal > 10 && acceptedXFinal != -666){
-			xFinal = 3;
+			xFinal = "3";
 		}else{
 			if(acceptedXFinal < -10 && acceptedXFinal != -666){
-				xFinal = 1;
+				xFinal = "1";
 			}else{
-				xFinal = 2;
+				xFinal = "2";
 			}
 		}
 	}
@@ -213,5 +209,6 @@ public class MustangLEDs {
 			}
 			
 		}			
-	}	
-}
+  }
+}	
+  
