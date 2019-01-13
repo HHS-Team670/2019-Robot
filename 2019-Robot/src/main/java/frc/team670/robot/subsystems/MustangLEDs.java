@@ -67,7 +67,7 @@ public class MustangLEDs {
 			alliance = "red    ";
 		}
 		if(color == DriverStation.Alliance.Invalid){
-			alliance = "invalid";	
+			alliance = "Invalid";	
 		}
 	}
 	

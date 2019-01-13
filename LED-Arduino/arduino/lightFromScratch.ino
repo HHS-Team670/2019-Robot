@@ -120,7 +120,7 @@ void loop() {
     r = 255;
     b = 0;
   }
-  if(alliance == "invalid"){                        //If no alliance is specified, set the base LED color to purple
+  if(alliance == "Invalid"){                        //If no alliance is specified, set the base LED color to purple
     r = 255;
     b = 255;
   }
