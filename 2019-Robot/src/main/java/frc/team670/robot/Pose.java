@@ -41,6 +41,14 @@ public class Pose {
     this.currRobotY = currRobotY;
     this.timeOfPose = timeOfPose;
   }
+
+  private Pose(long lEncoderTick, long rEncoderTick, double angle, long currRobotX, long currRobotY) {
+    leftEncoderTick = lEncoderTick;
+    rightEncoderTick = rEncoderTick;
+    currentAngle = angle;
+    this.currRobotX = currRobotX;
+    this.currRobotY = currRobotY;
+  }
  
   /**
    * Updates the Pose's position and angle corresponding to the drivebase's ticks and NavX gyro reading.

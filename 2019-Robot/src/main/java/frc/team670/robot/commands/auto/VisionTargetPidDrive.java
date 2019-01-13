@@ -22,7 +22,7 @@ import frc.team670.robot.utils.functions.SettingUtils;
 /**
  * Drives towards the vision target on the field using distance and angle from the raspberry pi vision
  * code to feed a PID loop.
- * @author hanyun, shaylandias, meganchoy, pallavidas
+ * @author hanyun, shaylandias, meganchoy, pallavidas, kabirbatra, varunjoshi
  */
 public class VisionTargetPidDrive extends Command {
 
@@ -32,9 +32,6 @@ public class VisionTargetPidDrive extends Command {
   private static final double distanceTolerance = 0.05; //inches
   private double visionHeadingControllerLowerBound = -.15, visionHeadingControllerUpperBound = .15;
   private double visionDistanceControllerLowerBound = -.7, visionDistanceControllerUpperBound = .7;
-
-
-  private double distanceControllerLowerBound = 0.05, distanceControllerUpperBound = 0.05;
 
   private final double cameraOffset = 2.5; //distance from camera to front of the robot in inches. TODO set this
   private int executeCount;
@@ -125,6 +122,69 @@ public class VisionTargetPidDrive extends Command {
   protected void interrupted() {
     Logger.consoleLog("Interrupted VisionTargetPidDrive");
     end();
+  }
+
+  public class VisionAndPose_PIDSource implements PIDSource {
+
+    private VisionValue_PIDSource visionSource;
+    private PIDSourceType pidSourceType;
+    private Pose storedPose;
+    private double targetAngle, targetDistance;
+    
+    private boolean isDistance;
+
+
+    public VisionAndPose_PIDSource(VisionValue_PIDSource visionSource, boolean isDistance) {
+      this.visionSource = visionSource;
+      this.isDistance = isDistance;
+    }
+
+    @Override
+    public PIDSourceType getPIDSourceType() {
+        return pidSourceType;
+    }
+
+    @Override
+    public void setPIDSourceType(PIDSourceType pidSource) {
+        pidSourceType = pidSource;
+    }
+
+    @Override
+    public double pidGet() {
+      // return distance left, or angle left
+      double visionValue = visionSource.pidGet();
+
+      if (MathUtils.doublesEqual(visionValue, RobotConstants.VISION_ERROR_CODE)) { // If vision cannot find a target
+        if (isDistance) {
+          // This can be made more efficient by calculating this only once. Gets the target Coordinate Values.
+          long targetX = storedPose.getPosX() + (int)(Math.cos(Math.toRadians(targetAngle)) * targetDistance);
+          long targetY = storedPose.getPosY() + (int)(Math.sin(Math.toRadians(targetAngle)) * targetDistance);
+
+          // Current Coordinate Values
+          long currentPoseX = robotPosition.getPosX();
+          long currentPoseY = robotPosition.getPosY();
+
+          // Distance from current coordinate values to target coordinate values.
+          double distance = MathUtils.findDistance(currentPoseX, currentPoseY, targetX, targetY);
+
+          return distance;
+        }
+        else { // Needs to return an angle
+          double currentAngle = robotPosition.getRobotAngle();
+          return targetAngle - currentAngle;
+        }
+      }
+      else {  // if there is no error
+        if (isDistance) {
+          targetDistance = visionValue;
+        } 
+        else {
+          targetAngle = visionValue;
+        }
+        storedPose = robotPosition.clone();
+        return visionValue;
+      } 
+    }
   }
 
   public class VisionAndPose_PIDSource implements PIDSource {
