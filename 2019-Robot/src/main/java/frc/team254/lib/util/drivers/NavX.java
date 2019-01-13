@@ -56,6 +56,7 @@ public class NavX {
 
     public synchronized void zeroYaw() {
         setOffSetAngle();
+        resetState();
     }
 
     private void resetState() {
@@ -71,10 +72,6 @@ public class NavX {
     protected synchronized double getRawYawDegrees() {
         return mYawDegrees;
     }
-
-    // public Rotation2d getYaw() {
-    //     return mAngleAdjustment.rotateBy(Rotation2d.fromDegrees(getRawYawDegrees()));
-    // }
 
     public double getYawDouble() {
         double rtrnAngle = getRawYawDegrees() - offSet;
