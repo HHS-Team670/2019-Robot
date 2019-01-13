@@ -17,6 +17,6 @@ public class RobotConstants {
     public static final double segmentCompletionTolerance = 0; //TODO: set value of this
 
     // LEDs
-    public static final int LED_PORT = 5810;
+    public static final int LED_PORT = 5801;
 
 }

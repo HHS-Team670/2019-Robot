@@ -65,7 +65,9 @@ public class Robot extends TimedRobot {
     Logger.consoleLog();
     savedTime = System.currentTimeMillis();
 
-    leds.socketSetup(RobotConstants.LED_PORT);
+    leds.socketSetup(RobotConstants.LED_PORT);    
+    leds.update_xFinal(0);
+    leds.updateClimbingBoolean(true);
 
   }
 
