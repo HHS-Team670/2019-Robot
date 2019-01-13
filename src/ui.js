@@ -13,7 +13,9 @@ var ui = {
     }
 };
 
-NetworkTables.addKeyListener('/SmartDashboard/robotTime', (key, value) => {
+let allFieldLocations = ["left-rocket-top", "left-rocket-middle", "left-rocket-bottom", "left-cargo-far", "left-cargo-mid", "left-cargo-close", "left-cargo-alliance", "right-cargo-alliance", "right-cargo-far", "right-cargo-mid", "right-cargo-close", "right-rocket-top", "right-rocket-middle", "right-rocket-bottom", "right-loading-station", "left-loading-station"];
+
+NetworkTables.addKeyListener('/Pi-Dashboard/robotTime', (key, value) => {
   var minutes = ~~(value / 60); // converts to integer
   var seconds = (value - 60*minutes) % 60;
   seconds = (seconds < 10) ? '0'+seconds : seconds;
@@ -23,8 +25,39 @@ NetworkTables.addKeyListener('/SmartDashboard/robotTime', (key, value) => {
   ui.timer.innerHTML = minutes + ':' + seconds;
 });
 
-NetworkTables.addKeyListener('/SmartDashboard/gyro', (key, value) => {
+NetworkTables.addKeyListener('/Pi-Dashboard/gyro', (key, value) => {
   var angle = value % 360;
   ui.navx.number.innerHTML = angle + 'º';
   ui.navx.arm.style.transform = `rotate(${angle}deg)`;
 });
+
+// NetworkTables.addKeyListener('/SmartDashboard/Safety\ Mode\ Enabled', (key, value) => {
+//   document.getElementById('test').innerHTML = value;
+// });
+
+window.onkeyup = function(event) {
+    let key = event.key;
+    if (key == 'a') {
+      highlight('left-rocket-top');
+    }
+    if (key == 'j') {
+      highlight('left-rocket-middle');
+    }
+    if (key == '9') {
+      document.getElementById('test').innerHTML = '9 pressed';
+      clearHighlight();
+    }
+}
+
+function highlight(toHighlight) {
+  var location = document.getElementById(toHighlight);
+  location.style.fill = `rgb(0,255,0)`;
+}
+
+function clearHighlight() {
+  var len = allFieldLocations.length;
+  for (var i = 0; i < len; i++) {
+    var location = allFieldLocations[i];
+    document.getElementById(location).style.fill = `rgb(0,0,0)`;
+  }
+}

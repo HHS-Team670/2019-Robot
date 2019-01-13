@@ -9,5 +9,5 @@ ui.camera.viewer.style.backgroundImage = 'url(' + ui.camera.src + ')';
 
 // When camera is clicked on, send a value over network tables.
 ui.camera.viewer.onclick = function() {
-	NetworkTables.putValue('/SmartDashboard/cameraSource', 'next');
+	NetworkTables.putValue('/Pi-Dashboard/cameraSource', 'next');
 };
