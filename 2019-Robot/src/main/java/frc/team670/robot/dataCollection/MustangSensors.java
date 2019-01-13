@@ -57,7 +57,7 @@ public class MustangSensors extends Subsystem {
    */
   public double getYawDouble(){
     if(navXMicro != null) {
-      return navXMicro.getYaw().getDegrees();
+      return navXMicro.getYawDouble();
     } else{
       return NAVX_ERROR_CODE;
     }
@@ -76,13 +76,13 @@ public class MustangSensors extends Subsystem {
   /**
    * Gets the yaw as one of 254's Rotation2d Objects (a point on the unit circle). Returns null if the navX is not connected.
    */
-  public Rotation2d getYaw() {
-    if(navXMicro != null) {
-    return navXMicro.getYaw();
-    } else {
-      return null;
-    }
-  }
+  // public Rotation2d getYaw() {
+  //   if(navXMicro != null) {
+  //   return navXMicro.getYaw();
+  //   } else {
+  //     return null;
+  //   }
+  // }
 
   /**
    * Adds a "user-offset" variable to the NavX, effectively zeroing the value you will receive at this point.

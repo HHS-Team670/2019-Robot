@@ -35,6 +35,7 @@ public class NavX {
     protected double mYawRateDegreesPerSecond;
     protected final long kInvalidTimestamp = -1;
     protected long mLastSensorTimestampMs;
+    private double offSet;
 
     public NavX(SPI.Port spi_port_id) {
         mAHRS = new AHRS(spi_port_id, (byte) 200);
@@ -54,7 +55,7 @@ public class NavX {
     }
 
     public synchronized void zeroYaw() {
-        mAHRS.zeroYaw();
+        setOffSetAngle();
         resetState();
     }
 
@@ -72,8 +73,15 @@ public class NavX {
         return mYawDegrees;
     }
 
-    public Rotation2d getYaw() {
-        return mAngleAdjustment.rotateBy(Rotation2d.fromDegrees(getRawYawDegrees()));
+    public double getYawDouble() {
+        double rtrnAngle = getRawYawDegrees() - offSet;
+        while (rtrnAngle > 180) { 
+            rtrnAngle = rtrnAngle - 360; // returns the same angle but in range [-180, 180]
+        }
+        while (rtrnAngle < -180) {
+            rtrnAngle = rtrnAngle + 360; 
+        }
+        return rtrnAngle;
     }
 
     public double getYawRateDegreesPerSec() {
@@ -87,4 +95,14 @@ public class NavX {
     public double getRawAccelX() {
         return mAHRS.getRawAccelX();
     }
+
+    private void setOffSetAngle() {
+        offSet = getRawYawDegrees();
+    }
+
+    public double getYawFieldCentric() {
+        return getRawYawDegrees();
+    }
+
+
 }
