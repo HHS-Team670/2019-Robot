@@ -42,9 +42,13 @@ public class MustangLEDsEnum {
 	private XFinal xFinal=XFinal.XFINAL2;
 	private AllianceColor allianceColor=AllianceColor.INVALID;
 	
+	final String blueAlliance = "1A";
+	final String redAlliance = "2A";
 	String stateData;
 	String allianceData;
 	String xFinalData;
+	String data;
+
 	// Socket Init
 	ServerSocket serverSocket = null;
 	// Thread init
@@ -66,9 +70,11 @@ public class MustangLEDsEnum {
 	public void changeAlliance(boolean b) {
 		if(b) {
 			allianceColor=AllianceColor.BLUE;
+			allianceData=blueAlliance;
 		}
 		else {
 			allianceColor=AllianceColor.RED;
+			allianceData=redAlliance;
 		}
 	}
 
@@ -77,53 +83,55 @@ public class MustangLEDsEnum {
 		DriverStation.Alliance color = DriverStation.getInstance().getAlliance();
 		
 		if(color == DriverStation.Alliance.Blue){
-			allianceColor=AllianceColor.BLUE;
+			allianceData=blueAlliance;
 		}
 		if(color == DriverStation.Alliance.Red){
-			allianceColor=AllianceColor.RED;
+			allianceData=redAlliance;
 		}
 		if(color == DriverStation.Alliance.Invalid){
-			allianceColor=AllianceColor.INVALID;	
+			allianceData="0A";	
 		}
 	}
 	
 	public void updateClimbingBoolean(boolean trigger){ // Updates if we are climbing
 		if(trigger == true){
-			robotData=RobotState.CLIMBING;
+			stateData="4R";
 		}
 	}
 	
 	public void updateVisionData(boolean trigger){ //updates if we lock onto a vision target
 		if(trigger == true){
-			robotData=RobotState.VISION_LOCK;
+			stateData="2R";
 		}
 	}
 	public void updateForwardDrive(boolean trigger){//update if we are driving forward
 		if(trigger=true){
-			robotData=RobotState.FORWARD_DRIVE;
+			stateData="0R";
 		}
 		
 	}
 	public void updateReverseDrive(boolean trigger){
 		if(trigger=true){
-			robotData=RobotState.REVERSE_DRIVE;
+			stateData="1R";
 		}
 		
 	}
 	public void updateStillDrive(boolean trigger){
 		if(trigger=true){
-			robotData=RobotState.STILL_DRIVE;
+			stateData = "3R";
 		}
 	}
 	
 	public void update_xFinal(double acceptedXFinal){ // Updates xFinal in data
 		if(acceptedXFinal > 10 && acceptedXFinal != -666){
-			xFinal=XFinal.XFINAL3;
-		}else{
+			xFinalData="3X";
+		}
+		else{
 			if(acceptedXFinal < -10 && acceptedXFinal != -666){
-				xFinal=XFinal.XFINAL1;
-			}else{
-				xFinal=XFinal.XFINAL2;
+				xFinalData="1X";
+			}
+			else{
+				xFinalData="2X";
 			}
 		}
 	}
@@ -157,50 +165,12 @@ public class MustangLEDsEnum {
 			
 			while(true){
 				
-				//converts enum values for robot state into strings because .writeUTF is only compatible with strings
-				if(robotData==RobotState.CLIMBING){
-					stateData="4R";
-				}
-				if(robotData==RobotState.FORWARD_DRIVE){
-					stateData="0R";
-				}
-				if(robotData==RobotState.REVERSE_DRIVE){
-					stateData="1R";
-				}
-				if(robotData==RobotState.VISION_LOCK){
-					stateData="2R";
-				}
-				else{
-					stateData="3R";
-				}
-				//converts enum values for alliance color into strings 
-				if(allianceColor==AllianceColor.BLUE){
-					allianceData="1A";
-				}
-				if(allianceColor==AllianceColor.RED){
-					allianceData="2A";
-				}
-				else{
-					allianceData="0A";
-				}
-				//converts enum values for xFinal into strings
-				if(xFinal==XFinal.XFINAL1){
-					xFinalData="1X";
-				}
-				if(xFinal==XFinal.XFINAL3){
-					xFinalData="3X";
-				}
-				else{
-					xFinalData="2X";
-				}
-
-
-	
 				System.out.println(stateData+""+allianceData+""+xFinalData);
+				data = stateData + allianceData + xFinalData;
 				
 				// Sends data to the Arduino/Ethernet Shield
 				try {
-					output.writeUTF(stateData+""+allianceData+""+xFinalData);
+					output.writeUTF(data);
 					output.flush();
 				} catch (Exception e) {
 					System.out.println("Unable to send Arduino data");
