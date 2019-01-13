@@ -25,10 +25,10 @@ int connectionTimer = 0;                            //Sets a connection timer to
 
 char dataChar;                                      //Used for storing a character before inputing it into dataArray[]
 
-String dataString = "";                             //Used for building a string to then splice into multiple parts to control the LEDs
-String xFinal = "2";                                //data for where the peg is via vision program,
-String truexFinal = "center";
-String alliance = "Invalid";
+// String dataString = "";                             //Used for building a string to then splice into multiple parts to control the LEDs
+// String xFinal = "2";                                //data for where the peg is via vision program,
+// String truexFinal = "center";
+// String alliance = "Invalid";
 // String climbing = "false  ";
 // String forwardDrive="false  ";
 // String reverseDrive="false  ";
@@ -36,20 +36,13 @@ String alliance = "Invalid";
 // String visionLock="false  ";
 
 //enum robot state declarations
-enum robotState 
-{   
-    climbing, 
-    forwardDrive,
-    reverseDrive,
-    still,
-    visionLock,
-};
-//assigning enums to variables
-robotState climbingValue=climbing;
-robotState forwardDriveValue=forwardDrive;
-robotState reverseDriveValue=reverseDrive;
-robotState stillValue=still;
-robotState visionLockValue=visionLock;
+
+
+
+]
+String stateData;
+String allianceData;
+String xFinalData;
 
 
 int numberOfPixels=strip.numPixels();
@@ -78,7 +71,7 @@ void setup() {                                      //Sets up constants before p
 }
 
 void loop() {
-                                         //Ran indefinitly after setup()
+                                                    //Ran indefinitly after setup()
   connectionTimer++;                                //Adds a count to the ConnectionTimer
   
   if(robotClient.available()){                      //Runs when bytes are available to read
@@ -88,55 +81,48 @@ void loop() {
       dataChar = asciiConvert(robotClient);         //Processes an ASCII byte into a readable character        
       dataString = dataString + dataChar;           //Combines the character with the full data string    
     }
+    //parses dataString and receives corresponding values from Java program
     dataString.remove(0,2);                         //Removes two garbage characters from the start of the string
-
-
-    alliance = dataString.substring(0,7);           //Grabs the expected location of various data, puts it in variables
-    climbing = dataString.substring(8,15);              
-    forwardDrive = dataString.substring(16,23);         
-    reverseDrive = dataString.substring(24,31);
-    still = dataString.substring(25,32);
-    visionLock = dataString.substring(33,40);
-    xFinal = dataString.substring(41,42);
-
+    stateData = dataString.substring(0,2);           //Grabs the expected location of various data, puts it in variables
+    allianceData = dataString.substring(3,5);              
+    xFinalData=dataString.substring(6,8);
 
     
-    if(xFinal.equals("1")){                              //If xFinal is equal to 1, it is to the left of the camera
-      truexFinal = "left";
+    
+    if(xFinalData=="1X"){                              //If xFinal is equal to 1, it is to the left of the camera
+      strip.setPixelColor(11,100,200,255);
     }
-    if(xFinal.equals("2")){                              //If xFinal is equal to 2, it is centered to the camera
-      truexFinal = "center";
+    if(xFinalData=="2X"){                              //If xFinal is equal to 2, it is centered to the camera
+      strip.setPixelColor(12,150,20,130)
     }
-    if(xFinal.equals("3")){                              //If xFinal is equal to 3, it is to the right of the camera
-      truexFinal = "right";
+    if(xFinalData=="3X"){                              //If xFinal is equal to 3, it is to the right of the camera
+      strip.setPixelColor(13,10,255,100);
     }
 
-    Serial.println("Alliance?: " + alliance +       //Prints out the data above to the serial console
-      ", Climbing?: "  + climbing + ", forwardDrive?: " + 
-      forwardDrive + ", reverseDrive?: " + reverseDrive + ", still?:" +still+", visionLock?:"+visionLock+", xFinal?:"+xFinal); 
+    // Serial.println("Alliance?: " + alliance +       //Prints out the data above to the serial console
+    //   ", Climbing?: "  + climbing + ", forwardDrive?: " + 
+    //   forwardDrive + ", reverseDrive?: " + reverseDrive + ", still?:" +still+", visionLock?:"+visionLock+", xFinal?:"+xFinal); 
   
   }
 
   //Below here is code to control the LED's from the data obtained above
-  
+  void reset(){
   for(int i = 0; i < numberOfPixels; i++){       //Resets the full LED strip...
     strip.setPixelColor(i,0,0,0);                   //...by setting each LED to black
+  }
   }
 //  void reset(){
 //  strip.begin();
 //  strip.show(); //initialize all pixels to "off"
 //  }
- if(alliance == "blue   "){                        //If the alliance is blue, set the base LED color to blue
-    r = 0;
-    b = 255;
+ if(allianceData=="1A"){                        //If the alliance is blue, set the base LED color to blue
+    AllianceColor=BLUE;
   }
-  if(alliance == "red    "){                        //If the alliance is red, set the base LED color to red
-    r = 255;
-    b = 0;
+  if(allianceData=="2A"){                        //If the alliance is red, set the base LED color to red
+    AllianceColor=RED;
   }
-  if(alliance == "Invalid"){                        //If no alliance is specified, set the base LED color to purple
-    r =1;
-    b = 100;
+  if(allianceData== "3A"){                        //If no alliance is specified, set the base LED color to purple
+    AllianceColor=INVALID;
   }
   
  
