@@ -15,7 +15,7 @@ var ui = {
 
 let allFieldLocations = ["left-rocket-top", "left-rocket-middle", "left-rocket-bottom", "left-cargo-far", "left-cargo-mid", "left-cargo-close", "left-cargo-alliance", "right-cargo-alliance", "right-cargo-far", "right-cargo-mid", "right-cargo-close", "right-rocket-top", "right-rocket-middle", "right-rocket-bottom", "right-loading-station", "left-loading-station"];
 
-NetworkTables.addKeyListener('/Pi-Dashboard/robotTime', (key, value) => {
+NetworkTables.addKeyListener('/SmartDashboard/robotTime', (key, value) => {
   var minutes = ~~(value / 60); // converts to integer
   var seconds = (value - 60*minutes) % 60;
   seconds = (seconds < 10) ? '0'+seconds : seconds;
@@ -25,7 +25,7 @@ NetworkTables.addKeyListener('/Pi-Dashboard/robotTime', (key, value) => {
   ui.timer.innerHTML = minutes + ':' + seconds;
 });
 
-NetworkTables.addKeyListener('/Pi-Dashboard/gyro', (key, value) => {
+NetworkTables.addKeyListener('/SmartDashboard/gyro', (key, value) => {
   var angle = value % 360;
   ui.navx.number.innerHTML = angle + 'º';
   ui.navx.arm.style.transform = `rotate(${angle}deg)`;
@@ -87,7 +87,6 @@ window.onkeyup = function(event) {
     }
 
     if (key == '9') {
-      document.getElementById('test').innerHTML = '9 pressed';
       clearHighlight();
     }
 }
