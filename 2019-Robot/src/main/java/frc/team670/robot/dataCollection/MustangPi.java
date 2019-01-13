@@ -9,6 +9,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.NetworkTableType;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
+import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.utils.functions.MathUtils;
 
 /**
@@ -17,11 +18,9 @@ import frc.team670.robot.utils.functions.MathUtils;
  */
 public class MustangPi {
 
-    public static final double VISION_ERROR_CODE = -99999;
-
     private HashMap<String, NetworkTableObject> entries;
 
-    private PidSource_VisionValue angleToTarget, distanceToTarget; 
+    private VisionValue_PIDSource angleToTarget, distanceToTarget; 
 
     // The keys for the NetworkTable entries that the raspberry pi is putting up. Ensure that these are placed on the raspi also. Maybe make a shared config file
     private static final String[] raspiKeys = new String[] {"angleToTarget", "distanceToTarget"};
@@ -82,26 +81,26 @@ public class MustangPi {
     /** 
      * Angle to the vision target in degrees, as a PIDSource. Provides the VISION_ERROR_CODE if no value found.
      */
-    public PidSource_VisionValue getAngleToTarget() {
+    public VisionValue_PIDSource getAngleToTarget() {
         return angleToTarget;
     }
 
     /**
      * Distance to the vision target in inches, as a PIDSource. Provides the VISION_ERROR_CODE if no value found.
      */
-    public PidSource_VisionValue getDistanceToTarget() {
+    public VisionValue_PIDSource getDistanceToTarget() {
         return distanceToTarget;
     }
 
     /**
      * Represents a value received off the raspberry pi through vision processing as a PIDSource for WPILib PIDControllers
      */
-    private class PidSource_VisionValue implements PIDSource {
+    public class VisionValue_PIDSource implements PIDSource {
 
         private PIDSourceType pidSourceType;
         private String keyName;
         
-        private PidSource_VisionValue(String keyName) {
+        private VisionValue_PIDSource(String keyName) {
             pidSourceType = PIDSourceType.kDisplacement;
             this.keyName = keyName;
         }
@@ -122,8 +121,8 @@ public class MustangPi {
         @Override
         public double pidGet() {
             double entry = getEntry();
-            if(MathUtils.doublesEqual(entry, VISION_ERROR_CODE)) {
-                return VISION_ERROR_CODE;
+            if(MathUtils.doublesEqual(entry, RobotConstants.VISION_ERROR_CODE)) {
+                return RobotConstants.VISION_ERROR_CODE;
             } else {
                 return entry;
             }
@@ -137,7 +136,7 @@ public class MustangPi {
          * Returns true if a vision target is able to be located in the raspberry pi camera
          */
         public boolean canSeeVisionTarget() {
-            return !MathUtils.doublesEqual(getEntry(), VISION_ERROR_CODE);
+            return !MathUtils.doublesEqual(getEntry(), RobotConstants.VISION_ERROR_CODE);
         }
     }
 }
