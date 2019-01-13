@@ -16,6 +16,7 @@ import frc.team670.robot.commands.ExampleCommand;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangPi;
 import frc.team670.robot.dataCollection.MustangSensors;
+import frc.team670.robot.dataCollection.SharpIRSensor;
 import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.subsystems.MustangLEDs;
 import frc.team670.robot.utils.Logger;
@@ -33,6 +34,7 @@ public class Robot extends TimedRobot {
   public static MustangPi visionPi = new MustangPi();
   public static DriveBase driveBase = new DriveBase();
   private MustangLEDs leds = new MustangLEDs();
+  private SharpIRSensor irSensor = new SharpIRSensor(1, 0.25, 0.55);
 
   Command autonomousCommand;
   SendableChooser<Command> auton_chooser = new SendableChooser<>();
@@ -73,6 +75,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    System.out.println("Voltage: "+(irSensor.getVoltage()));
   }
 
   /**

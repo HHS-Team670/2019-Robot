@@ -35,9 +35,9 @@ public class MustangPi {
     }
 
     private MustangPi(String[] keys) {
-        for(String key : keys){
-            entries.put(key, new NetworkTableObject(key));
-        }
+        //for(String key : keys){
+          //  entries.put(key, new NetworkTableObject(key));
+        //}
     }
 
     private class NetworkTableObject {
@@ -176,6 +176,7 @@ public class MustangPi {
          * Gets the entry at the given index in the array at the NetworkTable entry that corresponds to this object's key.
          */
         public double getEntry(int index) {
+            if (entries.get(key)==null) return 0; //TODO:fix this, right now we dont have anything so null pointer 
             return entries.get(key).getValue()[index];
         }
 
