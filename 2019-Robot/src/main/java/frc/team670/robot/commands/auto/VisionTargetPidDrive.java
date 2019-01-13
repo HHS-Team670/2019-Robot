@@ -17,6 +17,7 @@ import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangPi.VisionValue_PIDSource;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.functions.MathUtils;
+import frc.team670.robot.utils.functions.SettingUtils;
 
 /**
  * Drives towards the vision target on the field using distance and angle from the raspberry pi vision
@@ -68,7 +69,7 @@ public class VisionTargetPidDrive extends Command {
     Logger.consoleLog("Initialized VisionTargetPidDrive");
 
     visionHeadingController.setSetpoint(0);
-    visionDistanceController.setSetpoint(0 + cameraOffset);
+    visionDistanceController.setSetpoint(0 - cameraOffset);
 
     executeCount = 0;
 
@@ -111,8 +112,8 @@ public class VisionTargetPidDrive extends Command {
   protected void end() {
     Logger.consoleLog("Ended VisionTargetPidDrive: headingOutput:%s, distanceOutput:%s", visionHeadingController.get(), visionDistanceController.get());
     Robot.driveBase.stop();
-    releaseController(visionDistanceController);
-    releaseController(visionHeadingController);
+    SettingUtils.releaseController(visionDistanceController);
+    SettingUtils.releaseController(visionHeadingController);
   }
 
   // Called when another command which requires one or more of the same
@@ -123,12 +124,67 @@ public class VisionTargetPidDrive extends Command {
     end();
   }
 
-  /**
-   * Disables controller and releases its resources.
-   */
-  private void releaseController(PIDController controller) {
-    controller.disable();
-    controller.free();
+  public class VisionAndPose_PIDSource implements PIDSource {
+
+    private VisionValue_PIDSource visionSource;
+    private PIDSourceType pidSourceType;
+    private Pose storedPose;
+    private double targetAngle, targetDistance;
+    
+    private boolean isDistance;
+
+
+    public VisionAndPose_PIDSource(VisionValue_PIDSource visionSource, boolean isDistance) {
+      this.visionSource = visionSource;
+      this.isDistance = isDistance;
+    }
+
+    @Override
+    public PIDSourceType getPIDSourceType() {
+        return pidSourceType;
+    }
+
+    @Override
+    public void setPIDSourceType(PIDSourceType pidSource) {
+        pidSourceType = pidSource;
+    }
+
+    @Override
+    public double pidGet() {
+      // return distance left, or angle left
+      double visionValue = visionSource.pidGet();
+
+      if (MathUtils.doublesEqual(visionValue, RobotConstants.VISION_ERROR_CODE)) { // If vision cannot find a target
+        if (isDistance) {
+          // This can be made more efficient by calculating this only once. Gets the target Coordinate Values.
+          long targetX = storedPose.getPosX() + (int)(Math.cos(Math.toRadians(targetAngle)) * targetDistance);
+          long targetY = storedPose.getPosY() + (int)(Math.sin(Math.toRadians(targetAngle)) * targetDistance);
+
+          // Current Coordinate Values
+          long currentPoseX = robotPosition.getPosX();
+          long currentPoseY = robotPosition.getPosY();
+
+          // Distance from current coordinate values to target coordinate values.
+          double distance = MathUtils.findDistance(currentPoseX, currentPoseY, targetX, targetY);
+
+          return distance;
+        }
+        else { // Needs to return an angle
+          double currentAngle = robotPosition.getRobotAngle();
+          return targetAngle - currentAngle;
+        }
+      }
+      else {  // if there is no error
+        if (isDistance) {
+          targetDistance = visionValue;
+        } 
+        else {
+          targetAngle = visionValue;
+        }
+        storedPose = robotPosition.clone();
+        return visionValue;
+      } 
+    }
   }
 
   public class VisionAndPose_PIDSource implements PIDSource {

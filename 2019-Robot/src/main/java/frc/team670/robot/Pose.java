@@ -13,6 +13,8 @@ public class Pose {
   private double currentAngle;
 
   private long currRobotX, currRobotY;
+
+  private long timeOfPose;
   
   /**
    * Makes new pose using current robot encoder values and angles
@@ -21,16 +23,23 @@ public class Pose {
     this(Robot.driveBase.getLeftEncoder(), Robot.driveBase.getRightEncoder(), Robot.sensors.getYaw().getDegrees());
   }
 
-  /**
+/**
    * 
    * @param lEncoderTick Encoder ticks -> forward = positive, backwards = negative
    * @param rEncoderTick Encoder ticks -> forward = positive, backwards = negative
    * @param angle Angle in degrees -> left = negative, right = positive
    */
   public Pose(long lEncoderTick, long rEncoderTick, double angle) {
+    this(lEncoderTick, rEncoderTick, angle, 0, 0, System.currentTimeMillis());
+  }
+
+  private Pose(long lEncoderTick, long rEncoderTick, double angle, long currRobotX, long currRobotY, long timeOfPose) {
     leftEncoderTick = lEncoderTick;
     rightEncoderTick = rEncoderTick;
     currentAngle = angle;
+    this.currRobotX = currRobotX;
+    this.currRobotY = currRobotY;
+    this.timeOfPose = timeOfPose;
   }
 
   private Pose(long lEncoderTick, long rEncoderTick, double angle, long currRobotX, long currRobotY) {
@@ -88,7 +97,14 @@ public class Pose {
     Robot.driveBase.resetEncoders();
   }
 
+  /**
+   * @return the timeOfPose
+   */
+  public long getTimeOfPose() {
+    return timeOfPose;
+  }
+
   public Pose clone() {
-    return new Pose(leftEncoderTick, rightEncoderTick, currentAngle, currRobotX, currRobotY);
+    return new Pose(leftEncoderTick, rightEncoderTick, currentAngle, currRobotX, currRobotY, timeOfPose);
   }
 }
