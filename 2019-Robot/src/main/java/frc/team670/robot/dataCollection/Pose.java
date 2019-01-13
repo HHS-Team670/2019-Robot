@@ -5,7 +5,9 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot;
+package frc.team670.robot.dataCollection;
+
+import frc.team670.robot.Robot;
 
 public class Pose {
 
@@ -13,7 +15,8 @@ public class Pose {
   private double currentAngle;
 
   private long currRobotX, currRobotY;
-  
+  private static Pose fieldCentricPose;
+
   /**
    * Makes new pose using current robot encoder values and angles
    */
@@ -90,5 +93,17 @@ public class Pose {
 
   public Pose clone() {
     return new Pose(leftEncoderTick, rightEncoderTick, currentAngle, currRobotX, currRobotY);
+  }
+
+  public void instantiateFieldCentricPose () {
+    fieldCentricPose = new Pose();
+  }
+
+  public void updateFieldCentricPose() {
+    // fieldCentricPose.update(); // TODO add parameters
+  }
+
+  public Pose getFieldCentricPose() {
+    return fieldCentricPose;
   }
 }
