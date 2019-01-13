@@ -10,8 +10,9 @@ import java.util.ArrayList;
 import org.opencv.core.MatOfPoint;
 
 import edu.wpi.first.wpilibj.DriverStation;
+
 enum RobotState{
-	DEFAULT_STATE,FORWARD_DRIVE,REVERSE_DRIVE,VISION_LOCK,STILL_DRIVE,CLIMBING;
+	FORWARD_DRIVE,REVERSE_DRIVE,VISION_LOCK,STILL_DRIVE,CLIMBING;
 }
 enum XFinal{
 	XFINAL1,XFINAL2,XFINAL3;
@@ -37,9 +38,10 @@ public class MustangLEDsEnum {
 	// String visionLock="false  ";
 	//String xFinal = "2";
 	
-	private RobotState robotData=RobotState.DEFAULT_STATE;
+	private RobotState robotData=RobotState.STILL_DRIVE;
 	private XFinal xFinal=XFinal.XFINAL2;
 	private AllianceColor allianceColor=AllianceColor.INVALID;
+	
 	String stateData;
 	String allianceData;
 	String xFinalData;
@@ -157,22 +159,19 @@ public class MustangLEDsEnum {
 				
 				//converts enum values for robot state into strings because .writeUTF is only compatible with strings
 				if(robotData==RobotState.CLIMBING){
-					stateData="5R";
-				}
-				if(robotData==RobotState.FORWARD_DRIVE){
-					stateData="1R";
-				}
-				if(robotData==RobotState.REVERSE_DRIVE){
-					stateData="2R";
-				}
-				if(robotData==RobotState.STILL_DRIVE){
 					stateData="4R";
 				}
+				if(robotData==RobotState.FORWARD_DRIVE){
+					stateData="0R";
+				}
+				if(robotData==RobotState.REVERSE_DRIVE){
+					stateData="1R";
+				}
 				if(robotData==RobotState.VISION_LOCK){
-					stateData="3R";
+					stateData="2R";
 				}
 				else{
-					stateData="0R";
+					stateData="3R";
 				}
 				//converts enum values for alliance color into strings 
 				if(allianceColor==AllianceColor.BLUE){
