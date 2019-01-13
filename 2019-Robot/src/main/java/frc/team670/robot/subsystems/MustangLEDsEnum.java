@@ -11,15 +11,7 @@ import org.opencv.core.MatOfPoint;
 
 import edu.wpi.first.wpilibj.DriverStation;
 
-enum RobotState{
-	FORWARD_DRIVE,REVERSE_DRIVE,VISION_LOCK,STILL_DRIVE,CLIMBING;
-}
-enum XFinal{
-	XFINAL1,XFINAL2,XFINAL3;
-}
-enum AllianceColor{
-	RED,BLUE,INVALID;
-}
+
 /**
  * Modify this class to collect data to send based on this year's game.
  * 
@@ -38,9 +30,6 @@ public class MustangLEDsEnum {
 	// String visionLock="false  ";
 	//String xFinal = "2";
 	
-	private RobotState robotData=RobotState.STILL_DRIVE;
-	private XFinal xFinal=XFinal.XFINAL2;
-	private AllianceColor allianceColor=AllianceColor.INVALID;
 	
 	final String blueAlliance = "1A";
 	final String redAlliance = "2A";
@@ -69,11 +58,9 @@ public class MustangLEDsEnum {
 	
 	public void changeAlliance(boolean b) {
 		if(b) {
-			allianceColor=AllianceColor.BLUE;
 			allianceData=blueAlliance;
 		}
 		else {
-			allianceColor=AllianceColor.RED;
 			allianceData=redAlliance;
 		}
 	}
