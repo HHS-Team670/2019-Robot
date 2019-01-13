@@ -21,7 +21,6 @@ Neopixels connected to Arduino pin 6. Using GRB format at 800KHZ bitstream
 * Arduino Ethernet shield to robot radio (as long as it's somehow connected to Ethernet on the robot side)
 * Arduino to USB power 
 
-
 In the Arduino code, to set up IP addresses: 
 
 ```cpp
