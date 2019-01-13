@@ -7,10 +7,12 @@
 
 package frc.team670.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.SensorCollection;
+import com.revrobotics.CANSparkMax;
+
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import com.revrobotics.CANSparkMax;
 
 /**
  * Represents a tank drive base.

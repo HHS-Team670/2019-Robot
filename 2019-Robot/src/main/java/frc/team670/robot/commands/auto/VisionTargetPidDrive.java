@@ -11,10 +11,10 @@ import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.command.Command;
-import frc.team670.robot.Pose;
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangPi.VisionValue_PIDSource;
+import frc.team670.robot.dataCollection.Pose;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.functions.MathUtils;
 
