@@ -2,7 +2,6 @@ package frc.team670.robot.dataCollection;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import frc.team254.lib.util.drivers.NavX;
 import frc.team254.lib.util.math.Rotation2d;
 import frc.team670.robot.constants.RobotMap;
 

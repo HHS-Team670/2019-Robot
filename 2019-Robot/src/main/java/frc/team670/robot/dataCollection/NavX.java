@@ -1,15 +1,17 @@
-package frc.team254.lib.util.drivers;
+package frc.team670.robot.dataCollection;
 
 import com.kauailabs.navx.AHRSProtocol.AHRSUpdateBase;
 import com.kauailabs.navx.frc.AHRS;
 import com.kauailabs.navx.frc.ITimestampedDataSubscriber;
 
+import edu.wpi.first.wpilibj.PIDSource;
+import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SerialPort;
 import frc.team254.lib.util.math.Rotation2d;
 
 /**
- * yes Driver for a NavX board. Basically a wrapper for the {@link AHRS} class
+ * Driver for a NavX board. Basically a wrapper for the AHRS class. Much of this was taken from 254's code release.
  */
 public class NavX {
     protected class Callback implements ITimestampedDataSubscriber {
@@ -86,5 +88,25 @@ public class NavX {
 
     public double getRawAccelX() {
         return mAHRS.getRawAccelX();
+    }
+
+    private class ZeroableNavX_PIDSource implements PIDSource{
+
+        private PIDSourceType type;
+
+        public ZeroableNavX_PIDSource() {
+            type = PIDSourceType.kDisplacement;
+        }
+
+        @Override
+        public void setPIDSourceType(PIDSourceType pidSource) {
+            type = pidSource;
+        }
+
+        @Override
+        public PIDSourceType getPIDSourceType() {
+            return type;
+        }
+
     }
 }

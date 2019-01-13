@@ -5,12 +5,11 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot;
+package frc.team670.robot.dataCollection;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import frc.team670.robot.Pose;
 
 /**
  * A Test for the MathUtils class. Serves as a test example for functions. Add to this for all other functions added.

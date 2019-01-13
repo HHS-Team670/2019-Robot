@@ -11,10 +11,10 @@ import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.command.Command;
-import frc.team670.robot.Pose;
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangPi.VisionValue_PIDSource;
+import frc.team670.robot.dataCollection.Pose;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.functions.MathUtils;
 import frc.team670.robot.utils.functions.SettingUtils;
@@ -33,9 +33,6 @@ public class VisionTargetPidDrive extends Command {
   private double visionHeadingControllerLowerBound = -.15, visionHeadingControllerUpperBound = .15;
   private double visionDistanceControllerLowerBound = -.7, visionDistanceControllerUpperBound = .7;
 
-
-  private double distanceControllerLowerBound = 0.05, distanceControllerUpperBound = 0.05;
-
   private final double cameraOffset = 2.5; //distance from camera to front of the robot in inches. TODO set this
   private int executeCount;
   private final double minimumAngleAdjustment = 0.03;
@@ -48,8 +45,8 @@ public class VisionTargetPidDrive extends Command {
 
     // Distance is in positive numbers, so it outputs a negative number as it tries to go to zero.
     // This is offset by having the robot drive the output * -1
-    visionDistanceController = new PIDController(P, I, D, F, new VisionAndPose_PIDSource(Robot.visionPi.getDistanceToTarget(), true), null);
-    visionHeadingController = new PIDController (P, I, D, F, new VisionAndPose_PIDSource(Robot.visionPi.getAngleToTarget(), false), null);
+    visionDistanceController = new PIDController(P, I, D, F, new VisionAndPose_PIDSource(Robot.visionPi.getDistanceToWallTarget(), true), null);
+    visionHeadingController = new PIDController (P, I, D, F, new VisionAndPose_PIDSource(Robot.visionPi.getAngleToWallTarget(), false), null);
     
     visionHeadingController.setInputRange(-30.0,  30.0);
     visionHeadingController.setOutputRange(visionHeadingControllerLowerBound, visionHeadingControllerUpperBound);
