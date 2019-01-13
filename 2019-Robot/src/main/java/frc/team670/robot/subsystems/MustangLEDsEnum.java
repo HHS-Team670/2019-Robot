@@ -13,6 +13,12 @@ import edu.wpi.first.wpilibj.DriverStation;
 enum RobotState{
 	DEFAULT_STATE,FORWARD_DRIVE,REVERSE_DRIVE,VISION_LOCK,STILL_DRIVE,CLIMBING;
 }
+enum XFinal{
+	XFINAL1,XFINAL2,XFINAL3;
+}
+enum AllianceColor{
+	RED,BLUE,INVALID;
+}
 /**
  * Modify this class to collect data to send based on this year's game.
  * 
@@ -22,17 +28,21 @@ enum RobotState{
  */
 
 public class MustangLEDsEnum {
-	public String robotState; 
 	// Data Init
-	String alliance = "Invalid";
-	String climbing = "false  ";
-	String forwardDrive="false  ";
-	String reverseDrive="false  ";
-	String still="false  ";
-	String visionLock="false  ";
-	String xFinal = "2";
-	private RobotState data=RobotState.DEFAULT_STATE;
+	// String alliance = "Invalid";
+	// String climbing = "false  ";
+	// String forwardDrive="false  ";
+	// String reverseDrive="false  ";
+	// String still="false  ";
+	// String visionLock="false  ";
+	//String xFinal = "2";
 	
+	private RobotState robotData=RobotState.DEFAULT_STATE;
+	private XFinal xFinal=XFinal.XFINAL2;
+	private AllianceColor allianceColor=AllianceColor.INVALID;
+	String stateData;
+	String allianceData;
+	String xFinalData;
 	// Socket Init
 	ServerSocket serverSocket = null;
 	// Thread init
@@ -53,10 +63,10 @@ public class MustangLEDsEnum {
 	
 	public void changeAlliance(boolean b) {
 		if(b) {
-			alliance = "blue   ";
+			allianceColor=AllianceColor.BLUE;
 		}
 		else {
-			alliance = "red    ";
+			allianceColor=AllianceColor.RED;
 		}
 	}
 
@@ -65,53 +75,53 @@ public class MustangLEDsEnum {
 		DriverStation.Alliance color = DriverStation.getInstance().getAlliance();
 		
 		if(color == DriverStation.Alliance.Blue){
-			alliance = "blue   ";
+			allianceColor=AllianceColor.BLUE;
 		}
 		if(color == DriverStation.Alliance.Red){
-			alliance = "red    ";
+			allianceColor=AllianceColor.RED;
 		}
 		if(color == DriverStation.Alliance.Invalid){
-			alliance = "Invalid";	
+			allianceColor=AllianceColor.INVALID;	
 		}
 	}
 	
 	public void updateClimbingBoolean(boolean trigger){ // Updates if we are climbing
 		if(trigger == true){
-			data=RobotState.CLIMBING;
+			robotData=RobotState.CLIMBING;
 		}
 	}
 	
 	public void updateVisionData(boolean trigger){ //updates if we lock onto a vision target
 		if(trigger == true){
-			data=RobotState.VISION_LOCK;
+			robotData=RobotState.VISION_LOCK;
 		}
 	}
 	public void updateForwardDrive(boolean trigger){//update if we are driving forward
 		if(trigger=true){
-			data=RobotState.FORWARD_DRIVE;
+			robotData=RobotState.FORWARD_DRIVE;
 		}
 		
 	}
 	public void updateReverseDrive(boolean trigger){
 		if(trigger=true){
-			data=RobotState.REVERSE_DRIVE;
+			robotData=RobotState.REVERSE_DRIVE;
 		}
 		
 	}
 	public void updateStillDrive(boolean trigger){
 		if(trigger=true){
-		data=RobotState.STILL_DRIVE;
+			robotData=RobotState.STILL_DRIVE;
 		}
 	}
 	
 	public void update_xFinal(double acceptedXFinal){ // Updates xFinal in data
 		if(acceptedXFinal > 10 && acceptedXFinal != -666){
-			xFinal = "3";
+			xFinal=XFinal.XFINAL3;
 		}else{
 			if(acceptedXFinal < -10 && acceptedXFinal != -666){
-				xFinal = "1";
+				xFinal=XFinal.XFINAL1;
 			}else{
-				xFinal = "2";
+				xFinal=XFinal.XFINAL2;
 			}
 		}
 	}
@@ -145,15 +155,53 @@ public class MustangLEDsEnum {
 			
 			while(true){
 				
-				// Compiles data into one nice neat string
-				
-				data = alliance + "," + climbing + "," + forwardDrive+ "," +reverseDrive + "," + still+ "," +visionLock+","+xFinal;
+				//converts enum values for robot state into strings because .writeUTF is only compatible with strings
+				if(robotData==RobotState.CLIMBING){
+					stateData="5R";
+				}
+				if(robotData==RobotState.FORWARD_DRIVE){
+					stateData="1R";
+				}
+				if(robotData==RobotState.REVERSE_DRIVE){
+					stateData="2R";
+				}
+				if(robotData==RobotState.STILL_DRIVE){
+					stateData="4R";
+				}
+				if(robotData==RobotState.VISION_LOCK){
+					stateData="3R";
+				}
+				else{
+					stateData="0R";
+				}
+				//converts enum values for alliance color into strings 
+				if(allianceColor==AllianceColor.BLUE){
+					allianceData="1A";
+				}
+				if(allianceColor==AllianceColor.RED){
+					allianceData="2A";
+				}
+				else{
+					allianceData="0A";
+				}
+				//converts enum values for xFinal into strings
+				if(xFinal==XFinal.XFINAL1){
+					xFinalData="1X";
+				}
+				if(xFinal==XFinal.XFINAL3){
+					xFinalData="3X";
+				}
+				else{
+					xFinalData="2X";
+				}
+
+
 	
-				System.out.println(data);
+				System.out.println(stateData+""+allianceData+""+xFinalData);
 				
 				// Sends data to the Arduino/Ethernet Shield
 				try {
-					output.writeUTF(data);
+					output.writeUTF(stateData+""+allianceData+""+xFinalData);
 					output.flush();
 				} catch (Exception e) {
 					System.out.println("Unable to send Arduino data");
