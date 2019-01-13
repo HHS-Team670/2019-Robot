@@ -97,7 +97,6 @@ public class MustangPi {
      * Represents a set of vision data received from the raspberry pi containing an array of doubles in the form [angle, distance, timestamp]
      */
     public class VisionValues {
-
         private static final int ANGLE_INDEX = 0, DISTANCE_INDEX = 1, TIMESTAMP_INDEX = 2;
         private VisionValue_PIDSource angle, distance;
         

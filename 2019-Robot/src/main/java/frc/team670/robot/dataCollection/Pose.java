@@ -22,7 +22,7 @@ public class Pose {
    * Makes new pose using current robot encoder values and angles
    */
   public Pose() {
-    this(Robot.driveBase.getLeftEncoder(), Robot.driveBase.getRightEncoder(), Robot.sensors.getYaw().getDegrees());
+    this(Robot.driveBase.getLeftEncoder(), Robot.driveBase.getRightEncoder(), Robot.sensors.getYawDouble());
   }
 
   /**
@@ -49,6 +49,14 @@ public class Pose {
     this.currRobotX = currRobotX;
     this.currRobotY = currRobotY;
     this.timeOfPose = timeOfPose;
+  }
+
+  private Pose(long lEncoderTick, long rEncoderTick, double angle, long currRobotX, long currRobotY) {
+    leftEncoderTick = lEncoderTick;
+    rightEncoderTick = rEncoderTick;
+    currentAngle = angle;
+    this.currRobotX = currRobotX;
+    this.currRobotY = currRobotY;
   }
  
   /**

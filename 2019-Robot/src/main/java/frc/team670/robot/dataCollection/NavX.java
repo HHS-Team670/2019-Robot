@@ -37,6 +37,7 @@ public class NavX {
     protected double mYawRateDegreesPerSecond;
     protected final long kInvalidTimestamp = -1;
     protected long mLastSensorTimestampMs;
+    private double offSet;
 
     public NavX(SPI.Port spi_port_id) {
         mAHRS = new AHRS(spi_port_id, (byte) 200);
@@ -50,13 +51,20 @@ public class NavX {
         mAHRS.registerCallback(new Callback(), null);
     }
 
+    /**
+     * Resets and recalibrates the NavX (yaw will go back to zero and offset cleared). Call this right at the beginning of the match.
+     */
     public synchronized void reset() {
         mAHRS.reset();
         resetState();
+        offSet = 0;
     }
 
+    /**
+     * Zeroes the yaw for getYawDouble()
+     */
     public synchronized void zeroYaw() {
-        mAHRS.zeroYaw();
+        setOffSetAngle();
         resetState();
     }
 
@@ -66,30 +74,74 @@ public class NavX {
         mYawRateDegreesPerSecond = 0.0;
     }
 
-    public synchronized void setAngleAdjustment(Rotation2d adjustment) {
-        mAngleAdjustment = adjustment;
-    }
+    // public synchronized void setAngleAdjustment(Rotation2d adjustment) {
+    //     mAngleAdjustment = adjustment;
+    // }
 
-    protected synchronized double getRawYawDegrees() {
+    /**
+     * The Field Centric Yaw
+     */
+    private synchronized double getRawYawDegrees() {
         return mYawDegrees;
     }
 
-    public Rotation2d getYaw() {
-        return mAngleAdjustment.rotateBy(Rotation2d.fromDegrees(getRawYawDegrees()));
+    /**
+     * Gets the yaw with offset taken into account. Offset sets the zero of the gyro to the point where zeroYaw() was last called.
+     */
+    public synchronized double getYawDouble() {
+        double rtrnAngle = getRawYawDegrees() - offSet;
+        while (rtrnAngle > 180) { 
+            rtrnAngle = rtrnAngle - 360; // returns the same angle but in range [-180, 180]
+        }
+        while (rtrnAngle < -180) {
+            rtrnAngle = rtrnAngle + 360; 
+        }
+        return rtrnAngle;
     }
 
-    public double getYawRateDegreesPerSec() {
+    /**
+     * The rate of change of the NavX angle in degrees per second.
+     */
+    public synchronized double getYawRateDegreesPerSec() {
         return mYawRateDegreesPerSecond;
     }
 
-    public double getYawRateRadiansPerSec() {
+    /**
+     * The rate of change of the NavX angle in radians per second.
+     */
+    public synchronized double getYawRateRadiansPerSec() {
         return 180.0 / Math.PI * getYawRateDegreesPerSec();
     }
 
-    public double getRawAccelX() {
+    public synchronized double getRawAccelX() {
         return mAHRS.getRawAccelX();
     }
 
+    private synchronized void setOffSetAngle() {
+        offSet = getRawYawDegrees();
+    }
+
+    /**
+     * Gets the NavX as a PIDSource that responds to the NavX being zeroed.
+     */
+    public synchronized ZeroableNavX_PIDSource getZeroableNavXPIDSource() {
+        return new ZeroableNavX_PIDSource();
+    }
+
+    /**
+     * Gets the NavX object itself so be careful with it and don't reset it. This will be field centric.
+     */
+    public synchronized AHRS getFieldCentricNavXPIDSource () {
+        return mAHRS;
+    }
+
+    /**
+     * Gets the field centric yaw (0 degrees is forward for the robot from its starting position),
+     * @return The Yaw (-180, 180) with -180 and 180 being directly backwards.
+     */
+    public synchronized double getYawFieldCentric() {
+        return getRawYawDegrees();
+    }
     private class ZeroableNavX_PIDSource implements PIDSource{
 
         private PIDSourceType type;
@@ -108,5 +160,11 @@ public class NavX {
             return type;
         }
 
+        @Override
+        public double pidGet() {
+            return getYawDouble();
+        }
+
     }
+
 }
