@@ -9,8 +9,6 @@ package frc.team670.robot.commands.auto;
 
 import java.util.ArrayList;
 
-import com.ctre.phoenix.motorcontrol.SensorCollection;
-
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
@@ -24,9 +22,15 @@ import frc.team670.robot.utils.functions.MathUtils;
 import frc.team670.robot.utils.functions.SettingUtils;
 import com.revrobotics.CANEncoder;
 
-public class VisionPIDEncoderDependent extends Command {
-
-  private Pose pose;
+/**
+ * 
+ * Implements a PID Drive based on Vision by constantly setting setpoint and driving them using the NavX gyroscope
+ * and encoders. Takes into account time for vision data to be sent and continues off the last seen target if the
+ * vision can no longer find it.
+ * 
+ * @author shaylandias
+ */
+public class AdvancedVisionPIDDrive extends Command {
 
   private PIDController  distanceController, headingController;
   private static final double P = 0.01, I = 0.0, D = 0.0, F = 0.0;
@@ -42,7 +46,7 @@ public class VisionPIDEncoderDependent extends Command {
   private Pose robotPosition;
 
 
-  public VisionPIDEncoderDependent() {
+  public AdvancedVisionPIDDrive() {
     requires(Robot.driveBase);
     distanceController = new PIDController(P, I, D, F, new TwoEncoder_PIDSource(Robot.driveBase.getLeftEncoder(), Robot.driveBase.getRightEncoder()), null);
     // headingController = new PIDController (P, I, D, F, Robot.sensors.get, null);
@@ -79,6 +83,11 @@ public class VisionPIDEncoderDependent extends Command {
 
     robotPosition.update((long)Robot.driveBase.getLeftEncoderPosition(), (long)Robot.driveBase.getRightEncoderPosition(), Robot.sensors.getYawDouble());
 
+    double[] visionData = visionDistanceAndPose.getAngleAndDistance();
+
+    headingController.setSetpoint(visionData[0]);
+    distanceController.setSetpoint(visionData[1]);
+
     double distanceOutput = distanceController.get();
     double headingOutput = headingController.get();
 
@@ -103,7 +112,7 @@ public class VisionPIDEncoderDependent extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return false;
+    return distanceController.onTarget() && headingController.onTarget();
   }
 
   // Called once after isFinished returns true
