@@ -17,7 +17,7 @@ import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import frc.team670.robot.constants.RobotMap;
+import com.revrobotics.CANSparkMax;
 
 /**
  * Represents a tank drive base.
@@ -263,6 +263,36 @@ public class DriveBase extends Subsystem {
 
   public void stop() {
     tankDrive(0, 0);
+  }
+
+/**
+ * Return the left encoder's position
+ */
+  public long getLeftEncoder() {
+    return 0;
+
+  }
+
+/**
+ * Return the right encoder's position
+ */
+  public long getRightEncoder(){
+    return 0;
+  }
+
+  public SensorCollection getLeftEncoderCollection() {
+    return null;
+  }
+
+  public SensorCollection getRightEncoderCollection() {
+    return null;
+  }
+
+  /**
+   * Resets the encoder values to zero.
+   */
+  public void resetEncoders() {
+
   }
 
   @Override
