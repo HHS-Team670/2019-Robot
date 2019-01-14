@@ -18,7 +18,7 @@ public class Pose {
 
   private long timeOfPose;
   
-  private static Pose fieldCentricPose = new Pose();
+  private static Pose fieldCentricPose;
 
   /**
    * Makes new pose using current robot encoder values and angles
@@ -118,7 +118,7 @@ public class Pose {
   /**
    * Instantiates the field centric Pose. Call this in Robot.autonomousInit()
    */
-  public static void reinstantiateFieldCentricPose () {
+  public static void instantiateFieldCentricPose () {
     fieldCentricPose = new Pose();
   }
 

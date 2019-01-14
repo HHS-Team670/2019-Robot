@@ -62,7 +62,7 @@ public class VisionTargetPidDrive extends Command {
   @Override
   protected void initialize() {
 
-    Pose.resetPoseInputs();
+    Robot.sensors.zeroYaw();
 
     robotPosition = new Pose();
 

@@ -142,7 +142,7 @@ public class NavX {
     public synchronized double getYawFieldCentric() {
         return getRawYawDegrees();
     }
-    private class ZeroableNavX_PIDSource implements PIDSource{
+    public class ZeroableNavX_PIDSource implements PIDSource{
 
         private PIDSourceType type;
 

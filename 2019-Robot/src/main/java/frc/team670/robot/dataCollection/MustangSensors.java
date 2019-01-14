@@ -2,8 +2,8 @@ package frc.team670.robot.dataCollection;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import frc.team254.lib.util.math.Rotation2d;
 import frc.team670.robot.constants.RobotMap;
+import frc.team670.robot.dataCollection.NavX.ZeroableNavX_PIDSource;
 
 /**
  * Instantiates sensor representation objects and contains methods for accessing the sensor data.
@@ -90,6 +90,13 @@ public class MustangSensors extends Subsystem {
     if(navXMicro != null){
       navXMicro.zeroYaw();
     }
+  }
+
+  public ZeroableNavX_PIDSource getZeroableNavXPIDSource() {
+    if(navXMicro != null){
+      return navXMicro.getZeroableNavXPIDSource();
+    }
+    return null;
   }
 
 }
