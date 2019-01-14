@@ -176,7 +176,9 @@ public class MustangPi {
          * Gets the entry at the given index in the array at the NetworkTable entry that corresponds to this object's key.
          */
         public double getEntry(int index) {
-            if (entries.get(key)==null) return 0; //TODO:fix this, right now we dont have anything so null pointer 
+            if (entries.get(key)==null) {
+                return RobotConstants.VISION_ERROR_CODE; // If no data found, returns VISION_ERROR_CODE
+            }
             return entries.get(key).getValue()[index];
         }
 

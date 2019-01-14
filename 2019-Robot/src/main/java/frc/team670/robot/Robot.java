@@ -16,6 +16,7 @@ import frc.team670.robot.commands.ExampleCommand;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangPi;
 import frc.team670.robot.dataCollection.MustangSensors;
+import frc.team670.robot.dataCollection.Pose;
 import frc.team670.robot.dataCollection.SharpIRSensor;
 import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.subsystems.MustangLEDs;
@@ -76,6 +77,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     System.out.println("Voltage: "+(irSensor.getVoltage()));
+    Pose.updateFieldCentricPose(); // Update our field centric Pose to the new robot position.
   }
 
   /**
@@ -106,6 +108,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    sensors.resetNavX(); // Reset NavX completely, zero the field centric based on how robot faces from start of game.
+    Pose.reinstantiateFieldCentricPose(); // Resets the Field Centric Pose of the robot for the start of the game.
+
     Logger.consoleLog("Auton Started");
     autonomousCommand = auton_chooser.getSelected();
 

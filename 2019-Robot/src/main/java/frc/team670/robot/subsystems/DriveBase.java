@@ -278,13 +278,6 @@ public class DriveBase extends Subsystem {
     return right1.getEncoder();
   }
 
-  /**
-   * Resets the encoder values to zero.
-   */
-  public void resetEncoders() {
-
-  }
-
   @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
