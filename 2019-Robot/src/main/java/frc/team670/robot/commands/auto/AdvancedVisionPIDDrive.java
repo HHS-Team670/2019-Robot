@@ -9,6 +9,8 @@ package frc.team670.robot.commands.auto;
 
 import java.util.ArrayList;
 
+import com.revrobotics.CANEncoder;
+
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
@@ -20,12 +22,13 @@ import frc.team670.robot.dataCollection.Pose;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.functions.MathUtils;
 import frc.team670.robot.utils.functions.SettingUtils;
-import com.revrobotics.CANEncoder;
+import jaci.pathfinder.Pathfinder;
 
 /**
  * 
- * Implements a PID Drive based on Vision by constantly setting setpoint and driving them using the NavX gyroscope
- * and encoders. Takes into account time for vision data to be sent and continues off the last seen target if the
+ * Implements a PID Drive based on Vision by constantly setting setpoint and
+ * driving them using the NavX gyroscope and encoders. Takes into account time
+ * for vision data to be sent and continues off the last seen target if the
  * vision can no longer find it.
  * 
  * @author shaylandias
@@ -246,12 +249,17 @@ public class AdvancedVisionPIDDrive extends Command {
     }  
 
     private double calcAngleWithTimeAdjustment(double yGoal, double xGoal, double yCurrent, double xCurrent) {
-      return Math.toDegrees(Math.atan2(yGoal - yCurrent, xGoal - xCurrent));
-    }
+      return AdvancedVisionPIDDrive.calcAngleWithTimeAdjustment(yGoal, xGoal, yCurrent, xCurrent);
+  }
 
     private double calcDistanceWithTimeAdjustment(double yGoal, double xGoal, double yCurrent, double xCurrent) {
       return MathUtils.findDistance(xGoal, yGoal, xCurrent, yCurrent);
     }
+
+  }
+
+  public static double calcAngleWithTimeAdjustment(double yGoal, double xGoal, double yCurrent, double xCurrent) {
+    return Pathfinder.boundHalfDegrees(-1 * (Math.toDegrees(Math.atan2(yGoal - yCurrent, xGoal - xCurrent)) - 90));
 
   }
 
