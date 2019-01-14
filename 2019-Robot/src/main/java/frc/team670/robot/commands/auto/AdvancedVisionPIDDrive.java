@@ -226,7 +226,7 @@ public class AdvancedVisionPIDDrive extends Command {
         }
 
         // Calculate target angle and target distance.
-        targetAngle = calcAngleWithTimeAdjustment(lastTarget.getPosY(), lastTarget.getPosX(), currentPose.getPosY(), currentPose.getPosX());
+        targetAngle = calcAngleWithTimeAdjustment(lastTarget.getPosX(), lastTarget.getPosY(), currentPose.getPosX(), currentPose.getPosY());
         targetDistance = calcDistanceWithTimeAdjustment(lastTarget.getPosY(), lastTarget.getPosX(), currentPose.getPosY(), currentPose.getPosX());
       }
       else {    // if there is no error
@@ -237,8 +237,8 @@ public class AdvancedVisionPIDDrive extends Command {
         double targetY = Math.sin(Math.toRadians(angle))* distance;
 
         // Calculate target angle and target distance.
-        targetAngle = calcAngleWithTimeAdjustment(targetY, targetX, currentPose.getPosY(), currentPose.getPosX());
-        targetDistance = calcDistanceWithTimeAdjustment(targetY, targetX, currentPose.getPosY(), currentPose.getPosX());
+        targetAngle = calcAngleWithTimeAdjustment(targetX, targetY, currentPose.getPosX(), currentPose.getPosY());
+        targetDistance = calcDistanceWithTimeAdjustment(targetX, targetY, currentPose.getPosX(), currentPose.getPosY());
 
         // Stores the lastTarget in case we lose it.
         lastTarget = new Pose(currentPose.getPosX() + targetDistance * Math.cos(Math.toRadians(targetAngle)),
@@ -249,17 +249,17 @@ public class AdvancedVisionPIDDrive extends Command {
       return new double[]{targetAngle, targetDistance};
     }  
 
-    private double calcAngleWithTimeAdjustment(double yGoal, double xGoal, double yCurrent, double xCurrent) {
-      return AdvancedVisionPIDDrive.calcAngleWithTimeAdjustment(yGoal, xGoal, yCurrent, xCurrent);
+    private double calcAngleWithTimeAdjustment(double xGoal, double yGoal, double xCurrent, double yCurrent) {
+      return AdvancedVisionPIDDrive.calcAngleWithTimeAdjustment(xGoal, yGoal, xCurrent, yCurrent);
   }
 
-    private double calcDistanceWithTimeAdjustment(double yGoal, double xGoal, double yCurrent, double xCurrent) {
+    private double calcDistanceWithTimeAdjustment(double xGoal, double yGoal, double xCurrent, double yCurrent) {
       return MathUtils.findDistance(xGoal, yGoal, xCurrent, yCurrent);
     }
 
   }
 
-  public static double calcAngleWithTimeAdjustment(double yGoal, double xGoal, double yCurrent, double xCurrent) {
+  public static double calcAngleWithTimeAdjustment(double xGoal, double yGoal, double xCurrent, double yCurrent) {
     return Pathfinder.boundHalfDegrees(-1 * (Math.toDegrees(Math.atan2(yGoal - yCurrent, xGoal - xCurrent)) - 90));
 
   }

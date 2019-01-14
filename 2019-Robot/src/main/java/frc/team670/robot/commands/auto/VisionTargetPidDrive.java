@@ -37,7 +37,7 @@ public class VisionTargetPidDrive extends Command {
   private int executeCount;
   private final double minimumAngleAdjustment = 0.03;
 
-  private Pose robotPosition, currentPose;
+  private Pose robotPosition;
 
   public VisionTargetPidDrive() {
 

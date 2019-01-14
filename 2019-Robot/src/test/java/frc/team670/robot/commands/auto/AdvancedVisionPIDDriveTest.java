@@ -19,10 +19,10 @@ public class AdvancedVisionPIDDriveTest {
 
     @Test
     public void testCalcAngleWithTimeAdjustment() {
-        assertEquals(90, AdvancedVisionPIDDrive.calcAngleWithTimeAdjustment(0d, 1d, 0d, 0d), 0.0001);
-        assertEquals(0, AdvancedVisionPIDDrive.calcAngleWithTimeAdjustment(1d, 0d, 0d, 0d), 0.0001);
-        assertEquals(-90, AdvancedVisionPIDDrive.calcAngleWithTimeAdjustment(0d, -1d, 0d, 0d), 0.0001);
-        assertEquals(-180, AdvancedVisionPIDDrive.calcAngleWithTimeAdjustment(-1d, 0d, 0d, 0d), 0.0001);
+        assertEquals(90, AdvancedVisionPIDDrive.calcAngleWithTimeAdjustment(1d, 0d, 0d, 0d), 0.0001);
+        assertEquals(0, AdvancedVisionPIDDrive.calcAngleWithTimeAdjustment(0d, 1d, 0d, 0d), 0.0001);
+        assertEquals(-90, AdvancedVisionPIDDrive.calcAngleWithTimeAdjustment(-1d, 0d, 0d, 0d), 0.0001);
+        assertEquals(-180, AdvancedVisionPIDDrive.calcAngleWithTimeAdjustment(0d, -1d, 0d, 0d), 0.0001);
 
     }
 
