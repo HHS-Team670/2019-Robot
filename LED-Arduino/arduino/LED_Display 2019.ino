@@ -22,29 +22,16 @@ IPAddress ip(10,6,70,3);                            //Defines a static IP for th
 IPAddress robotIp(10,6,70,2);                       //Defines the robot's IP
 
 int connectionTimer = 0;                            //Sets a connection timer to see if the program should reconnect to the RoboRio in case it becomes disconnected
-
 char dataChar;                                      //Used for storing a character before inputing it into dataArray[]
+int numberOfPixels=strip.numPixels();
 
- String dataString = "";                             //Used for building a string to then splice into multiple parts to control the LEDs
-// String xFinal = "2";                                //data for where the peg is via vision program,
-// String truexFinal = "center";
-// String alliance = "Invalid";
-// String climbing = "false  ";
-// String forwardDrive="false  ";
-// String reverseDrive="false  ";
-// String still="false  ";
-// String visionLock="false  ";
-//enum robot state declarations
-
-
-
-
+String dataString = "";                             //Used for building a string to then splice into multiple parts to control the LEDs
 String stateData;
 String allianceData;
 String xFinalData;
 
 
-int numberOfPixels=strip.numPixels();
+
 
 int asciiArray[] = {                                //Please use the ASCII converter at https://www.arduino.cc/en/Reference/ASCIIchart
     32,44,45,48,49,50,51,52,53,54,55,56,            //to translate ASCII and add more possible characters to be readable
