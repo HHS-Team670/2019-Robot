@@ -33,10 +33,26 @@ public class MustangLEDsEnum {
 	
 	final String blueAlliance = "1A";
 	final String redAlliance = "2A";
-	String stateData;
-	String allianceData;
-	String xFinalData;
-	String data;
+	final String invalidAlliance="3A";
+
+
+	final String climbing="4R";
+	final String visionLock="2R";
+	final String forwardDrive="0R";
+	final String reverseDrive="1R";
+	final String stillDrive="3R";
+
+	final String xFinalLeft="1X";
+	final String xFinalCenter="2X";
+	final String xFinalRight="3X";
+	
+	String stateData=stillDrive;
+	String allianceData=invalidAlliance;
+	String xFinalData=xFinalCenter;
+	String data="";
+
+	
+
 
 	// Socket Init
 	ServerSocket serverSocket = null;
@@ -76,49 +92,49 @@ public class MustangLEDsEnum {
 			allianceData=redAlliance;
 		}
 		if(color == DriverStation.Alliance.Invalid){
-			allianceData="0A";	
+			allianceData=invalidAlliance;	
 		}
 	}
 	
-	public void updateClimbingBoolean(boolean trigger){ // Updates if we are climbing
+	public void getClimbingData(boolean trigger){ // Updates if we are climbing
 		if(trigger == true){
-			stateData="4R";
+			stateData=climbing;
 		}
 	}
 	
-	public void updateVisionData(boolean trigger){ //updates if we lock onto a vision target
+	public void getVisionData(boolean trigger){ //updates if we lock onto a vision target
 		if(trigger == true){
-			stateData="2R";
+			stateData=visionLock;
 		}
 	}
-	public void updateForwardDrive(boolean trigger){//update if we are driving forward
+	public void getForwardData(boolean trigger){//update if we are driving forward
 		if(trigger=true){
-			stateData="0R";
+			stateData=forwardDrive;
 		}
 		
 	}
-	public void updateReverseDrive(boolean trigger){
+	public void getReverseData(boolean trigger){
 		if(trigger=true){
-			stateData="1R";
+			stateData=reverseDrive;
 		}
 		
 	}
 	public void updateStillDrive(boolean trigger){
 		if(trigger=true){
-			stateData = "3R";
+			stateData = stillDrive;
 		}
 	}
 	
 	public void update_xFinal(double acceptedXFinal){ // Updates xFinal in data
 		if(acceptedXFinal > 10 && acceptedXFinal != -666){
-			xFinalData="3X";
+			xFinalData=xFinalRight;
 		}
 		else{
 			if(acceptedXFinal < -10 && acceptedXFinal != -666){
-				xFinalData="1X";
+				xFinalData=xFinalLeft;
 			}
 			else{
-				xFinalData="2X";
+				xFinalData=xFinalCenter;
 			}
 		}
 	}
