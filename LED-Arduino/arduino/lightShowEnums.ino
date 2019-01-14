@@ -12,20 +12,20 @@
 #include <Adafruit_NeoPixel.h> 
 
 Adafruit_NeoPixel strip =                           //Defines an Adafruit Neopixel strip, containing 120 LEDs, using 
-  Adafruit_NeoPixel(120, 6, NEO_GRB + NEO_KHZ800);  //Arduino pin #6, and using the GRB format at 800KHZ bitstream
+  Adafruit_NeoPixel(16, 6, NEO_GRB + NEO_KHZ800);  //Arduino pin #6, and using the GRB format at 800KHZ bitstream
   
 EthernetClient robotClient;                         //Defines a client to be used to connect to the Robo Rio
 byte mac[] = {                                      //Creates a mac address for use in defining an Ethernet instance
   0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED
 };
-IPAddress ip(10,9,57,6);                            //Defines a static IP for the Arduino/Ethernet Shield
-IPAddress robotIp(10,9,57,2);                       //Defines the robot's IP
+IPAddress ip(10,6,70,3);                            //Defines a static IP for the Arduino/Ethernet Shield
+IPAddress robotIp(10,6,70,2);                       //Defines the robot's IP
 
 int connectionTimer = 0;                            //Sets a connection timer to see if the program should reconnect to the RoboRio in case it becomes disconnected
 
 char dataChar;                                      //Used for storing a character before inputing it into dataArray[]
 
-// String dataString = "";                             //Used for building a string to then splice into multiple parts to control the LEDs
+ String dataString = "";                             //Used for building a string to then splice into multiple parts to control the LEDs
 // String xFinal = "2";                                //data for where the peg is via vision program,
 // String truexFinal = "center";
 // String alliance = "Invalid";
@@ -34,12 +34,11 @@ char dataChar;                                      //Used for storing a charact
 // String reverseDrive="false  ";
 // String still="false  ";
 // String visionLock="false  ";
-
 //enum robot state declarations
 
 
 
-]
+
 String stateData;
 String allianceData;
 String xFinalData;
@@ -71,10 +70,17 @@ void setup() {                                      //Sets up constants before p
 }
 
 void loop() {
-                                                    //Ran indefinitly after setup()
+   for(int i = 0; i < numberOfPixels; i++){
+        strip.setPixelColor(i,255,255,255);
+   }
+        strip.show();    
+           //Ran indefinitly after setup()
   connectionTimer++;                                //Adds a count to the ConnectionTimer
   
   if(robotClient.available()){                      //Runs when bytes are available to read
+   for(int i = 0; i < numberOfPixels; i++){
+        strip.setPixelColor(i,255,0,0);}//green
+        strip.show();
     connectionTimer = 0;                            //Sets the connectionTimer countdown to zero
     dataString = "";                                //Resets our final data string
     while(robotClient.available()){                 //Processes data until program is out of readable bytes
@@ -83,21 +89,28 @@ void loop() {
     }
     //parses dataString and receives corresponding values from Java program
     dataString.remove(0,2);                         //Removes two garbage characters from the start of the string
-    stateData = dataString.substring(0,2);           //Grabs the expected location of various data, puts it in variables
-    allianceData = dataString.substring(3,5);              
-    xFinalData=dataString.substring(6,8);
+    stateData = dataString.substring(0,1);           //Grabs the expected location of various data, puts it in variables
+    allianceData = dataString.substring(2,3);              
+    xFinalData=dataString.substring(4,5);
 
     
     
     if(xFinalData=="1X"){                              //If xFinal is equal to 1, it is to the left of the camera
-      strip.setPixelColor(11,100,200,255);
+      for(int i = 0; i < strip.numPixels(); i++){       //Resets the full LED strip...
+    strip.setPixelColor(i,244, 100, 240);                  
+  }
+    } else if(xFinalData=="2X"){                              //If xFinal is equal to 2, it is centered to the camera
+    // 25 25 45
+      for(int i = 0; i < strip.numPixels(); i++){       //Resets the full LED strip...
+    strip.setPixelColor(i,18 ,226,18);                   
+  }
+    } else if(xFinalData=="3X"){                              //If xFinal is equal to 3, it is to the right of the camera
+    // 10 255 100
+      for(int i = 0; i < strip.numPixels(); i++){       //Resets the full LED strip...
+    strip.setPixelColor(i,10,255,100);                   
+  }
     }
-    if(xFinalData=="2X"){                              //If xFinal is equal to 2, it is centered to the camera
-      strip.setPixelColor(12,150,20,130)
-    }
-    if(xFinalData=="3X"){                              //If xFinal is equal to 3, it is to the right of the camera
-      strip.setPixelColor(13,10,255,100);
-    }
+    strip.show();
 
     // Serial.println("Alliance?: " + alliance +       //Prints out the data above to the serial console
     //   ", Climbing?: "  + climbing + ", forwardDrive?: " + 
@@ -106,81 +119,65 @@ void loop() {
   }
 
   //Below here is code to control the LED's from the data obtained above
-  void reset(){
-  for(int i = 0; i < numberOfPixels; i++){       //Resets the full LED strip...
-    strip.setPixelColor(i,0,0,0);                   //...by setting each LED to black
-  }
-  }
+  // void reset(){
+  // for(int i = 0; i < numberOfPixels; i++){       //Resets the full LED strip...
+  //   strip.setPixelColor(i,0,0,0);                   //...by setting each LED to black
+  // }
+  // }
 //  void reset(){
 //  strip.begin();
 //  strip.show(); //initialize all pixels to "off"
 //  }
  if(allianceData=="1A"){                        //If the alliance is blue, set the base LED color to blue
-    AllianceColor=BLUE;
-  }
-  if(allianceData=="2A"){                        //If the alliance is red, set the base LED color to red
-    AllianceColor=RED;
-  }
-  if(allianceData== "3A"){                        //If no alliance is specified, set the base LED color to purple
-    AllianceColor=INVALID;
-  }
-  
+     for(int i = 0; i < numberOfPixels; i++){
+      strip.setPixelColor(i,0,0,255);
+     }
+} else if(allianceData=="2A"){                        //If the alliance is red, set the base LED color to red
+    strip.setPixelColor(16,255,0,0);
+} else if(allianceData== "3A"){                        //If no alliance is specified, set the base LED color to purple
+    strip.setPixelColor(17,0,255,0);
+}
+  strip.show();
  
-if(climbingValue==0){
-    while(climbingValue==0)
-    {
+
+  if(stateData=="4R"){
+    for(int i = 0; i < numberOfPixels; i++){
+      strip.setPixelColor(i,66,229,244);
+      strip.show();
+    }
+  } else if(stateData=="2R"){
+    for(int i = 0; i < numberOfPixels; i++){
+      strip.setPixelColor(i,r,b,0);
+      strip.show();
+    }
+   
+  } else if(stateData=="0R"){
+    for(int i = 0; i < numberOfPixels; i++){
+      strip.setPixelColor(i,200,200,0);
+      strip.show();
+    }
+    
+  } else if(stateData=="1R") {
       for(int i = 0; i < numberOfPixels; i++){
-        strip.setPixelColor(i,76,156,20);
+        strip.setPixelColor(i,200,200,200);
         strip.show();
     }
-         //strip.reset();//allows strip to reset and display LEDs again – allows the LEDs to "snake around the strip"
-  }
-}
-//}
-//light show for vision lock
-  if(visionLock.equals("true   ")){
-    while(visionLock.equals("true   ")){
-      for(int i = 0; i < numberOfPixels; i++){
-        strip.setPixelColor(i,r,b,0);
-    }
-          strip.show();
-  }
-
-}
-//light show for forward drive
-  if(forwardDrive.equals("true   ")){
-    while(forwardDrive.equals("true   ")){
-      for(int i = 0; i < numberOfPixels; i++){
-        strip.setPixelColor(i,200,200,0);
-    }
-          strip.show();
-  }
-}
-//light show for reverse drive 
-  if(reverseDrive.equals("true   ")){
-    while(reverseDrive.equals("true   ")) {
-      for(int i = 0; i < numberOfPixels; i++)
-      {
-        strip.setPixelColor(i,200,200,200);
-    }
-          strip.show();
-  }
-}
-
-  if(still.equals("true   ")){
-   while(still.equals("true   ")){
-      for(int i = 0; i < numberOfPixels; i++)
-      {
+        
+  } else if(stateData=="3R"){
+    for(int i = 0; i < numberOfPixels; i++){
        strip.setPixelColor(i,200,200,200);
+       strip.show();
     }
-   }
+    
   }
+  
   if(connectionTimer > 20){                         //About 1 second has passed since the last packet when one should come in every 1/4 of a second
     connectionTimer = 0;                            //Resets the timer
     robotClient.stop();                             //Forces a socket disconnect from the RoboRio
     robotClient.connect(robotIp, 5801);             //Re-initalizes socket communication with the Rio
   }
 }
+
 char asciiConvert(EthernetClient client){           //Changes an ASCII byte from a socket to a string
 
   int data = client.read();                         //Reads the socket for data from server
