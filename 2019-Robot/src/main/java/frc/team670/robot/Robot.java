@@ -16,7 +16,6 @@ import frc.team670.robot.commands.ExampleCommand;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangPi;
 import frc.team670.robot.dataCollection.MustangSensors;
-import frc.team670.robot.dataCollection.Pose;
 import frc.team670.robot.dataCollection.SharpIRSensor;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Claw;
@@ -85,7 +84,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     System.out.println("Voltage: "+(irSensor.getVoltage()));
-    Pose.updateFieldCentricPose(); // Update our field centric Pose to the new robot position.
+    // Pose.updateFieldCentricPose(); // Update our field centric Pose to the new robot position. Commented out to avoid null-pointers until sensors hooked up.
   }
 
   /**
