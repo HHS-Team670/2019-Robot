@@ -83,7 +83,7 @@ public class MathUtils {
     }
 
     /**
-     * Convers a value of per second of the DriveBase Rounds Per Minute
+     * Converts a value of per second of the DriveBase Rounds Per Minute
      */
     public static double convertInchesPerSecondToDriveBaseRoundsPerMinute(double inchesPerSecond) {
         // (Inches/seconds) * (60 seconds/1 minute) * ((2 * Diameter inches)/Rotation)
