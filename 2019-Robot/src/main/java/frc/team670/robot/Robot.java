@@ -19,6 +19,7 @@ import frc.team670.robot.dataCollection.MustangPi;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.subsystems.MustangLEDs;
+import frc.team670.robot.utils.FRCDashboard;
 import frc.team670.robot.utils.Logger;
 
 /**
@@ -34,6 +35,7 @@ public class Robot extends TimedRobot {
   public static MustangPi visionPi = new MustangPi();
   public static DriveBase driveBase = new DriveBase();
   private MustangLEDs leds = new MustangLEDs();
+  public static FRCDashboard dashboard;
 
   Command autonomousCommand;
   SendableChooser<Command> auton_chooser = new SendableChooser<>();
@@ -41,6 +43,7 @@ public class Robot extends TimedRobot {
   public Robot() {
 
     oi = new OI();
+    dashboard = new FRCDashboard("SmartDashboard");
 
     try
     {
