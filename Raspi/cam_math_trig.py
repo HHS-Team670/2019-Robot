@@ -1,75 +1,89 @@
-# Kyle Fu || Rishab Borah || Navaneet Kadaba || Eshan Jain || Harinandan K
+'''
+Kyle Fu || Rishab Borah || Navaneet Kadaba || Eshan Jain || Harinandan K
 
-# Usage notes:
-# You can calibrate the focal distance or object diagonal value by pressing
-# the key 'c' while holding a detected colored object a known distance
-# away from the camera. You need either a known diagonal length of the object
-# or the known focal length of the camera. The bigger the object, the more
-# accurate this calibration will be (as long as it fits into the camera frame).
-# Check the terminal output to choose whether to calibrate the focal length or
-# diagonal.
-# You can click on a point on the output image to print out the hsv value of
-# that point. Useful for finding specific hsv color ranges.
+Usage notes:
+You can calibrate the focal distance or object diagonal value by pressing
+the key 'c' while holding a detected colored object a known distance
+away from the camera. You need either a known diagonal length of the object
+or the known focal length of the camera. The bigger the object, the more
+accurate this calibration will be (as long as it fits into the camera frame).
+Check the terminal output to choose whether to calibrate the focal length or
+diagonal.
+You can click on a point on the output image to print out the hsv value of
+that point. Useful for finding specific hsv color ranges.
+'''
 
-import cv2
-import numpy as np
-import math
 import copy
+import math
 from threading import Thread
+import cv2
 import imutils
-import datetime
+import numpy as np
 
 DEBUG_MODE = True
 ERROR = -99999
 # Variables (These should be changed to reflect the camera)
-capture_source = 0 # Number of port for camera, file path for video
+capture_source = 0  # Number of port for camera, file path for video
 capture_color = 'g'  # Possible: r (Red), g (Green), b (Blue), y (Yellow)
-known_object_height = 12.75  # The height of the tape from the ground (in inches)
+known_object_height = 12.75  # Height of the tape from the ground (in inches)
 known_camera_height = 2.0
-camera_fov_vertical = 39.7 # FOV of the camera (in degrees)
+camera_fov_vertical = 39.7  # FOV of the camera (in degrees)
 camera_fov_horizontal = 60.0
 image_width = 1080  # Desired width of inputted image (for processing speed)
 screen_resize = 1  # Scale that the GUI image should be scaled to
-calibrate_angle = 0  # Test to calibrate the angle and see if that works    exposure = -10
+calibrate_angle = 0  # Test to calibrate the angle and see if that works
 exposure = -8
 # HSV Values to detect
 min_hsv = [58, 0, 254]
 max_hsv = [67, 62, 255]
 
-#Min area
+# Min area
 MIN_AREA = 2000
 
 
 class ThreadedVideo:
-    '''this class creates a thread for video capture'''
+    '''This class creates a thread for video capturing.'''
     def __init__(self, resize_value, src):
-        '''init class that initializes a video stream and a single video capture image'''
+        '''
+        Init class that initializes a video stream and a single
+        video capture image.
+        '''
         self.stream = cv2.VideoCapture(src)
         self.width = 1000
         self.grabbed = read_video_image(self.stream, resize_value)
-        self.frame=imutils.resize(self.grabbed, width=self.width)
-        self.stopped=False
+        self.frame = imutils.resize(self.grabbed, width=self.width)
+        self.stopped = False
         self.resize = resize_value
+
     def start(self):
-        '''starts thread'''
+        '''Starts the thread for video processing.'''
         Thread(target=self.update, args=()).start()
         return self
+
     def stop(self):
-        '''stops thread, for some reason entire program crashes after the q key is pressed to quit, but it doesn"t affect anything'''
-        self.stopped=True
+        '''
+        Stops the thread for video processing. For some reason the
+        entire program crashes after the q key is pressed to quit,
+        but it doesn't affect anything sooooo who cares
+        '''
+        self.stopped = True
+
     def read(self):
-        '''returns frame'''
+        '''Returns the resized frame.'''
         return self.frame
+
     def raw_read(self):
-        '''returns raw frame'''
+        '''Returns the raw frame with the original video input's image size.'''
         return self.grabbed
+
     def update(self):
-        '''grabs new video images'''
+        '''Grabs new video images from the current video stream.'''
         while True:
             if self.stopped:
                 return
             self.grabbed = read_video_image(self.stream, self.resize)
-            self.frame=imutils.resize(self.grabbed, width=self.width)
+            self.frame = imutils.resize(self.grabbed, width=self.width)
+
 
 def get_resize_values(capture, width=1920):
     '''
@@ -77,8 +91,8 @@ def get_resize_values(capture, width=1920):
     Mainly for optimization purposes. Entirely aesthetic for debug mode.
     '''
     main_image = capture.read()[1]
-    image_width = main_image.shape[1]
-    return width / image_width
+    main_image_width = main_image.shape[1]
+    return width / main_image_width
 
 
 def read_video_image(capture, scale=1):
@@ -92,7 +106,8 @@ def read_video_image(capture, scale=1):
     return main_image
 
 
-# Make this take in HSV values from the start and not futz around with converting rgb -> hsv
+# TODO: Make this take in HSV values from the start and not futz around
+# with converting rgb -> hsv
 def find_colored_object(image, capture_color='y', debug=False):
     '''
     Takes in an image and the capture color (r, g, b, or y).
@@ -122,7 +137,7 @@ def find_colored_object(image, capture_color='y', debug=False):
     return masked_image
 
 
-def find_largest_contour(image, debug=False): 
+def find_largest_contour(image, debug=False):
     '''
     Finds the largest two contours in the inputted image (the tape strips).
     Returns the minimum area rectangle of each contour.
@@ -214,6 +229,7 @@ def find_largest_contour(image, debug=False):
     else:
         return [-1, -1]
 
+
 def depth_from_angle(image, rectangles, vangle, hangle, known_height):
     '''
     Returns the depth of the tape when given the height of the tape (from the
@@ -224,9 +240,10 @@ def depth_from_angle(image, rectangles, vangle, hangle, known_height):
     if vangle == 0:
         vangle = 0.0001
     # Do some calculations
-        
+
     depth = known_height / math.tan(abs(vangle))
-    #adjusted_depth = depth / math.cos(abs(hangle)) # This was an adjustment to adjust depth for an object that is offcenter.
+    # This was an adjustment to adjust depth for an object that is offcenter
+    # adjusted_depth = depth / math.cos(abs(hangle))
     return depth
 
 
@@ -241,6 +258,7 @@ def find_vert_focal_length(image, vert_fov):
     calc_focal_length = height / (2 * math.tan(math.radians(vert_fov / 2)))
     return calc_focal_length
 
+
 def find_hor_focal_length(image, hor_fov):
     width = image.shape[:2][1]
 
@@ -248,15 +266,11 @@ def find_hor_focal_length(image, hor_fov):
     return calc_focal_length
 
 
-def find_rectangle_highpoint(image, rectangles):
+def find_rectangle_highpoint(rectangles):
     '''
     Returns a tuple with the x midpoint and y highpoint.
     Highpoint is the average of the tallest point of each rectangle.
     '''
-
-    # Find image width / height
-    width = image.shape[:2][1]
-    height = image.shape[:2][0]
     # Find x midpoint and tallest y point of given rectangles
     highest_y = 0
     mid_x = 0
@@ -358,24 +372,28 @@ def draw_output_image(image, rectanglelist, depth, vangle, hangle): ##edited
                 cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 255), 3)
     return output_image
 
+
 def main():
     '''
     Main.
-    TODO Separate output images into a debug mode, if debug mode enabled show vid and prints, else no
+    TODO Separate output images into a debug mode, if debug mode enabled
+    show vid and prints, else no
     TODO Adjust depth
     '''
     # Video capture / resizing stuff
     cv2.VideoCapture(capture_source).set(cv2.CAP_PROP_EXPOSURE, exposure)
-    vs = ThreadedVideo(screen_resize, capture_source).start() ## EDIT thread implementation (any instances of 'capture' from here down are written as 'vs.stream'
+    vs = ThreadedVideo(screen_resize, capture_source).start()
     # resize_value = get_resize_values(vs.stream, image_width)
 
     # This may not need to be calculated, can use Andra's precalculated values
-    vert_focal_length = find_vert_focal_length(vs.raw_read(), camera_fov_vertical)
-    hor_focal_length = find_hor_focal_length(vs.raw_read(), camera_fov_horizontal)
+    vert_focal_length = find_vert_focal_length(vs.raw_read(),
+                                               camera_fov_vertical)
+    hor_focal_length = find_hor_focal_length(vs.raw_read(),
+                                             camera_fov_horizontal)
 
     while True:
         # Read input image from video
-        input_image = vs.raw_read() # EDIT vs.read rather than read_input_image [this method, however, is implemented in the thread video class]
+        input_image = vs.raw_read()
         if input_image is None:
             print("Error: Capture source not found or broken.")
             key = cv2.waitKey(1) & 0xFF
@@ -385,8 +403,10 @@ def main():
             continue
 
         # Find colored object / box it with a rectangle
-        masked_image = find_colored_object(input_image, capture_color, debug=False)
-        # Find the two biggest colored objects (two pieces of tape) -- ##TODO change this to filter rectangles for 2 centermost in screen
+        masked_image = find_colored_object(input_image, capture_color,
+                                           debug=False)
+        # Find the two biggest colored objects (two pieces of tape)
+        # TODO change this to filter rectangles for 2 centermost in screen
         # TODO check if invalid rectangles return -99999
         # TODO if both or one center rectangles: continue as normal
 
@@ -396,7 +416,8 @@ def main():
         # DEBUG mode code
         if object_rect == -1 and object_rect_2 == -1:
             print("No contours found. Assuming no colored object was found.")
-            output_image = cv2.resize(input_image, (0, 0), fx=screen_resize, fy=screen_resize)
+            output_image = cv2.resize(input_image, (0, 0), fx=screen_resize,
+                                      fy=screen_resize)
             cv2.imshow("Output", output_image)
             key = cv2.waitKey(1) & 0xFF
             if key == ord('q'):
@@ -404,7 +425,8 @@ def main():
                 break
             continue
         elif (object_rect == -1) != (object_rect_2 == -1):
-            output_image = cv2.resize(input_image, (0, 0), fx=screen_resize, fy=screen_resize)
+            output_image = cv2.resize(input_image, (0, 0), fx=screen_resize,
+                                      fy=screen_resize)
             cv2.imshow("Output", output_image)
             key = cv2.waitKey(1) & 0xFF
             if key == ord('q'):
@@ -416,18 +438,21 @@ def main():
         # find_horizontal_angle finds horizontal angle to object if needed
         # angle = find_vertical_angle(input_image, object_rects, camera_fov)
         # angle -= calibrate_angle
-        high_point = find_rectangle_highpoint(input_image, object_rects)[1]
+        rect_x_midpoint, high_point = find_rectangle_highpoint(object_rects)
         vangle = find_vert_angle(input_image, high_point, vert_focal_length)
-        high_point = find_rectangle_highpoint(input_image, object_rects)[0]
-        hangle = find_hor_angle(input_image, high_point, hor_focal_length)
-        depth = depth_from_angle(input_image, object_rects, vangle, hangle, known_object_height - known_camera_height)
+        hangle = find_hor_angle(input_image, rect_x_midpoint, hor_focal_length)
+        depth = depth_from_angle(input_image, object_rects, vangle, hangle,
+                                 known_object_height - known_camera_height)
         # adjusted_depth = adjust_depth(depth, angle)
         adjusted_depth = depth
 
         # Create output image to display
-        output_image = draw_output_image(input_image, [object_rect, object_rect_2], adjusted_depth, vangle, hangle)
+        output_image = draw_output_image(input_image,
+                                         [object_rect, object_rect_2],
+                                         adjusted_depth, vangle, hangle)
         if screen_resize != 1:
-            output_image = cv2.resize(output_image, (0, 0), fx=screen_resize, fy=screen_resize)
+            output_image = cv2.resize(output_image, (0, 0),
+                                      fx=screen_resize, fy=screen_resize)
         cv2.imshow("Output", output_image)
 
         # Check for key presses
@@ -438,12 +463,15 @@ def main():
         # Handle mouse clicks
         # Comment this out if unneeded for maximum efficiency
         # currently somewhat broken
-        cv2.setMouseCallback("Output", mouse_click_handler, {"input_image" : input_image, "screen_resize" : screen_resize})
+        cv2.setMouseCallback("Output", mouse_click_handler,
+                             {"input_image": input_image,
+                              "screen_resize": screen_resize})
 
     # Release & close when done
     vs.stream.release()
     cv2.destroyAllWindows()
     vs.stop()
+
 
 if __name__ == "__main__":
     main()
