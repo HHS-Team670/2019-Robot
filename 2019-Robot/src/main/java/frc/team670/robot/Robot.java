@@ -18,7 +18,11 @@ import frc.team670.robot.dataCollection.MustangPi;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.dataCollection.Pose;
 import frc.team670.robot.dataCollection.SharpIRSensor;
+import frc.team670.robot.subsystems.Arm;
+import frc.team670.robot.subsystems.Claw;
+import frc.team670.robot.subsystems.Climber;
 import frc.team670.robot.subsystems.DriveBase;
+import frc.team670.robot.subsystems.Intake;
 import frc.team670.robot.subsystems.MustangLEDs;
 import frc.team670.robot.utils.Logger;
 
@@ -34,7 +38,11 @@ public class Robot extends TimedRobot {
   public static MustangSensors sensors = new MustangSensors();
   public static MustangPi visionPi = new MustangPi();
   public static DriveBase driveBase = new DriveBase();
-  private MustangLEDs leds = new MustangLEDs();
+  public static Arm arm = new Arm();
+  public static Intake intake = new Intake();
+  public static Claw claw = new Claw();
+  public static Climber climber = new Climber();
+  public static MustangLEDs leds = new MustangLEDs();
   private SharpIRSensor irSensor = new SharpIRSensor(1, 0.25, 0.55);
 
   Command autonomousCommand;
