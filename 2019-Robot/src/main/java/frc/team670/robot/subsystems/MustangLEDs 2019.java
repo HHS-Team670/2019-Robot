@@ -11,6 +11,7 @@ import org.opencv.core.MatOfPoint;
 
 import edu.wpi.first.wpilibj.DriverStation;
 
+
 /**
  * Modify this class to collect data to send based on this year's game.
  * 
@@ -18,17 +19,25 @@ import edu.wpi.first.wpilibj.DriverStation;
  * 
  * @author ctchen, shaylandias
  */
-public class MustangLEDs {
+
+public class MustangLEDsEnum {
 	// Data Init
-	String alliance = "Invalid";
-	String climbing = "false  ";
-	String forwardDrive="false  ";
-	String reverseDrive="false  ";
-	String still="false  ";
-	String visionLock="false  ";
-	String xFinal = "2";
-	String data = "Invalid,false,false,";
+	// String alliance = "Invalid";
+	// String climbing = "false  ";
+	// String forwardDrive="false  ";
+	// String reverseDrive="false  ";
+	// String still="false  ";
+	// String visionLock="false  ";
+	//String xFinal = "2";
 	
+	
+	final String blueAlliance = "1A";
+	final String redAlliance = "2A";
+	String stateData;
+	String allianceData;
+	String xFinalData;
+	String data;
+
 	// Socket Init
 	ServerSocket serverSocket = null;
 	// Thread init
@@ -49,10 +58,10 @@ public class MustangLEDs {
 	
 	public void changeAlliance(boolean b) {
 		if(b) {
-			alliance = "blue   ";
+			allianceData=blueAlliance;
 		}
 		else {
-			alliance = "red    ";
+			allianceData=redAlliance;
 		}
 	}
 
@@ -61,86 +70,55 @@ public class MustangLEDs {
 		DriverStation.Alliance color = DriverStation.getInstance().getAlliance();
 		
 		if(color == DriverStation.Alliance.Blue){
-			alliance = "blue   ";
+			allianceData=blueAlliance;
 		}
 		if(color == DriverStation.Alliance.Red){
-			alliance = "red    ";
+			allianceData=redAlliance;
 		}
 		if(color == DriverStation.Alliance.Invalid){
-			alliance = "Invalid";	
+			allianceData="0A";	
 		}
 	}
 	
 	public void updateClimbingBoolean(boolean trigger){ // Updates if we are climbing
 		if(trigger == true){
-			climbing = "true   ";
-			visionLock="false  ";
-			forwardDrive="false  ";
-			reverseDrive="false  ";
-			still="false  ";
-			String alliance = "Invalid";
-	
-		}else{
-			climbing = "false  ";
+			stateData="4R";
 		}
 	}
 	
 	public void updateVisionData(boolean trigger){ //updates if we lock onto a vision target
 		if(trigger == true){
-			visionLock = "true   ";
-			climbing = "false  ";
-			forwardDrive="false  ";
-			reverseDrive="false  ";
-			still="false  ";
-		}else{
-			visionLock = "false  ";
+			stateData="2R";
 		}
 	}
 	public void updateForwardDrive(boolean trigger){//update if we are driving forward
 		if(trigger=true){
-			forwardDrive="true   ";
-			climbing="false  ";
-			reverseDrive="false  ";
-			still="false  ";
-			visionLock="false  ";
+			stateData="0R";
 		}
-		else{
-			forwardDrive="false  ";
-		}
+		
 	}
 	public void updateReverseDrive(boolean trigger){
 		if(trigger=true){
-			forwardDrive="false  ";
-			climbing="false  ";
-			reverseDrive="true   ";
-			still="false  ";
-			visionLock="false  ";
+			stateData="1R";
 		}
-		else{
-			reverseDrive="false  ";
-		}
+		
 	}
 	public void updateStillDrive(boolean trigger){
 		if(trigger=true){
-			forwardDrive="false  ";
-			climbing="false  ";
-			reverseDrive="false  ";
-			still="true   ";
-			visionLock="false  ";
-		}
-		else{
-			still="false  ";
+			stateData = "3R";
 		}
 	}
 	
 	public void update_xFinal(double acceptedXFinal){ // Updates xFinal in data
 		if(acceptedXFinal > 10 && acceptedXFinal != -666){
-			xFinal = "3";
-		}else{
+			xFinalData="3X";
+		}
+		else{
 			if(acceptedXFinal < -10 && acceptedXFinal != -666){
-				xFinal = "1";
-			}else{
-				xFinal = "2";
+				xFinalData="1X";
+			}
+			else{
+				xFinalData="2X";
 			}
 		}
 	}
@@ -174,11 +152,8 @@ public class MustangLEDs {
 			
 			while(true){
 				
-				// Compiles data into one nice neat string
-				
-				data = alliance + "," + climbing + "," + forwardDrive+ "," +reverseDrive + "," + still+ "," +visionLock+","+xFinal;
-	
-				System.out.println(data);
+				System.out.println(stateData+""+allianceData+""+xFinalData);
+				data = stateData + allianceData + xFinalData;
 				
 				// Sends data to the Arduino/Ethernet Shield
 				try {
