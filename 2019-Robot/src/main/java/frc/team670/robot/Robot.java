@@ -18,7 +18,7 @@ import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangPi;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.DriveBase;
-import frc.team670.robot.subsystems.MustangLEDs;
+import frc.team670.robot.subsystems.MustangLEDsEnum;
 import frc.team670.robot.utils.Logger;
 
 /**
@@ -33,9 +33,9 @@ public class Robot extends TimedRobot {
   public static MustangSensors sensors = new MustangSensors();
   public static MustangPi visionPi = new MustangPi();
   public static DriveBase driveBase = new DriveBase();
-  private MustangLEDs leds = new MustangLEDs();
+  private MustangLEDsEnum leds = new MustangLEDsEnum();
 
-  private long savedTime;
+  private long savedTime=0;
 
   Command autonomousCommand;
   SendableChooser<Command> auton_chooser = new SendableChooser<>();
@@ -64,8 +64,11 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Auto mode", auton_chooser);
     Logger.consoleLog();
     savedTime = System.currentTimeMillis();
+    System.out.println("Robot init");
 
-    leds.socketSetup(RobotConstants.LED_PORT);    
+    leds.socketSetup(5801);
+    System.out.println("LED Setup Run");
+    //leds.socketSetup(RobotConstants.LED_PORT);    
     leds.update_xFinal(0);
     leds.updateClimbingBoolean(true);
 
@@ -82,19 +85,27 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
 
-    if(System.currentTimeMillis() > savedTime + 1000) {
+    // if(System.currentTimeMillis() > savedTime + 1000) {
+    //   leds.updateClimbingBoolean(true);
+    // }
+    // else if(System.currentTimeMillis() > savedTime + 2000) {
+    //   leds.updateForwardDrive(true);
+    // }
+    // else if(System.currentTimeMillis() > savedTime + 3000) {
+    //   leds.updateReverseDrive(true);
+    // }
+    // else if(System.currentTimeMillis() > savedTime + 4000) {
+    //   leds.updateVisionData(true);
+    //   savedTime = System.currentTimeMillis();
+    // }  
+    if(System.currentTimeMillis()>savedTime+5000){
       leds.updateClimbingBoolean(true);
     }
-    else if(System.currentTimeMillis() > savedTime + 2000) {
-      leds.updateForwardDrive(true);
+    else if(System.currentTimeMillis()>savedTime+10000){
+      leds.changeAlliance(true);
     }
-    else if(System.currentTimeMillis() > savedTime + 3000) {
-      leds.updateReverseDrive(true);
-    }
-    else if(System.currentTimeMillis() > savedTime + 4000) {
-      leds.updateVisionData(true);
-      savedTime = System.currentTimeMillis();
-    }
+    
+    
   }
 
   /**
@@ -160,7 +171,6 @@ public class Robot extends TimedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
-    leds.socketSetup(RobotConstants.LED_PORT);
 
   }
 

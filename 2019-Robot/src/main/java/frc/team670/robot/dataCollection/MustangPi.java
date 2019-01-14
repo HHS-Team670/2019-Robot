@@ -35,9 +35,9 @@ public class MustangPi {
     }
 
     private MustangPi(String[] keys) {
-        for(String key : keys){
-            entries.put(key, new NetworkTableObject(key));
-        }
+        //for(String key : keys){
+          //  entries.put(key, new NetworkTableObject(key));
+       // }
     }
 
     private class NetworkTableObject {
@@ -130,6 +130,7 @@ public class MustangPi {
         }
 
         private double getEntry() {
+            if (entries.get(keyName)==null) return 0; //TODO
             return entries.get(keyName).getValue()[0]; // Gets the 0th value of the array. Make sure that is the correct one if vision software provides an array.
         }
 
