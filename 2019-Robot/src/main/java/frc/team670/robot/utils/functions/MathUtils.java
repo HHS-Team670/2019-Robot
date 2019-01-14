@@ -83,6 +83,14 @@ public class MathUtils {
     }
 
     /**
+     * Convers a value of per second of the DriveBase Rounds Per Minute
+     */
+    public static double convertInchesPerSecondToDriveBaseRoundsPerMinute(double inchesPerSecond) {
+        // (Inches/seconds) * (60 seconds/1 minute) * ((2 * Diameter inches)/Rotation)
+        return inchesPerSecond * 60 / (Math.PI * RobotConstants.WHEEL_DIAMETER_INCHES);
+    }
+
+    /**
      * Returns the distance (always positive) between two points in a coordinate system.
      * @param x1 The x-coord of point 1
      * @param y1 The y-coord of point 1
