@@ -7,7 +7,6 @@
 
 package frc.team670.robot.commands.auto;
 
-import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.revrobotics.CANEncoder;
 
 import edu.wpi.first.wpilibj.PIDController;
