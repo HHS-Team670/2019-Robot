@@ -36,28 +36,28 @@ public class DriveBase extends Subsystem {
   private List<CANSparkMax> allMotors;
 
   public DriveBase() {
-    left1 = new CANSparkMax(RobotMap.sparkLeftMotor1, CANSparkMaxLowLevel.MotorType.kBrushless);
-    left2 = new CANSparkMax(RobotMap.sparkLeftMotor2, CANSparkMaxLowLevel.MotorType.kBrushless);
-    right1 = new CANSparkMax(RobotMap.sparkRightMotor1, CANSparkMaxLowLevel.MotorType.kBrushless);
-    right2 = new CANSparkMax(RobotMap.sparkRightMotor2, CANSparkMaxLowLevel.MotorType.kBrushless);
+    // left1 = new CANSparkMax(RobotMap.sparkLeftMotor1, CANSparkMaxLowLevel.MotorType.kBrushless);
+    // left2 = new CANSparkMax(RobotMap.sparkLeftMotor2, CANSparkMaxLowLevel.MotorType.kBrushless);
+    // right1 = new CANSparkMax(RobotMap.sparkRightMotor1, CANSparkMaxLowLevel.MotorType.kBrushless);
+    // right2 = new CANSparkMax(RobotMap.sparkRightMotor2, CANSparkMaxLowLevel.MotorType.kBrushless);
 
-    leftControllers = Arrays.asList(left1,left2);
-    rightControllers = Arrays.asList(right1, right2);
-    allMotors.addAll(leftControllers);
-    allMotors.addAll(rightControllers);
+    // leftControllers = Arrays.asList(left1,left2);
+    // rightControllers = Arrays.asList(right1, right2);
+    // allMotors.addAll(leftControllers);
+    // allMotors.addAll(rightControllers);
     
-    setMotorsInvert(leftControllers, false);
-    setMotorsInvert(rightControllers, true);
+    // setMotorsInvert(leftControllers, false);
+    // setMotorsInvert(rightControllers, true);
 
-    left2.follow(left1);
-    right2.follow(right1);
+    // left2.follow(left1);
+    // right2.follow(right1);
 
-    left = new SpeedControllerGroup(left1, left2);
-    right = new SpeedControllerGroup(right1, right2);
+    // left = new SpeedControllerGroup(left1, left2);
+    // right = new SpeedControllerGroup(right1, right2);
 
-    setMotorsBrushless(allMotors);
+    // setMotorsBrushless(allMotors);
 
-    driveTrain = new DifferentialDrive(left, right);
+    // driveTrain = new DifferentialDrive(left, right);
 
   }
 
