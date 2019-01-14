@@ -92,4 +92,8 @@ public class MustangSensors extends Subsystem {
     }
   }
 
+  public NavX getNavX(){
+    return navXMicro;
+  }
+
 }

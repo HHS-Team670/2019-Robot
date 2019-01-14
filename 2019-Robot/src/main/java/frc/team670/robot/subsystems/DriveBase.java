@@ -294,4 +294,17 @@ public class DriveBase extends Subsystem {
     // Set the default command for a subsystem here.
     // setDefaultCommand(new MySpecialCommand());
   }
+
+  public CANSparkMax getLeft1(){
+    return left1;
+  }
+  public CANSparkMax getLeft2(){
+    return left2;
+  }
+  public CANSparkMax getRight1(){
+    return right1;
+  }
+  public CANSparkMax getRight2(){
+    return right2;
+  }
 }
