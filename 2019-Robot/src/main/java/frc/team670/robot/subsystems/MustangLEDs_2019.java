@@ -5,10 +5,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-
-
 import org.opencv.core.MatOfPoint;
-
 import edu.wpi.first.wpilibj.DriverStation;
 
 
@@ -20,32 +17,26 @@ import edu.wpi.first.wpilibj.DriverStation;
  * @author ctchen, shaylandias
  */
 
-public class MustangLEDsEnum {
-	// Data Init
-	// String alliance = "Invalid";
-	// String climbing = "false  ";
-	// String forwardDrive="false  ";
-	// String reverseDrive="false  ";
-	// String still="false  ";
-	// String visionLock="false  ";
-	//String xFinal = "2";
-	
-	
+public class MustangLEDs_2019 {
+
+	//string representations for alliances 
 	final String blueAlliance = "1A";
 	final String redAlliance = "2A";
 	final String invalidAlliance="3A";
-
-
+	
+	//string representations for robot states
 	final String climbing="4R";
 	final String visionLock="2R";
 	final String forwardDrive="0R";
 	final String reverseDrive="1R";
 	final String stillDrive="3R";
-
+	
+	//string representations for xFinal
 	final String xFinalLeft="1X";
 	final String xFinalCenter="2X";
 	final String xFinalRight="3X";
 	
+	//variables for data which will be sent over server
 	String stateData=stillDrive;
 	String allianceData=invalidAlliance;
 	String xFinalData=xFinalCenter;
@@ -72,29 +63,32 @@ public class MustangLEDsEnum {
 		
 	}
 	
-	public void changeAlliance(boolean b) {
-		if(b) {
+	public void changeAlliance(boolean b) { //true for blue, false for red
+		if(b==true) {
 			allianceData=blueAlliance;
 		}
-		else {
+		else if(b==false){
 			allianceData=redAlliance;
+		}
+		else{
+			allianceData=invalidAlliance;
 		}
 	}
 
-	public void updateAlliance(){ // Updates the Alliance Color in data transmission
+	// public void updateAlliance(){ // Updates the Alliance Color in data transmission
 		
-		DriverStation.Alliance color = DriverStation.getInstance().getAlliance();
+	// 	DriverStation.Alliance color = DriverStation.getInstance().getAlliance();
 		
-		if(color == DriverStation.Alliance.Blue){
-			allianceData=blueAlliance;
-		}
-		if(color == DriverStation.Alliance.Red){
-			allianceData=redAlliance;
-		}
-		if(color == DriverStation.Alliance.Invalid){
-			allianceData=invalidAlliance;	
-		}
-	}
+	// 	if(color == DriverStation.Alliance.Blue){
+	// 		allianceData=blueAlliance;
+	// 	}
+	// 	if(color == DriverStation.Alliance.Red){
+	// 		allianceData=redAlliance;
+	// 	}
+	// 	if(color == DriverStation.Alliance.Invalid){
+	// 		allianceData=invalidAlliance;	
+	// 	}
+	// }
 	
 	public void getClimbingData(boolean trigger){ // Updates if we are climbing
 		if(trigger == true){
@@ -107,19 +101,19 @@ public class MustangLEDsEnum {
 			stateData=visionLock;
 		}
 	}
-	public void getForwardData(boolean trigger){//update if we are driving forward
+	public void getForwardData(boolean trigger){//updates if we are driving forward
 		if(trigger=true){
 			stateData=forwardDrive;
 		}
 		
 	}
-	public void getReverseData(boolean trigger){
+	public void getReverseData(boolean trigger){//updates if we are driving in reverse
 		if(trigger=true){
 			stateData=reverseDrive;
 		}
 		
 	}
-	public void updateStillDrive(boolean trigger){
+	public void updateStillDrive(boolean trigger){//updates it robot is not moving
 		if(trigger=true){
 			stateData = stillDrive;
 		}
@@ -146,6 +140,7 @@ public class MustangLEDsEnum {
 			Socket socketClient = null;
 			DataOutputStream output = null;
 			ArrayList<MatOfPoint> gpgArray = new ArrayList<MatOfPoint>();
+			
 			while(socketClient == null){ // Attempts until client is found
 
 				System.out.println("Socket Client null");
@@ -169,6 +164,7 @@ public class MustangLEDsEnum {
 			while(true){
 				
 				System.out.println(stateData+""+allianceData+""+xFinalData);
+				//string which gets sent over server
 				data = stateData + allianceData + xFinalData;
 				
 				// Sends data to the Arduino/Ethernet Shield

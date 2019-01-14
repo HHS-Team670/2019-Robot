@@ -18,28 +18,29 @@ EthernetClient robotClient;                         //Defines a client to be use
 byte mac[] = {                                      //Creates a mac address for use in defining an Ethernet instance
   0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED
 };
+
 IPAddress ip(10,6,70,3);                            //Defines a static IP for the Arduino/Ethernet Shield
 IPAddress robotIp(10,6,70,2);                       //Defines the robot's IP
 
-int connectionTimer = 0;                            //Sets a connection timer to see if the program should reconnect to the RoboRio in case it becomes disconnected
-char dataChar;                                      //Used for storing a character before inputing it into dataArray[]
-const int numberOfPixels=strip.numPixels();
-
+  int connectionTimer = 0;                            //Sets a connection timer to see if the program should reconnect to the RoboRio in case it becomes disconnected
+  char dataChar;                                      //Used for storing a character before inputing it into dataArray[]
+  const int numberOfPixels=strip.numPixels();
+  //variables to store data recived from server
   String dataString = "";                             //Used for building a string to then splice into multiple parts to control the LEDs
   String stateData=stillDrive;
   String allianceData=invalidAlliance;
   String xFinalData=xFinalCenter;
-
+  //string representations for alliances
   const String blueAlliance = "1A";
 	const String redAlliance = "2A";
 	const String invalidAlliance= "3A";
-
+  //string representations for robot states
 	const String climbing= "4R";
 	const String visionLock= "2R";
 	const String forwardDrive= "0R";
 	const String reverseDrive= "1R";
 	const String stillDrive= "3R";
-
+  //string representations for xFinal
 	const String xFinalLeft= "1X";
 	const String xFinalCenter= "2X";
 	const String xFinalRight= "3X";
@@ -110,11 +111,11 @@ void loop() {
     for(int i=0;i<=numberOfPixels;i++){
     strip.setPixelColor(i,0,0,255);
     }
-} else if(allianceData==redAlliance){                        //If the alliance is red, set the base LED color to red
+} else if(allianceData==redAlliance){                   //If the alliance is red, set the base LED color to red
     for(int i=0;i<=numberOfPixels;i++){
     strip.setPixelColor(i,0,255,0);
     }
-} else if(allianceData== invalidAlliance){                        //If no alliance is specified, set the base LED color to purple
+} else if(allianceData== invalidAlliance){              //If no alliance is specified, set the base LED color to purple
     strip.reset;
 }
   strip.show();
