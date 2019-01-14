@@ -15,11 +15,14 @@ public class Pose {
   private double currentAngle;
 
   private long currRobotX, currRobotY;
+<<<<<<< HEAD:2019-Robot/src/main/java/frc/team670/robot/dataCollection/Pose.java
 
   private long timeOfPose;
   
+=======
   private static Pose fieldCentricPose;
 
+>>>>>>> field-centric-pose/pallavi-kabir-megan:2019-Robot/src/main/java/frc/team670/robot/dataCollection/Pose.java
   /**
    * Makes new pose using current robot encoder values and angles
    */
@@ -53,13 +56,12 @@ public class Pose {
     this.timeOfPose = timeOfPose;
   }
 
-  public Pose(long lEncoderTick, long rEncoderTick, double angle, long currRobotX, long currRobotY) {
+  private Pose(long lEncoderTick, long rEncoderTick, double angle, long currRobotX, long currRobotY) {
     leftEncoderTick = lEncoderTick;
     rightEncoderTick = rEncoderTick;
     currentAngle = angle;
     this.currRobotX = currRobotX;
     this.currRobotY = currRobotY;
-    this.timeOfPose = System.currentTimeMillis();
   }
  
   /**

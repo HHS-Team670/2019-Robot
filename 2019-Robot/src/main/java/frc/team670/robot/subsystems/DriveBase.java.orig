@@ -7,6 +7,7 @@
 
 package frc.team670.robot.subsystems;
 
+<<<<<<< HEAD
 import java.util.Arrays;
 import java.util.List;
 
@@ -14,12 +15,19 @@ import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel;
+=======
+import com.ctre.phoenix.motorcontrol.SensorCollection;
+import com.revrobotics.CANSparkMax;
+>>>>>>> field-centric-pose/pallavi-kabir-megan
 
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+<<<<<<< HEAD
 
 import frc.team670.robot.constants.RobotMap;
+=======
+>>>>>>> field-centric-pose/pallavi-kabir-megan
 
 /**
  * Represents a tank drive base.
@@ -28,6 +36,10 @@ import frc.team670.robot.constants.RobotMap;
  */
 public class DriveBase extends Subsystem {
 
+  // TODO declare all of the correct motor controllers. Add them to ArrayLists for
+  // easily changing parameters for all of them.
+  // Make helper methods to change them and access sensor data. Set a
+  // DefaultCommand
 
   private CANSparkMax left1, left2, right1, right2;
   private SpeedControllerGroup left, right;
@@ -264,7 +276,7 @@ public class DriveBase extends Subsystem {
   }
 
 /**
- * Return the left CANEncoder Object
+ * Return the left encoder's position
  */
   public CANEncoder getLeftEncoder() {
     return left1.getEncoder();
@@ -272,7 +284,7 @@ public class DriveBase extends Subsystem {
   }
 
 /**
- * Return the right CanEncoder Object
+ * Return the right encoder's position
  */
   public CANEncoder getRightEncoder(){
     return right1.getEncoder();

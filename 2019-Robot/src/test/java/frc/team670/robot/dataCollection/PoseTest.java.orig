@@ -10,8 +10,11 @@ package frc.team670.robot.dataCollection;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+<<<<<<< HEAD:2019-Robot/src/test/java/frc/team670/robot/dataCollection/PoseTest.java
+=======
 
 import frc.team670.robot.dataCollection.Pose;
+>>>>>>> field-centric-pose/pallavi-kabir-megan:2019-Robot/src/test/java/frc/team670/robot/PoseTest.java
 
 /**
  * A Test for the MathUtils class. Serves as a test example for functions. Add to this for all other functions added.
