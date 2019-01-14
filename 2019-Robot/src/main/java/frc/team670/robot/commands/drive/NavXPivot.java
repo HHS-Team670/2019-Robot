@@ -21,16 +21,17 @@ import frc.team670.robot.utils.Logger;
  */
 public class NavXPivot extends Command {
 
-  private double finalAngle, startAngle, angle, leftSpeed, rightSpeed;
+	private double finalAngle, startAngle, angle, leftSpeed, rightSpeed;
 	protected double endingSpeed = 0.2;
 	private PIDController pivotController;
+	private static final double P = 1, I = 0, D = 0;
 
   public NavXPivot(double angle) {
 	this.angle = angle;
 	
 
 	// TODO find PID constants
-	pivotController = new PIDController(0, 0, 0, Robot.sensors.getNavX().getZeroableNavXPIDSource(), null);
+	pivotController = new PIDController(P, I, D, Robot.sensors.getNavX().getZeroableNavXPIDSource(), null);
 
 	pivotController.setInputRange(-180, 180);
 	pivotController.setOutputRange(-1, 1);
@@ -54,7 +55,8 @@ public class NavXPivot extends Command {
   @Override
   protected void execute() {
 
-		Robot.driveBase.tankDrive(leftSpeed, rightSpeed);
+		double pivotOutput = pivotController.get();
+		Robot.driveBase.tankDrive(leftSpeed, -rightSpeed);
 	
 	Logger.consoleLog("DegreesToTravel:%s CurrentAngle:%s", 
 			yawRemaining(), getNormalizedYaw());
