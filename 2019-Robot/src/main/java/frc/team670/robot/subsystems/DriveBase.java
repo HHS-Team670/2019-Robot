@@ -115,143 +115,7 @@ public class DriveBase extends Subsystem {
     driveTrain.arcadeDrive(xSpeed, zRotation, squaredInputs);
   }
 
-  public int getLeftEncoderPosition(){
-    return (int)left1.getEncoder().getPosition();
-  }
-
-  /**
-   * Gets the position of the front right motor, this encoder gets more positive as it goes forward
-   */
-  public int getRightEncoderPosition(){
-    return (int)right1.getEncoder().getPosition();
-  }
-
-  public int getLeftVelocity(){
-    return (int)left1.getEncoder().getVelocity();
-  }
-
-  public int getRightVelocity(){
-    return (int)right1.getEncoder().getVelocity();
-  }
-  
-  /**
-   * Inverts a list of motors.
-   */
-  private void setMotorsInvert(List<CANSparkMax> motorGroup, boolean invert){
-    for (CANSparkMax m: motorGroup){
-      m.setInverted(invert);
-    }
-  }
-
-  /**
-   * Sets array of motors to be brushless
-   */
-
-  private void setMotorsBrushless(List<CANSparkMax> motorGroup){
-    for(CANSparkMax m:motorGroup){
-      m.setMotorType(CANSparkMaxLowLevel.MotorType.kBrushless);
-    }
-  }
-  /**
-   * Sets array of motors to be of a specified mode
-   */
-  public void setMotorsNeutralMode(IdleMode mode){
-    for(CANSparkMax m:allMotors){
-      m.setIdleMode(mode);
-    }
-  }
-
-  /**
-   * Sets array of motor to coast mode
-   */
-  public void setMotorsCoastMode(List<CANSparkMax> motorGroup, IdleMode mode){
-    for(CANSparkMax m:motorGroup){
-      m.setIdleMode(IdleMode.kCoast);
-    }
-  }
-
-  /**
-   * Sets array of motor to brake mode
-   */
-  public void setMotorsBrakeMode(List<CANSparkMax> motorGroup, IdleMode mode){
-    for(CANSparkMax m:motorGroup){
-      m.setIdleMode(IdleMode.kBrake);
-    }
-  }
-
-  /*
-   * Gets the voltage fed into the motor controllers on the left side of the robot
-   */
-  public double getLeftInputVoltage(){
-    double output = left1.getBusVoltage() + left2.getBusVoltage();
-    return output;
-  }
-
-  /*
-   *Get the voltage fed into the motor controllers on the right side of the robot
-   */
-  public double getRightInputVoltage(){
-    double output = right1.getBusVoltage() + right2.getBusVoltage();
-    return output;
-  }
-  
-  /*
-   * Gets the output voltage of the motor controllers on the left side of the robot
-   */
-  public double getLeftOutputVoltage() {
-    double output = left1.getAppliedOutput() + left2.getAppliedOutput();
-    return output;
-  }
-
-  /*
-   * Gets the output voltage of the motor controllers on the right side of the robot
-   */ 
-  public double getRightOutputVoltage(){
-    double output = right1.getAppliedOutput() + right2.getAppliedOutput();
-    return output;
-  }
-
-  /*
-   * Gets the output current (in amps) of the motor controllers on the left side of the robot
-   */
-  public double getLeftOutputCurrent() {
-    double output = left1.getOutputCurrent() + left2.getOutputCurrent();
-    return output;
-  }
-
-  /*
-   * Gets the output current (in amps) of the motor controllers on the right side of the robot
-   */
-  public double getRightOutputCurrent(){
-    double output = right1.getOutputCurrent() + right2.getOutputCurrent();
-    return output;
-  }
-
-  /*
-   * Gets the input voltage of all the motor controllers on the robot
-   */
-  public double getRobotInputVoltage(){
-    double output = left1.getBusVoltage() + left2.getBusVoltage() + right1.getBusVoltage() + right2.getBusVoltage();
-    return output;
-  }
-
-  /*
-   * Gets the output voltage of all the motor controllers on the robot
-   */
-  public double getRobotOutputVoltage(){
-    double output = left1.getAppliedOutput() + left2.getAppliedOutput() + right1.getAppliedOutput() + right2.getAppliedOutput();
-    return output;
-  }
-
-  /*
-   * Gets the output current of all the motor controllers on the robot
-   */
-  public double getRobotOutputCurrent(){
-    double output = left1.getOutputCurrent() + left2.getOutputCurrent() + right1.getOutputCurrent() + right2.getOutputCurrent();
-    return output;
-  }
-
-  /**
+    /**
    * 
    * Drives the Robot using an arcade drive configuration (single joystick with twist)
    * 
@@ -267,6 +131,23 @@ public class DriveBase extends Subsystem {
    */
   public void stop() {
     tankDrive(0, 0);
+  }
+
+
+  /*
+   * Gets the input voltage of all the motor controllers on the robot
+   */
+  public double getRobotInputVoltage(){
+    double output = left1.getBusVoltage() + left2.getBusVoltage() + right1.getBusVoltage() + right2.getBusVoltage();
+    return output;
+  }
+
+  /*
+   * Gets the output voltage of all the motor controllers on the robot
+   */
+  public double getRobotOutputVoltage(){
+    double output = left1.getAppliedOutput() + left2.getAppliedOutput() + right1.getAppliedOutput() + right2.getAppliedOutput();
+    return output;
   }
 
 /**
