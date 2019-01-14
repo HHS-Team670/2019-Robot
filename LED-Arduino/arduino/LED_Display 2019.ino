@@ -122,35 +122,33 @@ void loop() {
 
   if(stateData==climbing){
     while(stateData==climbing){
-    for(int i = 0; i < numberOfPixels; i++){
+    for(int i = 0; i <= numberOfPixels; i++){
       strip.setPixelColor(i,138,67,35);
     }
-    strip.show();
+      strip.show();
     }
   } else if(stateData==visionLock){
-    for(int i = 0; i < numberOfPixels; i++){
-      strip.setPixelColor(i,r,b,0);
-      strip.show();
+    for(int i = 0; i <= numberOfPixels; i++){
+      strip.setPixelColor(i,0,195,255);
     }
-   
+      strip.show();
   } else if(stateData==forwardDrive){
-    for(int i = 0; i < numberOfPixels; i++){
-      strip.setPixelColor(i,200,200,100);
-      strip.show();
+    for(int i = 0; i <= numberOfPixels; i++){
+      strip.setPixelColor(i,138,67,35);
     }
+      strip.show();
     
   } else if(stateData==reverseDrive) {
       for(int i = 0; i < numberOfPixels; i++){
-        strip.setPixelColor(i,100,56,20);
+        strip.setPixelColor(i,0,255,0);
         strip.show();
     }
         
   } else if(stateData==stillDrive){
     for(int i = 0; i < numberOfPixels; i++){
-       strip.setPixelColor(i,90,200,176);
-       strip.show();
+       strip.setPixelColor(i,74,76,72);
     }
-    
+    strip.show();
   }
   
   if(connectionTimer > 20){                         //About 1 second has passed since the last packet when one should come in every 1/4 of a second
