@@ -132,7 +132,7 @@ def find_largest_contour(image, debug=False):
     #blur_image = cv2.medianBlur(image, 5)
     #blur_image = cv2.GaussianBlur(blur_image, (5, 5), 0)
     blur_image = image.copy()
-    center_point = (image.shape[:2][1] / 2, image.shape[:2][0] / 2)
+    center_x = image.shape[:2][1] / 2
 
     # Finds ALL the contours of the image
     # Note: the tree and chain things could probably be optimized better.
@@ -141,16 +141,47 @@ def find_largest_contour(image, debug=False):
     if len(contours) != 0:
         # Find the biggest area contour
         conarea = []
-        for i in contours:
-            area = cv2.contourArea(i)
-            if area > 30:
+        dists = []
+        ac_contours = []
+        for i in range(len(contours)):
+            ix = contours[i]
+            area = cv2.contourArea(ix)
+            if area > 100:
                 conarea.append(area)
-            else:
-                contours.remove(i)
+                ac_contours.append(ix)
+                moment = cv2.moments(ix)
+                con_x = int(moment["m10"] / moment["m00"])
+                distance = abs(center_x-con_x)
+                dists.append(distance)
+
         #biggest_contour = max(contours, key=cv2.contourArea)
+        centermost_dist = min(dists, default=-1)
+        centermost_con = -1
+        center_ind = -1
+        if (centermost_dist != -1):
+            center_ind = dists.index(centermost_dist)
+            centermost_con = ac_contours[center_ind]
+        if center_ind != -1:
+           del ac_contours[center_ind]
+           del dists[center_ind]
 
-
-
+        sec_center_con = -1
+        center_ind = -1
+        sec_center_dist = min(dists, default=-1)
+        if (sec_center_dist != -1):
+            center_ind = dists.index(sec_center_dist)
+            sec_center_con = ac_contours[center_ind]
+        if center_ind != -1:
+            del ac_contours[center_ind]
+            del dists[center_ind]
+        
+        rect = -1
+        rec2 = -1
+        if centermost_con is not -1:
+            rect = cv2.minAreaRect(centermost_con)
+        if sec_center_con is not -1:
+            rec2 = cv2.minAreaRect(sec_center_con)
+        '''
         contours2 = copy.deepcopy(contours)
         biggest_contour=max(conarea)
         del contours2[conarea.index(biggest_contour)]
@@ -166,7 +197,7 @@ def find_largest_contour(image, debug=False):
             rec2 = cv2.minAreaRect(biggest_contour)
         # Creating a rotated minimum area rectangle
         rect = cv2.minAreaRect(biggest_contour)
-
+        '''
         if debug:
             cv2.imshow("Blurred", blur_image)
             draw_image = image.copy()
