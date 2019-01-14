@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.utils;
+package frc.team670.robot.dataCollection;
 
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 

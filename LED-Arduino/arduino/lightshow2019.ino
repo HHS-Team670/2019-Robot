@@ -1,8 +1,7 @@
 /*
  * Controlling LEDS for FRC....
  * 
- * Purpose: To recive data from a RoboRio that contains circumstantial data
- * to control NeoPixel LED strips to provide driver feedback and "bling".
+ * Purpose: Updated 2019 light show for differnt field tasks.
  * 
  * Requires an Arduino with an Ethernet Shield or an Arduino with a built
  * in Ethernet port, such as the Leonardo or Yun.
@@ -12,15 +11,16 @@
 #include <Ethernet.h>                               //Ethernet library for creating a client instance
 #include <Adafruit_NeoPixel.h>                      //Adafruit's NeoPixel library for controlling NeoPixels
 
+
 Adafruit_NeoPixel strip =                           //Defines an Adafruit Neopixel strip, containing 120 LEDs, using 
-  Adafruit_NeoPixel(16, 6, NEO_GRB + NEO_KHZ800);  //Arduino pin #6, and using the GRB format at 800KHZ bitstream
+  Adafruit_NeoPixel(120, 6, NEO_GRB + NEO_KHZ800);  //Arduino pin #6, and using the GRB format at 800KHZ bitstream
   
 EthernetClient robotClient;                         //Defines a client to be used to connect to the Robo Rio
 byte mac[] = {                                      //Creates a mac address for use in defining an Ethernet instance
   0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED
 };
-IPAddress ip(10,6,70,3);                            //Defines a static IP for the Arduino/Ethernet Shield
-IPAddress robotIp(10,6,70,2);                       //Defines the robot's IP
+IPAddress ip(10,9,57,6);                            //Defines a static IP for the Arduino/Ethernet Shield
+IPAddress robotIp(10,9,57,2);                       //Defines the robot's IP
 
 int connectionTimer = 0;                            //Sets a connection timer to see if the program should reconnect to the RoboRio in case it becomes disconnected
 
@@ -31,8 +31,12 @@ String gear = "false";                              //Gear state,
 String climbing = "false";                          //Climbing state,
 String xFinal = "2";                                //data for where the peg is via vision program,
 String truexFinal = "center";
-String inTeleOp = "false";                           //If the robot is in driver controlled mode
-int chaseOffset = 0;
+String inTeleOp = "false";  
+String visionLocked = "false"; 
+String outake = "succesful";                        //If the robot is in driver controlled mode
+const int numberOfPixels=strip.numPixels;
+
+
 int asciiArray[] = {                                //Please use the ASCII converter at https://www.arduino.cc/en/Reference/ASCIIchart
     32,44,45,48,49,50,51,52,53,54,55,56,            //to translate ASCII and add more possible characters to be readable
     57,97,98,99,100,101,102,103,104,105,            //Used for comparing data points to their ASCII counterparts
@@ -46,6 +50,17 @@ char translationArray[] = {                         //Array housing characters t
 
 int r;                                              //Alliance color red value
 int b;                                              //Alliance color blue value
+
+
+enum lightState{
+  successfulClimb,
+  visionLocked,
+  duringMovement,
+  succesfulOutake,
+  still,
+};
+
+lightState robot = successfulClimb;
   
 void setup() {                                      //Sets up constants before program begins     
   Ethernet.begin(mac,ip);                           //Initalizes an Ethernet instance
@@ -90,7 +105,7 @@ void loop() {                                       //Ran indefinitly after setu
     strip.setPixelColor(i,0,0,0);                   //...by setting each LED to black
   }
   
-  if(alliance == "blue   "){                        //If the alliance is blue, set the base LED color to blue
+  if(alliance == "blue "){                        //If the alliance is blue, set the base LED color to blue
     r = 0;
     b = 255;
   }
@@ -103,13 +118,40 @@ void loop() {                                       //Ran indefinitly after setu
     b = 255;
   }
   
-  if(climbing == "true "){                          //If the robot is climbing, make the LEDs climb upward
-    for(int i = chaseOffset; i < 26; i = i+3){      //Lights up one side with Leds moving down the strip in yellow
-      if(i >! 26){
-        strip.setPixelColor(i,255,255,0);
-      }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  //light show for if climbing
+  while(climbing = "true"){                          //If the robot is climbing, make the LEDs climb upward
+    for(int i = 0; i < numberOfPixels; i = i++){      //Lights up one side with Leds moving down the strip in yellow
+        strip.setPixelColor(i,76,156,20);
     }
+    strip.show();
+  }
 
+  while(visionLocked == "locked"){
+    for(int i=0;i <= numberOfPixels; i++){
+        strip.setPixelColor(i,r,g,0);
+      }
+    if(time % 2 == 0){
+      strip.setBrightness(0);
+    else{
+    }
+      
+    }
+    strip.show();
+  }
+    
     for(int i = 25; i < 60; i++){                   //Lights up the top with our alliance color
       strip.setPixelColor(i,r,0,b);
     }
@@ -119,7 +161,51 @@ void loop() {                                       //Ran indefinitly after setu
         strip.setPixelColor(i,255,255,0);
       }
     }
+  
+  //colors for if robot locks onto vision 
+  
+    while(visionLocked == "locked"){
+    for(int i=1;i<100;i++){
+      if(i%2 != 0){
+        strip.setPixelColor(r,b,0);
+      }
+      else{
+        strip.setPixelColor(0,0,0);
+      }
+    }
+  }
+  
+
+
+
+  
    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   }else{                                            //If the robot is not climbing, perform all our other LED actions
     if(gear == "true "){                            //If the robot has a gear, have the top part of our strip illuminate green
       for(int i = 26; i < 60; i++){                 //and perform an animation depending on the location of the peg.

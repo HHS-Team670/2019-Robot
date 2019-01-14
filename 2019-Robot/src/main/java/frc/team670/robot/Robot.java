@@ -13,11 +13,17 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.ExampleCommand;
-import frc.team670.robot.constants.OI;
+import frc.team670.robot.constants.RobotConstants;
+import frc.team670.robot.dataCollection.MustangPi;
+import frc.team670.robot.dataCollection.MustangSensors;
+import frc.team670.robot.dataCollection.SharpIRSensor;
+import frc.team670.robot.subsystems.Arm;
+import frc.team670.robot.subsystems.Claw;
+import frc.team670.robot.subsystems.Climber;
 import frc.team670.robot.subsystems.DriveBase;
+import frc.team670.robot.subsystems.Intake;
+import frc.team670.robot.subsystems.MustangLEDs;
 import frc.team670.robot.utils.Logger;
-import frc.team670.robot.utils.dataCollection.MustangPi;
-import frc.team670.robot.utils.dataCollection.MustangSensors;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -31,6 +37,12 @@ public class Robot extends TimedRobot {
   public static MustangSensors sensors = new MustangSensors();
   public static MustangPi visionPi = new MustangPi();
   public static DriveBase driveBase = new DriveBase();
+  public static Arm arm = new Arm();
+  public static Intake intake = new Intake();
+  public static Claw claw = new Claw();
+  public static Climber climber = new Climber();
+  public static MustangLEDs leds = new MustangLEDs();
+  private SharpIRSensor irSensor = new SharpIRSensor(1, 0.25, 0.55);
 
   Command autonomousCommand;
   SendableChooser<Command> auton_chooser = new SendableChooser<>();
@@ -71,6 +83,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    System.out.println("Voltage: "+(irSensor.getVoltage()));
+    // Pose.updateFieldCentricPose(); // Update our field centric Pose to the new robot position. Commented out to avoid null-pointers until sensors hooked up.
   }
 
   /**
@@ -101,6 +115,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    sensors.resetNavX(); // Reset NavX completely, zero the field centric based on how robot faces from start of game.
+    // Pose.instantiateFieldCentricPose(); // Commented out until motor controllers/encoders attached. Resets the Field Centric Pose of the robot for the start of the game.
+
     Logger.consoleLog("Auton Started");
     autonomousCommand = auton_chooser.getSelected();
 
@@ -127,6 +144,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+
     Logger.consoleLog("Teleop Started");
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
@@ -135,6 +153,8 @@ public class Robot extends TimedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
+    leds.socketSetup(RobotConstants.LED_PORT);
+
   }
 
   /**
@@ -152,4 +172,5 @@ public class Robot extends TimedRobot {
   public void testPeriodic() {
 
   }
+
 }
