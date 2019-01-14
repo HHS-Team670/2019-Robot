@@ -19,12 +19,13 @@ from threading import Thread
 import cv2
 import imutils
 import numpy as np
+import datetime
 
-DEBUG_MODE = True
+DEBUG_MODE = True # NOTE MAKE @FALSE TO MAKE NO SCREENS APPEAR
 ERROR = -99999
 # Variables (These should be changed to reflect the camera)
 capture_source = 0  # Number of port for camera, file path for video
-capture_color = 'g'  # Possible: r (Red), g (Green), b (Blue), y (Yellow)
+capture_color = 'g'  # Possible: r (Red), g (Green), b (Blue), y (Yellow), x (reflector tape)
 known_object_height = 12.75  # Height of the tape from the ground (in inches)
 known_camera_height = 2.0
 camera_fov_vertical = 39.7  # FOV of the camera (in degrees)
@@ -33,12 +34,133 @@ image_width = 1080  # Desired width of inputted image (for processing speed)
 screen_resize = 1  # Scale that the GUI image should be scaled to
 calibrate_angle = 0  # Test to calibrate the angle and see if that works
 exposure = -8
+timestamp = datetime.datetime.now()
 # HSV Values to detect
 min_hsv = [58, 0, 254]
 max_hsv = [67, 62, 255]
 
 # Min area
 MIN_AREA = 2000
+
+returns = [-99999, -99999, 0]
+
+def main():
+    '''
+    Main.
+    TODO Separate output images into a debug mode, if debug mode enabled
+    show vid and prints, else no
+    TODO Adjust depth
+    '''
+    # Video capture / resizing stuff
+    cv2.VideoCapture(capture_source).set(cv2.CAP_PROP_EXPOSURE, exposure)
+    vs = ThreadedVideo(screen_resize, capture_source).start()
+    # resize_value = get_resize_values(vs.stream, image_width)
+
+    # This may not need to be calculated, can use Andra's precalculated values
+    vert_focal_length = find_vert_focal_length(vs.raw_read(),
+                                               camera_fov_vertical)
+    hor_focal_length = find_hor_focal_length(vs.raw_read(),
+                                             camera_fov_horizontal)
+
+    while True:
+        # Read input image from video
+        input_image = vs.raw_read()
+        timestamp = datetime.datetime.now()
+        if input_image is None:
+            print("Error: Capture source not found or broken.")
+            returns = [ERROR, ERROR, timestamp]
+            push_network_table(returns)
+            if DEBUG_MODE:
+                key = cv2.waitKey(1) & 0xFF
+                if key == ord('q'):
+                    # Quit if q key is pressed
+                    break
+            continue
+        # Find colored object / box it with a rectangle
+        masked_image = find_colored_object(input_image, capture_color,
+                                           debug=DEBUG_MODE)
+        # Find the two biggest colored objects (two pieces of tape)
+        # TODO change this to filter rectangles for 2 centermost in screen
+        # TODO check if invalid rectangles return -99999
+        # TODO if both or one center rectangles: continue as normal
+
+        object_rects = find_largest_contour(masked_image, debug=DEBUG_MODE)
+        object_rect, object_rect_2 = object_rects
+
+        # DEBUG mode code
+        if object_rect is -1 and object_rect_2 is -1:
+            returns = [ERROR, ERROR, timestamp]
+            push_network_table(returns)
+            if DEBUG_MODE:
+                output_image = cv2.resize(input_image, (0, 0), fx=screen_resize,
+                                        fy=screen_resize)
+                cv2.imshow("Output", output_image)
+                key = cv2.waitKey(1) & 0xFF
+                if key == ord('q'):
+                    # Quit if q key is pressed
+                    break
+            continue
+        if object_rect == -1:
+            del object_rect
+            del object_rects[0]
+        elif object_rect_2 == -1:
+            del object_rect_2
+            del object_rects[1]
+        '''
+        elif (object_rect == -1) != (object_rect_2 == -1):
+            output_image = cv2.resize(input_image, (0, 0), fx=screen_resize,
+                                      fy=screen_resize)
+            cv2.imshow("Output", output_image)
+            key = cv2.waitKey(1) & 0xFF
+            if key == ord('q'):
+                # Quit if q key is pressed
+                break
+            continue
+        '''
+
+        # Find the depth / angle of the object
+        # find_horizontal_angle finds horizontal angle to object if needed
+        # angle = find_vertical_angle(input_image, object_rects, camera_fov)
+        # angle -= calibrate_angle
+        rect_x_midpoint, high_point = find_rectangle_highpoint(object_rects)
+        vangle = find_vert_angle(input_image, high_point, vert_focal_length)
+        hangle = find_hor_angle(input_image, rect_x_midpoint, hor_focal_length)
+        depth = depth_from_angle(input_image, object_rects, vangle, hangle,
+                                 known_object_height - known_camera_height)
+        adjusted_depth = adjust_depth(depth, hangle)
+        # adjusted_depth = depth
+
+        returns = [hangle, adjusted_depth, timestamp]
+        push_network_table(returns)
+        # Create output image to display
+        if DEBUG_MODE:
+            output_image = draw_output_image(input_image,
+                                            object_rects,
+                                            adjusted_depth, 
+                                            vangle, 
+                                            hangle, 
+                                            hipoint = (int(rect_x_midpoint), int(high_point)))
+            if screen_resize != 1:
+                output_image = cv2.resize(output_image, (0, 0),
+                                        fx=screen_resize, fy=screen_resize)
+            cv2.imshow("Output", output_image)
+
+            # Check for key presses
+            key = cv2.waitKey(1) & 0xFF
+            if key == ord('q'):
+                # Quit if q key is pressed
+                break
+            # Handle mouse clicks
+            # Comment this out if unneeded for maximum efficiency
+            # currently somewhat broken
+            cv2.setMouseCallback("Output", mouse_click_handler,
+                                {"input_image": input_image,
+                                "screen_resize": screen_resize})
+
+    # Release & close when done
+    vs.stop()
+    vs.stream.release()
+    cv2.destroyAllWindows()
 
 
 class ThreadedVideo:
@@ -57,7 +179,8 @@ class ThreadedVideo:
 
     def start(self):
         '''Starts the thread for video processing.'''
-        Thread(target=self.update, args=()).start()
+        self.thread = Thread(target=self.update, args=())
+        self.thread.start()
         return self
 
     def stop(self):
@@ -78,12 +201,14 @@ class ThreadedVideo:
 
     def update(self):
         '''Grabs new video images from the current video stream.'''
-        while True:
-            if self.stopped:
-                return
+        while not self.stopped:
             self.grabbed = read_video_image(self.stream, self.resize)
             self.frame = imutils.resize(self.grabbed, width=self.width)
 
+def push_network_table(return_list):
+    '''placeholder function for network table pushing--prints the list'''
+    if DEBUG_MODE:
+        print(return_list)
 
 def get_resize_values(capture, width=1920):
     '''
@@ -102,7 +227,8 @@ def read_video_image(capture, scale=1):
     Does some blurring to make the image easier to use.
     '''
     main_image = capture.read()[1]
-    main_image = cv2.resize(main_image, (0, 0), fx=scale, fy=scale)
+    if main_image is not None:
+        main_image = cv2.resize(main_image, (0, 0), fx=scale, fy=scale)
     return main_image
 
 
@@ -126,6 +252,9 @@ def find_colored_object(image, capture_color='y', debug=False):
         masked_image = cv2.inRange(hsv_image, np.array([35, 50, 50]),
                                    np.array([80, 255, 255]))  # Green
         # Correct values: [58, 0, 254], [67, 62, 255]
+    elif capture_color == 'x':
+        # TODO this will eventually be the only check
+        masked_image = cv2.inRange(hsv_image, np.array(min_hsv), np.array(max_hsv))
     else:
         mask_1 = cv2.inRange(hsv_image, np.array([0, 50, 50]),
                              np.array([5, 255, 255]))
@@ -217,13 +346,14 @@ def find_largest_contour(image, debug=False):
             cv2.imshow("Blurred", blur_image)
             draw_image = image.copy()
             cv2.drawContours(draw_image, contours, -1, (255, 0, 0), 2)
-            cv2.drawContours(draw_image, contours2, -1, (0, 255, 0), 2)
-            box_points = cv2.boxPoints(rect)
-            box_2p=cv2.boxPoints(rec2)
-            box_points = np.int0(box_points)
-            box_2p = np.int0(box_2p)
-            cv2.drawContours(draw_image, [box_points], 0, (0, 255, 0), 2)
-            cv2.drawContours(draw_image, [box_2p], 0, (255, 0, 0), 2)
+            if rect is not -1:
+                box_points = cv2.boxPoints(rect)
+                box_points = np.int0(box_points)
+                cv2.drawContours(draw_image, [box_points], 0, (0, 255, 0), 2)
+            if rec2 is not -1:
+                box_2p=cv2.boxPoints(rec2)
+                box_2p = np.int0(box_2p)
+                cv2.drawContours(draw_image, [box_2p], 0, (255, 0, 0), 2)
             cv2.imshow("Contours / Rectangle", image)
         return [rect, rec2]
     else:
@@ -272,17 +402,14 @@ def find_rectangle_highpoint(rectangles):
     Highpoint is the average of the tallest point of each rectangle.
     '''
     # Find x midpoint and tallest y point of given rectangles
-    highest_y = 0
+    highest_y = 9999999
     mid_x = 0
     for rectangle in rectangles:
         box_points = cv2.boxPoints(rectangle)
         mid_x += (box_points[0][0] + box_points[2][0]) / 2
-        temp_highest_y = box_points[0][1]
         for box_point in box_points[1:]:
-            if box_point[1] < temp_highest_y:
-                temp_highest_y = box_point[1]
-        highest_y += temp_highest_y
-    highest_y /= len(rectangles)
+            if box_point[1] < highest_y:
+                highest_y = box_point[1]
     mid_x /= len(rectangles)
 
     return (mid_x, highest_y)
@@ -350,7 +477,7 @@ def mouse_click_handler(event, x, y, flags, params):
         print("HSV value of point ({}, {}) is ({}, {}, {})".format(norm_x, norm_y, h, s, v))
 
 
-def draw_output_image(image, rectanglelist, depth, vangle, hangle): ##edited
+def draw_output_image(image, rectanglelist, depth, vangle, hangle, hipoint=None): ##edited
     '''
     Draws everything on the original image, and returns an image with
     all the information found by this program.
@@ -370,107 +497,9 @@ def draw_output_image(image, rectanglelist, depth, vangle, hangle): ##edited
                 cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 255), 3)
     cv2.putText(output_image, "%.2f degrees h" % hangle, (10, height - 110),
                 cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 255), 3)
+    if hipoint is not None:
+        cv2.circle(output_image, hipoint, 10, (0, 255, 255), thickness=10)
     return output_image
-
-
-def main():
-    '''
-    Main.
-    TODO Separate output images into a debug mode, if debug mode enabled
-    show vid and prints, else no
-    TODO Adjust depth
-    '''
-    # Video capture / resizing stuff
-    cv2.VideoCapture(capture_source).set(cv2.CAP_PROP_EXPOSURE, exposure)
-    vs = ThreadedVideo(screen_resize, capture_source).start()
-    # resize_value = get_resize_values(vs.stream, image_width)
-
-    # This may not need to be calculated, can use Andra's precalculated values
-    vert_focal_length = find_vert_focal_length(vs.raw_read(),
-                                               camera_fov_vertical)
-    hor_focal_length = find_hor_focal_length(vs.raw_read(),
-                                             camera_fov_horizontal)
-
-    while True:
-        # Read input image from video
-        input_image = vs.raw_read()
-        if input_image is None:
-            print("Error: Capture source not found or broken.")
-            key = cv2.waitKey(1) & 0xFF
-            if key == ord('q'):
-                # Quit if q key is pressed
-                break
-            continue
-
-        # Find colored object / box it with a rectangle
-        masked_image = find_colored_object(input_image, capture_color,
-                                           debug=False)
-        # Find the two biggest colored objects (two pieces of tape)
-        # TODO change this to filter rectangles for 2 centermost in screen
-        # TODO check if invalid rectangles return -99999
-        # TODO if both or one center rectangles: continue as normal
-
-        object_rects = find_largest_contour(masked_image, debug=False)
-        object_rect, object_rect_2 = object_rects
-
-        # DEBUG mode code
-        if object_rect == -1 and object_rect_2 == -1:
-            print("No contours found. Assuming no colored object was found.")
-            output_image = cv2.resize(input_image, (0, 0), fx=screen_resize,
-                                      fy=screen_resize)
-            cv2.imshow("Output", output_image)
-            key = cv2.waitKey(1) & 0xFF
-            if key == ord('q'):
-                # Quit if q key is pressed
-                break
-            continue
-        elif (object_rect == -1) != (object_rect_2 == -1):
-            output_image = cv2.resize(input_image, (0, 0), fx=screen_resize,
-                                      fy=screen_resize)
-            cv2.imshow("Output", output_image)
-            key = cv2.waitKey(1) & 0xFF
-            if key == ord('q'):
-                # Quit if q key is pressed
-                break
-            continue
-
-        # Find the depth / angle of the object
-        # find_horizontal_angle finds horizontal angle to object if needed
-        # angle = find_vertical_angle(input_image, object_rects, camera_fov)
-        # angle -= calibrate_angle
-        rect_x_midpoint, high_point = find_rectangle_highpoint(object_rects)
-        vangle = find_vert_angle(input_image, high_point, vert_focal_length)
-        hangle = find_hor_angle(input_image, rect_x_midpoint, hor_focal_length)
-        depth = depth_from_angle(input_image, object_rects, vangle, hangle,
-                                 known_object_height - known_camera_height)
-        # adjusted_depth = adjust_depth(depth, angle)
-        adjusted_depth = depth
-
-        # Create output image to display
-        output_image = draw_output_image(input_image,
-                                         [object_rect, object_rect_2],
-                                         adjusted_depth, vangle, hangle)
-        if screen_resize != 1:
-            output_image = cv2.resize(output_image, (0, 0),
-                                      fx=screen_resize, fy=screen_resize)
-        cv2.imshow("Output", output_image)
-
-        # Check for key presses
-        key = cv2.waitKey(1) & 0xFF
-        if key == ord('q'):
-            # Quit if q key is pressed
-            break
-        # Handle mouse clicks
-        # Comment this out if unneeded for maximum efficiency
-        # currently somewhat broken
-        cv2.setMouseCallback("Output", mouse_click_handler,
-                             {"input_image": input_image,
-                              "screen_resize": screen_resize})
-
-    # Release & close when done
-    vs.stream.release()
-    cv2.destroyAllWindows()
-    vs.stop()
 
 
 if __name__ == "__main__":
