@@ -62,6 +62,14 @@ public class DriveBase extends Subsystem {
   }
 
   /**
+   * Sets velocity (Talons) 
+   * TODO fill this out
+   */
+  public void setVelocity(){
+
+  }
+
+  /**
    * 
    * Drives the Robot using a tank drive configuration (two joysticks, or auton)
    * 
@@ -259,6 +267,9 @@ public class DriveBase extends Subsystem {
     arcadeDrive(xSpeed, zRotation, false);
   }
 
+  /**
+   * Stops the motors on the drive base (sets them to 0).
+   */
   public void stop() {
     tankDrive(0, 0);
   }
@@ -276,6 +287,9 @@ public class DriveBase extends Subsystem {
  */
   public CANEncoder getRightEncoder(){
     return right1.getEncoder();
+
+  public void setVelocityControl(double leftVel, double rightVel) {
+    // TODO implement this lol.... Should just be setControlMode(Velocity) on whatever motor controller we decide on
   }
 
   @Override
