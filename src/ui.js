@@ -35,60 +35,74 @@ NetworkTables.addKeyListener('/SmartDashboard/gyro', (key, value) => {
 //   document.getElementById('test').innerHTML = value;
 // });
 
+var keys = [];
+
 window.onkeyup = function(event) {
     let key = event.key;
-    if (key == 'a') {
-      highlight('left-rocket-top');
-    }
-    if (key == 'j') {
-      highlight('left-rocket-middle');
-    }
-    if (key == 's') {
-      highlight('left-rocket-bottom');
-    }
-    if (key == 'b') {
-      highlight('left-cargo-far');
-    }
-    if (key == 'k') {
-      highlight('left-cargo-mid');
-    }
-    if (key == 't') {
-      highlight('left-cargo-close');
-    }
-    if (key == '2') {
-      highlight('left-cargo-alliance');
-    }
-    if (key == '3') {
-      highlight('right-cargo-alliance');
-    }
-    if (key == 'c') {
-      highlight('right-cargo-far');
-    }
-    if (key == 'l') {
-      highlight('right-cargo-mid');
-    }
-    if (key == 'u') {
-      highlight('right-cargo-close');
-    }
-    if (key == 'd') {
-      highlight('right-rocket-top');
-    }
-    if (key == 'm') {
-      highlight('right-rocket-middle');
-    }
-    if (key == 'v') {
-      highlight('right-rocket-bottom');
-    }
-    if (key == '1') {
-      highlight('left-loading-station');
-    }
-    if (key == '4') {
-      highlight('right-loading-station');
-    }
 
     if (key == '9') {
-      clearHighlight();
+      keys = [];
+    } else if (key == '0') {
+      keys.pop();
+    } else {
+      keys.push(key);
     }
+
+    document.getElementById('test').innerHTML = keys;
+
+
+    // if (key == 'a') {
+    //   highlight('left-rocket-top');
+    // }
+    // if (key == 'j') {
+    //   highlight('left-rocket-middle');
+    // }
+    // if (key == 's') {
+    //   highlight('left-rocket-bottom');
+    // }
+    // if (key == 'b') {
+    //   highlight('left-cargo-far');
+    // }
+    // if (key == 'k') {
+    //   highlight('left-cargo-mid');
+    // }
+    // if (key == 't') {
+    //   highlight('left-cargo-close');
+    // }
+    // if (key == '2') {
+    //   highlight('left-cargo-alliance');
+    // }
+    // if (key == '3') {
+    //   highlight('right-cargo-alliance');
+    // }
+    // if (key == 'c') {
+    //   highlight('right-cargo-far');
+    // }
+    // if (key == 'l') {
+    //   highlight('right-cargo-mid');
+    // }
+    // if (key == 'u') {
+    //   highlight('right-cargo-close');
+    // }
+    // if (key == 'd') {
+    //   highlight('right-rocket-top');
+    // }
+    // if (key == 'm') {
+    //   highlight('right-rocket-middle');
+    // }
+    // if (key == 'v') {
+    //   highlight('right-rocket-bottom');
+    // }
+    // if (key == '1') {
+    //   highlight('left-loading-station');
+    // }
+    // if (key == '4') {
+    //   highlight('right-loading-station');
+    // }
+    //
+    // if (key == '9') {
+    //   clearHighlight();
+    // }
 }
 
 function highlight(toHighlight) {
