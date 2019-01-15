@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670;
+package frc.team670.robot;
 
 import frc.team670.robot.Robot;
 

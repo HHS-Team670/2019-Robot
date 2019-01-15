@@ -19,10 +19,15 @@ import edu.wpi.first.wpilibj.SerialPort.Port;
 public class RobotMap {
 
   // Drive Base
-
+  public static final int sparkLeftMotor1 = 0;
+  public static final int sparkLeftMotor2 = 1;
+  public static final int sparkRightMotor1 = 2;
+  public static final int sparkRightMotor2 = 3;
+  
   // Sensor Ports
   public final static Port navXPort = SerialPort.Port.kUSB;
 
   // Joysticks
+  public static final int DRIVER_CONTROLLER_PORT = 0;
 
 }
