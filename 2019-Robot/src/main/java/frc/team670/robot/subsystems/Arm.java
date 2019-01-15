@@ -9,6 +9,7 @@ package frc.team670.robot.subsystems;
 
 import java.awt.geom.Point2D;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
@@ -37,6 +38,7 @@ public class Arm extends Subsystem {
     wristRotation = new TalonSRX(RobotMap.armWristRotation);
 
     elbowRotationSlave = new VictorSPX(RobotMap.armElbowRotationMotorVictor);
+    elbowRotationSlave.set(ControlMode.Follower, elbowRotationMain.getDeviceID());
 
   }
 
