@@ -14,10 +14,13 @@ import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel;
+import com.revrobotics.ControlType;
 
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import frc.team670.robot.commands.drive.XboxRocketLeagueDrive;
+import frc.team670.robot.utils.functions.MathUtils;
 
 import frc.team670.robot.constants.RobotMap;
 
@@ -28,10 +31,7 @@ import frc.team670.robot.constants.RobotMap;
  */
 public class DriveBase extends Subsystem {
 
-  // TODO declare all of the correct motor controllers. Add them to ArrayLists for
-  // easily changing parameters for all of them.
-  // Make helper methods to change them and access sensor data. Set a
-  // DefaultCommand
+  private static final int velocityPIDSlot = 1, encodersPIDSlot = 2;
 
   private CANSparkMax left1, left2, right1, right2;
   private SpeedControllerGroup left, right;
@@ -40,29 +40,28 @@ public class DriveBase extends Subsystem {
   private List<CANSparkMax> allMotors;
 
   public DriveBase() {
-    left1 = new CANSparkMax(RobotMap.sparkLeftMotor1, CANSparkMaxLowLevel.MotorType.kBrushless);
-    left2 = new CANSparkMax(RobotMap.sparkLeftMotor2, CANSparkMaxLowLevel.MotorType.kBrushless);
-    right1 = new CANSparkMax(RobotMap.sparkRightMotor1, CANSparkMaxLowLevel.MotorType.kBrushless);
-    right2 = new CANSparkMax(RobotMap.sparkRightMotor2, CANSparkMaxLowLevel.MotorType.kBrushless);
+    // left1 = new CANSparkMax(RobotMap.sparkLeftMotor1, CANSparkMaxLowLevel.MotorType.kBrushless);
+    // left2 = new CANSparkMax(RobotMap.sparkLeftMotor2, CANSparkMaxLowLevel.MotorType.kBrushless);
+    // right1 = new CANSparkMax(RobotMap.sparkRightMotor1, CANSparkMaxLowLevel.MotorType.kBrushless);
+    // right2 = new CANSparkMax(RobotMap.sparkRightMotor2, CANSparkMaxLowLevel.MotorType.kBrushless);
 
-    leftControllers = Arrays.asList(left1,left2);
-    rightControllers = Arrays.asList(right1, right2);
-    allMotors.addAll(leftControllers);
-    allMotors.addAll(rightControllers);
+    // leftControllers = Arrays.asList(left1,left2);
+    // rightControllers = Arrays.asList(right1, right2);
+    // allMotors.addAll(leftControllers);
+    // allMotors.addAll(rightControllers);
     
-    setMotorsInvert(leftControllers, false);
-    setMotorsInvert(rightControllers, true);
+    // setMotorsInvert(leftControllers, false);
+    // setMotorsInvert(rightControllers, true);
 
-    left2.follow(left1);
-    right2.follow(right1);
+    // left2.follow(left1);
+    // right2.follow(right1);
 
-    left = new SpeedControllerGroup(left1, left2);
-    right = new SpeedControllerGroup(right1, right2);
+    // left = new SpeedControllerGroup(left1, left2);
+    // right = new SpeedControllerGroup(right1, right2);
 
-    setMotorsBrushless(allMotors);
+    // setMotorsBrushless(allMotors);
 
-    driveTrain = new DifferentialDrive(left, right);
-
+    // driveTrain = new DifferentialDrive(left, right);
   }
 
   /**
@@ -116,12 +115,87 @@ public class DriveBase extends Subsystem {
     driveTrain.arcadeDrive(xSpeed, zRotation, squaredInputs);
   }
 
+    /**
+   * 
+   * Drives the Robot using an arcade drive configuration (single joystick with twist)
+   * 
+   * @param xSpeed The forward throttle speed [-1, 1]
+   * @param zRotation The amount of rotation to turn [-1, 1] with positive being right
+   */
+  public void arcadeDrive(double xSpeed, double zRotation) {
+    arcadeDrive(xSpeed, zRotation, false);
+  }
+
+  /**
+   * Stops the motors on the drive base (sets them to 0).
+   */
+  public void stop() {
+    tankDrive(0, 0);
+  }
+
+
+  /*
+   * Gets the input voltage of all the motor controllers on the robot
+   */
+  public double getRobotInputVoltage(){
+    double output = left1.getBusVoltage() + left2.getBusVoltage() + right1.getBusVoltage() + right2.getBusVoltage();
+    return output;
+  }
+
+  /*
+   * Gets the output voltage of all the motor controllers on the robot
+   */
+  public double getRobotOutputVoltage(){
+    double output = left1.getAppliedOutput() + left2.getAppliedOutput() + right1.getAppliedOutput() + right2.getAppliedOutput();
+    return output;
+  }
+
+/**
+ * Return the left CANEncoder Object
+ * @deprecated Do not access these for PID Controllers anymore, use the internal PIDControllers for the SparkMAX motors.
+ */
+  public CANEncoder getLeftEncoder() {
+    return left1.getEncoder();
+
+  }
+
+/**
+ * Return the right CanEncoder Object
+ * @deprecated Do not access these for PID Controllers anymore, use the internal PIDControllers for the SparkMAX motors.
+ */
+  public CANEncoder getRightEncoder(){
+    return right1.getEncoder();
+  }
+
+  /**
+   * Sets the PIDControllers for the left and right side motors to the given positions in ticks.
+   */
+  public void setEncodersControl(double leftEncoderPosition, double rightEncoderPosition) {
+    left1.getPIDController().setReference(leftEncoderPosition, ControlType.kPosition, encodersPIDSlot);
+    right1.getPIDController().setReference(rightEncoderPosition, ControlType.kPosition, encodersPIDSlot);
+  }
+
+  /**
+   * Sets the velocities of the left and right motors of the robot.
+   * @param leftVel Velocity for left motors in inches/sec
+   * @param rightVel Velocity for right motors in inches/sec
+   */
+  public void setVelocityControl(double leftVel, double rightVel) {
+    leftVel = MathUtils.convertInchesPerSecondToDriveBaseRoundsPerMinute(MathUtils.convertInchesToDriveBaseTicks(leftVel));
+    rightVel = MathUtils.convertInchesPerSecondToDriveBaseRoundsPerMinute(MathUtils.convertInchesToDriveBaseTicks(rightVel));
+    left1.getPIDController().setReference(leftVel, ControlType.kVelocity, velocityPIDSlot);
+    right1.getPIDController().setReference(rightVel, ControlType.kVelocity, velocityPIDSlot);
+  }
+
+    /**
+   * Gets the encoder position of the front left motor in ticks.
+   */
   public int getLeftEncoderPosition(){
     return (int)left1.getEncoder().getPosition();
   }
 
   /**
-   * Gets the position of the front right motor, this encoder gets more positive as it goes forward
+   * Gets the encoder position of the front right motor in ticks, this encoder gets more positive as it goes forward
    */
   public int getRightEncoderPosition(){
     return (int)right1.getEncoder().getPosition();
@@ -229,17 +303,17 @@ public class DriveBase extends Subsystem {
   }
 
   /*
-   * Gets the input voltage of all the motor controllers on the robot
+   * Gets the input voltage of all the drivebase motor controllers on the robot
    */
-  public double getRobotInputVoltage(){
+  public double getDriveBaseInputVoltage(){
     double output = left1.getBusVoltage() + left2.getBusVoltage() + right1.getBusVoltage() + right2.getBusVoltage();
     return output;
   }
 
   /*
-   * Gets the output voltage of all the motor controllers on the robot
+   * Gets the output voltage of all the drivebase motor controllers on the robot
    */
-  public double getRobotOutputVoltage(){
+  public double getDriveBaseOutputVoltage(){
     double output = left1.getAppliedOutput() + left2.getAppliedOutput() + right1.getAppliedOutput() + right2.getAppliedOutput();
     return output;
   }
@@ -252,47 +326,9 @@ public class DriveBase extends Subsystem {
     return output;
   }
 
-  /**
-   * 
-   * Drives the Robot using an arcade drive configuration (single joystick with twist)
-   * 
-   * @param xSpeed The forward throttle speed [-1, 1]
-   * @param zRotation The amount of rotation to turn [-1, 1] with positive being right
-   */
-  public void arcadeDrive(double xSpeed, double zRotation) {
-    arcadeDrive(xSpeed, zRotation, false);
-  }
-
-  public void stop() {
-    tankDrive(0, 0);
-  }
-
-/**
- * Return the left encoder's position
- */
-  public CANEncoder getLeftEncoder() {
-    return left1.getEncoder();
-
-  }
-
-/**
- * Return the right encoder's position
- */
-  public CANEncoder getRightEncoder(){
-    return right1.getEncoder();
-  }
-
-  /**
-   * Resets the encoder values to zero.
-   */
-  public void resetEncoders() {
-
-  }
-
   @Override
   public void initDefaultCommand() {
-    // Set the default command for a subsystem here.
-    // setDefaultCommand(new MySpecialCommand());
+    setDefaultCommand(new XboxRocketLeagueDrive());
   }
 
   public CANSparkMax getLeft1(){

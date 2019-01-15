@@ -18,6 +18,8 @@ public class Pose {
 
   private long timeOfPose;
   
+  private static Pose fieldCentricPose;
+
   /**
    * Makes new pose using current robot encoder values and angles
    */
@@ -51,12 +53,13 @@ public class Pose {
     this.timeOfPose = timeOfPose;
   }
 
-  private Pose(long lEncoderTick, long rEncoderTick, double angle, long currRobotX, long currRobotY) {
+  public Pose(long lEncoderTick, long rEncoderTick, double angle, long currRobotX, long currRobotY) {
     leftEncoderTick = lEncoderTick;
     rightEncoderTick = rEncoderTick;
     currentAngle = angle;
     this.currRobotX = currRobotX;
     this.currRobotY = currRobotY;
+    this.timeOfPose = System.currentTimeMillis();
   }
  
   /**
@@ -76,6 +79,10 @@ public class Pose {
     leftEncoderTick = newLeftEncoderTick;
     rightEncoderTick = newRightEncoderTick;
     currentAngle = newAngle;
+  }
+
+  public void update() {
+    update(Robot.driveBase.getLeftEncoderPosition(), Robot.driveBase.getRightEncoderPosition(), Robot.sensors.getYawDouble());
   }
 
   public long getPosX(){
@@ -98,15 +105,6 @@ public class Pose {
   }
 
   /**
-   * Resets the Robot's NavX angle and the drive base encoders to 0, essentially changing the Pose inputs to zero.
-   * Use this before you create a new Pose for a driving Command that utilizes it to ensure accuracy.
-   */
-  public static void resetPoseInputs() {
-    Robot.sensors.resetNavX();
-    Robot.driveBase.resetEncoders();
-  }
-
-  /**
    * @return the timeOfPose
    */
   public long getTimeOfPose() {
@@ -115,5 +113,26 @@ public class Pose {
 
   public Pose clone() {
     return new Pose(leftEncoderTick, rightEncoderTick, currentAngle, currRobotX, currRobotY, timeOfPose);
+  }
+
+  /**
+   * Instantiates the field centric Pose. Call this in Robot.autonomousInit()
+   */
+  public static void instantiateFieldCentricPose () {
+    fieldCentricPose = new Pose();
+  }
+
+  /**
+   * Updates the field centric Pose that is stored
+   */
+  public static void updateFieldCentricPose() {
+    fieldCentricPose.update();
+  }
+
+  /**
+   * Gets a Pose that is kept up to date with the robot field centrically.
+   */
+  public static Pose getFieldCentricPose() {
+    return fieldCentricPose;
   }
 }

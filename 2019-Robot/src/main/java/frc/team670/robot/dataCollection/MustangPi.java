@@ -35,9 +35,9 @@ public class MustangPi {
     }
 
     private MustangPi(String[] keys) {
-        for(String key : keys){
-            entries.put(key, new NetworkTableObject(key));
-        }
+        //for(String key : keys){
+          //  entries.put(key, new NetworkTableObject(key));
+        //}
     }
 
     private class NetworkTableObject {
@@ -176,6 +176,9 @@ public class MustangPi {
          * Gets the entry at the given index in the array at the NetworkTable entry that corresponds to this object's key.
          */
         public double getEntry(int index) {
+            if (entries.get(key)==null) {
+                return RobotConstants.VISION_ERROR_CODE; // If no data found, returns VISION_ERROR_CODE
+            }
             return entries.get(key).getValue()[index];
         }
 
