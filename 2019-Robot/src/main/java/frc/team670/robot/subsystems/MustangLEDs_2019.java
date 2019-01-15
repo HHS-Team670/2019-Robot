@@ -42,8 +42,6 @@ public class MustangLEDs_2019 {
 	// String xFinalData=xFinalCenter;
 	String data="";
 
-	
-
 
 	// Socket Init
 	ServerSocket serverSocket = null;
@@ -64,15 +62,14 @@ public class MustangLEDs_2019 {
 	}
 	
 	public void changeAlliance(boolean b) { //true for blue, false for red
-		if(b==true) {
+		if(b) {
 			allianceData=blueAlliance;
+			System.out.println("Alliance is blue");
 		}
-		else if(b==false){
+		else {
 			allianceData=redAlliance;
 		}
-		else{
-			allianceData=invalidAlliance;
-		}
+	
 	}
 
 	// public void updateAlliance(){ // Updates the Alliance Color in data transmission
@@ -90,30 +87,31 @@ public class MustangLEDs_2019 {
 	// 	}
 	// }
 	
-	public void getClimbingData(boolean trigger){ // Updates if we are climbing
+	public void setClimbingData(boolean trigger){ // Updates if we are climbing
 		if(trigger == true){
 			stateData=climbing;
+			System.out.println("Robot is climbing");
 		}
 	}
 	
-	public void getVisionData(boolean trigger){ //updates if we lock onto a vision target
+	public void setVisionData(boolean trigger){ //updates if we lock onto a vision target
 		if(trigger == true){
 			stateData=visionLock;
 		}
 	}
-	public void getForwardData(boolean trigger){//updates if we are driving forward
+	public void setForwardData(boolean trigger){//updates if we are driving forward
 		if(trigger=true){
 			stateData=forwardDrive;
 		}
 		
 	}
-	public void getReverseData(boolean trigger){//updates if we are driving in reverse
+	public void setReverseData(boolean trigger){//updates if we are driving in reverse
 		if(trigger=true){
 			stateData=reverseDrive;
 		}
 		
 	}
-	public void getStillDrive(boolean trigger){//updates it robot is not moving
+	public void setStillDrive(boolean trigger){//updates it robot is not moving
 		if(trigger=true){
 			stateData = stillDrive;
 		}

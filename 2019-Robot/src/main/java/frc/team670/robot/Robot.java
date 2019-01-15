@@ -18,7 +18,7 @@ import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangPi;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.DriveBase;
-import frc.team670.robot.subsystems.MustangLEDsEnum;
+import frc.team670.robot.subsystems.MustangLEDs_2019;
 import frc.team670.robot.utils.Logger;
 
 /**
@@ -33,7 +33,7 @@ public class Robot extends TimedRobot {
   public static MustangSensors sensors = new MustangSensors();
   public static MustangPi visionPi = new MustangPi();
   public static DriveBase driveBase = new DriveBase();
-  private MustangLEDsEnum leds = new MustangLEDsEnum();
+  private MustangLEDs_2019 leds = new MustangLEDs_2019();
 
   private long savedTime=0;
 
@@ -69,9 +69,7 @@ public class Robot extends TimedRobot {
     leds.socketSetup(5801);
     System.out.println("LED Setup Run");
     //leds.socketSetup(RobotConstants.LED_PORT);    
-    leds.update_xFinal(0);
-    leds.updateClimbingBoolean(true);
-
+    
   }
 
   /**
@@ -98,12 +96,12 @@ public class Robot extends TimedRobot {
     //   leds.updateVisionData(true);
     //   savedTime = System.currentTimeMillis();
     // }  
-    if(System.currentTimeMillis()>savedTime+5000){
-      leds.updateClimbingBoolean(true);
-    }
-    else if(System.currentTimeMillis()>savedTime+10000){
+      
+      leds.setClimbingData(true);
       leds.changeAlliance(true);
-    }
+
+      
+    
     
     
   }

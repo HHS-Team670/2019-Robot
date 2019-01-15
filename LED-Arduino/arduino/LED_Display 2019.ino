@@ -113,7 +113,7 @@ if(stateData==stillDrive){
     }
 } else if(allianceData==redAlliance){                   //If the alliance is red, set the base LED color to red
     for(int i=0;i<=numberOfPixels;i++){
-    strip.setPixelColor(i,0,255,0);
+    strip.setPixelColor(i,255,0,0);
     }
 } else if(allianceData== invalidAlliance){              //If no alliance is specified, set the base LED color to purple
     for(int i = 0; i <= numberOfPixels; i++){       //Resets the full LED strip...
@@ -126,7 +126,7 @@ if(stateData==stillDrive){
   if(stateData==climbing){
     while(stateData==climbing){
     for(int i = 0; i <= numberOfPixels; i++){
-      strip.setPixelColor(i,138,67,35);
+      strip.setPixelColor(i,0,200,0);
     }
       strip.show();
     }
@@ -143,7 +143,7 @@ if(stateData==stillDrive){
     
   } else if(stateData==reverseDrive) {
       for(int i = 0; i < numberOfPixels; i++){
-        strip.setPixelColor(i,0,255,0);
+        strip.setPixelColor(i,255,0,0);
         strip.show();
     }
         
