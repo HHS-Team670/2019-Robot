@@ -88,8 +88,6 @@ def main():
         # Find colored object / box it with a rectangle. Set capture_color at the top to "x" for reflector tape HSV
         masked_image = find_colored_object(input_image, capture_color, debug=DEBUG_MODE)
         # Find the two most central objects of a certain color (two pieces of tape)
-        # TODO check if invalid rectangles return -99999
-        # TODO if both or one center rectangles: continue as normal
 
         object_rects = find_two_important_contours(masked_image, debug=DEBUG_MODE)
         object_rect, object_rect_2 = object_rects
@@ -161,9 +159,9 @@ def main():
     vs.stream.release()
     cv2.destroyAllWindows()
 
-
+# Classes
 class ThreadedVideo:
-    '''This class creates a thread for video capturing.'''
+    '''This class creates a thread for video capturing. self.stream is the capture stream'''
     def __init__(self, resize_value, src):
         '''
         Init class that initializes a video stream and a single
@@ -206,10 +204,13 @@ class ThreadedVideo:
                 if self.grabbed[0] is not None:
                     self.frame = imutils.resize(self.grabbed[0], width=self.width)
 
+# Methods
 def push_network_table(table, return_list):
-    push_tuple = tuple(return_list)
-    '''placeholder function for network table pushing--simply prints the list in debug mode at the moment
     '''
+    Pushes a tuple to the network table
+    prints the table in Debug mode
+    '''
+    push_tuple = tuple(return_list)
     table.putNumberArray(NETWORK_KEY, return_list)
 
     if DEBUG_MODE:
@@ -332,23 +333,7 @@ def find_two_important_contours(image, debug=False):
             rect = cv2.minAreaRect(centermost_con)
         if sec_center_con is not -1:
             rec2 = cv2.minAreaRect(sec_center_con)
-        '''
-        contours2 = copy.deepcopy(contours)
-        biggest_contour=max(conarea)
-        del contours2[conarea.index(biggest_contour)]
-        biggest_contour=contours[conarea.index(biggest_contour)]
-        if len(contours) != 1:
-            area2 = []
-            for i in contours2:
-                area2.append(cv2.contourArea(i))
-            sec_big_con = max(area2)
-            sec_big_con = contours2[area2.index(sec_big_con)]
-            rec2 = cv2.minAreaRect(sec_big_con)
-        else:
-            rec2 = cv2.minAreaRect(biggest_contour)
-        # Creating a rotated minimum area rectangle
-        rect = cv2.minAreaRect(biggest_contour)
-        '''
+
         if debug:
             cv2.imshow("Blurred", blur_image)
             draw_image = image.copy()
@@ -367,21 +352,23 @@ def find_two_important_contours(image, debug=False):
         return [-1, -1]
 
 
-def depth_from_angle(image, rectangles, vangle, hangle, known_height):
+def find_rectangle_highpoint(rectangles):
     '''
-    Returns the depth of the tape when given the height of the tape (from the
-    center of the camera to the middle of the tape), the angle to the center
-    of the tape, the focal length, and the original image (to get its size).
+    Returns a tuple with the x midpoint and y highpoint.
+    Highpoint is the average of the tallest point of each rectangle.
     '''
-    # Keep tangent from being undefined
-    if vangle == 0:
-        vangle = 0.0001
-    # Do some calculations
+    # Find x midpoint and tallest y point of given rectangles
+    highest_y = 9999999
+    mid_x = 0
+    for rectangle in rectangles:
+        box_points = cv2.boxPoints(rectangle)
+        mid_x += (box_points[0][0] + box_points[2][0]) / 2
+        for box_point in box_points[1:]:
+            if box_point[1] < highest_y:
+                highest_y = box_point[1]
+    mid_x /= len(rectangles)
 
-    depth = known_height / math.tan(abs(vangle))
-    # This was an adjustment to adjust depth for an object that is offcenter
-    # adjusted_depth = depth / math.cos(abs(hangle))
-    return depth
+    return (mid_x, highest_y)
 
 
 def find_vert_focal_length(image, vert_fov):
@@ -402,24 +389,6 @@ def find_hor_focal_length(image, hor_fov):
     calc_focal_length = width / (2 * math.tan(math.radians(hor_fov / 2)))
     return calc_focal_length
 
-
-def find_rectangle_highpoint(rectangles):
-    '''
-    Returns a tuple with the x midpoint and y highpoint.
-    Highpoint is the average of the tallest point of each rectangle.
-    '''
-    # Find x midpoint and tallest y point of given rectangles
-    highest_y = 9999999
-    mid_x = 0
-    for rectangle in rectangles:
-        box_points = cv2.boxPoints(rectangle)
-        mid_x += (box_points[0][0] + box_points[2][0]) / 2
-        for box_point in box_points[1:]:
-            if box_point[1] < highest_y:
-                highest_y = box_point[1]
-    mid_x /= len(rectangles)
-
-    return (mid_x, highest_y)
 
 def find_vert_angle(image, y, focal_length):
     '''
@@ -455,6 +424,23 @@ def find_hor_angle(image, x, focal_length):
     horizontal_angle = -1 * math.degrees(math.atan((x_from_bottom - center_x) / focal_length))
     return horizontal_angle
 
+def depth_from_angle(image, rectangles, vangle, hangle, known_height):
+    '''
+    Returns the depth of the tape when given the height of the tape (from the
+    center of the camera to the middle of the tape), the angle to the center
+    of the tape, the focal length, and the original image (to get its size).
+    '''
+    # Keep tangent from being undefined
+    if vangle == 0:
+        vangle = 0.0001
+    # Do some calculations
+
+    depth = known_height / math.tan(abs(vangle))
+    # This was an adjustment to adjust depth for an object that is offcenter
+    # adjusted_depth = depth / math.cos(abs(hangle))
+    return depth
+
+
 def adjust_depth(depth, angle):
     '''
     Adjusts the depth based on the angle to the object (using simple trig).
@@ -467,7 +453,7 @@ def adjust_depth(depth, angle):
         adjusted_depth = 0
     return adjusted_depth
 
-
+# Debug mode methods
 def mouse_click_handler(event, x, y, flags, params):
     '''
     If the mouse is clicked, return the hsv values of that point.
@@ -511,5 +497,6 @@ def draw_output_image(image, rectanglelist, depth, vangle, hangle, hipoint=None)
     return output_image
 
 
+# causes program to run main method when program is run, but allows modular import allows
 if __name__ == "__main__":
     main()
