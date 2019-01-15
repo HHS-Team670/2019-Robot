@@ -77,6 +77,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    dashboard.putString("test", "robotPeriodic()");
   }
 
   /**
