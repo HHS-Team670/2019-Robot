@@ -50,4 +50,9 @@ public class RobotConstants {
     kPathFollowingGoalPosTolerance, kPathFollowingGoalVelTolerance,
     kPathStopSteeringDistance;
 
+    // Arm constants
+    public static final double armBaseHeight = 0;
+    public static final double clawRadius = 0;
+
+
 }

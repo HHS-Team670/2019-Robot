@@ -7,8 +7,14 @@
 
 package frc.team670.robot.subsystems;
 
-import edu.wpi.first.wpilibj.PIDController;
+import java.awt.geom.Point2D;
+
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+
 import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.team670.robot.constants.RobotConstants;
+import frc.team670.robot.constants.RobotMap;
 
 /**
  * Represents the arm mechanism on the robot.
@@ -17,7 +23,35 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  */
 public class Arm extends Subsystem {
   
+  private TalonSRX translationMotor;
+  private TalonSRX extensionMotor;
+  private TalonSRX elbowRotationMain;
+  private VictorSPX elbowRotationSlave;
+  private TalonSRX wristRotation;
+
+
   public Arm() {
+    translationMotor = new TalonSRX(RobotMap.armTranslationMotor);
+    extensionMotor = new TalonSRX(RobotMap.armExtensionMotor);
+    elbowRotationMain = new TalonSRX(RobotMap.armElbowRotationMotorTalon);
+    wristRotation = new TalonSRX(RobotMap.armWristRotation);
+
+    elbowRotationSlave = new VictorSPX(RobotMap.armElbowRotationMotorVictor);
+
+  }
+
+
+  /**
+   * Returns the arm's point in forward facing plane relative to (0,0) at the base of the arm.
+   * 
+   * left the variable stuff as parameters for now
+   */
+  public Point2D.Double getPosition(double armLength, double wristAngle, double elbowAngle) {
+
+    double x = armLength * Math.sin(elbowAngle) + RobotConstants.clawRadius * Math.sin(wristAngle);
+    double y = armLength * Math.cos(elbowAngle) + RobotConstants.clawRadius * Math.cos(wristAngle) + RobotConstants.armBaseHeight;
+
+    return new Point2D.Double(x, y);
 
   }
 
