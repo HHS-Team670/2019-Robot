@@ -7,8 +7,6 @@
 
 package frc.team670.robot.commands.drive;
 
-import java.util.HashMap;
-
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.Robot;
 import frc.team670.robot.utils.Logger;
@@ -40,7 +38,7 @@ public class TimeDrive extends Command {
   protected void execute() { 
     Robot.driveBase.tankDrive(speed, speed);
     if (executeCounter % 10 == 0) {
-        Logger.consoleLog("Speed: %s Seconds: %s", speed, seconds);
+        Logger.consoleLog("Timed Driving");
     }
     executeCounter++;
 

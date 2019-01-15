@@ -7,14 +7,11 @@
 
 package frc.team670.robot.commands.drive;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.revrobotics.CANEncoder;
-
 import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.Robot;
 import frc.team670.robot.utils.Logger;
+import jaci.pathfinder.Pathfinder;
 
 /**
  * An example command.  You can replace me with your own command.
@@ -24,13 +21,12 @@ public class NavXPivot extends Command {
 	private double finalAngle, startAngle, angle, leftSpeed, rightSpeed;
 	protected double endingSpeed = 0.2;
 	private PIDController pivotController;
+	// TODO find PID constants
 	private static final double P = 1, I = 0, D = 0;
 
   public NavXPivot(double angle) {
 	this.angle = angle;
 	
-
-	// TODO find PID constants
 	pivotController = new PIDController(P, I, D, Robot.sensors.getZeroableNavXPIDSource(), null);
 
 	pivotController.setInputRange(-180, 180);
@@ -45,21 +41,24 @@ public class NavXPivot extends Command {
   @Override
   protected void initialize() {
 		startAngle = Robot.sensors.getYawDouble();
-		finalAngle = startAngle + angle;
+		finalAngle = Pathfinder.boundHalfDegrees(startAngle + angle);
 
 		Logger.consoleLog("StartAngle:%s FinalAngle:%s DegreesToTravel:%s", 
-				startAngle, finalAngle, finalAngle - startAngle);
+				startAngle, finalAngle, angle);
+
+		pivotController.setSetpoint(finalAngle);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-
-		double pivotOutput = pivotController.get();
-		Robot.driveBase.tankDrive(leftSpeed, -rightSpeed);
 	
-	Logger.consoleLog("DegreesToTravel:%s CurrentAngle:%s", 
-			yawRemaining(), getNormalizedYaw());
+	double output = pivotController.get();
+
+	Robot.driveBase.tankDrive(output, -output);
+
+	Logger.consoleLog("Output:%s CurrentAngle:%s", output, Robot.sensors.getYawDouble());
+
   }
 
   // Make this return true when this Command no longer needs to run execute()
@@ -72,9 +71,8 @@ public class NavXPivot extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-		Robot.driveBase.tankDrive(0, 0);
-		Logger.consoleLog("DegreesToTravel:%s CurrentAngle:%s", 
-				yawRemaining(), getNormalizedYaw());
+		Robot.driveBase.stop();
+		Logger.consoleLog("FinishedPivot, CurrentAngle: %s, TargetAngle", Robot.sensors.getYawDouble(), finalAngle);
   }
 
   // Called when another command which requires one or more of the same
@@ -82,34 +80,7 @@ public class NavXPivot extends Command {
   @Override
   protected void interrupted() {
 		end();
+		Logger.consoleLog("Pivot Interrupted");
 	}
 	
-		//Gets yaw accounting for discontinuity at 180/-180 for NavX yaw result
-		private double getNormalizedYaw() {
-			double rawYaw = Robot.sensors.getYawDouble();
-			if((startAngle < 0 && rawYaw > 0) || (startAngle > 0 && rawYaw < 0)) { //Signs of angles are different
-				if(angle < 0) {
-					if(startAngle > 0) {
-						return rawYaw;
-					} else {
-						return -360 + rawYaw; // -180 - (180 - rawYaw)
-					}
-				}
-				else {
-					if(startAngle > 0) {
-						return 360 + rawYaw; // 180 + (180 + rawYaw)
-					} else {
-						return rawYaw;
-					}
-				}
-			}
-			else {
-				return rawYaw;
-			}
-		}
-	
-		private double yawRemaining() {
-			
-			return finalAngle - getNormalizedYaw();
-		}
 }
