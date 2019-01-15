@@ -32,14 +32,14 @@ public class MustangLEDs_2019 {
 	final String stillDrive="3R";
 	
 	//string representations for xFinal
-	final String xFinalLeft="1X";
-	final String xFinalCenter="2X";
-	final String xFinalRight="3X";
+	// final String xFinalLeft="1X";
+	// final String xFinalCenter="2X";
+	// final String xFinalRight="3X";
 	
 	//variables for data which will be sent over server
 	String stateData=stillDrive;
 	String allianceData=invalidAlliance;
-	String xFinalData=xFinalCenter;
+	// String xFinalData=xFinalCenter;
 	String data="";
 
 	
@@ -113,25 +113,25 @@ public class MustangLEDs_2019 {
 		}
 		
 	}
-	public void updateStillDrive(boolean trigger){//updates it robot is not moving
+	public void getStillData(boolean trigger){//updates it robot is not moving
 		if(trigger=true){
 			stateData = stillDrive;
 		}
 	}
 	
-	public void update_xFinal(double acceptedXFinal){ // Updates xFinal in data
-		if(acceptedXFinal > 10 && acceptedXFinal != -666){
-			xFinalData=xFinalRight;
-		}
-		else{
-			if(acceptedXFinal < -10 && acceptedXFinal != -666){
-				xFinalData=xFinalLeft;
-			}
-			else{
-				xFinalData=xFinalCenter;
-			}
-		}
-	}
+	// public void update_xFinal(double acceptedXFinal){ // Updates xFinal in data
+	// 	if(acceptedXFinal > 10 && acceptedXFinal != -666){
+	// 		xFinalData=xFinalRight;
+	// 	}
+	// 	else{
+	// 		if(acceptedXFinal < -10 && acceptedXFinal != -666){
+	// 			xFinalData=xFinalLeft;
+	// 		}
+	// 		else{
+	// 			xFinalData=xFinalCenter;
+	// 		}
+	// 	}
+	// }
 	
 	public class clientManagement extends Thread{
 		
@@ -163,9 +163,9 @@ public class MustangLEDs_2019 {
 			
 			while(true){
 				
-				System.out.println(stateData+""+allianceData+""+xFinalData);
+				System.out.println(stateData+""+allianceData);
 				//string which gets sent over server
-				data = stateData + allianceData + xFinalData;
+				data = stateData + allianceData;
 				
 				// Sends data to the Arduino/Ethernet Shield
 				try {

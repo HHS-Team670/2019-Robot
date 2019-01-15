@@ -25,11 +25,7 @@ IPAddress robotIp(10,6,70,2);                       //Defines the robot's IP
   int connectionTimer = 0;                            //Sets a connection timer to see if the program should reconnect to the RoboRio in case it becomes disconnected
   char dataChar;                                      //Used for storing a character before inputing it into dataArray[]
   const int numberOfPixels=strip.numPixels();
-  //variables to store data recived from server
-  String dataString = "";                             //Used for building a string to then splice into multiple parts to control the LEDs
-  String stateData=stillDrive;
-  String allianceData=invalidAlliance;
-  String xFinalData=xFinalCenter;
+  
   //string representations for alliances
   const String blueAlliance = "1A";
 	const String redAlliance = "2A";
@@ -40,10 +36,16 @@ IPAddress robotIp(10,6,70,2);                       //Defines the robot's IP
 	const String forwardDrive= "0R";
 	const String reverseDrive= "1R";
 	const String stillDrive= "3R";
-  //string representations for xFinal
-	const String xFinalLeft= "1X";
-	const String xFinalCenter= "2X";
-	const String xFinalRight= "3X";
+  // //string representations for xFinal
+	// const String xFinalLeft= "1X";
+	// const String xFinalCenter= "2X";
+	// const String xFinalRight= "3X";
+  //variables to store data recived from server
+  String dataString = "";                             //Used for building a string to then splice into multiple parts to control the LEDs
+  String stateData=stillDrive;
+  String allianceData=invalidAlliance;
+  // String xFinalData=xFinalCenter;
+  
 
 
 int asciiArray[] = {                                //Please use the ASCII converter at https://www.arduino.cc/en/Reference/ASCIIchart
@@ -56,9 +58,8 @@ int asciiArray[] = {                                //Please use the ASCII conve
 char translationArray[] = {                         //Array housing characters to convert from ASCII to characters
   " ,-0123456789abcdefghijklmnopqrstuvwxyz"         //These are the usable characters for transferring data
 };
+                                        //Alliance color blue value
 
-int r;                                              //Alliance color red value
-int b;                                              //Alliance color blue value
 
 
   
@@ -69,7 +70,8 @@ void setup() {                                      //Sets up constants before p
   strip.begin();                                    //Starts communication with the NeoPixel strip
 }
 
-void loop() {
+
+void loop(){
                                                     //Ran indefinitly after setup()
   connectionTimer++;                                //Adds a count to the ConnectionTimer
   
@@ -80,33 +82,31 @@ void loop() {
       dataChar = asciiConvert(robotClient);         //Processes an ASCII byte into a readable character        
       dataString = dataString + dataChar;           //Combines the character with the full data string    
     }
+  }
     //parses dataString and receives corresponding values from Java program
     dataString.remove(0,2);                         //Removes two garbage characters from the start of the string
     stateData = dataString.substring(0,1);           //Grabs the expected location of various data, puts it in variables
     allianceData = dataString.substring(2,3);              
-    xFinalData=dataString.substring(4,5);
+    // xFinalData=dataString.substring(4,5);
 
     
     
-    if(xFinalData==xFinalLeft){                              //If xFinal is equal to 1, it is to the left of the camera
-      strip.setPixelColor(11,100,200,255);
-    } else if(xFinalData==xFinalCenter){                              //If xFinal is equal to 2, it is centered to the camera
-      strip.setPixelColor(12,25,25,45);
-    } else if(xFinalData==xFinalRight){                              //If xFinal is equal to 3, it is to the right of the camera
-      strip.setPixelColor(13,10,255,100);
-    }
-    strip.show();
+  //   if(xFinalData==xFinalLeft){                              //If xFinal is equal to 1, it is to the left of the camera
+  //     strip.setPixelColor(11,100,200,255);
+  //   } else if(xFinalData==xFinalCenter){                              //If xFinal is equal to 2, it is centered to the camera
+  //     strip.setPixelColor(12,25,25,45);
+  //   } else if(xFinalData==xFinalRight){                              //If xFinal is equal to 3, it is to the right of the camera
+  //     strip.setPixelColor(13,10,255,100);
+  //   }
+  //   strip.show();
 
   
   
-  }
+  // }
 
   //Below here is code to control the LED's from the data obtained above
-  void reset(){
-    for(int i = 0; i <= numberOfPixels; i++){       //Resets the full LED strip...
-      strip.setPixelColor(i,0,0,0);                   //...by setting each LED to black
-   }
-
+  
+if(stateData==stillDrive){
  if(allianceData==blueAlliance){                        //If the alliance is blue, set the base LED color to blue
     for(int i=0;i<=numberOfPixels;i++){
     strip.setPixelColor(i,0,0,255);
@@ -116,11 +116,13 @@ void loop() {
     strip.setPixelColor(i,0,255,0);
     }
 } else if(allianceData== invalidAlliance){              //If no alliance is specified, set the base LED color to purple
-    strip.reset;
+    for(int i = 0; i <= numberOfPixels; i++){       //Resets the full LED strip...
+      strip.setPixelColor(i,0,0,0);                   //...by setting each LED to black
+}
+}
 }
   strip.show();
  
-
   if(stateData==climbing){
     while(stateData==climbing){
     for(int i = 0; i <= numberOfPixels; i++){
@@ -145,19 +147,14 @@ void loop() {
         strip.show();
     }
         
-  } else if(stateData==stillDrive){
-    for(int i = 0; i < numberOfPixels; i++){
-       strip.setPixelColor(i,74,76,72);
-    }
-    strip.show();
-  }
-  
+  } 
   if(connectionTimer > 20){                         //About 1 second has passed since the last packet when one should come in every 1/4 of a second
     connectionTimer = 0;                            //Resets the timer
     robotClient.stop();                             //Forces a socket disconnect from the RoboRio
     robotClient.connect(robotIp, 5801);             //Re-initalizes socket communication with the Rio
   }
 }
+  
 
 char asciiConvert(EthernetClient client){           //Changes an ASCII byte from a socket to a string
 
