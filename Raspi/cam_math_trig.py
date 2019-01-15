@@ -2,15 +2,12 @@
 Kyle Fu || Rishab Borah || Navaneet Kadaba || Eshan Jain || Harinandan K
 
 Usage notes:
-You can calibrate the focal distance or object diagonal value by pressing
-the key 'c' while holding a detected colored object a known distance
-away from the camera. You need either a known diagonal length of the object
-or the known focal length of the camera. The bigger the object, the more
-accurate this calibration will be (as long as it fits into the camera frame).
-Check the terminal output to choose whether to calibrate the focal length or
-diagonal.
+Set DEBUG_MODE to True in order to make screens appear
+
+Depth detection is reliant on constants--the known object height, the known camera's height, the camera's FOV, and focal length
+
 You can click on a point on the output image to print out the hsv value of
-that point. Useful for finding specific hsv color ranges.
+that point in debug mode. Useful for finding specific hsv color ranges.
 '''
 
 import copy
@@ -19,13 +16,20 @@ from threading import Thread
 import cv2
 import imutils
 import numpy as np
-import datetime
+import time
+from networktables import NetworkTables
 
-DEBUG_MODE = True # NOTE MAKE @FALSE TO MAKE NO SCREENS APPEAR
+DEBUG_MODE = True # NOTE MAKE this @FALSE TO MAKE NO SCREENS APPEAR
 ERROR = -99999
+
+# TODO SET THESE to correct values
+IP = "roboRIO-670-frc.local" # set this to ip of network table
+TABLE = "raspberryPi" # set this to table name
+NETWORK_KEY = "vision_tuple" # key for Shaylan's robot code vision tuple -- what??
+
 # Variables (These should be changed to reflect the camera)
 capture_source = 0  # Number of port for camera, file path for video
-capture_color = 'g'  # Possible: r (Red), g (Green), b (Blue), y (Yellow), x (reflector tape)
+capture_color = 'b'  # Possible: r (Red), g (Green), b (Blue), y (Yellow), x (reflector tape), anything else: Red
 known_object_height = 12.75  # Height of the tape from the ground (in inches)
 known_camera_height = 2.0
 camera_fov_vertical = 39.7  # FOV of the camera (in degrees)
@@ -34,63 +38,64 @@ image_width = 1080  # Desired width of inputted image (for processing speed)
 screen_resize = 1  # Scale that the GUI image should be scaled to
 calibrate_angle = 0  # Test to calibrate the angle and see if that works
 exposure = -8
-timestamp = datetime.datetime.now()
+timestamp = round(time.time()*1000) # time in milliseconds
+
 # HSV Values to detect
 min_hsv = [58, 0, 254]
 max_hsv = [67, 62, 255]
 
-# Min area
-MIN_AREA = 2000
+# Min area to make sure not to pick up noise
+MIN_AREA = 100
 
-returns = [-99999, -99999, 0]
+# Network table (by default returns error codes, but changes in program)
+returns = [ERROR, ERROR, timestamp]
 
 def main():
     '''
-    Main.
-    TODO Separate output images into a debug mode, if debug mode enabled
-    show vid and prints, else no
-    TODO Adjust depth
+    Main method, runs when program is run.
     '''
+    # initialize network tables
+    NetworkTables.initialize(IP)
+    table = NetworkTables.getTable(TABLE)
     # Video capture / resizing stuff
     cv2.VideoCapture(capture_source).set(cv2.CAP_PROP_EXPOSURE, exposure)
     vs = ThreadedVideo(screen_resize, capture_source).start()
-    # resize_value = get_resize_values(vs.stream, image_width)
+    # resize_value = get_resize_values(vs.stream, image_width) # uncomment if screen resize is desired
 
     # This may not need to be calculated, can use Andra's precalculated values
-    vert_focal_length = find_vert_focal_length(vs.raw_read(),
-                                               camera_fov_vertical)
-    hor_focal_length = find_hor_focal_length(vs.raw_read(),
-                                             camera_fov_horizontal)
+    vert_focal_length = find_vert_focal_length(vs.raw_read()[0], camera_fov_vertical)
+    hor_focal_length = find_hor_focal_length(vs.raw_read()[0], camera_fov_horizontal)
 
     while True:
         # Read input image from video
-        input_image = vs.raw_read()
-        timestamp = datetime.datetime.now()
+        input_raw = vs.raw_read()
+        input_image = input_raw[0]
+        timestamp = input_raw[1]
         if input_image is None:
             print("Error: Capture source not found or broken.")
             returns = [ERROR, ERROR, timestamp]
-            push_network_table(returns)
+            push_network_table(table, returns)
+
+            #Debug mode code
             if DEBUG_MODE:
                 key = cv2.waitKey(1) & 0xFF
                 if key == ord('q'):
                     # Quit if q key is pressed
                     break
             continue
-        # Find colored object / box it with a rectangle
-        masked_image = find_colored_object(input_image, capture_color,
-                                           debug=DEBUG_MODE)
-        # Find the two biggest colored objects (two pieces of tape)
-        # TODO change this to filter rectangles for 2 centermost in screen
+        # Find colored object / box it with a rectangle. Set capture_color at the top to "x" for reflector tape HSV
+        masked_image = find_colored_object(input_image, capture_color, debug=DEBUG_MODE)
+        # Find the two most central objects of a certain color (two pieces of tape)
         # TODO check if invalid rectangles return -99999
         # TODO if both or one center rectangles: continue as normal
 
-        object_rects = find_largest_contour(masked_image, debug=DEBUG_MODE)
+        object_rects = find_two_important_contours(masked_image, debug=DEBUG_MODE)
         object_rect, object_rect_2 = object_rects
 
         # DEBUG mode code
         if object_rect is -1 and object_rect_2 is -1:
             returns = [ERROR, ERROR, timestamp]
-            push_network_table(returns)
+            push_network_table(table, returns)
             if DEBUG_MODE:
                 output_image = cv2.resize(input_image, (0, 0), fx=screen_resize,
                                         fy=screen_resize)
@@ -100,39 +105,31 @@ def main():
                     # Quit if q key is pressed
                     break
             continue
+       
+        # if rectangles don't exist
         if object_rect == -1:
             del object_rect
             del object_rects[0]
         elif object_rect_2 == -1:
             del object_rect_2
             del object_rects[1]
-        '''
-        elif (object_rect == -1) != (object_rect_2 == -1):
-            output_image = cv2.resize(input_image, (0, 0), fx=screen_resize,
-                                      fy=screen_resize)
-            cv2.imshow("Output", output_image)
-            key = cv2.waitKey(1) & 0xFF
-            if key == ord('q'):
-                # Quit if q key is pressed
-                break
-            continue
-        '''
 
-        # Find the depth / angle of the object
-        # find_horizontal_angle finds horizontal angle to object if needed
-        # angle = find_vertical_angle(input_image, object_rects, camera_fov)
-        # angle -= calibrate_angle
+        # find_vert_angle finds the depth / angle of the object
+        # find_hor_angle finds horizontal angle to object
+
         rect_x_midpoint, high_point = find_rectangle_highpoint(object_rects)
-        vangle = find_vert_angle(input_image, high_point, vert_focal_length)
-        hangle = find_hor_angle(input_image, rect_x_midpoint, hor_focal_length)
+        vangle = find_vert_angle(input_image, high_point, vert_focal_length) # vangle - 'V'ertical angle
+        hangle = find_hor_angle(input_image, rect_x_midpoint, hor_focal_length) # hangle - 'H'orizontal angle
         depth = depth_from_angle(input_image, object_rects, vangle, hangle,
                                  known_object_height - known_camera_height)
         adjusted_depth = adjust_depth(depth, hangle)
-        # adjusted_depth = depth
+        # adjusted_depth = depth # uncomment if you want depth independent of horizontal angle to object -- not recommended
 
+        # set and push network table
         returns = [hangle, adjusted_depth, timestamp]
-        push_network_table(returns)
-        # Create output image to display
+        push_network_table(table, returns)
+
+        # Create output image to display in debug mode
         if DEBUG_MODE:
             output_image = draw_output_image(input_image,
                                             object_rects,
@@ -172,8 +169,8 @@ class ThreadedVideo:
         '''
         self.stream = cv2.VideoCapture(src)
         self.width = 1000
-        self.grabbed = read_video_image(self.stream, resize_value)
-        self.frame = imutils.resize(self.grabbed, width=self.width)
+        self.grabbed = (read_video_image(self.stream, resize_value), round(time.time()*1000))
+        self.frame = imutils.resize(self.grabbed[0], width=self.width)
         self.stopped = False
         self.resize = resize_value
 
@@ -192,7 +189,7 @@ class ThreadedVideo:
         self.stopped = True
 
     def read(self):
-        '''Returns the resized frame.'''
+        '''Returns the resized frame. Unnecessary for the actual robot'''
         return self.frame
 
     def raw_read(self):
@@ -202,18 +199,24 @@ class ThreadedVideo:
     def update(self):
         '''Grabs new video images from the current video stream.'''
         while not self.stopped:
-            self.grabbed = read_video_image(self.stream, self.resize)
-            self.frame = imutils.resize(self.grabbed, width=self.width)
+            if not self.stopped:
+                self.grabbed = (read_video_image(self.stream, self.resize), round(time.time()*1000))
+                if self.grabbed[0] is not None:
+                    self.frame = imutils.resize(self.grabbed[0], width=self.width)
 
-def push_network_table(return_list):
-    '''placeholder function for network table pushing--prints the list'''
+def push_network_table(table, return_list):
+    push_tuple = tuple(return_list)
+    '''placeholder function for network table pushing--simply prints the list in debug mode at the moment
+    '''
+    table.putNumberArray(NETWORK_KEY, return_list)
+
     if DEBUG_MODE:
-        print(return_list)
+        print(push_tuple)
 
 def get_resize_values(capture, width=1920):
     '''
     Returns the fx / fy resize values needed to get the correct size image.
-    Mainly for optimization purposes. Entirely aesthetic for debug mode.
+    Entirely aesthetic for debug mode.
     '''
     main_image = capture.read()[1]
     main_image_width = main_image.shape[1]
@@ -234,7 +237,7 @@ def read_video_image(capture, scale=1):
 
 # TODO: Make this take in HSV values from the start and not futz around
 # with converting rgb -> hsv
-def find_colored_object(image, capture_color='y', debug=False):
+def find_colored_object(image, capture_color='g', debug=False):
     '''
     Takes in an image and the capture color (r, g, b, or y).
     Outputs a black / white image with only the desired color object as white.
@@ -242,31 +245,33 @@ def find_colored_object(image, capture_color='y', debug=False):
     # Find the part of the image with the specified color
 
     hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-    if capture_color == 'y':
-        masked_image = cv2.inRange(hsv_image, np.array([17, 125, 125]),
-                                   np.array([36, 255, 255]))  # Yellow
-    elif capture_color == 'b':
-        masked_image = cv2.inRange(hsv_image, np.array([95, 50, 50]),
-                                   np.array([125, 255, 255]))  # Blue
-    elif capture_color == 'g':
-        masked_image = cv2.inRange(hsv_image, np.array([35, 50, 50]),
-                                   np.array([80, 255, 255]))  # Green
-        # Correct values: [58, 0, 254], [67, 62, 255]
-    elif capture_color == 'x':
-        # TODO this will eventually be the only check
-        masked_image = cv2.inRange(hsv_image, np.array(min_hsv), np.array(max_hsv))
+    if debug:
+        if capture_color == 'y':
+            masked_image = cv2.inRange(hsv_image, np.array([17, 125, 125]),
+                                    np.array([36, 255, 255]))  # Yellow
+        elif capture_color == 'b':
+            masked_image = cv2.inRange(hsv_image, np.array([95, 50, 50]),
+                                    np.array([125, 255, 255]))  # Blue
+        elif capture_color == 'g':
+            masked_image = cv2.inRange(hsv_image, np.array([35, 50, 50]),
+                                    np.array([80, 255, 255]))  # Green
+            # Correct values: [58, 0, 254], [67, 62, 255]
+        elif capture_color == 'x':
+            masked_image = cv2.inRange(hsv_image, np.array(min_hsv), np.array(max_hsv))
+        else:
+            mask_1 = cv2.inRange(hsv_image, np.array([0, 50, 50]),
+                                np.array([5, 255, 255]))
+            mask_2 = cv2.inRange(hsv_image, np.array([165, 50, 50]),
+                                np.array([180, 255, 255]))
+            masked_image = cv2.bitwise_or(mask_1, mask_2)  # Red red red red
     else:
-        mask_1 = cv2.inRange(hsv_image, np.array([0, 50, 50]),
-                             np.array([5, 255, 255]))
-        mask_2 = cv2.inRange(hsv_image, np.array([165, 50, 50]),
-                             np.array([180, 255, 255]))
-        masked_image = cv2.bitwise_or(mask_1, mask_2)  # Red red red red
+        masked_image = cv2.inRange(hsv_image, np.array(min_hsv), np.array(max_hsv))
     if debug:
         cv2.imshow("Color Mask", masked_image)
     return masked_image
 
 
-def find_largest_contour(image, debug=False):
+def find_two_important_contours(image, debug=False):
     '''
     Finds the largest two contours in the inputted image (the tape strips).
     Returns the minimum area rectangle of each contour.
@@ -290,7 +295,7 @@ def find_largest_contour(image, debug=False):
         for i in range(len(contours)):
             ix = contours[i]
             area = cv2.contourArea(ix)
-            if area > 100:
+            if area > MIN_AREA:
                 conarea.append(area)
                 ac_contours.append(ix)
                 moment = cv2.moments(ix)
@@ -465,6 +470,7 @@ def mouse_click_handler(event, x, y, flags, params):
     '''
     If the mouse is clicked, return the hsv values of that point.
     Useful for figuring out precise hsv ranges / troubleshooting detection.
+    DEBUG function
     '''
     if event == cv2.EVENT_LBUTTONDOWN:
         try:
@@ -481,6 +487,7 @@ def draw_output_image(image, rectanglelist, depth, vangle, hangle, hipoint=None)
     '''
     Draws everything on the original image, and returns an image with
     all the information found by this program.
+    DEBUG function
     '''
     output_image = image.copy()
     # Get width and height of the image
