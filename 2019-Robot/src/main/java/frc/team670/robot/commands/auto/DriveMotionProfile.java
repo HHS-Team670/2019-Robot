@@ -50,7 +50,7 @@ public class DriveMotionProfile extends Command {
   /**
    * Drives a Pathfinder Motion Profile using set Waypoints
    */
-  public DriveMotionProfile(Waypoint[] waypoints) {
+  public DriveMotionProfile(Waypoint[] waypoints, boolean isReversed) {
     requires(Robot.driveBase);
 
     this.waypoints = waypoints.clone();
@@ -62,6 +62,7 @@ public class DriveMotionProfile extends Command {
      // TODO In the future maybe do this in initialize so when the Command is rerun it starts over
     left = new EncoderFollower(modifier.getLeftTrajectory());
     right= new EncoderFollower(modifier.getRightTrajectory());
+    
   }
 
 
@@ -69,7 +70,7 @@ public class DriveMotionProfile extends Command {
    * Creates a DriveMotionProfile from a text file
    * @param fileName path to trajectory file inside the deploy folder
    */
-  public DriveMotionProfile(String fileName) {
+  public DriveMotionProfile(String fileName, boolean isReversed) {
 
     String binary = "traj";
     String csv = "csv";
