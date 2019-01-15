@@ -2,12 +2,14 @@
 Kyle Fu || Rishab Borah || Navaneet Kadaba || Eshan Jain || Harinandan K
 
 Usage notes:
-Set DEBUG_MODE to True in order to make screens appear
+Set DEBUG_MODE to True in order to make screens appear showing what robot sees
 
 Depth detection is reliant on constants--the known object height, the known camera's height, the camera's FOV, and focal length
 
 You can click on a point on the output image to print out the hsv value of
 that point in debug mode. Useful for finding specific hsv color ranges.
+
+Pushes a tuple (angle, distance, timestamp) to network tables--for Shaylan's robot auton drive code
 '''
 
 import copy
@@ -23,9 +25,9 @@ DEBUG_MODE = True # NOTE MAKE this @FALSE TO MAKE NO SCREENS APPEAR
 ERROR = -99999
 
 # TODO SET THESE to correct values
-IP = "roboRIO-670-frc.local" # set this to ip of network table
-TABLE = "raspberryPi" # set this to table name
-NETWORK_KEY = "vision_tuple" # key for Shaylan's robot code vision tuple -- what??
+ROBORIO_IP = "10.6.70.2" # TODO set this to roborio ip of network table
+NETWORK_TABLE_NAME = "raspberryPi" # TODO set this to network table name
+NETWORK_KEY = "reflect_tape_vision_data" # TODO key for Shaylan's robot code vision tuple -- what??
 
 # Variables (These should be changed to reflect the camera)
 capture_source = 0  # Number of port for camera, file path for video
@@ -55,8 +57,8 @@ def main():
     Main method, runs when program is run.
     '''
     # initialize network tables
-    NetworkTables.initialize(IP)
-    table = NetworkTables.getTable(TABLE)
+    NetworkTables.initialize(ROBORIO_IP)
+    table = NetworkTables.getTable(NETWORK_TABLE_NAME)
     # Video capture / resizing stuff
     cv2.VideoCapture(capture_source).set(cv2.CAP_PROP_EXPOSURE, exposure)
     vs = ThreadedVideo(screen_resize, capture_source).start()
