@@ -192,3 +192,4 @@ gradle-app.setting
 .settings/
 bin/
 *.orig
+.DS_Store
