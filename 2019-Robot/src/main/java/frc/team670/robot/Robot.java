@@ -65,7 +65,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    auton_chooser.addDefault("Default Auto", new TimeDrive());
+    // auton_chooser.addDefault("Default Auto", new TimeDrive());
     // chooser.addObject("My Auto", new MyAutoCommand());
     SmartDashboard.putData("Auto mode", auton_chooser);
     Logger.consoleLog();

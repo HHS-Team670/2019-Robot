@@ -31,7 +31,7 @@ public class NavXPivot extends Command {
 	
 
 	// TODO find PID constants
-	pivotController = new PIDController(P, I, D, Robot.sensors.getNavX().getZeroableNavXPIDSource(), null);
+	pivotController = new PIDController(P, I, D, Robot.sensors.getZeroableNavXPIDSource(), null);
 
 	pivotController.setInputRange(-180, 180);
 	pivotController.setOutputRange(-1, 1);
@@ -44,7 +44,7 @@ public class NavXPivot extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-		startAngle = Robot.sensors.getNavX().getYawDouble();
+		startAngle = Robot.sensors.getYawDouble();
 		finalAngle = startAngle + angle;
 
 		Logger.consoleLog("StartAngle:%s FinalAngle:%s DegreesToTravel:%s", 
