@@ -113,7 +113,7 @@ public class MustangLEDs_2019 {
 		}
 		
 	}
-	public void getStillData(boolean trigger){//updates it robot is not moving
+	public void getStillDrive(boolean trigger){//updates it robot is not moving
 		if(trigger=true){
 			stateData = stillDrive;
 		}
