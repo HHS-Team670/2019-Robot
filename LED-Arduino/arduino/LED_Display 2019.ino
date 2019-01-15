@@ -60,7 +60,11 @@ char translationArray[] = {                         //Array housing characters t
 };
                                         //Alliance color blue value
 
-
+int setStripColor(int r,int g, int b){
+  for(int i=0;i<=numberOfPixels;i++){
+    strip.setPixelColor(i,r,g,b);
+    }
+}
 
   
 void setup() {                                      //Sets up constants before program begins     
