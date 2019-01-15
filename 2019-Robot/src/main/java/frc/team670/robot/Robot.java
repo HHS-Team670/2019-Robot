@@ -84,6 +84,9 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     System.out.println("Voltage: "+(irSensor.getVoltage()));
+    if (Robot.oi.getDriverController().getAButton()) {
+      SmartDashboard.putString("cameraSource", "next");
+    }
     // Pose.updateFieldCentricPose(); // Update our field centric Pose to the new robot position. Commented out to avoid null-pointers until sensors hooked up.
   }
 
