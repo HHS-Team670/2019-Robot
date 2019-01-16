@@ -47,8 +47,8 @@ public class CANPIDEncoderDrive extends Command {
     leftCurrentPosition = Robot.driveBase.getLeftEncoderPosition();
     rightCurrentPosition = Robot.driveBase.getRightEncoderPosition();
 
-    Robot.driveBase.setEncodersControl(ticksToTravel, ticksToTravel); //Could be put into initialize
-    //Also possibly takes in rotations not tick values
+    Robot.driveBase.setEncodersControl(ticksToTravel, ticksToTravel); // Could be put into initialize
+    // Also possibly takes in rotations not tick values
     Logger.consoleLog("lefCurrentPosition:%s rightCurrentPosition:%s ", leftCurrentPosition, rightCurrentPosition);
 
   }

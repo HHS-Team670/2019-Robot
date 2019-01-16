@@ -70,6 +70,13 @@ public class DriveBase extends Subsystem {
     left1.getPIDController().setD(D, encodersPIDSlot);
     left1.getPIDController().setFF(FF, encodersPIDSlot);
     left1.getPIDController().setOutputRange(-1, 1);
+
+    right1.getPIDController().setP(P, encodersPIDSlot);
+    right1.getPIDController().setI(I, encodersPIDSlot);
+    right1.getPIDController().setD(D, encodersPIDSlot);
+    right1.getPIDController().setFF(FF, encodersPIDSlot);
+    right1.getPIDController().setOutputRange(-1, 1);
+
   }
 
   /**
