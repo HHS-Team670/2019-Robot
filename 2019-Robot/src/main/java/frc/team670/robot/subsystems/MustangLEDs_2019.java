@@ -22,7 +22,7 @@ public class MustangLEDs_2019 {
 	//string representations for alliances 
 	final String blueAlliance = "1A";
 	final String redAlliance = "2A";
-	final String invalidAlliance="3A";
+	//final String invalidAlliance="3A";
 	
 	//string representations for robot states
 	final String climbing="4R";
@@ -38,7 +38,7 @@ public class MustangLEDs_2019 {
 	
 	//variables for data which will be sent over server
 	String stateData=stillDrive;
-	String allianceData=invalidAlliance;
+	String allianceData=blueAlliance;
 	// String xFinalData=xFinalCenter;
 	String data="";
 

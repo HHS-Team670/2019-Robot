@@ -29,7 +29,7 @@ IPAddress robotIp(10,6,70,2);                       //Defines the robot's IP
   //string representations for alliances
   const String blueAlliance = "1A";
 	const String redAlliance = "2A";
-	const String invalidAlliance= "3A";
+//const String invalidAlliance= "3A";
   //string representations for robot states
 	const String climbing= "4R";
 	const String visionLock= "2R";
@@ -43,7 +43,8 @@ IPAddress robotIp(10,6,70,2);                       //Defines the robot's IP
   //variables to store data recived from server
   String dataString = "";                             //Used for building a string to then splice into multiple parts to control the LEDs
   String stateData=stillDrive;
-  String allianceData=invalidAlliance;
+  String allianceData=blueAlliance;
+  //String allianceData=invalidAlliance;
   // String xFinalData=xFinalCenter;
   
 
@@ -60,7 +61,8 @@ char translationArray[] = {                         //Array housing characters t
 };
                                         //Alliance color blue value
 
-int setStripColor(int r,int g, int b){
+//sets the entire strip to a specified color
+void setStripColor(int r,int g, int b){
   for(int i=0;i<=numberOfPixels;i++){
     strip.setPixelColor(i,r,g,b);
     }
@@ -112,52 +114,50 @@ void loop(){
   
 if(stateData==stillDrive){
  if(allianceData==blueAlliance){                        //If the alliance is blue, set the base LED color to blue
-    for(int i=0;i<=numberOfPixels;i++){
-    strip.setPixelColor(i,0,0,255);
-    }
+    setStripColor(0,0,255);
 } else if(allianceData==redAlliance){                   //If the alliance is red, set the base LED color to red
-    for(int i=0;i<=numberOfPixels;i++){
-    strip.setPixelColor(i,255,0,0);
-    }
-} else if(allianceData== invalidAlliance){              //If no alliance is specified, set the base LED color to purple
-    for(int i = 0; i <= numberOfPixels; i++){       //Resets the full LED strip...
-      strip.setPixelColor(i,0,0,0);                   //...by setting each LED to black
-}
-}
+    setStripColor(255,0,0);
+ }// else if(allianceData== invalidAlliance){              //If no alliance is specified, set the base LED color to purple
+//     for(int i = 0; i <= numberOfPixels; i++){       //Resets the full LED strip...
+//       strip.setPixelColor(i,0,0,0);                   //...by setting each LED to black
+// }
+// }
 }
   strip.show();
- 
+  //climbing green LEDs effect
   if(stateData==climbing){
     while(stateData==climbing){
     for(int i = 0; i <= numberOfPixels; i++){
       strip.setPixelColor(i,0,200,0);
-    }
       strip.show();
     }
+    for(int i=0; i<=numberOfPixels;i++){
+      strip.setPixelColor(i,0,0,0);
+      strip.show();
+    }    
+    }
+  //solid blue color indicates vision lock
   } else if(stateData==visionLock){
-    for(int i = 0; i <= numberOfPixels; i++){
-      strip.setPixelColor(i,0,195,255);
-    }
+    setStripColor(10,67,35);
       strip.show();
+  //forward drive is indicated by green
   } else if(stateData==forwardDrive){
-    for(int i = 0; i <= numberOfPixels; i++){
-      strip.setPixelColor(i,138,67,35);
-    }
+    setStripColor(0,200,0);
       strip.show();
-    
+  //reverse drive indicated by red
   } else if(stateData==reverseDrive) {
-      for(int i = 0; i < numberOfPixels; i++){
-        strip.setPixelColor(i,255,0,0);
+      setStripColor(255,0,0);
         strip.show();
     }
         
-  } 
+   
   if(connectionTimer > 20){                         //About 1 second has passed since the last packet when one should come in every 1/4 of a second
     connectionTimer = 0;                            //Resets the timer
     robotClient.stop();                             //Forces a socket disconnect from the RoboRio
     robotClient.connect(robotIp, 5801);             //Re-initalizes socket communication with the Rio
   }
 }
+
   
 
 char asciiConvert(EthernetClient client){           //Changes an ASCII byte from a socket to a string
