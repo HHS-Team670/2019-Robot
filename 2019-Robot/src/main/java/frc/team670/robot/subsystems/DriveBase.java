@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.Encoder;
 import frc.team670.robot.commands.drive.XboxRocketLeagueDrive;
 import frc.team670.robot.utils.functions.MathUtils;
+import frc.team670.robot.constants.RobotConstants;
 
 import frc.team670.robot.constants.RobotMap;
 
@@ -41,7 +42,7 @@ public class DriveBase extends Subsystem {
   private List<CANSparkMax> leftControllers, rightControllers;
   private List<CANSparkMax> allMotors;
   private Encoder leftDIOEncoder, rightDIOEncoder;
-  private final double P, I, D, FF;
+  private final double P = 1, I = 0, D = 0, FF = 0;
 
   public DriveBase() {
     // left1 = new CANSparkMax(RobotMap.sparkLeftMotor1, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -70,6 +71,12 @@ public class DriveBase extends Subsystem {
 //     leftDIOEncoder = new Encoder(RobotMap.leftEncoderChannelA, RobotMap.leftEncoderChannelB);
 //     rightDIOEncoder = new Encoder(RobotMap.rightEncoderChannelA, RobotMap.rightEncoderChannelB);
 
+    double distancePerPulse = Math.PI * RobotConstants.WHEEL_DIAMETER* RobotConstants.DIO_TICKS_PER_ROTATION;
+    leftDIOEncoder.setDistancePerPulse(distancePerPulse);
+    rightDIOEncoder.setDistancePerPulse(distancePerPulse);
+    leftDIOEncoder.setReverseDirection(false); // TODO One of these will need to be reversed, same as the motors, figure out which
+    rightDIOEncoder.setReverseDirection(true);
+
 //     left1.getPIDController().setP(P, encodersPIDSlot);
 //     left1.getPIDController().setI(I, encodersPIDSlot);
 //     left1.getPIDController().setD(D, encodersPIDSlot);
@@ -81,6 +88,7 @@ public class DriveBase extends Subsystem {
 //     right1.getPIDController().setD(D, encodersPIDSlot);
 //     right1.getPIDController().setFF(FF, encodersPIDSlot);
 //     right1.getPIDController().setOutputRange(-1, 1);
+
 
   }
 
@@ -195,6 +203,7 @@ public class DriveBase extends Subsystem {
   public void setSparkEncodersControl(double deltaLeft, double deltaRight) {
     left1.getPIDController().setReference(left1.getEncoder().getPosition() + deltaLeft, ControlType.kPosition, encodersPIDSlot);
     right1.getPIDController().setReference(right1.getEncoder().getPosition() + deltaRight, ControlType.kPosition, encodersPIDSlot);
+  }
 
   /**
    * Sets the velocities of the left and right motors of the robot.
@@ -360,10 +369,52 @@ public class DriveBase extends Subsystem {
     return rightDIOEncoder;
   }
 
+  /**
+   * Gets the tick count of the left encoder
+   */
   public int getLeftDIOEncoderPosition(){
     return leftDIOEncoder.get();
   }
 
+  /**
+   * Returns the velocity of the left side of the drivebase in inches/second from the DIO Encoder
+   */
+  public double getLeftDIOEncoderVelocityInches() {
+    return leftDIOEncoder.getRate();
+  }
+
+  /**
+   * Returns the velocity of the right side of the drivebase in inches/second from the DIO Encoder
+   */
+  public double getRightDIOEncoderVelocityInches() {
+    return rightDIOEncoder.getRate();
+  }
+
+  /**
+   * Returns the velocity of the right side of the drivebase in ticks/second from the DIO Encoder
+   */
+  public double getRightDIOEncoderVelocityTicks() {
+    return MathUtils.convertInchesToDriveBaseTicks(rightDIOEncoder.getRate());
+  }
+
+  /**
+   * Returns the velocity of the left side of the drivebase in ticks/second from the DIO Encoder
+   */
+  public double getLeftDIOEncoderVelocityTicks() {
+    return MathUtils.convertInchesToDriveBaseTicks(leftDIOEncoder.getRate());
+  }
+
+  public double getLeftDIODistanceInches() {
+    return leftDIOEncoder.getDistance();
+  }
+
+  public double getRightDIODistanceInches() {
+    return rightDIOEncoder.getDistance();
+  }
+
+  /**
+   * Gets the tick count of the right encoder
+   */
   public int getRightDIOEncoderPosition(){
     return rightDIOEncoder.get();
   }

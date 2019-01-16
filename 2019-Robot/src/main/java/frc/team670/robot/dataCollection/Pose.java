@@ -12,7 +12,7 @@ import frc.team670.robot.Robot;
 public class Pose {
 
   private long leftEncoderTick, rightEncoderTick;
-  private int leftVelocity, rightVelocity;
+  private double leftVelocity, rightVelocity;
   private double currentAngle;
 
   private long currRobotX, currRobotY;
@@ -22,10 +22,11 @@ public class Pose {
   private static Pose fieldCentricPose;
 
   /**
-   * Makes new pose using current robot encoder values and angles
+   * Makes new pose using current robot encoder values and angles. Does everything in ticks using the DIO Encoders
    */
   public Pose() {
-    this(Robot.driveBase.getLeftDIOEncoderPosition(), Robot.driveBase.getRightDIOEncoderPosition(), Robot.sensors.getYawDouble(), Robot.driveBase.getLeftVelocity(), Robot.driveBase.getRightVelocity());
+    this(Robot.driveBase.getLeftDIOEncoderPosition(), Robot.driveBase.getRightDIOEncoderPosition(), Robot.sensors.getYawDouble(), 
+         Robot.driveBase.getLeftDIOEncoderVelocityTicks(), Robot.driveBase.getRightDIOEncoderVelocityTicks());
   }
 
   /**
@@ -34,11 +35,11 @@ public class Pose {
    * @param rEncoderTick Encoder ticks -> forward = positive, backwards = negative
    * @param angle Angle in degrees -> left = negative, right = positive
    */
-  public Pose(long lEncoderTick, long rEncoderTick, double angle, int leftVelocity, int rightVelocity) {
+  public Pose(long lEncoderTick, long rEncoderTick, double angle, double leftVelocity, double rightVelocity) {
     this(lEncoderTick, rEncoderTick, angle, 0, 0, System.currentTimeMillis(), leftVelocity, rightVelocity);
   }
 
-  public Pose(double x, double y, double angle, int leftEncoderPosition, int rightEncoderPosition, int leftVelocity, int rightVelocity) {
+  public Pose(double x, double y, double angle, int leftEncoderPosition, int rightEncoderPosition, double leftVelocity, double rightVelocity) {
     currRobotX = (long)x;
     currRobotY = (long)y;
     currentAngle = angle;
@@ -49,7 +50,7 @@ public class Pose {
     timeOfPose = System.currentTimeMillis();
   }
 
-  private Pose(long lEncoderTick, long rEncoderTick, double angle, long currRobotX, long currRobotY, long timeOfPose, int leftVelocity, int rightVelocity) {
+  private Pose(long lEncoderTick, long rEncoderTick, double angle, long currRobotX, long currRobotY, long timeOfPose, double leftVelocity, double rightVelocity) {
     leftEncoderTick = lEncoderTick;
     rightEncoderTick = rEncoderTick;
     currentAngle = angle;
@@ -74,7 +75,7 @@ public class Pose {
   /**
    * Updates the Pose's position and angle corresponding to the drivebase's ticks and NavX gyro reading.
    */
-  public void update(long newLeftEncoderTick, long newRightEncoderTick, double newAngle, int leftVelocity, int rightVelocity){
+  public void update(long newLeftEncoderTick, long newRightEncoderTick, double newAngle, double leftVelocity, double rightVelocity){
     
     long lDeltaTick = newLeftEncoderTick - leftEncoderTick;
     long rDeltaTick = newRightEncoderTick - rightEncoderTick;
@@ -96,21 +97,34 @@ public class Pose {
 
 
   public void update() {
-    update(Robot.driveBase.getLeftDIOEncoderPosition(), Robot.driveBase.getRightDIOEncoderPosition(), Robot.sensors.getYawDouble(), Robot.driveBase.getLeftVelocity(), Robot.driveBase.getRightVelocity());
+    update(Robot.driveBase.getLeftDIOEncoderPosition(), Robot.driveBase.getRightDIOEncoderPosition(), Robot.sensors.getYawDouble(),
+           Robot.driveBase.getLeftDIOEncoderVelocityTicks(), Robot.driveBase.getRightDIOEncoderVelocityTicks());
   }
 
+  /**
+   * The X Position in DIO encoder ticks
+   */
   public long getPosX(){
     return currRobotX;
   }
 
+  /**
+   * The Y Position in DIO Encoder ticks
+   */
   public long getPosY(){
     return currRobotY;
   }
 
+  /**
+   * The left tick value in DIO Encoder ticks
+   */
  public double getLeftEncoderTick(){
     return leftEncoderTick;
   }
 
+  /**
+   * The right tick value in DIO Encoder ticks
+   */
   public double getRightEncoderTick(){
     return rightEncoderTick;
   }
@@ -126,19 +140,22 @@ public class Pose {
   }
 
   /**
-   * Gets the left side of the robot's velocity at the time of the pose in ticks/second
+   * Gets the left side of the robot's velocity at the time of the pose in ticks/second using DIO Encoder ticks
    */
-  public int getLeftVelocity() {
+  public double getLeftVelocity() {
     return leftVelocity;
   }
 
   /**
-   * Gets the right side of the robot's velocity at the time of the pose in ticks/second
+   * Gets the right side of the robot's velocity at the time of the pose in ticks/second using DIO Encoder ticks
    */
-  public int getRightVelocity() {
+  public double getRightVelocity() {
     return rightVelocity;
   }
 
+  /**
+   * Returns a copy of this Pose
+   */
   public Pose clone() {
     return new Pose(leftEncoderTick, rightEncoderTick, currentAngle, currRobotX, currRobotY, timeOfPose, leftVelocity, rightVelocity);
   }

@@ -10,7 +10,7 @@ public class RobotConstants {
     public static final double ROBOT_LENGTH = 0, ROBOT_WIDTH = 0;
 
     //TODO set wheel diameter and ticks per rotation.
-    public static final double WHEEL_DIAMETER_INCHES = 5, TICKS_PER_ROTATION = 4690;
+    public static final double WHEEL_DIAMETER_INCHES = 5, DIO_TICKS_PER_ROTATION = 4690, SPARK_TICKS_PER_ROTATION = 4960;
 
     // Vision Constants
     public static final double VISION_ERROR_CODE = -99999;
