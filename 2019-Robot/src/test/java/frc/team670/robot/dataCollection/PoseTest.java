@@ -11,6 +11,8 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import frc.team670.robot.dataCollection.Pose;
+
 /**
  * A Test for the MathUtils class. Serves as a test example for functions. Add to this for all other functions added.
  * @author shaylandias
@@ -22,15 +24,15 @@ public class PoseTest {
     @Test
     public void getPoseTest() {
 
-        Pose poseTest = new Pose(0, 0, 0);
-        poseTest.update(100, 100, 60);
+        Pose poseTest = new Pose(0d, 0d, 0d, 0, 0, 0, 0);
+        poseTest.update(100, 100, 60, 0, 0);
         assertEquals(86.0,  poseTest.getPosX(), 0.0001);
         assertEquals(49.0,  poseTest.getPosY(), 0.0001);
         assertEquals(60.0,  poseTest.getRobotAngle(), 0.0001);
-        poseTest = new Pose(0, 0, 0);
-        poseTest.update(-100, -100, 0);
-        assertEquals(-100.0,  poseTest.getPosX(), 0.0001);
-        poseTest.update(0, 0, -40);
+        //poseTest = new Pose(0d, 0d, 0d, 0, 0, 0, 0);
+        poseTest.update(-100, -100, 0, 0, 0);
+        assertEquals(-87.0,  poseTest.getPosX(), 0.0001);
+        poseTest.update(0, 0, -40, 0, 0);
         assertEquals(-40.0,  poseTest.getRobotAngle(), 0.0001);
     }
 

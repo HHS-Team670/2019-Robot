@@ -115,6 +115,7 @@ hs_err_pid*
 .DS_Store
 .AppleDouble
 .LSOverride
+*.DS_Store
 
 # Icon must end with two \r
 Icon
@@ -191,3 +192,4 @@ gradle-app.setting
 .project
 .settings/
 bin/
+*.orig

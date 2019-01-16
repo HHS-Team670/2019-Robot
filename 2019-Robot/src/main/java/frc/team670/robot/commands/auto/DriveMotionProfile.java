@@ -144,7 +144,7 @@ public class DriveMotionProfile extends Command {
       left.configureEncoder(Robot.driveBase.getLeftEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.WHEEL_DIAMETER);
       right.configureEncoder(Robot.driveBase.getRightEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.WHEEL_DIAMETER);  
     }
-    
+
     // The first argument is the proportional gain. Usually this will be quite high
     // The second argument is the integral gain. This is unused for motion profiling
     // The third argument is the derivative gain. Tweak this if you are unhappy with the tracking of the trajectory
@@ -169,7 +169,6 @@ public class DriveMotionProfile extends Command {
     * LEFT ENCODER IS BACKWARDS SO WE MULTIPLY IT'S VALUE BY -1 TO FLIP IT
     */
     int leftEncoder, rightEncoder;
-
     if(isReversed) {
       leftEncoder = -1 * Robot.driveBase.getLeftEncoderPosition();
       rightEncoder = -1 * Robot.driveBase.getRightEncoderPosition();

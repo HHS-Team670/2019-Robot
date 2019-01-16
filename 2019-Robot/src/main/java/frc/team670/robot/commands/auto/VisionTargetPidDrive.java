@@ -37,7 +37,7 @@ public class VisionTargetPidDrive extends Command {
   private int executeCount;
   private final double minimumAngleAdjustment = 0.03;
 
-  private Pose robotPosition, currentPose;
+  private Pose robotPosition;
 
   public VisionTargetPidDrive() {
 
@@ -62,7 +62,7 @@ public class VisionTargetPidDrive extends Command {
   @Override
   protected void initialize() {
 
-    Pose.resetPoseInputs();
+    Robot.sensors.zeroYaw();
 
     robotPosition = new Pose();
 
@@ -79,7 +79,7 @@ public class VisionTargetPidDrive extends Command {
   @Override
   protected void execute() {
 
-    robotPosition.update((long)Robot.driveBase.getLeftEncoderPosition(), (long)Robot.driveBase.getRightEncoderPosition(), Robot.sensors.getYawDouble());
+    robotPosition.update((long)Robot.driveBase.getLeftEncoderPosition(), (long)Robot.driveBase.getRightEncoderPosition(), Robot.sensors.getYawDouble(), Robot.driveBase.getLeftVelocity(), Robot.driveBase.getRightVelocity());
 
     /** changed output range to insure that the distanceController isn't going into a negative range */
     double distanceOutput = visionDistanceController.get() * -1;

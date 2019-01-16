@@ -52,7 +52,7 @@ public class AdvancedVisionPIDDrive extends Command {
   public AdvancedVisionPIDDrive() {
     requires(Robot.driveBase);
     distanceController = new PIDController(P, I, D, F, new TwoEncoder_PIDSource(Robot.driveBase.getLeftEncoder(), Robot.driveBase.getRightEncoder()), null);
-    // headingController = new PIDController (P, I, D, F, Robot.sensors.get, null);
+    headingController = new PIDController (P, I, D, F, Robot.sensors.getZeroableNavXPIDSource(), null);
     
     headingController.setInputRange(-180.0,  180.0);
     headingController.setOutputRange(visionHeadingControllerLowerOutput, visionHeadingControllerUpperOutput);
@@ -71,9 +71,10 @@ public class AdvancedVisionPIDDrive extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    Pose.resetPoseInputs();
+    Robot.sensors.zeroYaw();
+
     robotPosition = new Pose();
-    Logger.consoleLog("Initialized VisionPIDEncoderDependent");
+    Logger.consoleLog("Initialized AdvancedVisionPIDDrive");
 
     setSetpoints(0, 0);
 
@@ -84,7 +85,7 @@ public class AdvancedVisionPIDDrive extends Command {
   @Override
   protected void execute() {
 
-    robotPosition.update((long)Robot.driveBase.getLeftEncoderPosition(), (long)Robot.driveBase.getRightEncoderPosition(), Robot.sensors.getYawDouble());
+    robotPosition.update((long)Robot.driveBase.getLeftEncoderPosition(), (long)Robot.driveBase.getRightEncoderPosition(), Robot.sensors.getYawDouble(), Robot.driveBase.getLeftVelocity(), Robot.driveBase.getRightVelocity());
 
     double[] visionData = visionDistanceAndPose.getAngleAndDistance();
 
@@ -105,7 +106,7 @@ public class AdvancedVisionPIDDrive extends Command {
 
     Robot.driveBase.tankDrive(leftSpeed, rightSpeed);
     if (executeCount % 5 == 0) {
-      Logger.consoleLog("Executing VisionTargetPidDrive: headingOutput:%s, distanceOutput:%s, leftSpeed:%s, rightSpeed:%s", headingOutput, distanceOutput, leftSpeed, rightSpeed);
+      Logger.consoleLog("Executing AdvancedVisionPIDDrive: headingOutput:%s, distanceOutput:%s, leftSpeed:%s, rightSpeed:%s", headingOutput, distanceOutput, leftSpeed, rightSpeed);
     }
 
     executeCount ++;
@@ -121,7 +122,7 @@ public class AdvancedVisionPIDDrive extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Logger.consoleLog("PIDEncoderDependent Ended. DistanceOutput: %s, HeadingOutput: %s", distanceController.get(), headingController.get());
+    Logger.consoleLog("AdvancedVisionPIDDrive Ended. DistanceOutput: %s, HeadingOutput: %s", distanceController.get(), headingController.get());
     Robot.driveBase.stop();
     SettingUtils.releaseController(headingController);
     SettingUtils.releaseController(distanceController);
@@ -131,7 +132,7 @@ public class AdvancedVisionPIDDrive extends Command {
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    Logger.consoleLog("PIDEncoderDependent Interrupted.");
+    Logger.consoleLog("AdvancedVisionPIDDrive Interrupted.");
     end();
   }
 
@@ -225,7 +226,7 @@ public class AdvancedVisionPIDDrive extends Command {
         }
 
         // Calculate target angle and target distance.
-        targetAngle = calcAngleWithTimeAdjustment(lastTarget.getPosY(), lastTarget.getPosX(), currentPose.getPosY(), currentPose.getPosX());
+        targetAngle = calcAngleWithTimeAdjustment(lastTarget.getPosX(), lastTarget.getPosY(), currentPose.getPosX(), currentPose.getPosY());
         targetDistance = calcDistanceWithTimeAdjustment(lastTarget.getPosY(), lastTarget.getPosX(), currentPose.getPosY(), currentPose.getPosX());
       }
       else {    // if there is no error
@@ -236,29 +237,29 @@ public class AdvancedVisionPIDDrive extends Command {
         double targetY = Math.sin(Math.toRadians(angle))* distance;
 
         // Calculate target angle and target distance.
-        targetAngle = calcAngleWithTimeAdjustment(targetY, targetX, currentPose.getPosY(), currentPose.getPosX());
-        targetDistance = calcDistanceWithTimeAdjustment(targetY, targetX, currentPose.getPosY(), currentPose.getPosX());
+        targetAngle = calcAngleWithTimeAdjustment(targetX, targetY, currentPose.getPosX(), currentPose.getPosY());
+        targetDistance = calcDistanceWithTimeAdjustment(targetX, targetY, currentPose.getPosX(), currentPose.getPosY());
 
         // Stores the lastTarget in case we lose it.
-        lastTarget = new Pose(currentPose.getPosX() + targetDistance * Math.cos(Math.toRadians(targetAngle)),
-                              currentPose.getPosY() + targetDistance * Math.sin(Math.toRadians(targetAngle)),
-                              currentPose.getRobotAngle());
+        lastTarget = new Pose(((long)(currentPose.getPosX() + targetDistance * Math.cos(Math.toRadians(targetAngle)))),
+                              ((long) (currentPose.getPosY() + targetDistance * Math.sin(Math.toRadians(targetAngle)))),
+                              currentPose.getRobotAngle(), Robot.driveBase.getLeftVelocity(), Robot.driveBase.getRightVelocity());
       }
       lastPoses.remove(0); // Remove the oldes Pose from lastPoses so we don't accumulate too many.
       return new double[]{targetAngle, targetDistance};
     }  
 
-    private double calcAngleWithTimeAdjustment(double yGoal, double xGoal, double yCurrent, double xCurrent) {
-      return AdvancedVisionPIDDrive.calcAngleWithTimeAdjustment(yGoal, xGoal, yCurrent, xCurrent);
+    private double calcAngleWithTimeAdjustment(double xGoal, double yGoal, double xCurrent, double yCurrent) {
+      return AdvancedVisionPIDDrive.calcAngleWithTimeAdjustment(xGoal, yGoal, xCurrent, yCurrent);
   }
 
-    private double calcDistanceWithTimeAdjustment(double yGoal, double xGoal, double yCurrent, double xCurrent) {
+    private double calcDistanceWithTimeAdjustment(double xGoal, double yGoal, double xCurrent, double yCurrent) {
       return MathUtils.findDistance(xGoal, yGoal, xCurrent, yCurrent);
     }
 
   }
 
-  public static double calcAngleWithTimeAdjustment(double yGoal, double xGoal, double yCurrent, double xCurrent) {
+  public static double calcAngleWithTimeAdjustment(double xGoal, double yGoal, double xCurrent, double yCurrent) {
     return Pathfinder.boundHalfDegrees(-1 * (Math.toDegrees(Math.atan2(yGoal - yCurrent, xGoal - xCurrent)) - 90));
 
   }
