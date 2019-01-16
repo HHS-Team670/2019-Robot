@@ -13,14 +13,14 @@ import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.functions.MathUtils;
 
-public class CANPIDEncoderDrive extends Command {
+public class SparkCANPIDEncoderDrive extends Command {
 
   private int inchesToTravel, ticksToTravel;
   private double rotations;
   private int leftStartingPosition, rightStartingPosition, leftEndingPosition, rightEndingPosition, leftCurrentPosition, rightCurrentPosition;
   private double threshold = 300; // TODO Define threshold
 
-  public CANPIDEncoderDrive(int inchesToTravel) {
+  public SparkCANPIDEncoderDrive(int inchesToTravel) {
     requires (Robot.driveBase);
     this.inchesToTravel = inchesToTravel;
 
