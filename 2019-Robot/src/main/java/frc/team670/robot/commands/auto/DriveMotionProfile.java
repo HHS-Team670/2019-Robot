@@ -130,9 +130,14 @@ public class DriveMotionProfile extends Command {
     // 'getEncPosition' function.
     // 1000 is the amount of encoder ticks per full revolution
     // Wheel Diameter is the diameter of your wheels (or pulley for a track system) in meters
-    left.configureEncoder(Robot.driveBase.getLeftEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.WHEEL_DIAMETER);
-    right.configureEncoder(Robot.driveBase.getRightEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.WHEEL_DIAMETER);
-
+    if(isReversed){
+      left.configureEncoder(-1 * Robot.driveBase.getLeftEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.WHEEL_DIAMETER);
+      right.configureEncoder(-1 * Robot.driveBase.getRightEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.WHEEL_DIAMETER);  
+    } else{
+      left.configureEncoder(Robot.driveBase.getLeftEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.WHEEL_DIAMETER);
+      right.configureEncoder(Robot.driveBase.getRightEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.WHEEL_DIAMETER);  
+    }
+    
     // The first argument is the proportional gain. Usually this will be quite high
     // The second argument is the integral gain. This is unused for motion profiling
     // The third argument is the derivative gain. Tweak this if you are unhappy with the tracking of the trajectory
@@ -146,7 +151,7 @@ public class DriveMotionProfile extends Command {
     double l = left.calculate(-Robot.driveBase.getLeftEncoderPosition());// Negate encoder count so robot thinks its going forward when going backwards
     double r = right.calculate(-Robot.driveBase.getRightEncoderPosition());
 
-    double angleDifference = Pathfinder.boundHalfDegrees(Pathfinder.r2d(left.getHeading()) + Robot.sensors.getYawDouble());
+    double angleDifference = Pathfinder.boundHalfDegrees(Pathfinder.r2d(left.getHeading()) + -1 * Robot.sensors.getYawDouble());
     double turn = 2 * (-1.0 / 80.0) * angleDifference; // We used 2 as it seemed to work better after trial and error
 			
     Robot.driveBase.tankDrive(-(r - turn), -(l + turn));// Left Side Output, Right Side Output. We use the right output for the left side and the left side output for the right side, then negate everything
