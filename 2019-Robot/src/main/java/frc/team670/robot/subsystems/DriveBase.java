@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.revrobotics.CANEncoder;
+import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel;
@@ -38,6 +39,7 @@ public class DriveBase extends Subsystem {
   private DifferentialDrive driveTrain;
   private List<CANSparkMax> leftControllers, rightControllers;
   private List<CANSparkMax> allMotors;
+  private double P, I, D, FF;
 
   public DriveBase() {
     // left1 = new CANSparkMax(RobotMap.sparkLeftMotor1, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -62,6 +64,12 @@ public class DriveBase extends Subsystem {
     // setMotorsBrushless(allMotors);
 
     // driveTrain = new DifferentialDrive(left, right);
+
+    left1.getPIDController().setP(P, encodersPIDSlot);
+    left1.getPIDController().setI(I, encodersPIDSlot);
+    left1.getPIDController().setD(D, encodersPIDSlot);
+    left1.getPIDController().setFF(FF, encodersPIDSlot);
+    left1.getPIDController().setOutputRange(-1, 1);
   }
 
   /**
@@ -168,11 +176,13 @@ public class DriveBase extends Subsystem {
   }
 
   /**
-   * Sets the PIDControllers for the left and right side motors to the given positions in ticks.
+   * Sets the PIDControllers setpoints for the left and right side motors to the given positions in ticks forward.
+   * @param deltaLeft The desired change in left position in encoder ticks
+   * @param deltaRight The desired change in right position in encoder ticks
    */
-  public void setEncodersControl(double leftEncoderPosition, double rightEncoderPosition) {
-    left1.getPIDController().setReference(leftEncoderPosition, ControlType.kPosition, encodersPIDSlot);
-    right1.getPIDController().setReference(rightEncoderPosition, ControlType.kPosition, encodersPIDSlot);
+  public void setEncodersControl(double deltaLeft, double deltaRight) {
+    left1.getPIDController().setReference(left1.getEncoder().getPosition() + deltaLeft, ControlType.kPosition, encodersPIDSlot);
+    right1.getPIDController().setReference(right1.getEncoder().getPosition() + deltaRight, ControlType.kPosition, encodersPIDSlot);
   }
 
   /**
@@ -331,4 +341,16 @@ public class DriveBase extends Subsystem {
     setDefaultCommand(new XboxRocketLeagueDrive());
   }
 
+  public CANSparkMax getLeft1(){
+    return left1;
+  }
+  public CANSparkMax getLeft2(){
+    return left2;
+  }
+  public CANSparkMax getRight1(){
+    return right1;
+  }
+  public CANSparkMax getRight2(){
+    return right2;
+  }
 }
