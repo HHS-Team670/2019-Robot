@@ -36,7 +36,7 @@ image_width = 1080  # Desired width of inputted image (for processing speed)
 screen_resize = 1  # Scale that the GUI image should be scaled to
 calibrate_angle = 0  # Test to calibrate the angle and see if that works
 exposure = -8
-timestamp = round(time.time()*1000) # time in milliseconds
+timestamp = round(time.time() * 1000) # time in milliseconds
 
 # HSV Values to detect
 min_hsv = [58, 0, 254]
@@ -62,7 +62,7 @@ def main():
 
     # This may not need to be calculated, can use Andra's precalculated values
     vert_focal_length = find_focal_length(vs.raw_read()[0], camera_fov_vertical)
-    hor_focal_length = find_focal_length(vs.raw_read()[0], camera_fov_horizontal)
+    hor_focal_length = find_focal_length(vs.raw_read()[0], camera_fov_horizontal, vertical=False)
 
     while True:
         # Read input image from video
@@ -115,7 +115,7 @@ def main():
 
         rect_x_midpoint, high_point = find_rectangle_highpoint(object_rects)
         vangle = find_vert_angle(input_image, high_point, vert_focal_length) # vangle - 'V'ertical angle
-        hangle = find_vert_angle(input_image, rect_x_midpoint, hor_focal_length) # hangle - 'H'orizontal angle
+        hangle = find_vert_angle(input_image, rect_x_midpoint, hor_focal_length, vertical=False) # hangle - 'H'orizontal angle
         depth = depth_from_angle(input_image, object_rects, vangle, hangle,
                                  known_object_height - known_camera_height)
         adjusted_depth = adjust_depth(depth, hangle)
@@ -363,13 +363,17 @@ def find_rectangle_highpoint(rectangles):
     return (mid_x, highest_y)
 
 
-def find_focal_length(image, _fov):
+def find_focal_length(image, _fov, vertical = True):
     '''
     Calculates the vert/hor focal length when given
     the image and vert/hor FOV.
     '''
     # Find image height
-    height = image.shape[:2][0]
+    height = 0
+    if vertical:
+        height = image.shape[:2][0]
+    else:
+        height = image.shape[:2][1]
 
     calc_focal_length = height / (2 * math.tan(math.radians(_fov / 2)))
     return calc_focal_length
@@ -377,7 +381,7 @@ def find_focal_length(image, _fov):
 
 
 
-def find_vert_angle(image, y, focal_length):
+def find_vert_angle(image, y, focal_length, vertical=True):
     '''
     Returns the vertical/horizontal angle of the given y/x point in an image.
     This is the angle that the robot needs to look up / down in order to
@@ -386,7 +390,11 @@ def find_vert_angle(image, y, focal_length):
     '''
 
     # Find center y point
-    image_height = image.shape[:2][0]
+    image_height = 0
+    if vertical:
+        image_height = image.shape[:2][0]
+    else:
+        image_height = image.shape[:2][1]
     center_y = image_height / 2
     y_from_bottom = image_height-y
 
