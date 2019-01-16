@@ -30,6 +30,8 @@ public class Arm extends Subsystem {
   private VictorSPX elbowRotationSlave;
   private TalonSRX wristRotation;
 
+  private ArmState[] allowableStates;
+
 
   public Arm() {
     translationMotor = new TalonSRX(RobotMap.armTranslationMotor);
@@ -61,4 +63,14 @@ public class Arm extends Subsystem {
   public void initDefaultCommand() {
     
   }
+
+  public class ArmState {
+    private double elbowAngle, wristAngle;
+    private Point2D.Double coord;
+  }
+
+  public class ArmTransition {
+    private Point2D.Double startCoord, endCoord;
+  }
+
 }
