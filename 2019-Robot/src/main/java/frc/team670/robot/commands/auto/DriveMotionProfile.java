@@ -44,14 +44,17 @@ public class DriveMotionProfile extends Command {
   // Values for logging purposes
   private final int executeLogInterval = 8;
   private long executeCount;
+  private boolean isReversed;
 
   int initialLeftEncoder, initialRightEncoder;
   
   /**
    * Drives a Pathfinder Motion Profile using set Waypoints
    */
-  public DriveMotionProfile(Waypoint[] waypoints) {
+  public DriveMotionProfile(Waypoint[] waypoints, boolean isReversed) {
     requires(Robot.driveBase);
+
+    this.isReversed = isReversed;
 
     this.waypoints = waypoints.clone();
 
@@ -62,6 +65,7 @@ public class DriveMotionProfile extends Command {
      // TODO In the future maybe do this in initialize so when the Command is rerun it starts over
     left = new EncoderFollower(modifier.getLeftTrajectory());
     right= new EncoderFollower(modifier.getRightTrajectory());
+
   }
 
 
@@ -69,7 +73,9 @@ public class DriveMotionProfile extends Command {
    * Creates a DriveMotionProfile from a text file
    * @param fileName path to trajectory file inside the deploy folder
    */
-  public DriveMotionProfile(String fileName) {
+  public DriveMotionProfile(String fileName, boolean isReversed) {
+
+    this.isReversed = isReversed;
 
     String binary = "traj";
     String csv = "csv";
@@ -114,8 +120,15 @@ public class DriveMotionProfile extends Command {
     // TODO Think through what we want out of angle, maybe go off an initial angle
     Robot.sensors.resetNavX();
 
-    initialLeftEncoder = Robot.driveBase.getLeftDIOEncoderPosition();
-    initialRightEncoder = Robot.driveBase.getRightDIOEncoderPosition();
+    double initialLeftEncoder, initialRightEncoder;
+    if(isReversed) {
+      initialLeftEncoder = -1 * Robot.driveBase.getLeftDIOEncoderPosition();
+      initialRightEncoder = -1 * Robot.driveBase.getRightDIOEncoderPosition();
+    }
+    else {
+      initialLeftEncoder = Robot.driveBase.getLeftDIOEncoderPosition();
+      initialRightEncoder = Robot.driveBase.getRightDIOEncoderPosition();
+    }
 
     // Set up Robot for Auton Driving
     Robot.driveBase.initAutonDrive();
@@ -124,8 +137,14 @@ public class DriveMotionProfile extends Command {
     // 'getEncPosition' function.
     // 1000 is the amount of encoder ticks per full revolution
     // Wheel Diameter is the diameter of your wheels (or pulley for a track system) in meters
-    left.configureEncoder(Robot.driveBase.getLeftDIOEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.WHEEL_DIAMETER);
-    right.configureEncoder(Robot.driveBase.getRightDIOEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.WHEEL_DIAMETER);
+
+    if(isReversed){
+      left.configureEncoder(-1 * Robot.driveBase.getLeftDIOEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.WHEEL_DIAMETER);
+      right.configureEncoder(-1 * Robot.driveBase.getRightDIOEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.WHEEL_DIAMETER);  
+    } else{
+      left.configureEncoder(Robot.driveBase.getLeftDIOEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.WHEEL_DIAMETER);
+      right.configureEncoder(Robot.driveBase.getRightDIOEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.WHEEL_DIAMETER);  
+    }
 
     // The first argument is the proportional gain. Usually this will be quite high
     // The second argument is the integral gain. This is unused for motion profiling
@@ -150,14 +169,29 @@ public class DriveMotionProfile extends Command {
     /*
     * LEFT ENCODER IS BACKWARDS SO WE MULTIPLY IT'S VALUE BY -1 TO FLIP IT
     */
-    int leftEncoder = Robot.driveBase.getLeftDIOEncoderPosition();
-    int rightEncoder = Robot.driveBase.getRightDIOEncoderPosition();
+
+    int leftEncoder, rightEncoder;
+    if(isReversed) {
+      leftEncoder = -1 * Robot.driveBase.getLeftDIOEncoderPosition();
+      rightEncoder = -1 * Robot.driveBase.getRightDIOEncoderPosition();
+    }
+    else {
+      leftEncoder = Robot.driveBase.getLeftDIOEncoderPosition();
+      rightEncoder = Robot.driveBase.getRightDIOEncoderPosition();
+    }
+  
     // System.out.println("Right Encoder: " + rightEncoder + ", LeftEncoder: " + leftEncoder);
     double l = left.calculate(leftEncoder);
     double r = right.calculate(rightEncoder);
     
     // Calculates the angle offset for PID
-    double gyroHeading = Pathfinder.boundHalfDegrees(Robot.sensors.getYawDoubleForPathfinder());   // Assuming the gyro is giving a value in degrees
+    double gyroHeading;
+    if(isReversed) {
+      gyroHeading = Pathfinder.boundHalfDegrees(-1 * Robot.sensors.getYawDoubleForPathfinder());   // Assuming the gyro is giving a value in degrees
+    }
+    else {
+      gyroHeading = Pathfinder.boundHalfDegrees(Robot.sensors.getYawDoubleForPathfinder());   // Assuming the gyro is giving a value in degrees
+    }
     double desiredHeading = Pathfinder.boundHalfDegrees(Pathfinder.r2d(left.getHeading()));  // Should also be in degrees 
     // Make sure gyro and desired angle match up [-180, 180], navX reports the opposite orientation as Pathfinder expects
     double angleDifference = Pathfinder.boundHalfDegrees(desiredHeading - gyroHeading);    

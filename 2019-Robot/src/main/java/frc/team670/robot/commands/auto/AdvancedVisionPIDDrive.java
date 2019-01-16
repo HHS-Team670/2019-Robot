@@ -85,7 +85,7 @@ public class AdvancedVisionPIDDrive extends Command {
   @Override
   protected void execute() {
 
-    robotPosition.update((long)Robot.driveBase.getLeftEncoderPosition(), (long)Robot.driveBase.getRightEncoderPosition(), Robot.sensors.getYawDouble());
+    robotPosition.update((long)Robot.driveBase.getLeftEncoderPosition(), (long)Robot.driveBase.getRightEncoderPosition(), Robot.sensors.getYawDouble(), Robot.driveBase.getLeftVelocity(), Robot.driveBase.getRightVelocity());
 
     double[] visionData = visionDistanceAndPose.getAngleAndDistance();
 
@@ -241,9 +241,9 @@ public class AdvancedVisionPIDDrive extends Command {
         targetDistance = calcDistanceWithTimeAdjustment(targetX, targetY, currentPose.getPosX(), currentPose.getPosY());
 
         // Stores the lastTarget in case we lose it.
-        lastTarget = new Pose(currentPose.getPosX() + targetDistance * Math.cos(Math.toRadians(targetAngle)),
-                              currentPose.getPosY() + targetDistance * Math.sin(Math.toRadians(targetAngle)),
-                              currentPose.getRobotAngle());
+        lastTarget = new Pose(((long)(currentPose.getPosX() + targetDistance * Math.cos(Math.toRadians(targetAngle)))),
+                              ((long) (currentPose.getPosY() + targetDistance * Math.sin(Math.toRadians(targetAngle)))),
+                              currentPose.getRobotAngle(), Robot.driveBase.getLeftVelocity(), Robot.driveBase.getRightVelocity());
       }
       lastPoses.remove(0); // Remove the oldes Pose from lastPoses so we don't accumulate too many.
       return new double[]{targetAngle, targetDistance};

@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.revrobotics.CANEncoder;
+import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel;
@@ -40,6 +41,7 @@ public class DriveBase extends Subsystem {
   private List<CANSparkMax> leftControllers, rightControllers;
   private List<CANSparkMax> allMotors;
   private Encoder leftDIOEncoder, rightDIOEncoder;
+  private final double P, I, D, FF;
 
   public DriveBase() {
     // left1 = new CANSparkMax(RobotMap.sparkLeftMotor1, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -65,8 +67,21 @@ public class DriveBase extends Subsystem {
 
     // driveTrain = new DifferentialDrive(left, right);
 
-    leftDIOEncoder = new Encoder(RobotMap.leftEncoderChannelA, RobotMap.leftEncoderChannelB);
-    rightDIOEncoder = new Encoder(RobotMap.rightEncoderChannelA, RobotMap.rightEncoderChannelB);
+//     leftDIOEncoder = new Encoder(RobotMap.leftEncoderChannelA, RobotMap.leftEncoderChannelB);
+//     rightDIOEncoder = new Encoder(RobotMap.rightEncoderChannelA, RobotMap.rightEncoderChannelB);
+
+//     left1.getPIDController().setP(P, encodersPIDSlot);
+//     left1.getPIDController().setI(I, encodersPIDSlot);
+//     left1.getPIDController().setD(D, encodersPIDSlot);
+//     left1.getPIDController().setFF(FF, encodersPIDSlot);
+//     left1.getPIDController().setOutputRange(-1, 1);
+
+//     right1.getPIDController().setP(P, encodersPIDSlot);
+//     right1.getPIDController().setI(I, encodersPIDSlot);
+//     right1.getPIDController().setD(D, encodersPIDSlot);
+//     right1.getPIDController().setFF(FF, encodersPIDSlot);
+//     right1.getPIDController().setOutputRange(-1, 1);
+
   }
 
   /**
@@ -173,12 +188,13 @@ public class DriveBase extends Subsystem {
   }
 
   /**
-   * Sets the PIDControllers for the left and right side motors to the given positions in ticks.
+   * Sets the PIDControllers setpoints for the left and right side motors to the given positions in ticks forward.
+   * @param deltaLeft The desired change in left position in encoder ticks
+   * @param deltaRight The desired change in right position in encoder ticks
    */
-  public void setSparkEncodersControl(double leftEncoderPosition, double rightEncoderPosition) {
-    left1.getPIDController().setReference(leftEncoderPosition, ControlType.kPosition, encodersPIDSlot);
-    right1.getPIDController().setReference(rightEncoderPosition, ControlType.kPosition, encodersPIDSlot);
-  }
+  public void setSparkEncodersControl(double deltaLeft, double deltaRight) {
+    left1.getPIDController().setReference(left1.getEncoder().getPosition() + deltaLeft, ControlType.kPosition, encodersPIDSlot);
+    right1.getPIDController().setReference(right1.getEncoder().getPosition() + deltaRight, ControlType.kPosition, encodersPIDSlot);
 
   /**
    * Sets the velocities of the left and right motors of the robot.
@@ -360,3 +376,4 @@ public class DriveBase extends Subsystem {
     return rightControllers;
   }
 }
+
