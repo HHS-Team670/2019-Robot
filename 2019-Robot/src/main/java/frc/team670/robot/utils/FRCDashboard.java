@@ -12,10 +12,11 @@ import edu.wpi.first.networktables.NetworkTableValue;
  */
 public class FRCDashboard {
 
-    private NetworkTable table;
-    private NetworkTableInstance instance;
+    
+    private static NetworkTableInstance instance = NetworkTableInstance.getDefault();
+    private static NetworkTable table = instance.getTable("SmartDashboard");
 
-    private ArrayList<NetworkTableEntry> entries;
+    private static ArrayList<NetworkTableEntry> entries = new ArrayList<NetworkTableEntry>();
     private NetworkTableEntry autonChooser;
 
     /**
@@ -23,18 +24,16 @@ public class FRCDashboard {
      * 
      * @param tableName the name of the table to connect to
      */
-    public FRCDashboard(String tableName) {
-        instance = NetworkTableInstance.getDefault();
-        table = instance.getTable(tableName);
+    private FRCDashboard() {
         instance.startClientTeam(670);
         instance.startDSClient();
 
-        entries = new ArrayList<NetworkTableEntry>();
-        autonChooser = table.getEntry("auton-chooser");
-        entries.add(autonChooser);
+        // SAMPLE USE CASE
+        // autonChooser = table.getEntry("auton-chooser");
+        // entries.add(autonChooser);
     }
 
-    public void putString(String key, String value) {
+    public static void putString(String key, String value) {
         for (NetworkTableEntry entry : entries) {
             if (entry.getName().equals(key)) {
                 entry.setString(value);
@@ -42,7 +41,7 @@ public class FRCDashboard {
         }
     }
 
-    public void putDouble(String key, double value) {
+    public static void putDouble(String key, double value) {
         for (NetworkTableEntry entry : entries) {
             if (entry.getName().equals(key)) {
                 entry.setDouble(value);
@@ -50,17 +49,17 @@ public class FRCDashboard {
         }
     }
 
-    public double getDouble(String key) {
+    public static double getDouble(String key) {
         NetworkTableValue received = getValue(key);
         return received.getDouble();
     }
 
-    public String getString(String key) {
+    public static String getString(String key) {
         NetworkTableValue received = getValue(key);
         return received.getString();
     }
 
-    private NetworkTableValue getValue(String key) {
+    private static NetworkTableValue getValue(String key) {
         return table.getEntry(key).getValue();
     }
 

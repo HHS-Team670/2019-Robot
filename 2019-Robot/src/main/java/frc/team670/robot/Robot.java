@@ -37,7 +37,6 @@ public class Robot extends TimedRobot {
   public static MustangSensors sensors = new MustangSensors();
   public static MustangPi visionPi = new MustangPi();
   public static DriveBase driveBase = new DriveBase();
-  public static FRCDashboard dashboard;
   public static Arm arm = new Arm();
   public static Intake intake = new Intake();
   public static Claw claw = new Claw();
@@ -51,7 +50,6 @@ public class Robot extends TimedRobot {
   public Robot() {
 
     oi = new OI();
-    dashboard = new FRCDashboard("SmartDashboard");
 
     try
     {
@@ -85,7 +83,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    dashboard.putString("test", "robotPeriodic()");
+    FRCDashboard.putString("test", "robotPeriodic()");
     System.out.println("Voltage: "+(irSensor.getVoltage()));
     // Pose.updateFieldCentricPose(); // Update our field centric Pose to the new robot position. Commented out to avoid null-pointers until sensors hooked up.
   }
