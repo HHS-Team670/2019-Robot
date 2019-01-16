@@ -57,6 +57,7 @@ public class MustangLEDs_2019 {
 			client.start();
 		} catch (IOException e) {
 			System.out.println("Unable to init Arduino server");
+			System.out.println(e.toString());
 		}  
 		
 	}
@@ -135,54 +136,41 @@ public class MustangLEDs_2019 {
 		
 		public void run(){
 			
-			Socket socketClient = null;
-			DataOutputStream output = null;
-			ArrayList<MatOfPoint> gpgArray = new ArrayList<MatOfPoint>();
-			
-			while(socketClient == null){ // Attempts until client is found
-
-				System.out.println("Socket Client null");
-				try {
-					socketClient = serverSocket.accept();
-				} catch (IOException e) {
-					socketClient = null;
-				}
-			}
-			
-			while(output == null){	// Attempts until Data Output Stream declared
-				System.out.println("Output Null");
-				try {
-					output = new DataOutputStream(socketClient.getOutputStream());
-					output.flush();
-				} catch (IOException e) {
-					output = null;
-				}
-			}
-			
 			while(true){
+				Socket socketClient = null;
+				DataOutputStream output = null;
+				ArrayList<MatOfPoint> gpgArray = new ArrayList<MatOfPoint>();
+				while(socketClient == null){ // Attempts until client is found
+
+					System.out.println("Socket Client null");
+					try {
+						socketClient = serverSocket.accept();
+					} catch (IOException e) {
+						socketClient = null;
+					}
+				}
+			
+				while(output == null){	// Attempts until Data Output Stream declared
+					System.out.println("Output Null");
+					try {
+						output = new DataOutputStream(socketClient.getOutputStream());
+					} catch (IOException e) {
+						output = null;
+					}
+				}
+			
 				
 				System.out.println(stateData+""+allianceData);
-				//string which gets sent over server
 				data = stateData + allianceData;
 				
 				// Sends data to the Arduino/Ethernet Shield
 				try {
 					output.writeUTF(data);
 					output.flush();
+					output.close();
 				} catch (Exception e) {
 					System.out.println("Unable to send Arduino data");
-					
-					try{
-						output.close();
-						socketClient.close();
-						serverSocket = null;
-						socketClient = null;
-						socketSetup(5801);
-					}catch(Exception E){
-					}
-					
-					socketSetup(5801);
-					return;
+					System.out.println(e.toString());
 				}  
 				
 				// Sleeps to attempt to prevent a DOS overload

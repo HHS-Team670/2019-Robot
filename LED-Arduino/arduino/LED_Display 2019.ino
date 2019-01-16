@@ -67,6 +67,9 @@ void setStripColor(int r,int g, int b){
     strip.setPixelColor(i,r,g,b);
     }
 }
+void reset(){
+  setStripColor(0,0,0);
+}
 
   
 void setup() {                                      //Sets up constants before program begins     
@@ -131,11 +134,9 @@ if(stateData==stillDrive){
       strip.setPixelColor(i,0,200,0);
       strip.show();
     }
-    for(int i=0; i<=numberOfPixels;i++){
-      strip.setPixelColor(i,0,0,0);
-      strip.show();
+    reset();
     }    
-    }
+    
   //solid blue color indicates vision lock
   } else if(stateData==visionLock){
     setStripColor(10,67,35);
