@@ -114,8 +114,8 @@ public class DriveMotionProfile extends Command {
     // TODO Think through what we want out of angle, maybe go off an initial angle
     Robot.sensors.resetNavX();
 
-    initialLeftEncoder = Robot.driveBase.getLeftEncoderPosition();
-    initialRightEncoder = Robot.driveBase.getRightEncoderPosition();
+    initialLeftEncoder = Robot.driveBase.getLeftDIOEncoderPosition();
+    initialRightEncoder = Robot.driveBase.getRightDIOEncoderPosition();
 
     // Set up Robot for Auton Driving
     Robot.driveBase.initAutonDrive();
@@ -124,8 +124,8 @@ public class DriveMotionProfile extends Command {
     // 'getEncPosition' function.
     // 1000 is the amount of encoder ticks per full revolution
     // Wheel Diameter is the diameter of your wheels (or pulley for a track system) in meters
-    left.configureEncoder(Robot.driveBase.getLeftEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.WHEEL_DIAMETER);
-    right.configureEncoder(Robot.driveBase.getRightEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.WHEEL_DIAMETER);
+    left.configureEncoder(Robot.driveBase.getLeftDIOEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.WHEEL_DIAMETER);
+    right.configureEncoder(Robot.driveBase.getRightDIOEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.WHEEL_DIAMETER);
 
     // The first argument is the proportional gain. Usually this will be quite high
     // The second argument is the integral gain. This is unused for motion profiling
@@ -150,8 +150,8 @@ public class DriveMotionProfile extends Command {
     /*
     * LEFT ENCODER IS BACKWARDS SO WE MULTIPLY IT'S VALUE BY -1 TO FLIP IT
     */
-    int leftEncoder = Robot.driveBase.getLeftEncoderPosition();
-    int rightEncoder = Robot.driveBase.getRightEncoderPosition();
+    int leftEncoder = Robot.driveBase.getLeftDIOEncoderPosition();
+    int rightEncoder = Robot.driveBase.getRightDIOEncoderPosition();
     // System.out.println("Right Encoder: " + rightEncoder + ", LeftEncoder: " + leftEncoder);
     double l = left.calculate(leftEncoder);
     double r = right.calculate(rightEncoder);
@@ -192,7 +192,7 @@ public class DriveMotionProfile extends Command {
   protected void end() {
     Robot.driveBase.tankDrive(0, 0);
     Logger.consoleLog("Ended. EndingAngle: %s, EndingLeftTicks: %s, EndingRightTicks: %s", Pathfinder.boundHalfDegrees(Robot.sensors.getYawDoubleForPathfinder()), 
-                     (Robot.driveBase.getLeftEncoderPosition() - initialLeftEncoder), (Robot.driveBase.getRightEncoderPosition() - initialRightEncoder));
+                     (Robot.driveBase.getLeftDIOEncoderPosition() - initialLeftEncoder), (Robot.driveBase.getRightDIOEncoderPosition() - initialRightEncoder));
   }
 
   // Called when another command which requires one or more of the same

@@ -23,6 +23,13 @@ public class RobotMap {
   public static final int sparkLeftMotor2 = 1;
   public static final int sparkRightMotor1 = 2;
   public static final int sparkRightMotor2 = 3;
+
+  //Encoders
+  public static final int leftEncoderChannelA = 0;
+  public static final int leftEncoderChannelB = 1;
+  public static final int rightEncoderChannelA = 2;
+  public static final int rightEncoderChannelB = 3;
+
   
   // Sensor Ports
   public final static Port navXPort = SerialPort.Port.kUSB;

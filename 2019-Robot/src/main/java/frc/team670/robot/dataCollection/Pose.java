@@ -24,7 +24,7 @@ public class Pose {
    * Makes new pose using current robot encoder values and angles
    */
   public Pose() {
-    this(Robot.driveBase.getLeftEncoderPosition(), Robot.driveBase.getRightEncoderPosition(), Robot.sensors.getYawDouble());
+    this(Robot.driveBase.getLeftDIOEncoderPosition(), Robot.driveBase.getRightDIOEncoderPosition(), Robot.sensors.getYawDouble());
   }
 
   /**
@@ -82,7 +82,7 @@ public class Pose {
   }
 
   public void update() {
-    update(Robot.driveBase.getLeftEncoderPosition(), Robot.driveBase.getRightEncoderPosition(), Robot.sensors.getYawDouble());
+    update(Robot.driveBase.getLeftDIOEncoderPosition(), Robot.driveBase.getRightDIOEncoderPosition(), Robot.sensors.getYawDouble());
   }
 
   public long getPosX(){
