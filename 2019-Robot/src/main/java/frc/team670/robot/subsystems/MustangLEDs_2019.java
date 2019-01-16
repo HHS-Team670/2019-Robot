@@ -40,7 +40,6 @@ public class MustangLEDs_2019 {
 	byte[] stateData=stillDrive;
 	byte[] allianceData=blueAlliance;
 	// String xFinalData=xFinalCenter;
-	byte[] data={blur};
 
 
 	// Socket Init
@@ -159,12 +158,14 @@ public class MustangLEDs_2019 {
 			
 				
 				System.out.println(stateData+""+allianceData);
-				data = stateData + allianceData;
 				
 				// Sends data to the Arduino/Ethernet Shield
 				try {
-					byte[] toSend = {'a'};
-					output.write(toSend); // data.getBytes());
+					byte[] toSend = {'a','0'};
+					output.write(toSend);
+					//output.write(toSend);
+					// output.write(stateData); // data.getBytes());
+					// output.write(allianceData);
 					output.flush();
 					output.close();
 				} catch (Exception e) {

@@ -162,21 +162,22 @@ if(stateData==stillDrive){
   
 
 char asciiConvert(EthernetClient client){           //Changes an ASCII byte from a socket to a string
+  char data=client.read();
+  return data;
+  // int data = client.read();                         //Reads the socket for data from server
+  // int dataPoint = -666;                             //Defaults the point that the recived bytes equal a char in asciiArray[]
+  // for(int i=0; i < 37 -1; i++){                     //Runs the length of asciiArray[]
+  //   if(asciiArray[i] == data){                      //If the data recived equals a point in asciiArray[]...
+  //     dataPoint = i;                                //...the program sets dataPoint to the point of equality
+  //   }
+  // }
 
-  int data = client.read();                         //Reads the socket for data from server
-  int dataPoint = -666;                             //Defaults the point that the recived bytes equal a char in asciiArray[]
-  for(int i=0; i < 37 -1; i++){                     //Runs the length of asciiArray[]
-    if(asciiArray[i] == data){                      //If the data recived equals a point in asciiArray[]...
-      dataPoint = i;                                //...the program sets dataPoint to the point of equality
-    }
-  }
-
-  char finalData = translationArray[dataPoint];     //Sets the final character 
-  if(dataPoint != -666){                            //If the data point is not null...
-    return finalData;                               //Returns the transcribed ASCII character
-  }else{
-    char defaultchar[] = {"E"};                     //Sets a default char if there is an error
-    return defaultchar[0];                          //Returns the default error char
-  }
+  // char finalData = translationArray[dataPoint];     //Sets the final character 
+  // if(dataPoint != -666){                            //If the data point is not null...
+  //   return finalData;                               //Returns the transcribed ASCII character
+  // }else{
+  //   char defaultchar[] = {"E"};                     //Sets a default char if there is an error
+  //   return defaultchar[0];                          //Returns the default error char
+  // }
 }
 

@@ -69,9 +69,7 @@ public class Robot extends TimedRobot {
     leds.socketSetup(5801);
     System.out.println("LED Setup Run");
     //leds.socketSetup(RobotConstants.LED_PORT);    
-    //leds.update_xFinal(0);
-    leds.setClimbingData(true);
-
+    
   }
 
   /**
@@ -98,10 +96,13 @@ public class Robot extends TimedRobot {
     //   leds.updateVisionData(true);
     //   savedTime = System.currentTimeMillis();
     // }  
- leds.setClimbingData(true);
+      
+      leds.setClimbingData(true);//we climb
+      
+    
+    
     
   }
-  
 
   /**
    * This function is called once each time the robot enters Disabled mode.
