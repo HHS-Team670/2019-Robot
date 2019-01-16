@@ -168,11 +168,13 @@ public class DriveBase extends Subsystem {
   }
 
   /**
-   * Sets the PIDControllers for the left and right side motors to the given positions in ticks.
+   * Sets the PIDControllers setpoints for the left and right side motors to the given positions in ticks forward.
+   * @param deltaLeft The desired change in left position in encoder ticks
+   * @param deltaRight The desired change in right position in encoder ticks
    */
-  public void setEncodersControl(double leftEncoderPosition, double rightEncoderPosition) {
-    left1.getPIDController().setReference(leftEncoderPosition, ControlType.kPosition, encodersPIDSlot);
-    right1.getPIDController().setReference(rightEncoderPosition, ControlType.kPosition, encodersPIDSlot);
+  public void setEncodersControl(double deltaLeft, double deltaRight) {
+    left1.getPIDController().setReference(left1.getEncoder().getPosition() + deltaLeft, ControlType.kPosition, encodersPIDSlot);
+    right1.getPIDController().setReference(right1.getEncoder().getPosition() + deltaRight, ControlType.kPosition, encodersPIDSlot);
   }
 
   /**
