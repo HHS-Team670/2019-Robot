@@ -175,4 +175,3 @@ if(stateData==stillDrive){
 //   //   return defaultchar[0];                          //Returns the default error char
 //   // }
 // }
-
