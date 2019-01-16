@@ -25,7 +25,7 @@ public class Pose {
    * Makes new pose using current robot encoder values and angles
    */
   public Pose() {
-    this(Robot.driveBase.getLeftEncoderPosition(), Robot.driveBase.getRightEncoderPosition(), Robot.sensors.getYawDouble());
+    this(Robot.driveBase.getLeftEncoderPosition(), Robot.driveBase.getRightEncoderPosition(), Robot.sensors.getYawDouble(), Robot.driveBase.getLeftVelocity(), Robot.driveBase.getRightVelocity());
   }
 
   /**
@@ -34,18 +34,18 @@ public class Pose {
    * @param rEncoderTick Encoder ticks -> forward = positive, backwards = negative
    * @param angle Angle in degrees -> left = negative, right = positive
    */
-  public Pose(long lEncoderTick, long rEncoderTick, double angle) {
-    this(lEncoderTick, rEncoderTick, angle, 0, 0, System.currentTimeMillis(), Robot.driveBase.getLeftVelocity(), Robot.driveBase.getRightVelocity());
+  public Pose(long lEncoderTick, long rEncoderTick, double angle, int leftVelocity, int rightVelocity) {
+    this(lEncoderTick, rEncoderTick, angle, 0, 0, System.currentTimeMillis(), leftVelocity, rightVelocity);
   }
 
-  public Pose(double x, double y, double angle) {
+  public Pose(double x, double y, double angle, int leftEncoderPosition, int rightEncoderPosition, int leftVelocity, int rightVelocity) {
     currRobotX = (long)x;
     currRobotY = (long)y;
     currentAngle = angle;
-    leftEncoderTick = Robot.driveBase.getLeftEncoderPosition();
-    rightEncoderTick = Robot.driveBase.getRightEncoderPosition();
-    leftVelocity = Robot.driveBase.getLeftVelocity();
-    rightVelocity = Robot.driveBase.getRightVelocity();
+    leftEncoderTick = leftEncoderPosition;
+    rightEncoderTick = rightEncoderPosition;
+    this.leftVelocity = leftVelocity;
+    this.rightVelocity = rightVelocity;
     timeOfPose = System.currentTimeMillis();
   }
 
@@ -60,21 +60,21 @@ public class Pose {
     this.timeOfPose = timeOfPose;
   }
 
-  public Pose(long lEncoderTick, long rEncoderTick, double angle, long currRobotX, long currRobotY) {
+  public Pose(long lEncoderTick, long rEncoderTick, double angle, long currRobotX, long currRobotY, int leftVelocity, int rightVelocity) {
     leftEncoderTick = lEncoderTick;
     rightEncoderTick = rEncoderTick;
     currentAngle = angle;
     this.currRobotX = currRobotX;
     this.currRobotY = currRobotY;
     this.timeOfPose = System.currentTimeMillis();
-    leftVelocity = Robot.driveBase.getLeftVelocity();
-    rightVelocity = Robot.driveBase.getRightVelocity();
+    this.leftVelocity = leftVelocity;
+    this.rightVelocity = rightVelocity;
   }
  
   /**
    * Updates the Pose's position and angle corresponding to the drivebase's ticks and NavX gyro reading.
    */
-  public void update(long newLeftEncoderTick, long newRightEncoderTick, double newAngle){
+  public void update(long newLeftEncoderTick, long newRightEncoderTick, double newAngle, int leftVelocity, int rightVelocity){
     
     long lDeltaTick = newLeftEncoderTick - leftEncoderTick;
     long rDeltaTick = newRightEncoderTick - rightEncoderTick;
@@ -82,20 +82,21 @@ public class Pose {
     
     double deltaAngle = (newAngle - currentAngle)/2;
 
-    currRobotX = (long) (Math.cos(deltaAngle*(Math.PI/180)) * hypotenuse);
-    currRobotY = (long) (Math.sin(deltaAngle*(Math.PI/180)) * hypotenuse);
+    currRobotX += (long) (Math.cos(deltaAngle*(Math.PI/180)) * hypotenuse);
+    currRobotY += (long) (Math.sin(deltaAngle*(Math.PI/180)) * hypotenuse);
 
     leftEncoderTick = newLeftEncoderTick;
     rightEncoderTick = newRightEncoderTick;
     currentAngle = newAngle;
 
-    leftVelocity = Robot.driveBase.getLeftVelocity();
-    rightVelocity = Robot.driveBase.getRightVelocity();
+    this.leftVelocity = leftVelocity;
+    this.rightVelocity = rightVelocity;
     timeOfPose = System.currentTimeMillis();
   }
 
+
   public void update() {
-    update(Robot.driveBase.getLeftEncoderPosition(), Robot.driveBase.getRightEncoderPosition(), Robot.sensors.getYawDouble());
+    update(Robot.driveBase.getLeftEncoderPosition(), Robot.driveBase.getRightEncoderPosition(), Robot.sensors.getYawDouble(), Robot.driveBase.getLeftVelocity(), Robot.driveBase.getRightVelocity());
   }
 
   public long getPosX(){
