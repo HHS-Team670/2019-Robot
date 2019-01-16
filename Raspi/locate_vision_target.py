@@ -61,8 +61,8 @@ def main():
     # resize_value = get_resize_values(vs.stream, image_width) # uncomment if screen resize is desired
 
     # This may not need to be calculated, can use Andra's precalculated values
-    vert_focal_length = find_vert_focal_length(vs.raw_read()[0], camera_fov_vertical)
-    hor_focal_length = find_hor_focal_length(vs.raw_read()[0], camera_fov_horizontal)
+    vert_focal_length = find_focal_length(vs.raw_read()[0], camera_fov_vertical)
+    hor_focal_length = find_focal_length(vs.raw_read()[0], camera_fov_horizontal)
 
     while True:
         # Read input image from video
@@ -115,7 +115,7 @@ def main():
 
         rect_x_midpoint, high_point = find_rectangle_highpoint(object_rects)
         vangle = find_vert_angle(input_image, high_point, vert_focal_length) # vangle - 'V'ertical angle
-        hangle = find_hor_angle(input_image, rect_x_midpoint, hor_focal_length) # hangle - 'H'orizontal angle
+        hangle = find_vert_angle(input_image, rect_x_midpoint, hor_focal_length) # hangle - 'H'orizontal angle
         depth = depth_from_angle(input_image, object_rects, vangle, hangle,
                                  known_object_height - known_camera_height)
         adjusted_depth = adjust_depth(depth, hangle)
@@ -128,14 +128,14 @@ def main():
         # Create output image to display in debug mode
         if DEBUG_MODE:
             output_image = draw_output_image(input_image,
-                                            object_rects,
-                                            adjusted_depth, 
-                                            vangle, 
-                                            hangle, 
-                                            hipoint = (int(rect_x_midpoint), int(high_point)))
+                                             object_rects,
+                                             adjusted_depth,
+                                             vangle,
+                                             hangle,
+                                             hipoint = (int(rect_x_midpoint), int(high_point)))
             if screen_resize != 1:
                 output_image = cv2.resize(output_image, (0, 0),
-                                        fx=screen_resize, fy=screen_resize)
+                                          fx=screen_resize, fy=screen_resize)
             cv2.imshow("Output", output_image)
 
             # Check for key presses
@@ -234,8 +234,6 @@ def read_video_image(capture, scale=1):
     return main_image
 
 
-# TODO: Make this take in HSV values from the start and not futz around
-# with converting rgb -> hsv
 def find_colored_object(image, capture_color='g', debug=False):
     '''
     Takes in an image and the capture color (r, g, b, or y).
@@ -331,7 +329,6 @@ def find_two_important_contours(image, debug=False):
             rec2 = cv2.minAreaRect(sec_center_con)
 
         if debug:
-            cv2.imshow("Blurred", blur_image)
             draw_image = image.copy()
             cv2.drawContours(draw_image, contours, -1, (255, 0, 0), 2)
             if rect is not -1:
@@ -342,7 +339,6 @@ def find_two_important_contours(image, debug=False):
                 box_2p=cv2.boxPoints(rec2)
                 box_2p = np.int0(box_2p)
                 cv2.drawContours(draw_image, [box_2p], 0, (255, 0, 0), 2)
-            cv2.imshow("Contours / Rectangle", image)
         return [rect, rec2]
     else:
         return [-1, -1]
@@ -367,28 +363,23 @@ def find_rectangle_highpoint(rectangles):
     return (mid_x, highest_y)
 
 
-def find_vert_focal_length(image, vert_fov):
+def find_focal_length(image, _fov):
     '''
-    Calculates the vertical focal length when given
-    the image and vertical FOV.
+    Calculates the vert/hor focal length when given
+    the image and vert/hor FOV.
     '''
     # Find image height
     height = image.shape[:2][0]
 
-    calc_focal_length = height / (2 * math.tan(math.radians(vert_fov / 2)))
+    calc_focal_length = height / (2 * math.tan(math.radians(_fov / 2)))
     return calc_focal_length
 
 
-def find_hor_focal_length(image, hor_fov):
-    width = image.shape[:2][1]
-
-    calc_focal_length = width / (2 * math.tan(math.radians(hor_fov / 2)))
-    return calc_focal_length
 
 
 def find_vert_angle(image, y, focal_length):
     '''
-    Returns the vertical angle of the given y point in an image.
+    Returns the vertical/horizontal angle of the given y/x point in an image.
     This is the angle that the robot needs to look up / down in order to
     directly face the image. Requires the actual image and focal
     length of the camera.
@@ -400,25 +391,8 @@ def find_vert_angle(image, y, focal_length):
     y_from_bottom = image_height-y
 
     # Calculate the angle using fancy formula
-    vertical_angle = -1 * math.degrees(math.atan((y_from_bottom - center_y) / focal_length))
-    return vertical_angle
-
-def find_hor_angle(image, x, focal_length):
-    '''
-    Returns the horizontal angle of the given x point in an image.
-    This is the angle that the robot needs to look left / right in order to
-    directly face the image. Requires the actual image and focal
-    length of the camera.
-    '''
-
-    # Find center x point
-    image_width = image.shape[:2][1]
-    center_x = image_width / 2
-    x_from_bottom = image_width-x
-
-    # Calculate the angle using fancy formula
-    horizontal_angle = -1 * math.degrees(math.atan((x_from_bottom - center_x) / focal_length))
-    return horizontal_angle
+    _angle = -1 * math.degrees(math.atan((y_from_bottom - center_y) / focal_length))
+    return _angle
 
 def depth_from_angle(image, rectangles, vangle, hangle, known_height):
     '''
