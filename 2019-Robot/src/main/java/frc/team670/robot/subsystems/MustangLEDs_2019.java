@@ -20,16 +20,16 @@ import edu.wpi.first.wpilibj.DriverStation;
 public class MustangLEDs_2019 {
 
 	//string representations for alliances 
-	final String blueAlliance = "1A";
-	final String redAlliance = "2A";
+	final byte[] blueAlliance ={'1','A'};
+	final byte[] redAlliance = {'2','A'};
 	//final String invalidAlliance="3A";
 	
 	//string representations for robot states
-	final String climbing="4R";
-	final String visionLock="2R";
-	final String forwardDrive="0R";
-	final String reverseDrive="1R";
-	final String stillDrive="3R";
+	final byte[] climbing={'4','R'};
+	final byte[] visionLock={'2','R'};
+	final byte[] forwardDrive={'0','R'};
+	final byte[] reverseDrive={'1','R'};
+	final byte[] stillDrive={'3','R'};
 	
 	//string representations for xFinal
 	// final String xFinalLeft="1X";
@@ -37,10 +37,10 @@ public class MustangLEDs_2019 {
 	// final String xFinalRight="3X";
 	
 	//variables for data which will be sent over server
-	String stateData=stillDrive;
-	String allianceData=blueAlliance;
+	byte[] stateData=stillDrive;
+	byte[] allianceData=blueAlliance;
 	// String xFinalData=xFinalCenter;
-	String data="";
+	byte[] data={blur};
 
 
 	// Socket Init
@@ -65,7 +65,6 @@ public class MustangLEDs_2019 {
 	public void changeAlliance(boolean b) { //true for blue, false for red
 		if(b) {
 			allianceData=blueAlliance;
-			System.out.println("Alliance is blue");
 		}
 		else {
 			allianceData=redAlliance;
@@ -91,7 +90,6 @@ public class MustangLEDs_2019 {
 	public void setClimbingData(boolean trigger){ // Updates if we are climbing
 		if(trigger == true){
 			stateData=climbing;
-			System.out.println("Robot is climbing");
 		}
 	}
 	
@@ -165,7 +163,8 @@ public class MustangLEDs_2019 {
 				
 				// Sends data to the Arduino/Ethernet Shield
 				try {
-					output.writeUTF(data);
+					byte[] toSend = {'a'};
+					output.write(toSend); // data.getBytes());
 					output.flush();
 					output.close();
 				} catch (Exception e) {
