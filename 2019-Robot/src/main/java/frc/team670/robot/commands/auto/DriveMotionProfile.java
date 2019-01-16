@@ -120,8 +120,15 @@ public class DriveMotionProfile extends Command {
     // TODO Think through what we want out of angle, maybe go off an initial angle
     Robot.sensors.resetNavX();
 
-    initialLeftEncoder = Robot.driveBase.getLeftEncoderPosition();
-    initialRightEncoder = Robot.driveBase.getRightEncoderPosition();
+    double initialLeftEncoder, initialRightEncoder;
+    if(isReversed) {
+      initialLeftEncoder = -1 * Robot.driveBase.getLeftEncoderPosition();
+      initialRightEncoder = -1 * Robot.driveBase.getRightEncoderPosition();
+    }
+    else {
+      initialLeftEncoder = Robot.driveBase.getLeftEncoderPosition();
+      initialRightEncoder = Robot.driveBase.getRightEncoderPosition();
+    }
 
     // Set up Robot for Auton Driving
     Robot.driveBase.initAutonDrive();
@@ -147,16 +154,6 @@ public class DriveMotionProfile extends Command {
     left.configurePIDVA(1.0, 0.0, 0.0, (1) / (generation_MaxVelocity), (0.0));
     right.configurePIDVA(1.0, 0.0, 0.0, (1) / (generation_MaxVelocity), (0.0));
 
-    if(isReversed){
-    double l = left.calculate(-Robot.driveBase.getLeftEncoderPosition());// Negate encoder count so robot thinks its going forward when going backwards
-    double r = right.calculate(-Robot.driveBase.getRightEncoderPosition());
-
-    double angleDifference = Pathfinder.boundHalfDegrees(Pathfinder.r2d(left.getHeading()) + -1 * Robot.sensors.getYawDouble());
-    double turn = 2 * (-1.0 / 80.0) * angleDifference; // We used 2 as it seemed to work better after trial and error
-			
-    Robot.driveBase.tankDrive(-(r - turn), -(l + turn));// Left Side Output, Right Side Output. We use the right output for the left side and the left side output for the right side, then negate everything
-    }
-
     Logger.consoleLog("Initialized DriveMotionProfile: InitialLeftEncoder: %s, InitialRightEncoder: %s, InitialAngle: %s", initialLeftEncoder, initialRightEncoder, Robot.sensors.getYawDouble());
 
     executeCount = 0;
@@ -171,14 +168,29 @@ public class DriveMotionProfile extends Command {
     /*
     * LEFT ENCODER IS BACKWARDS SO WE MULTIPLY IT'S VALUE BY -1 TO FLIP IT
     */
-    int leftEncoder = Robot.driveBase.getLeftEncoderPosition();
-    int rightEncoder = Robot.driveBase.getRightEncoderPosition();
+    int leftEncoder, rightEncoder;
+
+    if(isReversed) {
+      leftEncoder = -1 * Robot.driveBase.getLeftEncoderPosition();
+      rightEncoder = -1 * Robot.driveBase.getRightEncoderPosition();
+    }
+    else {
+      leftEncoder = Robot.driveBase.getLeftEncoderPosition();
+      rightEncoder = Robot.driveBase.getRightEncoderPosition();
+    }
+  
     // System.out.println("Right Encoder: " + rightEncoder + ", LeftEncoder: " + leftEncoder);
     double l = left.calculate(leftEncoder);
     double r = right.calculate(rightEncoder);
     
     // Calculates the angle offset for PID
-    double gyroHeading = Pathfinder.boundHalfDegrees(Robot.sensors.getYawDoubleForPathfinder());   // Assuming the gyro is giving a value in degrees
+    double gyroHeading;
+    if(isReversed) {
+      gyroHeading = Pathfinder.boundHalfDegrees(-1 * Robot.sensors.getYawDoubleForPathfinder());   // Assuming the gyro is giving a value in degrees
+    }
+    else {
+      gyroHeading = Pathfinder.boundHalfDegrees(Robot.sensors.getYawDoubleForPathfinder());   // Assuming the gyro is giving a value in degrees
+    }
     double desiredHeading = Pathfinder.boundHalfDegrees(Pathfinder.r2d(left.getHeading()));  // Should also be in degrees 
     // Make sure gyro and desired angle match up [-180, 180], navX reports the opposite orientation as Pathfinder expects
     double angleDifference = Pathfinder.boundHalfDegrees(desiredHeading - gyroHeading);    
