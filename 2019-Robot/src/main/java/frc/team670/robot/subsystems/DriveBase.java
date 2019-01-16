@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.revrobotics.CANEncoder;
+import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel;
@@ -38,6 +39,7 @@ public class DriveBase extends Subsystem {
   private DifferentialDrive driveTrain;
   private List<CANSparkMax> leftControllers, rightControllers;
   private List<CANSparkMax> allMotors;
+  private double P, I, D, FF;
 
   public DriveBase() {
     // left1 = new CANSparkMax(RobotMap.sparkLeftMotor1, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -62,6 +64,19 @@ public class DriveBase extends Subsystem {
     // setMotorsBrushless(allMotors);
 
     // driveTrain = new DifferentialDrive(left, right);
+
+    left1.getPIDController().setP(P, encodersPIDSlot);
+    left1.getPIDController().setI(I, encodersPIDSlot);
+    left1.getPIDController().setD(D, encodersPIDSlot);
+    left1.getPIDController().setFF(FF, encodersPIDSlot);
+    left1.getPIDController().setOutputRange(-1, 1);
+
+    right1.getPIDController().setP(P, encodersPIDSlot);
+    right1.getPIDController().setI(I, encodersPIDSlot);
+    right1.getPIDController().setD(D, encodersPIDSlot);
+    right1.getPIDController().setFF(FF, encodersPIDSlot);
+    right1.getPIDController().setOutputRange(-1, 1);
+
   }
 
   /**
@@ -346,3 +361,4 @@ public class DriveBase extends Subsystem {
     return right2;
   }
 }
+
