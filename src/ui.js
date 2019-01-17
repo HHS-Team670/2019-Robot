@@ -31,9 +31,12 @@ NetworkTables.addKeyListener('/SmartDashboard/gyro', (key, value) => {
   ui.navx.arm.style.transform = `rotate(${angle}deg)`;
 });
 
-// NetworkTables.addKeyListener('/SmartDashboard/Safety\ Mode\ Enabled', (key, value) => {
-//   document.getElementById('test').innerHTML = value;
-// });
+NetworkTables.addKeyListener('/SmartDashboard/cameraSource', (key, value) => {
+  if (value == 'next') {
+    window.webContents.reload();
+    // location.reload();
+  }
+});
 
 var keys = [];
 
@@ -41,10 +44,10 @@ window.onkeyup = function(event) {
     let key = event.key;
 
     if (key == '9') {
-      keys = [];
-    } else if (key == '0') {
       var toRemove = keys.pop();
       highlight(getMap(toRemove), 'clear');
+    } else if (key == '0') {
+      // toggle arm heights
     } else if (key == 'w') {
       finalize();
       keys = [];
@@ -55,15 +58,20 @@ window.onkeyup = function(event) {
         highlight(getMap(key), 'blue');
       }
     }
-
-    document.getElementById('test').innerHTML = keys;
 }
 
 // returns the value the key is mapped to
 function getMap(key) {
-  if (key == 'a') return 'left-rocket-top';
-  if (key == 'j') return 'left-rocket-middle';
-  if (key == 's') return 'left-rocket-bottom';
+  /*
+  a b c d
+  j k l m
+  s t u v
+  1 2 3 4
+  9 0 a w
+  */
+
+  if (key == 'a') return 'left-rocket-middle';
+  if (key == 'j') return 'left-rocket-bottom';
   if (key == 'b') return 'left-cargo-far';
   if (key == 'k') return 'left-cargo-mid';
   if (key == 't') return 'left-cargo-close';
@@ -72,12 +80,11 @@ function getMap(key) {
   if (key == 'c') return 'right-cargo-far';
   if (key == 'l') return 'right-cargo-mid';
   if (key == 'u') return 'right-cargo-close';
-  if (key == 'd') return 'right-rocket-top';
-  if (key == 'm') return 'right-rocket-middle';
-  if (key == 'v') return 'right-rocket-bottom';
-  if (key == '!') return 'left-loading-cargo';
+  if (key == 'd') return 'right-rocket-middle';
+  if (key == 'm') return 'right-rocket-bottom';
+  if (key == 's') return 'left-loading-cargo';
   if (key == '1') return 'left-loading-plate';
-  if (key == '$') return 'right-loading-cargo';
+  if (key == 'v') return 'right-loading-cargo';
   if (key == '4') return 'right-loading-plate';
 
   if (key == '9') return 'clear';
@@ -107,20 +114,20 @@ function finalize() {
   highlight(getMap(keys[0]), 'green');
   highlight(getMap(keys[1]), 'red');
 
-  var intakeStart = 'plate';
+  var armStart = 'plate';
   if (getMap(keys[0]).includes('cargo')) {
-    intakeStart = 'cargo';
+    armStart = 'cargo';
   }
 
-  var intakeEnd = 'bottom';
+  var armEnd = 'bottom';
   if (getMap(keys[1]).includes('top')) {
-    intakeEnd = 'top';
+    armEnd = 'top';
   } else if (getMap(keys[1]).includes('middle')) {
-    intakeEnd = 'middle';
+    armEnd = 'middle';
   }
 
   NetworkTables.putValue('/SmartDashboard/path/robot-start', keys[0]);
   NetworkTables.putValue('/SmartDashboard/path/robot-end', keys[1]);
-  NetworkTables.putValue('/SmartDashboard/path/intake-start', intakeStart);
-  NetworkTables.putValue('/SmartDashboard/path/intake-end', intakeEnd);
+  NetworkTables.putValue('/SmartDashboard/path/arm-start', armStart);
+  NetworkTables.putValue('/SmartDashboard/path/arm-end', armEnd);
 }
