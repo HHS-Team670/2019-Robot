@@ -23,7 +23,7 @@ public class MustangPi {
     private VisionValues wallTarget; 
 
     // The keys for the NetworkTable entries that the raspberry pi is putting up. Ensure that these are placed on the raspi also. Maybe make a shared config file
-    private static final String[] raspiKeys = new String[] {"wallTarget"};
+    private static final String[] raspiKeys = new String[] {"reflect_tape_vision_data"}; // Placeholder key. IRL use wallTarget, highTarget, etc.
     // The name of the subtable set on the raspberry pi
     private static final String tableName = "raspberryPi";
 
