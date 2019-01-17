@@ -5,50 +5,62 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.commands;
+package frc.team670.robot.commands.auto;
 
 import edu.wpi.first.wpilibj.command.Command;
+import frc.team670.robot.Robot;
 import frc.team670.robot.utils.Logger;
 
 /**
  * An example command.  You can replace me with your own command.
  */
-public class ExampleCommand extends Command {
-  public ExampleCommand() {
-    // Use requires() here to declare subsystem dependencies
-    // requires(Robot.m_subsystem);
+public class TimeDrive extends Command {
+
+    private double speed, seconds;
+    private int executeCounter;
+
+  public TimeDrive(double seconds, double speed) {
+    this.speed = speed;
+    this.seconds = seconds;
+    executeCounter = 0;
+    requires(Robot.driveBase);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    Logger.consoleLog("Initialized Example");
+    setTimeout(seconds);
+    Logger.consoleLog("Speed: %s Seconds: %s", speed, seconds);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
-  protected void execute() {
-    int example = 1;
-    Logger.consoleLog("Executing Example: %s", example);
+  protected void execute() { 
+    Robot.driveBase.tankDrive(speed, speed, false);
+    if (executeCounter % 10 == 0) {
+        Logger.consoleLog("Timed Driving");
+    }
+    executeCounter++;
+
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return false;
+    return isTimedOut();
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Logger.consoleLog("Finished Example");
+    Robot.driveBase.stop();
+    Logger.consoleLog("Speed: %s Seconds: %s", speed, seconds);
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    Logger.consoleLog("Interrupted Example");
     end();
   }
 }

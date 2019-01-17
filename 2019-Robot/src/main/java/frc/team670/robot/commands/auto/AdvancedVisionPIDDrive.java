@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 import com.revrobotics.CANEncoder;
 
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
@@ -51,7 +52,7 @@ public class AdvancedVisionPIDDrive extends Command {
 
   public AdvancedVisionPIDDrive() {
     requires(Robot.driveBase);
-    distanceController = new PIDController(P, I, D, F, new TwoEncoder_PIDSource(Robot.driveBase.getLeftEncoder(), Robot.driveBase.getRightEncoder()), null);
+    distanceController = new PIDController(P, I, D, F, new TwoEncoder_PIDSource(Robot.driveBase.getLeftDIOEncoder(), Robot.driveBase.getRightDIOEncoder()), null);
     headingController = new PIDController (P, I, D, F, Robot.sensors.getZeroableNavXPIDSource(), null);
     
     headingController.setInputRange(-180.0,  180.0);
@@ -85,7 +86,8 @@ public class AdvancedVisionPIDDrive extends Command {
   @Override
   protected void execute() {
 
-    robotPosition.update((long)Robot.driveBase.getLeftEncoderPosition(), (long)Robot.driveBase.getRightEncoderPosition(), Robot.sensors.getYawDouble());
+    robotPosition.update((long)Robot.driveBase.getLeftDIOEncoderPosition(), (long)Robot.driveBase.getRightDIOEncoderPosition(), Robot.sensors.getYawDouble(), 
+    Robot.driveBase.getLeftDIOEncoderVelocityTicks(), Robot.driveBase.getRightDIOEncoderVelocityTicks());
 
     double[] visionData = visionDistanceAndPose.getAngleAndDistance();
 
@@ -104,7 +106,7 @@ public class AdvancedVisionPIDDrive extends Command {
     double leftSpeed = distanceOutput - headingOutput;
     double rightSpeed = distanceOutput + headingOutput;
 
-    Robot.driveBase.tankDrive(leftSpeed, rightSpeed);
+    Robot.driveBase.tankDrive(leftSpeed, rightSpeed, false);
     if (executeCount % 5 == 0) {
       Logger.consoleLog("Executing AdvancedVisionPIDDrive: headingOutput:%s, distanceOutput:%s, leftSpeed:%s, rightSpeed:%s", headingOutput, distanceOutput, leftSpeed, rightSpeed);
     }
@@ -147,17 +149,17 @@ public class AdvancedVisionPIDDrive extends Command {
   }
 
   private class TwoEncoder_PIDSource implements PIDSource {
-    private CANEncoder left, right;
+    private Encoder left, right;
 
     private double initialLeft, initialRight;
 
     private PIDSourceType pidSourceType; 
 
-    public TwoEncoder_PIDSource(CANEncoder left, CANEncoder right) {
+    public TwoEncoder_PIDSource(Encoder left, Encoder right) {
         this.left = left;
         this.right = right;
-        initialLeft = left.getPosition();
-        initialRight = right.getPosition();
+        initialLeft = left.get();
+        initialRight = right.get();
         pidSourceType = PIDSourceType.kDisplacement;
     }
     
@@ -168,8 +170,8 @@ public class AdvancedVisionPIDDrive extends Command {
 
     @Override
     public double pidGet() {
-        double displacementLeft = left.getPosition() - initialLeft;
-        double displacementRight = right.getPosition() - initialRight;
+        double displacementLeft = left.get() - initialLeft;
+        double displacementRight = right.get() - initialRight;
         return MathUtils.convertDriveBaseTicksToInches((displacementLeft + displacementRight) / 2);
     }
 
@@ -241,9 +243,9 @@ public class AdvancedVisionPIDDrive extends Command {
         targetDistance = calcDistanceWithTimeAdjustment(targetX, targetY, currentPose.getPosX(), currentPose.getPosY());
 
         // Stores the lastTarget in case we lose it.
-        lastTarget = new Pose(currentPose.getPosX() + targetDistance * Math.cos(Math.toRadians(targetAngle)),
-                              currentPose.getPosY() + targetDistance * Math.sin(Math.toRadians(targetAngle)),
-                              currentPose.getRobotAngle());
+        lastTarget = new Pose(((long)(currentPose.getPosX() + targetDistance * Math.cos(Math.toRadians(targetAngle)))),
+                              ((long) (currentPose.getPosY() + targetDistance * Math.sin(Math.toRadians(targetAngle)))),
+                              currentPose.getRobotAngle(), Robot.driveBase.getLeftDIOEncoderVelocityTicks(), Robot.driveBase.getRightDIOEncoderVelocityTicks());
       }
       lastPoses.remove(0); // Remove the oldes Pose from lastPoses so we don't accumulate too many.
       return new double[]{targetAngle, targetDistance};

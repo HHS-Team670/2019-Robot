@@ -39,12 +39,13 @@ public class XboxRocketLeagueDrive extends InstantCommand {
 
 
     // Decides whether or not to smooth the Steering and Trigger. Smoothing helps reduce jerkiness when driving.
-    if(smoothRocketLeagueSteer){
-      steer = JoystickUtils.smoothInput(steer);
-    }
-    if(smoothRocketLeagueTrigger){
-      speed = JoystickUtils.smoothInput(speed);
-    }
+    // tankDrive actually does this for us automatically, so no need to do it ourselves
+    // if(smoothRocketLeagueSteer){
+    //   steer = JoystickUtils.smoothInput(steer);
+    // }
+    // if(smoothRocketLeagueTrigger){
+    //   speed = JoystickUtils.smoothInput(speed);
+    // }
 
     if(isReversed) {
       steer *= -1;
