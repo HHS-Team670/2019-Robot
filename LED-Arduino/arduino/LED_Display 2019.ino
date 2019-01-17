@@ -8,14 +8,14 @@
  * 
  * @author arnav kulkarni, arnuv tandon
 */
-                                                    //Imports:
+#include <math.h>                                                   //Imports:
 #include <SPI.h>                                    //SPI interface for interfacing with Ethernet Shield
 #include <Ethernet.h>                               //Ethernet library for creating a client instance
 #include <Adafruit_NeoPixel.h>                      //Adafruit library for led methods
 
 Adafruit_NeoPixel strip =                           //Defines an Adafruit Neopixel strip, containing 120 LEDs, using 
 Adafruit_NeoPixel(120, 6, NEO_GRB + NEO_KHZ800);    //Arduino pin #6, and using the GRB format at 800KHZ bitstream
-  
+
 EthernetClient robotClient;                         //Defines a client to be used to connect to the Robo Rio
 byte mac[] =                                        //Creates a mac address for use in defining an Ethernet instance
 {                                                  
@@ -44,7 +44,7 @@ const String stillDrive = "3R";
 String dataString = "";                             //Used for building a string to then splice into multiple parts to control the LEDs
 String stateData = stillDrive;                      //Sets default values for states
 String allianceData = blueAlliance;
-
+ 
 //sets the entire strip to a specified color
 void setStripColor(int r,int g, int b)
 {
@@ -143,7 +143,6 @@ void setup()
 
 void loop()
 {                                                   //Ran indefinitly after setup()
-RunningLights(100,0,255,10);
   connectionTimer++;                                //Adds a count to the ConnectionTimer
   if(robotClient.available())                       //Runs when bytes are available to read
   {                                                 
