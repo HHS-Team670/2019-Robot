@@ -450,8 +450,12 @@ def draw_output_image(image, rectanglelist, depth, vangle, hangle, hipoint=None)
                 cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 255), 3)
     if hipoint is not None:
         cv2.circle(output_image, hipoint, 10, (0, 255, 255), thickness=10)
-    return output_image
+    
+    height, width = output_image.shape[:2]
+    cv2.line(output_image, (round(width / 2), 0), (round(width / 2), height), (255, 0, 0), thickness=4)
+    cv2.line(output_image, (0 , round(height / 2)), (width, round(height / 2)), (255, 0, 0), thickness=4)
 
+    return output_image
 
 # causes program to run main method when program is run, but allows modular import allows
 if __name__ == "__main__":
