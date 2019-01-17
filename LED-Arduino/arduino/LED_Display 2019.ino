@@ -65,9 +65,16 @@ void Strobe(byte red, byte green, byte blue, int StrobeCount, int FlashDelay, in
     delay(FlashDelay);
   }
 }
-void randomStrobe(byte red, byte green, byte blue, int StrobeCount, int FlashDelay, int EndPause){
+void randomStrobe(int StrobeCount, int FlashDelay, int EndPause){
+  
   for(int j = 0; j < StrobeCount; j++) {
-    setStripColor(red,green,blue);
+    for(int i=0;i<=strip.numPixels();i++){
+      long randRed=random(1,255);
+    long randGreen=random(1,255);
+    long randBlue=random(1,255);
+      strip.setPixelColor(i,randRed,randGreen,randBlue);
+    }
+    strip.show();
     strip.show();
     delay(FlashDelay);
     reset();
@@ -143,6 +150,7 @@ void setup()
 
 void loop()
 {                                                   //Ran indefinitly after setup()
+reset();
   connectionTimer++;                                //Adds a count to the ConnectionTimer
   if(robotClient.available())                       //Runs when bytes are available to read
   {                                                 
