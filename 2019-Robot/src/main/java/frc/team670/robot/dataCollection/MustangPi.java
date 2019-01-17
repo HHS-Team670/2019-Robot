@@ -31,13 +31,14 @@ public class MustangPi {
 
     public MustangPi() {
         this(raspiKeys);
-        wallTarget = new VisionValues(raspiKeys[0]);
     }
 
     private MustangPi(String[] keys) {
-        //for(String key : keys){
-          //  entries.put(key, new NetworkTableObject(key));
-        //}
+        entries = new HashMap<String, NetworkTableObject>();
+        for(String key : keys){
+           entries.put(key, new NetworkTableObject(key));
+        }
+        wallTarget = new VisionValues(raspiKeys[0]);
     }
 
     private class NetworkTableObject {
