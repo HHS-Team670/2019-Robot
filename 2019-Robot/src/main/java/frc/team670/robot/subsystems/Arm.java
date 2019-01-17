@@ -52,6 +52,7 @@ public class Arm extends Subsystem {
      * Add in all of the states.
      */
 
+     // This is probably not necessary, but its not like its going to take too long and it only needs to run once.
      Collections.sort(allowableStates, new Comparator<ArmState>() { // Sorts the states by their LegalState IDs
        @Override
       public int compare(ArmState lhs, ArmState rhs) {
@@ -156,10 +157,7 @@ public class Arm extends Subsystem {
       }
 
       /*
-       * Implement this so it searches up the array of transitions towards the destination's ID for a transition
-       * to the destination state, then adds up all the steps to get there and puts them into the CommandGroup.
-       * This is essentially a recursion problem, it needs to find the shortest route. Alternatively, we could just 
-       * hard code paths between every single state by chaining multiple paths together lol.
+       * Implement this so it searches for the quickest path of transititons to the destination.
        */
 
       return result;
