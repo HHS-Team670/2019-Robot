@@ -179,8 +179,7 @@ public class DriveBase extends Subsystem {
   }
 
 /**
- * Return the left CANEncoder Object
- * @deprecated Do not access these for PID Controllers anymore, use the internal PIDControllers for the SparkMAX motors.
+ * Return the left CANEncoder Object. Do not access this for PID Controllers anymore, use the internal PIDControllers for the SparkMAX motors.
  */
   public CANEncoder getLeftSparkEncoder() {
     return left1.getEncoder();
@@ -188,8 +187,7 @@ public class DriveBase extends Subsystem {
   }
 
 /**
- * Return the right CanEncoder Object
- * @deprecated Do not access these for PID Controllers anymore, use the internal PIDControllers for the SparkMAX motors.
+ * Return the right CanEncoder Object. Do not access this for PID Controllers anymore, use the internal PIDControllers for the SparkMAX motors.
  */
   public CANEncoder getRightSparkEncoder(){
     return right1.getEncoder();
