@@ -66,9 +66,9 @@ public class MustangPi {
          */
         public double[] getValue() throws IllegalStateException {
             if(entry.getType().equals(NetworkTableType.kDouble)) {
-                return new double[] {entry.getDouble(RobotConstants.VISION_ERROR_CODE)};
+                return new double[] {entry.getDouble(RobotConstants.VISION_ERROR_CODE), RobotConstants.VISION_ERROR_CODE, RobotConstants.VISION_ERROR_CODE};
             } else if(entry.getType().equals(NetworkTableType.kDoubleArray)) {
-                return entry.getDoubleArray(new double[]{});
+                return entry.getDoubleArray(new double[]{RobotConstants.VISION_ERROR_CODE, RobotConstants.VISION_ERROR_CODE, RobotConstants.VISION_ERROR_CODE});
             } else {
                 throw new IllegalStateException("Entry was not a Double, Double Array, or Unassigned");
             }
