@@ -62,15 +62,14 @@ public class MustangPi {
         /**
          * Gets the value of the entry, this will be returned as a Double Array. Make sure to have a try/catch block for the Exception
          * @return A Double Array with the value or values last received from the pi.
-         * @exception IllegalStateException Throws if the value received from the pi was Unassigned or not a Double or Double Array
          */
-        public double[] getValue() throws IllegalStateException {
+        public double[] getValue() {
             if(entry.getType().equals(NetworkTableType.kDouble)) {
                 return new double[] {entry.getDouble(RobotConstants.VISION_ERROR_CODE), RobotConstants.VISION_ERROR_CODE, RobotConstants.VISION_ERROR_CODE};
             } else if(entry.getType().equals(NetworkTableType.kDoubleArray)) {
                 return entry.getDoubleArray(new double[]{RobotConstants.VISION_ERROR_CODE, RobotConstants.VISION_ERROR_CODE, RobotConstants.VISION_ERROR_CODE});
             } else {
-                throw new IllegalStateException("Entry was not a Double, Double Array, or Unassigned");
+                return new double[]{RobotConstants.VISION_ERROR_CODE, RobotConstants.VISION_ERROR_CODE, RobotConstants.VISION_ERROR_CODE};
             }
         }
 
