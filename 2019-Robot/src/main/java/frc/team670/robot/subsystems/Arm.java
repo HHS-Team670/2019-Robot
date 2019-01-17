@@ -87,7 +87,7 @@ public class Arm extends Subsystem {
    * Represents the different possible states of the Arm
    */
   public enum LegalState {
-    NEUTRAL(0), CUBE_PICKUP(1);
+    NEUTRAL(0), CARGO_PICKUP(1);
 
     private final int ID;
 
@@ -159,6 +159,10 @@ public class Arm extends Subsystem {
       /*
        * Implement this so it searches for the quickest path of transititons to the destination.
        * The A* Search Algorithm might be a good choice for this: https://www.geeksforgeeks.org/a-search-algorithm/ 
+       * Otherwise you could potentially do a breadth-first search, but A* will work best if we weight certain transitions
+       * for the time spent performing them. Currently this is measured as a tick count since we have no way of actually
+       * timing it.
+       * Long Stanford explanation on this: https://cs.stanford.edu/people/abisee/gs.pdf
        */
 
       return result;

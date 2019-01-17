@@ -9,11 +9,11 @@ package frc.team670.robot.commands.arm.armTransitions;
 
 import frc.team670.robot.subsystems.Arm.LegalState;
 
-public class NeutralToCubePickup extends ArmTransition {
+public class NeutralToCargoPickup extends ArmTransition {
   
   @Override
   public LegalState getDestination() {
-    return LegalState.CUBE_PICKUP;
+    return LegalState.CARGO_PICKUP;
   }
   
   @Override
@@ -21,10 +21,15 @@ public class NeutralToCubePickup extends ArmTransition {
     return LegalState.NEUTRAL;
   }
 
+  @Override
+  public int getTickLength() {
+    return 0; // Set this
+  }
+
   /**
    * Add your docs here.
    */
-  public NeutralToCubePickup() {
+  public NeutralToCargoPickup() {
     // Add Commands here:
     // e.g. addSequential(new Command1());
     // addSequential(new Command2());
