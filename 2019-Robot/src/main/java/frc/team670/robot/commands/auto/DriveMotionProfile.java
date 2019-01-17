@@ -122,12 +122,12 @@ public class DriveMotionProfile extends Command {
 
     double initialLeftEncoder, initialRightEncoder;
     if(isReversed) {
-      initialLeftEncoder = -1 * Robot.driveBase.getLeftEncoderPosition();
-      initialRightEncoder = -1 * Robot.driveBase.getRightEncoderPosition();
+      initialLeftEncoder = -1 * Robot.driveBase.getLeftDIOEncoderPosition();
+      initialRightEncoder = -1 * Robot.driveBase.getRightDIOEncoderPosition();
     }
     else {
-      initialLeftEncoder = Robot.driveBase.getLeftEncoderPosition();
-      initialRightEncoder = Robot.driveBase.getRightEncoderPosition();
+      initialLeftEncoder = Robot.driveBase.getLeftDIOEncoderPosition();
+      initialRightEncoder = Robot.driveBase.getRightDIOEncoderPosition();
     }
 
     // Set up Robot for Auton Driving
@@ -137,12 +137,13 @@ public class DriveMotionProfile extends Command {
     // 'getEncPosition' function.
     // 1000 is the amount of encoder ticks per full revolution
     // Wheel Diameter is the diameter of your wheels (or pulley for a track system) in meters
+
     if(isReversed){
-      left.configureEncoder(-1 * Robot.driveBase.getLeftEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.WHEEL_DIAMETER);
-      right.configureEncoder(-1 * Robot.driveBase.getRightEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.WHEEL_DIAMETER);  
+      left.configureEncoder(-1 * Robot.driveBase.getLeftDIOEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.WHEEL_DIAMETER);
+      right.configureEncoder(-1 * Robot.driveBase.getRightDIOEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.WHEEL_DIAMETER);  
     } else{
-      left.configureEncoder(Robot.driveBase.getLeftEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.WHEEL_DIAMETER);
-      right.configureEncoder(Robot.driveBase.getRightEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.WHEEL_DIAMETER);  
+      left.configureEncoder(Robot.driveBase.getLeftDIOEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.WHEEL_DIAMETER);
+      right.configureEncoder(Robot.driveBase.getRightDIOEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.WHEEL_DIAMETER);  
     }
 
     // The first argument is the proportional gain. Usually this will be quite high
@@ -168,14 +169,15 @@ public class DriveMotionProfile extends Command {
     /*
     * LEFT ENCODER IS BACKWARDS SO WE MULTIPLY IT'S VALUE BY -1 TO FLIP IT
     */
+
     int leftEncoder, rightEncoder;
     if(isReversed) {
-      leftEncoder = -1 * Robot.driveBase.getLeftEncoderPosition();
-      rightEncoder = -1 * Robot.driveBase.getRightEncoderPosition();
+      leftEncoder = -1 * Robot.driveBase.getLeftDIOEncoderPosition();
+      rightEncoder = -1 * Robot.driveBase.getRightDIOEncoderPosition();
     }
     else {
-      leftEncoder = Robot.driveBase.getLeftEncoderPosition();
-      rightEncoder = Robot.driveBase.getRightEncoderPosition();
+      leftEncoder = Robot.driveBase.getLeftDIOEncoderPosition();
+      rightEncoder = Robot.driveBase.getRightDIOEncoderPosition();
     }
   
     // System.out.println("Right Encoder: " + rightEncoder + ", LeftEncoder: " + leftEncoder);
@@ -224,7 +226,7 @@ public class DriveMotionProfile extends Command {
   protected void end() {
     Robot.driveBase.tankDrive(0, 0);
     Logger.consoleLog("Ended. EndingAngle: %s, EndingLeftTicks: %s, EndingRightTicks: %s", Pathfinder.boundHalfDegrees(Robot.sensors.getYawDoubleForPathfinder()), 
-                     (Robot.driveBase.getLeftEncoderPosition() - initialLeftEncoder), (Robot.driveBase.getRightEncoderPosition() - initialRightEncoder));
+                     (Robot.driveBase.getLeftDIOEncoderPosition() - initialLeftEncoder), (Robot.driveBase.getRightDIOEncoderPosition() - initialRightEncoder));
   }
 
   // Called when another command which requires one or more of the same
