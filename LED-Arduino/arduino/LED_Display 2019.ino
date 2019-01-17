@@ -65,6 +65,16 @@ void Strobe(byte red, byte green, byte blue, int StrobeCount, int FlashDelay, in
     delay(FlashDelay);
   }
 }
+void randomStrobe(byte red, byte green, byte blue, int StrobeCount, int FlashDelay, int EndPause){
+  for(int j = 0; j < StrobeCount; j++) {
+    setStripColor(red,green,blue);
+    strip.show();
+    delay(FlashDelay);
+    reset();
+    strip.show();
+    delay(FlashDelay);
+  }
+}
 void CylonBounce(byte red, byte green, byte blue, int EyeSize, int SpeedDelay, int ReturnDelay){
 
   for(int i = 0; i < strip.numPixels()-EyeSize-2; i++) {
@@ -94,6 +104,27 @@ void CylonBounce(byte red, byte green, byte blue, int EyeSize, int SpeedDelay, i
   delay(ReturnDelay);
 }
 
+void RunningLights(byte red, byte green, byte blue, int WaveDelay) {
+  
+  int Position=0;
+  
+  for(int j=0; j<strip.numPixels()*2; j++)
+  {
+      Position++; // = 0; //Position + Rate;
+      for(int i=0; i<strip.numPixels(); i++) {
+        // sine wave, 3 offset waves make a rainbow!
+        //float level = sin(i+Position) * 127 + 128;
+        //setPixel(i,level,0,0);
+        //float level = sin(i+Position) * 127 + 128;
+        strip.setPixelColor(i,((sin(i+Position) * 127 + 128)/255)*red,
+                   ((sin(i+Position) * 127 + 128)/255)*green,
+                   ((sin(i+Position) * 127 + 128)/255)*blue);
+      }
+      
+      strip.show();
+      delay(WaveDelay);
+  }
+}
 //Sets the strip to black(no color)
 void reset()
 {
@@ -112,7 +143,7 @@ void setup()
 
 void loop()
 {                                                   //Ran indefinitly after setup()
-    
+RunningLights(100,0,255,10);
   connectionTimer++;                                //Adds a count to the ConnectionTimer
   if(robotClient.available())                       //Runs when bytes are available to read
   {                                                 
