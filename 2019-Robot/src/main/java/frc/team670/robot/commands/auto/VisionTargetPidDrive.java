@@ -79,7 +79,7 @@ public class VisionTargetPidDrive extends Command {
   @Override
   protected void execute() {
 
-    robotPosition.update((long)Robot.driveBase.getLeftEncoderPosition(), (long)Robot.driveBase.getRightEncoderPosition(), Robot.sensors.getYawDouble());
+    robotPosition.update((long)Robot.driveBase.getLeftDIOEncoderPosition(), (long)Robot.driveBase.getRightDIOEncoderPosition(), Robot.sensors.getYawDouble(), Robot.driveBase.getLeftDIOEncoderVelocityTicks(), Robot.driveBase.getRightDIOEncoderVelocityTicks());
 
     /** changed output range to insure that the distanceController isn't going into a negative range */
     double distanceOutput = visionDistanceController.get() * -1;
@@ -94,7 +94,7 @@ public class VisionTargetPidDrive extends Command {
     double leftSpeed = distanceOutput - headingOutput;
     double rightSpeed = distanceOutput + headingOutput;
 
-    Robot.driveBase.tankDrive(leftSpeed, rightSpeed);
+    Robot.driveBase.tankDrive(leftSpeed, rightSpeed, false);
     if (executeCount % 5 == 0) {
       Logger.consoleLog("Executing VisionTargetPidDrive: headingOutput:%s, distanceOutput:%s, leftSpeed:%s, rightSpeed:%s", headingOutput, distanceOutput, leftSpeed, rightSpeed);
     }

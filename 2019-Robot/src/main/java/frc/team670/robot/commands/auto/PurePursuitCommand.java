@@ -66,7 +66,7 @@ public class PurePursuitCommand extends Command
         double wheelL = wheelVelocities.getX();
         double wheelR = wheelVelocities.getY();
 
-        Robot.driveBase.tankDrive(wheelL, wheelR);
+        Robot.driveBase.tankDrive(wheelL, wheelR, false);
 
     }
 

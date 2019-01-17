@@ -23,7 +23,7 @@ public class MustangPi {
     private VisionValues wallTarget; 
 
     // The keys for the NetworkTable entries that the raspberry pi is putting up. Ensure that these are placed on the raspi also. Maybe make a shared config file
-    private static final String[] raspiKeys = new String[] {"wallTarget"};
+    private static final String[] raspiKeys = new String[] {"reflect_tape_vision_data"}; // Placeholder key. IRL use wallTarget, highTarget, etc.
     // The name of the subtable set on the raspberry pi
     private static final String tableName = "raspberryPi";
 
@@ -31,13 +31,14 @@ public class MustangPi {
 
     public MustangPi() {
         this(raspiKeys);
-        wallTarget = new VisionValues(raspiKeys[0]);
     }
 
     private MustangPi(String[] keys) {
-        //for(String key : keys){
-          //  entries.put(key, new NetworkTableObject(key));
-        //}
+        entries = new HashMap<String, NetworkTableObject>();
+        for(String key : keys){
+           entries.put(key, new NetworkTableObject(key));
+        }
+        wallTarget = new VisionValues(raspiKeys[0]);
     }
 
     private class NetworkTableObject {
@@ -61,15 +62,14 @@ public class MustangPi {
         /**
          * Gets the value of the entry, this will be returned as a Double Array. Make sure to have a try/catch block for the Exception
          * @return A Double Array with the value or values last received from the pi.
-         * @exception IllegalStateException Throws if the value received from the pi was Unassigned or not a Double or Double Array
          */
-        public double[] getValue() throws IllegalStateException {
+        public double[] getValue() {
             if(entry.getType().equals(NetworkTableType.kDouble)) {
-                return new double[] {entry.getDouble(RobotConstants.VISION_ERROR_CODE)};
+                return new double[] {entry.getDouble(RobotConstants.VISION_ERROR_CODE), RobotConstants.VISION_ERROR_CODE, RobotConstants.VISION_ERROR_CODE};
             } else if(entry.getType().equals(NetworkTableType.kDoubleArray)) {
-                return entry.getDoubleArray(new double[]{});
+                return entry.getDoubleArray(new double[]{RobotConstants.VISION_ERROR_CODE, RobotConstants.VISION_ERROR_CODE, RobotConstants.VISION_ERROR_CODE});
             } else {
-                throw new IllegalStateException("Entry was not a Double, Double Array, or Unassigned");
+                return new double[]{RobotConstants.VISION_ERROR_CODE, RobotConstants.VISION_ERROR_CODE, RobotConstants.VISION_ERROR_CODE};
             }
         }
 
