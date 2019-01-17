@@ -28,39 +28,20 @@ IPAddress robotIp(10,6,70,2);                       //Defines the robot's IP
   
   //string representations for alliances
   const String blueAlliance = "1A";
-	const String redAlliance = "2A";
+  const String redAlliance = "2A";
 //const String invalidAlliance= "3A";
   //string representations for robot states
-	const String climbing= "4R";
-	const String visionLock= "2R";
-	const String forwardDrive= "0R";
-	const String reverseDrive= "1R";
-	const String stillDrive= "3R";
-  // //string representations for xFinal
-	// const String xFinalLeft= "1X";
-	// const String xFinalCenter= "2X";
-	// const String xFinalRight= "3X";
-  //variables to store data recived from server
+  const String climbing= "4R";
+  const String visionLock= "2R";
+  const String forwardDrive= "0R";
+  const String reverseDrive= "1R";
+  const String stillDrive= "3R";
+  
   String dataString = "";                             //Used for building a string to then splice into multiple parts to control the LEDs
   String stateData=stillDrive;
   String allianceData=blueAlliance;
-  //String allianceData=invalidAlliance;
-  // String xFinalData=xFinalCenter;
+ 
   
-
-
-// int asciiArray[] = {                                //Please use the ASCII converter at https://www.arduino.cc/en/Reference/ASCIIchart
-//     32,44,45,48,49,50,51,52,53,54,55,56,            //to translate ASCII and add more possible characters to be readable
-//     57,97,98,99,100,101,102,103,104,105,            //Used for comparing data points to their ASCII counterparts
-//     106,107,108,109,110,111,112,113,114,
-//     115,116,117,118,119,120,121,122
-// };
-
-// char translationArray[] = {                         //Array housing characters to convert from ASCII to characters
-//   " ,-0123456789abcdefghijklmnopqrstuvwxyz"         //These are the usable characters for transferring data
-// };
-                                        //Alliance color blue value
-
 //sets the entire strip to a specified color
 void setStripColor(int r,int g, int b){
   for(int i=0;i<=numberOfPixels;i++){
@@ -85,21 +66,24 @@ void setup() {                                      //Sets up constants before p
 void loop(){
                                                     //Ran indefinitly after setup()
   connectionTimer++;                                //Adds a count to the ConnectionTimer
-  
   if(robotClient.available()){                      //Runs when bytes are available to read
     connectionTimer = 0;                            //Sets the connectionTimer countdown to zero
     dataString = "";                                //Resets our final data string
     while(robotClient.available()){                 //Processes data until program is out of readable bytes
-      dataString = dataString + robotClient.read();
+      char robotRead=(char)robotClient.read();
+      dataString = dataString + robotRead;
+     // Serial.print(robotRead);
+     
           //Combines the character with the full data string    
     }
   }
     //parses dataString and receives corresponding values from Java program
     //dataString.remove(0,2);                         //Removes two garbage characters from the start of the string
-    stateData = dataString.substring(0,1);           //Grabs the expected location of various data, puts it in variables
-    allianceData = dataString.substring(2,3);              
+    stateData = dataString.substring(0,2);           //Grabs the expected location of various data, puts it in variables
+    allianceData = dataString.substring(2,4);              
     // xFinalData=dataString.substring(4,5);
-
+    Serial.print(stateData+"  state");
+    Serial.print(allianceData+"   alliance");
     
     
   //   if(xFinalData==xFinalLeft){                              //If xFinal is equal to 1, it is to the left of the camera

@@ -97,7 +97,7 @@ public class Robot extends TimedRobot {
     //   savedTime = System.currentTimeMillis();
     // }  
       
-      leds.setClimbingData(true);//we climb
+      leds.setReverseData(true);//we climb
       
     
     
