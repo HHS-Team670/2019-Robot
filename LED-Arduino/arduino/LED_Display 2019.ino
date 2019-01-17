@@ -55,6 +55,45 @@ void setStripColor(int r,int g, int b)
   strip.show();
 }
 
+void Strobe(byte red, byte green, byte blue, int StrobeCount, int FlashDelay, int EndPause){
+  for(int j = 0; j < StrobeCount; j++) {
+    setStripColor(red,green,blue);
+    strip.show();
+    delay(FlashDelay);
+    reset();
+    strip.show();
+    delay(FlashDelay);
+  }
+}
+void CylonBounce(byte red, byte green, byte blue, int EyeSize, int SpeedDelay, int ReturnDelay){
+
+  for(int i = 0; i < strip.numPixels()-EyeSize-2; i++) {
+    reset();
+    strip.setPixelColor(i, red/10, green/10, blue/10);
+    for(int j = 1; j <= EyeSize; j++) {
+      strip.setPixelColor(i+j, red, green, blue); 
+    }
+    strip.setPixelColor(i+EyeSize+1, red/10, green/10, blue/10);
+    strip.show();
+    delay(SpeedDelay);
+  }
+
+  delay(ReturnDelay);
+
+  for(int i = strip.numPixels()-EyeSize-2; i > 0; i--) {
+    reset();
+    strip.setPixelColor(i, red/10, green/10, blue/10);
+    for(int j = 1; j <= EyeSize; j++) {
+      strip.setPixelColor(i+j, red, green, blue); 
+    }
+    strip.setPixelColor(i+EyeSize+1, red/10, green/10, blue/10);
+    strip.show();;
+    delay(SpeedDelay);
+  }
+  
+  delay(ReturnDelay);
+}
+
 //Sets the strip to black(no color)
 void reset()
 {
@@ -73,6 +112,7 @@ void setup()
 
 void loop()
 {                                                   //Ran indefinitly after setup()
+    
   connectionTimer++;                                //Adds a count to the ConnectionTimer
   if(robotClient.available())                       //Runs when bytes are available to read
   {                                                 
