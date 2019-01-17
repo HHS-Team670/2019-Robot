@@ -77,27 +77,13 @@ void loop(){
           //Combines the character with the full data string    
     }
   }
-    //parses dataString and receives corresponding values from Java program
-    //dataString.remove(0,2);                         //Removes two garbage characters from the start of the string
+    //parses dataString and receives corresponding values from Java program                  
     stateData = dataString.substring(0,2);           //Grabs the expected location of various data, puts it in variables
     allianceData = dataString.substring(2,4);              
     // xFinalData=dataString.substring(4,5);
     Serial.print(stateData+"  state");
     Serial.print(allianceData+"   alliance");
-    
-    
-  //   if(xFinalData==xFinalLeft){                              //If xFinal is equal to 1, it is to the left of the camera
-  //     strip.setPixelColor(11,100,200,255);
-  //   } else if(xFinalData==xFinalCenter){                              //If xFinal is equal to 2, it is centered to the camera
-  //     strip.setPixelColor(12,25,25,45);
-  //   } else if(xFinalData==xFinalRight){                              //If xFinal is equal to 3, it is to the right of the camera
-  //     strip.setPixelColor(13,10,255,100);
-  //   }
-  //   strip.show();
 
-  
-  
-  // }
 
   //Below here is code to control the LED's from the data obtained above
   
@@ -106,11 +92,7 @@ if(stateData==stillDrive){
     setStripColor(0,0,255);
 } else if(allianceData==redAlliance){                   //If the alliance is red, set the base LED color to red
     setStripColor(255,0,0);
- }// else if(allianceData== invalidAlliance){              //If no alliance is specified, set the base LED color to purple
-//     for(int i = 0; i <= numberOfPixels; i++){       //Resets the full LED strip...
-//       strip.setPixelColor(i,0,0,0);                   //...by setting each LED to black
-// }
-// }
+ }
 }
   //climbing green LEDs effect
   if(stateData==climbing){
@@ -137,25 +119,3 @@ if(stateData==stillDrive){
     robotClient.connect(robotIp, 5801);             //Re-initalizes socket communication with the Rio
   }
 }
-
-  
-
-// char asciiConvert(EthernetClient client){           //Changes an ASCII byte from a socket to a string
-//   char data=client.read();
-//   return data;
-//   // int data = client.read();                         //Reads the socket for data from server
-//   // int dataPoint = -666;                             //Defaults the point that the recived bytes equal a char in asciiArray[]
-//   // for(int i=0; i < 37 -1; i++){                     //Runs the length of asciiArray[]
-//   //   if(asciiArray[i] == data){                      //If the data recived equals a point in asciiArray[]...
-//   //     dataPoint = i;                                //...the program sets dataPoint to the point of equality
-//   //   }
-//   // }
-
-//   // char finalData = translationArray[dataPoint];     //Sets the final character 
-//   // if(dataPoint != -666){                            //If the data point is not null...
-//   //   return finalData;                               //Returns the transcribed ASCII character
-//   // }else{
-//   //   char defaultchar[] = {"E"};                     //Sets a default char if there is an error
-//   //   return defaultchar[0];                          //Returns the default error char
-//   // }
-// }
