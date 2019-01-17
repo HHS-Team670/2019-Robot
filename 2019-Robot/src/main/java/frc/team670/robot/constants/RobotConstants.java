@@ -39,4 +39,8 @@ public class RobotConstants {
     public static final Lookahead lookahead = new Lookahead(minLookahead, maxLookahead,
     minLookaheadSpeed, maxLookaheadSpeed);
 
+    // Arm constants
+    public static final double armBaseHeight = 0;
+    public static final double clawRadius = 0;
+
 }
