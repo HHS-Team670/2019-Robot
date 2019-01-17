@@ -158,6 +158,7 @@ public class Arm extends Subsystem {
 
       /*
        * Implement this so it searches for the quickest path of transititons to the destination.
+       * The A* Search Algorithm might be a good choice for this: https://www.geeksforgeeks.org/a-search-algorithm/ 
        */
 
       return result;
