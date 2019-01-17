@@ -25,6 +25,7 @@ public class SparkCANPIDEncoderDrive extends Command {
     this.inchesToTravel = inchesToTravel;
 
     ticksToTravel = MathUtils.convertInchesToDriveBaseTicks(inchesToTravel);
+
     rotations = ticksToTravel / RobotConstants.SPARK_TICKS_PER_ROTATION;
 
     // Use requires() here to declare subsystem dependencies
@@ -48,6 +49,7 @@ public class SparkCANPIDEncoderDrive extends Command {
     rightCurrentPosition = Robot.driveBase.getRightSparkEncoderPosition();
 
     Robot.driveBase.setSparkEncodersControl(ticksToTravel, ticksToTravel); // Could be put into initialize
+    
     // Also possibly takes in rotations not tick values
     Logger.consoleLog("lefCurrentPosition:%s rightCurrentPosition:%s ", leftCurrentPosition, rightCurrentPosition);
 
