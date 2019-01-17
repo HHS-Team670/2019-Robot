@@ -8,9 +8,7 @@
 package frc.team670.robot.subsystems;
 
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.HashMap;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -19,6 +17,7 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team670.robot.commands.arm.armTransitions.ArmTransition;
+import frc.team670.robot.commands.arm.armTransitions.NeutralToCargoPickup;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
 
@@ -35,7 +34,8 @@ public class Arm extends Subsystem {
   private VictorSPX elbowRotationSlave;
   private TalonSRX wristRotation;
 
-  private ArrayList<ArmState> allowableStates;
+  // All of the states
+  private HashMap<LegalState, ArmState> states;
 
 
   public Arm() {
@@ -47,19 +47,11 @@ public class Arm extends Subsystem {
     elbowRotationSlave = new VictorSPX(RobotMap.armElbowRotationMotorVictor);
     elbowRotationSlave.set(ControlMode.Follower, elbowRotationMain.getDeviceID());
 
-    allowableStates = new ArrayList<ArmState>();
+    states = new HashMap<LegalState, ArmState>();
+    states.put(LegalState.NEUTRAL, new Neutral());
     /*
-     * Add in all of the states.
+     * Add in all of the states here.
      */
-
-     // This is probably not necessary, but its not like its going to take too long and it only needs to run once.
-     Collections.sort(allowableStates, new Comparator<ArmState>() { // Sorts the states by their LegalState IDs
-       @Override
-      public int compare(ArmState lhs, ArmState rhs) {
-          // -1 - less than, 1 - greater than, 0 - equal, all inversed for descending
-          return lhs.getState().getId() - rhs.getState().getId();
-      }
-    });
 
   }
 
@@ -118,7 +110,7 @@ public class Arm extends Subsystem {
     /**
      * @param transitionableStates Should h
      */
-    protected ArmState(LegalState state, double extensionLength, double elbowAngle, double wristAngle, ArmTransition[] transitions) {
+    public ArmState(LegalState state, double extensionLength, double elbowAngle, double wristAngle, ArmTransition[] transitions) {
       this.state = state;
       this.extensionLength = extensionLength;
       this.elbowAngle = elbowAngle;
@@ -147,6 +139,10 @@ public class Arm extends Subsystem {
       return wristAngle;
     }
 
+    public ArmTransition[] getTransitions() {
+      return transitions;
+    }
+
     public CommandGroup getTransition(LegalState destination) {
       CommandGroup result = new CommandGroup();
       for(ArmTransition transition : transitions) {
@@ -166,9 +162,13 @@ public class Arm extends Subsystem {
        */
 
       return result;
-
     }
+  }
 
+  private class Neutral extends ArmState {
+    public Neutral() {
+      super(LegalState.NEUTRAL, 0, 45, 45, new ArmTransition[] {new NeutralToCargoPickup()});
+    }
   }
 
 }
