@@ -69,7 +69,7 @@ public class SparkCANPIDEncoderDrive extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Robot.driveBase.tankDrive(0,0);
+    Robot.driveBase.stop();
 
     leftEndingPosition = Robot.driveBase.getLeftSparkEncoderPosition();
     rightEndingPosition = Robot.driveBase.getRightSparkEncoderPosition();
@@ -82,7 +82,7 @@ public class SparkCANPIDEncoderDrive extends Command {
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    Robot.driveBase.tankDrive(0, 0);
+    Robot.driveBase.stop();
 
     Logger.consoleLog("CANPIDEncoderDrive interrupted");
   }

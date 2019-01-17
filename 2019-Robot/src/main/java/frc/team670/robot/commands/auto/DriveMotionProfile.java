@@ -205,7 +205,7 @@ public class DriveMotionProfile extends Command {
     double rightOutput = r - turn;
 
     // Drives the bot based on the input
-    Robot.driveBase.tankDrive(leftOutput, rightOutput); 
+    Robot.driveBase.tankDrive(leftOutput, rightOutput, false); 
 
     if(executeCount % 5 == 0) {
       Logger.consoleLog("Execute: gyroHeading: %s, desiredHeading: %s, angleDifference: %s, angleDivideConstant: %s, turn: %s, leftOuput: %s, rightOutput: %s", gyroHeading, desiredHeading, angleDifference, angleDivideConstant, turn, leftOutput , rightOutput) ;
@@ -224,7 +224,7 @@ public class DriveMotionProfile extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Robot.driveBase.tankDrive(0, 0);
+    Robot.driveBase.stop();
     Logger.consoleLog("Ended. EndingAngle: %s, EndingLeftTicks: %s, EndingRightTicks: %s", Pathfinder.boundHalfDegrees(Robot.sensors.getYawDoubleForPathfinder()), 
                      (Robot.driveBase.getLeftDIOEncoderPosition() - initialLeftEncoder), (Robot.driveBase.getRightDIOEncoderPosition() - initialRightEncoder));
   }

@@ -45,7 +45,7 @@ public class DIOEncoderDrive extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Robot.driveBase.tankDrive(leftPIDController.get(), rightPIDController.get());    
+    Robot.driveBase.tankDrive(leftPIDController.get(), rightPIDController.get(), false);    
 
     Logger.consoleLog("leftCurrentPosition:%s rightCurrentPosition:%s ", Robot.driveBase.getLeftDIOEncoderPosition(),
      Robot.driveBase.getRightDIOEncoderPosition());

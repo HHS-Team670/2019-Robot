@@ -55,7 +55,7 @@ public class NavXPivot extends Command {
 	
 	double output = pivotController.get();
 
-	Robot.driveBase.tankDrive(output, -output);
+	Robot.driveBase.tankDrive(output, -output, false);
 
 	Logger.consoleLog("Output:%s CurrentAngle:%s", output, Robot.sensors.getYawDouble());
 

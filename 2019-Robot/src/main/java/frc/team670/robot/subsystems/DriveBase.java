@@ -55,8 +55,8 @@ public class DriveBase extends Subsystem {
     // allMotors.addAll(leftControllers);
     // allMotors.addAll(rightControllers);
     
-    // setMotorsInvert(leftControllers, false);
-    // setMotorsInvert(rightControllers, true);
+    // setMotorsInvert(leftControllers, false); // We should not have to invert since DifferentialDrive inverts the right side for us.
+    // setMotorsInvert(rightControllers, false);
 
     // left2.follow(left1);
     // right2.follow(right1);
@@ -74,7 +74,7 @@ public class DriveBase extends Subsystem {
     double distancePerPulse = Math.PI * RobotConstants.WHEEL_DIAMETER* RobotConstants.DIO_TICKS_PER_ROTATION;
     leftDIOEncoder.setDistancePerPulse(distancePerPulse);
     rightDIOEncoder.setDistancePerPulse(distancePerPulse);
-    leftDIOEncoder.setReverseDirection(false); // TODO One of these will need to be reversed, same as the motors, figure out which
+    leftDIOEncoder.setReverseDirection(false); // TODO One of these will need to be reversed to fit with the motors, figure out which
     rightDIOEncoder.setReverseDirection(true);
 
 //     left1.getPIDController().setP(P, encodersPIDSlot);
@@ -94,10 +94,10 @@ public class DriveBase extends Subsystem {
 
   /**
    * 
-   * Drives the Robot using a tank drive configuration (two joysticks, or auton)
+   * Drives the Robot using a tank drive configuration (two joysticks, or auton). Squares inputs to linearize them.
    * 
-   * @param leftSpeed Speed for left side of drive base [-1, 1]
-   * @param rightSpeed Speed for right side of drive base [-1, 1]
+   * @param leftSpeed Speed for left side of drive base [-1, 1]. Automatically squares this value to linearize it.
+   * @param rightSpeed Speed for right side of drive base [-1, 1]. Automatically squares this value to linearize it.
    */
   public void tankDrive(double leftSpeed, double rightSpeed) {
     tankDrive(leftSpeed, rightSpeed, false);

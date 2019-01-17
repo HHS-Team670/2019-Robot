@@ -106,7 +106,7 @@ public class AdvancedVisionPIDDrive extends Command {
     double leftSpeed = distanceOutput - headingOutput;
     double rightSpeed = distanceOutput + headingOutput;
 
-    Robot.driveBase.tankDrive(leftSpeed, rightSpeed);
+    Robot.driveBase.tankDrive(leftSpeed, rightSpeed, false);
     if (executeCount % 5 == 0) {
       Logger.consoleLog("Executing AdvancedVisionPIDDrive: headingOutput:%s, distanceOutput:%s, leftSpeed:%s, rightSpeed:%s", headingOutput, distanceOutput, leftSpeed, rightSpeed);
     }

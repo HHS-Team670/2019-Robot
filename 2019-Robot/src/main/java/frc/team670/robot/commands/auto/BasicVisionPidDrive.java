@@ -80,7 +80,7 @@ public class BasicVisionPidDrive extends Command {
     double leftSpeed = distanceOutput - headingOutput;
     double rightSpeed = distanceOutput + headingOutput;
 
-    Robot.driveBase.tankDrive(leftSpeed, rightSpeed);
+    Robot.driveBase.tankDrive(leftSpeed, rightSpeed, false);
     if (executeCount % 5 == 0) {
       Logger.consoleLog("Executing VisionTargetPidDrive: headingOutput:%s, distanceOutput:%s, leftSpeed:%s, rightSpeed:%s", headingOutput, distanceOutput, leftSpeed, rightSpeed);
     }
