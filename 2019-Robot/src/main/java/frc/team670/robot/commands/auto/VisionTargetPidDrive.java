@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangPi.VisionValue_PIDSource;
+import frc.team670.robot.dataCollection.NullPIDOutput;
 import frc.team670.robot.dataCollection.Pose;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.functions.MathUtils;
@@ -26,7 +27,7 @@ import frc.team670.robot.utils.functions.SettingUtils;
  */
 public class VisionTargetPidDrive extends Command {
 
-  private PIDController  visionDistanceController, visionHeadingController, distanceControllerEncoders;
+  private PIDController  visionDistanceController, visionHeadingController;
   private static final double P = 0.01, I = 0.0, D = 0.0, F = 0.0;
   private static final double degreeTolerance = 0.05; //degrees
   private static final double distanceTolerance = 0.05; //inches
@@ -45,8 +46,8 @@ public class VisionTargetPidDrive extends Command {
 
     // Distance is in positive numbers, so it outputs a negative number as it tries to go to zero.
     // This is offset by having the robot drive the output * -1
-    visionDistanceController = new PIDController(P, I, D, F, new VisionAndPose_PIDSource(Robot.visionPi.getDistanceToWallTarget(), true), null);
-    visionHeadingController = new PIDController (P, I, D, F, new VisionAndPose_PIDSource(Robot.visionPi.getAngleToWallTarget(), false), null);
+    visionDistanceController = new PIDController(P, I, D, F, new VisionAndPose_PIDSource(Robot.visionPi.getDistanceToWallTarget(), true), new NullPIDOutput());
+    visionHeadingController = new PIDController (P, I, D, F, new VisionAndPose_PIDSource(Robot.visionPi.getAngleToWallTarget(), false), new NullPIDOutput());
     
     visionHeadingController.setInputRange(-30.0,  30.0);
     visionHeadingController.setOutputRange(visionHeadingControllerLowerBound, visionHeadingControllerUpperBound);

@@ -10,6 +10,7 @@ package frc.team670.robot.commands.auto;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.Robot;
+import frc.team670.robot.dataCollection.NullPIDOutput;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.functions.SettingUtils;
 
@@ -34,9 +35,9 @@ public class BasicVisionPidDrive extends Command {
   public BasicVisionPidDrive() {
 
     requires(Robot.driveBase);
-    distanceController = new PIDController(P, I, D, F, Robot.visionPi.getDistanceToWallTarget(), null);
+    distanceController = new PIDController(P, I, D, F, Robot.visionPi.getDistanceToWallTarget(), new NullPIDOutput());
 
-    headingController = new PIDController (P, I, D, F, Robot.visionPi.getAngleToWallTarget(), null);
+    headingController = new PIDController (P, I, D, F, Robot.visionPi.getAngleToWallTarget(), new NullPIDOutput());
 
     headingController.setInputRange(-30.0,  30.0);
     headingController.setOutputRange(headingControllerLowerBound, headingControllerUpperBound);
