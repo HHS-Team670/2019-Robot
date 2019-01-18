@@ -2,8 +2,10 @@ package frc.team670.robot.utils.sort;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 
 /**
@@ -28,25 +30,31 @@ public class AStarSearch {
 
         boolean end = false;
 
-     
+        HashMap<Node, Edge> cameFrom = new HashMap<Node, Edge>();
+        Map<Node, Integer> fValues = new HashMap<Node, Integer>();
+        Map<Node, Integer> gValues = new HashMap<Node, Integer>();
+        gValues.put(start, 0);
 
         while(!openList.isEmpty() && !end){
             current = openList.poll();
             closedList.add(current);
            
-            if(current.getState().equals(destination.getState())){
+            if(current.equals(destination)){
                 end = true;
             }
 
             for(Edge e : current.getEdges()){
                 Node child = e.getDest();
-                double tempG = current.getG() + getCost(current, child);
-                double tempF = tempG + calcH(child, destination);
+                int tempG = gValues.get(current) + e.getCost();
+                int tempF = tempG + child.getHeuristicDistance(destination);
 
-                 if(closedList.contains(child) && (tempF >= child.getF())){
+                 if(closedList.contains(child) && (fValues.get(child) == null || tempF >= fValues.get(child))) {
                         continue;
-                  } else if(!openList.contains(child) || (tempF < child.getF())){
-                    child.setParent(current);
+                  } else if(!openList.contains(child) || (tempF < deal with fvalues child.getF())){
+                    cameFrom.put(child, e);
+
+                    gValues.set
+                    fValues.set 
                     child.setG(tempG);
                     child.setF(tempF);
 
@@ -65,7 +73,7 @@ public class AStarSearch {
     }
 
 
-    private static List<Node> getPath(Node destination){
+    private static List<Node> getPath(Node destination, Map<Node, Node> cameFrom){
         List<Node> path = new ArrayList<Node>();
 
             for(Node node = destination; node != null; node = node.getParent()){
@@ -76,7 +84,7 @@ public class AStarSearch {
         return path;
     }
 
-    private static double getCost(Node d1, Node d2){
+    private static double getDist(Node d1, Node d2){
         double d1X = d1.getCoord().getX();
         double d1Y = d1.getCoord().getX();
         double d2X = d2.getCoord().getX();
@@ -86,7 +94,7 @@ public class AStarSearch {
     }
 
     private static double calcH(Node node, Node destination){
-        return getCost(node, destination);
+        return getDist(node, destination);
     }
     
 }

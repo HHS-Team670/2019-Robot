@@ -5,14 +5,14 @@ package frc.team670.robot.utils.sort;
  */
 public interface Edge{
     /**
-     * @return the "cost" of travelling between nodes (distance from 1 node to another)
+     * @return the "cost" of travelling over this edge
      */
-    public double getCost(Node d1, Node d2);
+    public int getCost();
     
     /**
      * @return the source node (where this edge starts)
      */
-    public double getSource();
+    public Node getSource();
 
     /*
      * @return the destination node (where this edge ends)
