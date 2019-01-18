@@ -27,15 +27,18 @@ NETWORK_KEY = "reflect_tape_vision_data" # TODO key for Shaylan's robot code vis
 
 # Variables (These should be changed to reflect the camera)
 capture_source = 0  # Number of port for camera, file path for video
-capture_color = 'b'  # Possible: r (Red), g (Green), b (Blue), y (Yellow), x (reflector tape), anything else: Red
-known_object_height = 12.75  # Height of the tape from the ground (in inches)
-known_camera_height = 2.0
+capture_color = 'g'  # Possible: r (Red), g (Green), b (Blue), y (Yellow), x (reflector tape), anything else: Red
+known_object_height = 7.75 #12.75  # Height of the tape from the ground (in inches)
+known_camera_height = 1.5 #2.0
 camera_fov_vertical = 39.7  # FOV of the camera (in degrees)
 camera_fov_horizontal = 60.0
+camera_vertical_angle = 2.1 # camera angle offset up or down
+camera_horizontal_angle = 0.0 # camera angle offset right left
+camera_horizontal_offset = 0.0 # camera horizontal offset distancewise in inches
 image_width = 1080  # Desired width of inputted image (for processing speed)
 screen_resize = 1  # Scale that the GUI image should be scaled to
 calibrate_angle = 0  # Test to calibrate the angle and see if that works
-exposure = -8
+exposure = -7
 timestamp = round(time.time() * 1000) # time in milliseconds
 
 # HSV Values to detect
@@ -381,7 +384,7 @@ def find_focal_length(image, _fov, vertical = True):
 
 
 
-def find_vert_angle(image, y, focal_length, vertical=True):
+def find_vert_angle(image, y, focal_length, vertical=True, ratio=1): # TODO bleeeheheheh
     '''
     Returns the vertical/horizontal angle of the given y/x point in an image.
     This is the angle that the robot needs to look up / down in order to
@@ -391,15 +394,21 @@ def find_vert_angle(image, y, focal_length, vertical=True):
 
     # Find center y point
     image_height = 0
+    _offset = 0 # if camera is tilted
     if vertical:
         image_height = image.shape[:2][0]
+        _offset = camera_vertical_angle
     else:
         image_height = image.shape[:2][1]
+        _offset = camera_horizontal_angle
     center_y = image_height / 2
     y_from_bottom = image_height-y
 
     # Calculate the angle using fancy formula
     _angle = -1 * math.degrees(math.atan((y_from_bottom - center_y) / focal_length))
+    _angle -= _offset
+    #if not vertical:
+    #    _angle += ratio*90 #TODO bleeeheheheh
     return _angle
 
 def depth_from_angle(image, rectangles, vangle, hangle, known_height):
@@ -409,11 +418,17 @@ def depth_from_angle(image, rectangles, vangle, hangle, known_height):
     of the tape, the focal length, and the original image (to get its size).
     '''
     # Keep tangent from being undefined
+
     if vangle == 0:
-        vangle = 0.0001
+        vangle = 0.0000000000001
+    
+    htan = 0
+    if hangle != 0:
+        htan = math.tan(math.radians(hangle))
     # Do some calculations
 
-    depth = known_height / math.tan(abs(vangle))
+    depth = known_height / (math.tan(math.radians(abs(vangle))))
+    depth = math.sqrt((depth*htan-camera_horizontal_offset)**2 + (depth**2))
     # This was an adjustment to adjust depth for an object that is offcenter
     # adjusted_depth = depth / math.cos(abs(hangle))
     return depth
