@@ -14,7 +14,7 @@ public class Pose {
   private long leftEncoderTick, rightEncoderTick;
   private double leftVelocity, rightVelocity;
   private double currentAngle;
-  private double deltaAngle; // for testing purposes
+  private double averagedAngle; // for testing purposes
 
   private long currRobotX, currRobotY;
 
@@ -37,13 +37,14 @@ public class Pose {
    * @param angle        Angle in degrees -> left = negative, right = positive
    */
   public Pose(long lEncoderTick, long rEncoderTick, double angle, double leftVelocity, double rightVelocity) {
-    this(lEncoderTick, rEncoderTick, angle, 0, 0, System.currentTimeMillis(), leftVelocity, rightVelocity);
+    this(lEncoderTick, rEncoderTick, angle, 0, 0, System.currentTimeMillis(), leftVelocity, rightVelocity, 0);
   }
 
-  public Pose(double x, double y, double angle, int leftEncoderPosition, int rightEncoderPosition, int leftVelocity,
-      int rightVelocity) {
+  public Pose(double x, double y, double angle, int leftEncoderPosition, int rightEncoderPosition, int leftVelocity, int rightVelocity) {
+    this(leftEncoderPosition, rightEncoderPosition, angle, leftVelocity, rightVelocity);
     currRobotX = (long) x;
     currRobotY = (long) y;
+  }
 
 public Pose(double x, double y, double angle, int leftEncoderPosition, int rightEncoderPosition, double leftVelocity, double rightVelocity) {
     currRobotX = (long)x;
@@ -65,7 +66,7 @@ public Pose(double x, double y, double angle, int leftEncoderPosition, int right
     this.leftVelocity = leftVelocity;
     this.rightVelocity = rightVelocity;
     this.timeOfPose = timeOfPose;
-    this.deltaAngle = deltaAngle;
+    this.averagedAngle = deltaAngle;
   }
 
   public Pose(long lEncoderTick, long rEncoderTick, double angle, long currRobotX, long currRobotY, int leftVelocity,
@@ -98,17 +99,17 @@ public Pose(double x, double y, double angle, int leftEncoderPosition, int right
       }
     }
 
-    deltaAngle = (newAngle + currentAngle) / 2;
+    averagedAngle = (newAngle + currentAngle) / 2;
 
-    while (deltaAngle > 180) {
-      deltaAngle -= 360;
+    while (averagedAngle > 180) {
+      averagedAngle -= 360;
     }
-    while (deltaAngle < -180) {
-      deltaAngle += 360;
+    while (averagedAngle < -180) {
+      averagedAngle += 360;
     }
     
-    currRobotX += (long) (Math.cos(deltaAngle * (Math.PI / 180)) * hypotenuse);
-    currRobotY += (long) (Math.sin(deltaAngle * (Math.PI / 180)) * hypotenuse);
+    currRobotX += (long) (Math.cos(averagedAngle * (Math.PI / 180)) * hypotenuse);
+    currRobotY += (long) (Math.sin(averagedAngle * (Math.PI / 180)) * hypotenuse);
 
     leftEncoderTick = newLeftEncoderTick;
     rightEncoderTick = newRightEncoderTick;
@@ -178,8 +179,8 @@ public Pose(double x, double y, double angle, int leftEncoderPosition, int right
   }
 
   // For testing purposes
-  public double getDeltaAngle() {
-    return deltaAngle;
+  public double averagedAngle() {
+    return averagedAngle;
   }
 
   /**
@@ -187,7 +188,7 @@ public Pose(double x, double y, double angle, int leftEncoderPosition, int right
    */
   public Pose clone() {
     return new Pose(leftEncoderTick, rightEncoderTick, currentAngle, currRobotX, currRobotY, timeOfPose, leftVelocity,
-        rightVelocity, deltaAngle);
+        rightVelocity, averagedAngle);
   }
 
   /**
