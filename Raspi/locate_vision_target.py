@@ -6,6 +6,7 @@ Depth detection is reliant on constants--the known object height, the known came
 You can click on a point on the output image to print out the hsv value of
 that point in debug mode. Useful for finding specific hsv color ranges.
 Pushes a tuple (angle, distance, timestamp) to network tables--for Shaylan's robot auton drive code
+copper goes to negative
 '''
 
 import copy
@@ -27,9 +28,9 @@ NETWORK_KEY = "reflect_tape_vision_data" # TODO key for Shaylan's robot code vis
 
 # Variables (These should be changed to reflect the camera)
 capture_source = 0  # Number of port for camera, file path for video
-capture_color = 'g'  # Possible: r (Red), g (Green), b (Blue), y (Yellow), x (reflector tape), anything else: Red
-known_object_height = 7.75 #12.75  # Height of the tape from the ground (in inches)
-known_camera_height = 1.5 #2.0
+capture_color = 'x'  # Possible: r (Red), g (Green), b (Blue), y (Yellow), x (reflector tape), anything else: Red
+known_object_height = 7.375  # Height of the tape from the ground (in inches)
+known_camera_height = 2.5
 camera_fov_vertical = 39.7  # FOV of the camera (in degrees)
 camera_fov_horizontal = 60.0
 camera_vertical_angle = 2.1 # camera angle offset up or down
@@ -42,8 +43,8 @@ exposure = -7
 timestamp = round(time.time() * 1000) # time in milliseconds
 
 # HSV Values to detect
-min_hsv = [58, 0, 254]
-max_hsv = [67, 62, 255]
+min_hsv = [70, 230, 130]
+max_hsv = [150, 255, 255]
 
 # Min area to make sure not to pick up noise
 MIN_AREA = 100
@@ -64,8 +65,8 @@ def main():
     # resize_value = get_resize_values(vs.stream, image_width) # uncomment if screen resize is desired
 
     # This may not need to be calculated, can use Andra's precalculated values
-    vert_focal_length = find_focal_length(vs.raw_read()[0], camera_fov_vertical)
-    hor_focal_length = find_focal_length(vs.raw_read()[0], camera_fov_horizontal, vertical=False)
+    vert_focal_length = find_vert_focal_length(vs.raw_read()[0], camera_fov_vertical)
+    hor_focal_length = find_hor_focal_length(vs.raw_read()[0], camera_fov_horizontal)
 
     while True:
         # Read input image from video
@@ -118,21 +119,19 @@ def main():
 
         rect_x_midpoint, high_point = find_rectangle_highpoint(object_rects)
         vangle = find_vert_angle(input_image, high_point, vert_focal_length) # vangle - 'V'ertical angle
-        hangle = find_vert_angle(input_image, rect_x_midpoint, hor_focal_length, vertical=False) # hangle - 'H'orizontal angle
+        hangle = find_hor_angle(input_image, rect_x_midpoint, hor_focal_length) # hangle - 'H'orizontal angle
         depth = depth_from_angle(input_image, object_rects, vangle, hangle,
                                  known_object_height - known_camera_height)
-        adjusted_depth = adjust_depth(depth, hangle)
-        # adjusted_depth = depth # uncomment if you want depth independent of horizontal angle to object -- not recommended
 
         # set and push network table
-        returns = [hangle, adjusted_depth, timestamp]
+        returns = [hangle, depth, timestamp]
         push_network_table(table, returns)
 
         # Create output image to display in debug mode
         if DEBUG_MODE:
             output_image = draw_output_image(input_image,
                                              object_rects,
-                                             adjusted_depth,
+                                             depth,
                                              vangle,
                                              hangle,
                                              hipoint = (int(rect_x_midpoint), int(high_point)))
@@ -366,22 +365,15 @@ def find_rectangle_highpoint(rectangles):
     return (mid_x, highest_y)
 
 
-def find_focal_length(image, _fov, vertical = True):
-    '''
-    Calculates the vert/hor focal length when given
-    the image and vert/hor FOV.
-    '''
-    # Find image height
-    height = 0
-    if vertical:
-        height = image.shape[:2][0]
-    else:
-        height = image.shape[:2][1]
-
-    calc_focal_length = height / (2 * math.tan(math.radians(_fov / 2)))
+def find_vert_focal_length(image, vert_fov):
+    height = image.shape[:2][0]
+    calc_focal_length = height / (2 * math.tan(math.radians(vert_fov / 2)))
     return calc_focal_length
 
-
+def find_hor_focal_length(image, hor_fov):
+    width = image.shape[:2][1]
+    calc_focal_length = width / (2 * math.tan(math.radians(hor_fov / 2)))
+    return calc_focal_length
 
 
 def find_vert_angle(image, y, focal_length, vertical=True, ratio=1): # TODO bleeeheheheh
@@ -401,6 +393,9 @@ def find_vert_angle(image, y, focal_length, vertical=True, ratio=1): # TODO blee
     else:
         image_height = image.shape[:2][1]
         _offset = camera_horizontal_angle
+
+    # Find center y point
+    image_height = image.shape[:2][0]
     center_y = image_height / 2
     y_from_bottom = image_height-y
 
@@ -418,7 +413,6 @@ def depth_from_angle(image, rectangles, vangle, hangle, known_height):
     of the tape, the focal length, and the original image (to get its size).
     '''
     # Keep tangent from being undefined
-
     if vangle == 0:
         vangle = 0.0000000000001
     
@@ -432,19 +426,6 @@ def depth_from_angle(image, rectangles, vangle, hangle, known_height):
     # This was an adjustment to adjust depth for an object that is offcenter
     # adjusted_depth = depth / math.cos(abs(hangle))
     return depth
-
-
-def adjust_depth(depth, angle):
-    '''
-    Adjusts the depth based on the angle to the object (using simple trig).
-    Returns the adjusted depth.
-    '''
-    cos_angle = math.cos(math.radians(abs(angle)))
-    if cos_angle != 0:
-        adjusted_depth = depth / cos_angle
-    else:
-        adjusted_depth = 0
-    return adjusted_depth
 
 # Debug mode methods
 def mouse_click_handler(event, x, y, flags, params):
@@ -487,8 +468,12 @@ def draw_output_image(image, rectanglelist, depth, vangle, hangle, hipoint=None)
                 cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 255), 3)
     if hipoint is not None:
         cv2.circle(output_image, hipoint, 10, (0, 255, 255), thickness=10)
-    return output_image
+    
+    height, width = output_image.shape[:2]
+    cv2.line(output_image, (round(width / 2), 0), (round(width / 2), height), (255, 0, 0), thickness=4)
+    cv2.line(output_image, (0 , round(height / 2)), (width, round(height / 2)), (255, 0, 0), thickness=4)
 
+    return output_image
 
 # causes program to run main method when program is run, but allows modular import allows
 if __name__ == "__main__":
