@@ -14,33 +14,36 @@ public class Pose {
   private long leftEncoderTick, rightEncoderTick;
   private int leftVelocity, rightVelocity;
   private double currentAngle;
+  private double deltaAngle; // for testing purposes
 
   private long currRobotX, currRobotY;
 
   private long timeOfPose;
-  
+
   private static Pose fieldCentricPose;
 
   /**
    * Makes new pose using current robot encoder values and angles
    */
   public Pose() {
-    this(Robot.driveBase.getLeftEncoderPosition(), Robot.driveBase.getRightEncoderPosition(), Robot.sensors.getYawDouble(), Robot.driveBase.getLeftVelocity(), Robot.driveBase.getRightVelocity());
+    this(Robot.driveBase.getLeftEncoderPosition(), Robot.driveBase.getRightEncoderPosition(),
+        Robot.sensors.getYawDouble(), Robot.driveBase.getLeftVelocity(), Robot.driveBase.getRightVelocity());
   }
 
   /**
    * 
    * @param lEncoderTick Encoder ticks -> forward = positive, backwards = negative
    * @param rEncoderTick Encoder ticks -> forward = positive, backwards = negative
-   * @param angle Angle in degrees -> left = negative, right = positive
+   * @param angle        Angle in degrees -> left = negative, right = positive
    */
   public Pose(long lEncoderTick, long rEncoderTick, double angle, int leftVelocity, int rightVelocity) {
     this(lEncoderTick, rEncoderTick, angle, 0, 0, System.currentTimeMillis(), leftVelocity, rightVelocity);
   }
 
-  public Pose(double x, double y, double angle, int leftEncoderPosition, int rightEncoderPosition, int leftVelocity, int rightVelocity) {
-    currRobotX = (long)x;
-    currRobotY = (long)y;
+  public Pose(double x, double y, double angle, int leftEncoderPosition, int rightEncoderPosition, int leftVelocity,
+      int rightVelocity) {
+    currRobotX = (long) x;
+    currRobotY = (long) y;
     currentAngle = angle;
     leftEncoderTick = leftEncoderPosition;
     rightEncoderTick = rightEncoderPosition;
@@ -49,7 +52,8 @@ public class Pose {
     timeOfPose = System.currentTimeMillis();
   }
 
-  private Pose(long lEncoderTick, long rEncoderTick, double angle, long currRobotX, long currRobotY, long timeOfPose, int leftVelocity, int rightVelocity) {
+  private Pose(long lEncoderTick, long rEncoderTick, double angle, long currRobotX, long currRobotY, long timeOfPose,
+      int leftVelocity, int rightVelocity) {
     leftEncoderTick = lEncoderTick;
     rightEncoderTick = rEncoderTick;
     currentAngle = angle;
@@ -60,7 +64,8 @@ public class Pose {
     this.timeOfPose = timeOfPose;
   }
 
-  public Pose(long lEncoderTick, long rEncoderTick, double angle, long currRobotX, long currRobotY, int leftVelocity, int rightVelocity) {
+  public Pose(long lEncoderTick, long rEncoderTick, double angle, long currRobotX, long currRobotY, int leftVelocity,
+      int rightVelocity) {
     leftEncoderTick = lEncoderTick;
     rightEncoderTick = rEncoderTick;
     currentAngle = angle;
@@ -70,20 +75,37 @@ public class Pose {
     this.leftVelocity = leftVelocity;
     this.rightVelocity = rightVelocity;
   }
- 
+
   /**
-   * Updates the Pose's position and angle corresponding to the drivebase's ticks and NavX gyro reading.
+   * Updates the Pose's position and angle corresponding to the drivebase's ticks
+   * and NavX gyro reading.
    */
-  public void update(long newLeftEncoderTick, long newRightEncoderTick, double newAngle, int leftVelocity, int rightVelocity){
-    
+  public void update(long newLeftEncoderTick, long newRightEncoderTick, double newAngle, int leftVelocity,
+      int rightVelocity) {
+
     long lDeltaTick = newLeftEncoderTick - leftEncoderTick;
     long rDeltaTick = newRightEncoderTick - rightEncoderTick;
-    long hypotenuse = (lDeltaTick+rDeltaTick)/2;
-    
-    double deltaAngle = (newAngle - currentAngle)/2;
+    long hypotenuse = (lDeltaTick + rDeltaTick) / 2;
 
-    currRobotX += (long) (Math.cos(deltaAngle*(Math.PI/180)) * hypotenuse);
-    currRobotY += (long) (Math.sin(deltaAngle*(Math.PI/180)) * hypotenuse);
+    if ((newAngle > 90 && currentAngle < -90) || (newAngle < -90 && currentAngle > 90)) {
+      if (newAngle < 0) {
+        newAngle += 360;
+      } else if (currentAngle < 0) {
+        currentAngle += 360;
+      }
+    }
+
+    deltaAngle = (newAngle + currentAngle) / 2;
+
+    while (deltaAngle > 180) {
+      deltaAngle -= 360;
+    }
+    while (deltaAngle < -180) {
+      deltaAngle += 360;
+    }
+    
+    currRobotX += (long) (Math.cos(deltaAngle * (Math.PI / 180)) * hypotenuse);
+    currRobotY += (long) (Math.sin(deltaAngle * (Math.PI / 180)) * hypotenuse);
 
     leftEncoderTick = newLeftEncoderTick;
     rightEncoderTick = newRightEncoderTick;
@@ -94,27 +116,28 @@ public class Pose {
     timeOfPose = System.currentTimeMillis();
   }
 
-
   public void update() {
-    update(Robot.driveBase.getLeftEncoderPosition(), Robot.driveBase.getRightEncoderPosition(), Robot.sensors.getYawDouble(), Robot.driveBase.getLeftVelocity(), Robot.driveBase.getRightVelocity());
+    update(Robot.driveBase.getLeftEncoderPosition(), Robot.driveBase.getRightEncoderPosition(),
+        Robot.sensors.getYawDouble(), Robot.driveBase.getLeftVelocity(), Robot.driveBase.getRightVelocity());
   }
 
-  public long getPosX(){
+  public long getPosX() {
     return currRobotX;
   }
 
-  public long getPosY(){
+  public long getPosY() {
     return currRobotY;
   }
 
- public double getLeftEncoderTick(){
+  public double getLeftEncoderTick() {
     return leftEncoderTick;
   }
 
-  public double getRightEncoderTick(){
+  public double getRightEncoderTick() {
     return rightEncoderTick;
   }
-  public double getRobotAngle(){
+
+  public double getRobotAngle() {
     return currentAngle;
   }
 
@@ -126,27 +149,35 @@ public class Pose {
   }
 
   /**
-   * Gets the left side of the robot's velocity at the time of the pose in ticks/second
+   * Gets the left side of the robot's velocity at the time of the pose in
+   * ticks/second
    */
   public int getLeftVelocity() {
     return leftVelocity;
   }
 
   /**
-   * Gets the right side of the robot's velocity at the time of the pose in ticks/second
+   * Gets the right side of the robot's velocity at the time of the pose in
+   * ticks/second
    */
   public int getRightVelocity() {
     return rightVelocity;
   }
 
+  // For testing purposes
+  public double getDeltaAngle() {
+    return deltaAngle;
+  }
+
   public Pose clone() {
-    return new Pose(leftEncoderTick, rightEncoderTick, currentAngle, currRobotX, currRobotY, timeOfPose, leftVelocity, rightVelocity);
+    return new Pose(leftEncoderTick, rightEncoderTick, currentAngle, currRobotX, currRobotY, timeOfPose, leftVelocity,
+        rightVelocity);
   }
 
   /**
    * Instantiates the field centric Pose. Call this in Robot.autonomousInit()
    */
-  public static void instantiateFieldCentricPose () {
+  public static void instantiateFieldCentricPose() {
     fieldCentricPose = new Pose();
   }
 
@@ -163,4 +194,5 @@ public class Pose {
   public static Pose getFieldCentricPose() {
     return fieldCentricPose;
   }
+
 }

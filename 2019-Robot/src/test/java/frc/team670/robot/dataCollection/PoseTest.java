@@ -12,6 +12,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import frc.team670.robot.dataCollection.Pose;
+import sun.nio.fs.DefaultFileTypeDetector;
 
 /**
  * A Test for the MathUtils class. Serves as a test example for functions. Add to this for all other functions added.
@@ -32,8 +33,26 @@ public class PoseTest {
         //poseTest = new Pose(0d, 0d, 0d, 0, 0, 0, 0);
         poseTest.update(-100, -100, 0, 0, 0);
         assertEquals(-87.0,  poseTest.getPosX(), 0.0001);
+        assertEquals(-50,  poseTest.getPosY(), 0.0001);
         poseTest.update(0, 0, -40, 0, 0);
         assertEquals(-40.0,  poseTest.getRobotAngle(), 0.0001);
+
+        // Angle tests
+        // poseTest = new Pose(0d, 0d, 90d, 0, 0, 0, 0); // Never going to happen b/c update is called continuously
+        // poseTest.update(0, 0, -90, 0, 0);
+        poseTest = new Pose(0d, 0d, 160d, 0, 0, 0, 0);
+        poseTest.update(0, 0, -170, 0, 0);
+        assertEquals(175, poseTest.getDeltaAngle(), 0.0001);
+
+        //starts at -170
+        poseTest.update(0, 0, 170, 0, 0);
+        poseTest.update(0, 0, -160, 0, 0);
+        assertEquals(-175, poseTest.getDeltaAngle(), 0.0001);
+
+        poseTest.update(0, 0, 40, 0, 0);
+        poseTest.update(0, 0, -50, 0, 0);
+        assertEquals(-5, poseTest.getDeltaAngle(), 0.0001);
+
     }
 
 
