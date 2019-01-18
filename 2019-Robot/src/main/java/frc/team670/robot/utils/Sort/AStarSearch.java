@@ -35,7 +35,7 @@ public class AStarSearch {
                 double tempG = current.getG() + getCost(current, child);
                 double tempF = tempG + calcH(child, destination);
 
-                 if(openList.contains(child) && (tempF >= child.getF())){
+                 if(closedList.contains(child) && (tempF >= child.getF())){
                         continue;
                   } else if(!openList.contains(child) || (tempF < child.getF())){
                     child.setParent(current);
