@@ -52,6 +52,11 @@ public class PoseTest {
         poseTest.update(0, 0, -50, 0, 0);
         assertEquals(-5, poseTest.getDeltaAngle(), 0.0001);
 
+        poseTest.update(0, 0, -175, 0, 0);
+        poseTest.update(0, 0, 176, 0, 0);
+        assertEquals(-179.5, poseTest.getDeltaAngle(), 0.0001);
+
+        // √µ the square root of the coefficienct of friction of Pokémon
     }
 
 
