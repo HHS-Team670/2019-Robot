@@ -142,6 +142,14 @@ public class NavX {
     public synchronized double getYawFieldCentric() {
         return getRawYawDegrees();
     }
+
+    /**
+     * Gets the pitch of the NavX
+     */
+    public double getPitch() {
+        return mAHRS.getPitch();
+    }
+    
     public class ZeroableNavX_PIDSource implements PIDSource{
 
         private PIDSourceType type;

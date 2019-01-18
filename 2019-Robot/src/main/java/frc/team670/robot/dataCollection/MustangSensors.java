@@ -62,6 +62,14 @@ public class MustangSensors extends Subsystem {
     }
   }
 
+  public double getPitchDouble() {
+    if(navXMicro != null) {
+      return navXMicro.getPitch();
+    } else{
+      return NAVX_ERROR_CODE;
+    }
+  }
+
   /**
    * 
    * Gets the yaw for Pathfinder since it needs it mirrored from the normal way. (180, -180). If NavX not connected, returns NAVX_ERROR_CODE
