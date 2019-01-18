@@ -71,15 +71,29 @@ public class MathUtils {
      */
     public static double convertDriveBaseTicksToInches(double ticks) {
        double rotations = ticks / RobotConstants.DIO_TICKS_PER_ROTATION;
-       return rotations * Math.PI * RobotConstants.WHEEL_DIAMETER_INCHES;
+       return rotations * Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER;
     }
 
     /**
      * Converts an inch value into drive base DIO Encoder ticks.
      */
     public static int convertInchesToDriveBaseTicks(double inches) {
-        double rotations = inches / (Math.PI * RobotConstants.WHEEL_DIAMETER_INCHES);
+        double rotations = inches / (Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
         return (int)(rotations * RobotConstants.DIO_TICKS_PER_ROTATION);
+    }
+
+    /**
+     * Gets inches per rotations of a NEO motor on the drive base since SparkMAX encoders work in rotations.
+     */
+    public static double convertDriveBaseRotationsToInches(double rotations) {
+        return RobotConstants.DRIVEBASE_INCHES_PER_ROTATION * rotations;
+    }
+
+    /**
+     * Gets rotations of a NEO motor on the drive base per a value in inches ince SparkMAX encoders work in rotations.
+     */
+    public static double convertInchesToDriveBaseRotations(double inches) {
+        return inches / RobotConstants.DRIVEBASE_INCHES_PER_ROTATION;
     }
 
     /**
@@ -87,7 +101,7 @@ public class MathUtils {
      */
     public static double convertInchesPerSecondToDriveBaseRoundsPerMinute(double inchesPerSecond) {
         // (Inches/seconds) * (60 seconds/1 minute) * ((2 * Diameter inches)/Rotation)
-        return inchesPerSecond * 60 / (Math.PI * RobotConstants.WHEEL_DIAMETER_INCHES);
+        return inchesPerSecond * 60 / (Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
     }
 
     /**

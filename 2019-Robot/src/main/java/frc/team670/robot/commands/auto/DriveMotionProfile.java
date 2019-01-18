@@ -139,11 +139,11 @@ public class DriveMotionProfile extends Command {
     // Wheel Diameter is the diameter of your wheels (or pulley for a track system) in meters
 
     if(isReversed){
-      left.configureEncoder(-1 * Robot.driveBase.getLeftDIOEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.WHEEL_DIAMETER);
-      right.configureEncoder(-1 * Robot.driveBase.getRightDIOEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.WHEEL_DIAMETER);  
+      left.configureEncoder(-1 * Robot.driveBase.getLeftDIOEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
+      right.configureEncoder(-1 * Robot.driveBase.getRightDIOEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);  
     } else{
-      left.configureEncoder(Robot.driveBase.getLeftDIOEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.WHEEL_DIAMETER);
-      right.configureEncoder(Robot.driveBase.getRightDIOEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.WHEEL_DIAMETER);  
+      left.configureEncoder(Robot.driveBase.getLeftDIOEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
+      right.configureEncoder(Robot.driveBase.getRightDIOEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);  
     }
 
     // The first argument is the proportional gain. Usually this will be quite high

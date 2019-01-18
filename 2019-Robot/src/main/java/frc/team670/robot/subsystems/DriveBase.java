@@ -11,21 +11,18 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.revrobotics.CANEncoder;
-import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.ControlType;
 
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.Encoder;
 import frc.team670.robot.commands.drive.XboxRocketLeagueDrive;
-import frc.team670.robot.utils.functions.MathUtils;
-import frc.team670.robot.constants.RobotConstants;
-
 import frc.team670.robot.constants.RobotMap;
+import frc.team670.robot.utils.functions.MathUtils;
 
 /**
  * Represents a tank drive base.
@@ -42,54 +39,58 @@ public class DriveBase extends Subsystem {
   private List<CANSparkMax> leftControllers, rightControllers;
   private List<CANSparkMax> allMotors;
   private Encoder leftDIOEncoder, rightDIOEncoder;
-  private final double P = 1, I = 0, D = 0, FF = 0;
+  private final double pP = 0.1, pI = 1E-4, pD = 1, pFF = 0; // Position PID Values. Set based off the default in REV Robotics example code.
+  private final double vP = 5E-5, vI = 1E-5, vD = 0, vFF = 0; // Velocity PID Values. Set based off the default in REV Robotics example code.
+
 
   public DriveBase() {
-    // left1 = new CANSparkMax(RobotMap.sparkLeftMotor1, CANSparkMaxLowLevel.MotorType.kBrushless);
-    // left2 = new CANSparkMax(RobotMap.sparkLeftMotor2, CANSparkMaxLowLevel.MotorType.kBrushless);
-    // right1 = new CANSparkMax(RobotMap.sparkRightMotor1, CANSparkMaxLowLevel.MotorType.kBrushless);
-    // right2 = new CANSparkMax(RobotMap.sparkRightMotor2, CANSparkMaxLowLevel.MotorType.kBrushless);
+    left1 = new CANSparkMax(RobotMap.sparkLeftMotor1, CANSparkMaxLowLevel.MotorType.kBrushless);
+    left2 = new CANSparkMax(RobotMap.sparkLeftMotor2, CANSparkMaxLowLevel.MotorType.kBrushless);
+    right1 = new CANSparkMax(RobotMap.sparkRightMotor1, CANSparkMaxLowLevel.MotorType.kBrushless);
+    right2 = new CANSparkMax(RobotMap.sparkRightMotor2, CANSparkMaxLowLevel.MotorType.kBrushless);
 
-    // leftControllers = Arrays.asList(left1,left2);
-    // rightControllers = Arrays.asList(right1, right2);
-    // allMotors.addAll(leftControllers);
-    // allMotors.addAll(rightControllers);
+    leftControllers = Arrays.asList(left1,left2);
+    rightControllers = Arrays.asList(right1, right2);
+    allMotors.addAll(leftControllers);
+    allMotors.addAll(rightControllers);
     
-    // setMotorsInvert(leftControllers, false); // We should not have to invert since DifferentialDrive inverts the right side for us.
-    // setMotorsInvert(rightControllers, false);
+    setMotorsInvert(leftControllers, false);
+     // Invert this so it will work properly with the CANPIDController 
+     // and then invert the SpeedController to compensate for automatic inversion.
+    setMotorsInvert(rightControllers, true);
 
-    // left2.follow(left1);
-    // right2.follow(right1);
+    left2.follow(left1);
+    right2.follow(right1);
 
-    // left = new SpeedControllerGroup(left1, left2);
-    // right = new SpeedControllerGroup(right1, right2);
+    left = new SpeedControllerGroup(left1, left2);
+    right = new SpeedControllerGroup(right1, right2);
+    // The DifferentialDrive inverts the right side automatically, however we want to invert straight from the Spark so that we can
+    // still use it properly with the CANPIDController, so we need to reverse the automatic invert.
+    right.setInverted(true);
 
-    // setMotorsBrushless(allMotors);
+    driveTrain = new DifferentialDrive(left, right);
 
-    // driveTrain = new DifferentialDrive(left, right);
+    // Set PID Values
+    left1.getPIDController().setP(pP, encodersPIDSlot);
+    left1.getPIDController().setI(pI, encodersPIDSlot);
+    left1.getPIDController().setD(pD, encodersPIDSlot);
+    left1.getPIDController().setFF(pFF, encodersPIDSlot);
+    left1.getPIDController().setOutputRange(-1, 1);
 
-//     leftDIOEncoder = new Encoder(RobotMap.leftEncoderChannelA, RobotMap.leftEncoderChannelB);
-//     rightDIOEncoder = new Encoder(RobotMap.rightEncoderChannelA, RobotMap.rightEncoderChannelB);
+    right1.getPIDController().setP(vP, velocityPIDSlot);
+    right1.getPIDController().setI(vI, velocityPIDSlot);
+    right1.getPIDController().setD(vD, velocityPIDSlot);
+    right1.getPIDController().setFF(vFF, velocityPIDSlot);
 
-    double distancePerPulse = Math.PI * RobotConstants.WHEEL_DIAMETER* RobotConstants.DIO_TICKS_PER_ROTATION;
-    leftDIOEncoder.setDistancePerPulse(distancePerPulse);
-    rightDIOEncoder.setDistancePerPulse(distancePerPulse);
-    leftDIOEncoder.setReverseDirection(false); // TODO One of these will need to be reversed to fit with the motors, figure out which
-    rightDIOEncoder.setReverseDirection(true);
+    // DIO Encoders
+    // leftDIOEncoder = new Encoder(RobotMap.leftEncoderChannelA, RobotMap.leftEncoderChannelB);
+    // rightDIOEncoder = new Encoder(RobotMap.rightEncoderChannelA, RobotMap.rightEncoderChannelB);
 
-//     left1.getPIDController().setP(P, encodersPIDSlot);
-//     left1.getPIDController().setI(I, encodersPIDSlot);
-//     left1.getPIDController().setD(D, encodersPIDSlot);
-//     left1.getPIDController().setFF(FF, encodersPIDSlot);
-//     left1.getPIDController().setOutputRange(-1, 1);
-
-//     right1.getPIDController().setP(P, encodersPIDSlot);
-//     right1.getPIDController().setI(I, encodersPIDSlot);
-//     right1.getPIDController().setD(D, encodersPIDSlot);
-//     right1.getPIDController().setFF(FF, encodersPIDSlot);
-//     right1.getPIDController().setOutputRange(-1, 1);
-
-
+    // double distancePerPulse = Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER* RobotConstants.DIO_TICKS_PER_ROTATION;
+    // leftDIOEncoder.setDistancePerPulse(distancePerPulse);
+    // rightDIOEncoder.setDistancePerPulse(distancePerPulse);
+    // leftDIOEncoder.setReverseDirection(false); // TODO One of these will need to be reversed to fit with the motors, figure out which
+    // rightDIOEncoder.setReverseDirection(true);
   }
 
   /**
@@ -216,14 +217,14 @@ public class DriveBase extends Subsystem {
   }
 
     /**
-   * Gets the encoder position of the front left motor in ticks.
+   * Gets the encoder position of the front left motor in motor revolutions.
    */
   public int getLeftSparkEncoderPosition(){
     return (int)left1.getEncoder().getPosition();
   }
 
   /**
-   * Gets the encoder position of the front right motor in ticks, this encoder gets more positive as it goes forward
+   * Gets the encoder position of the front right motor in motor revolutions.
    */
   public int getRightSparkEncoderPosition(){
     return (int)right1.getEncoder().getPosition();
@@ -425,4 +426,3 @@ public class DriveBase extends Subsystem {
     return rightControllers;
   }
 }
-
