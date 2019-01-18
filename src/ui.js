@@ -13,7 +13,26 @@ var ui = {
     }
 };
 
-let allFieldLocations = ["left-rocket-top", "left-rocket-middle", "left-rocket-bottom", "left-cargo-far", "left-cargo-mid", "left-cargo-close", "left-cargo-alliance", "right-cargo-alliance", "right-cargo-far", "right-cargo-mid", "right-cargo-close", "right-rocket-top", "right-rocket-middle", "right-rocket-bottom", "left-loading-cargo", "left-loading-plate", "right-loading-cargo", "right-loading-plate"];
+// naming convention starts from the midfield line and counts towards the alliance station
+let allEndpoints = [
+  "left-rocket-middle-1", "left-rocket-middle-2", "left-rocket-middle-3",
+  "left-rocket-bottom-1", "left-rocket-bottom-2", "left-rocket-bottom-3",
+  "right-rocket-middle-1", "right-rocket-middle-2", "right-rocket-middle-3",
+  "right-rocket-bottom-1", "right-rocket-bottom-2", "right-rocket-bottom-3",
+  "left-cargo-ball-1", "left-cargo-plate-1",
+  "left-cargo-ball-2", "left-cargo-plate-2",
+  "left-cargo-ball-3", "left-cargo-plate-3",
+  "left-cargo-ball-4", "left-cargo-plate-4",
+  "right-cargo-ball-1", "right-cargo-plate-1",
+  "right-cargo-ball-2", "right-cargo-plate-2",
+  "right-cargo-ball-3", "right-cargo-plate-3",
+  "right-cargo-ball-4", "right-cargo-plate-4",
+  "left-loading-ball", "left-loading-plate",
+  "right-loading-ball", "right-loading-plate",
+  "left-depot", "right-depot",
+  "hab-level-1", "left-hab-level-2", "right-hab-level-2", "hab-level-3"
+];
+var endpoints = [];
 
 NetworkTables.addKeyListener('/SmartDashboard/robotTime', (key, value) => {
   var minutes = ~~(value / 60); // converts to integer
@@ -44,87 +63,143 @@ window.onkeyup = function(event) {
     let key = event.key;
 
     if (key == '9') {
-      var toRemove = keys.pop();
-      highlight(getMap(toRemove), 'clear');
+      keys.pop();
     } else if (key == '0') {
       // toggle arm heights
     } else if (key == 'w') {
       finalize();
-      keys = [];
     } else {
-      if (keys.length == 0 && getMap(key) != 'unmapped') clearHighlight();
-      if (keys.length < 2) {
-        if (getMap(key) != 'unmapped') keys.push(key);
-        highlight(getMap(key), 'blue');
+      if (keys.length < 4) {
+        if (keys.length % 2 == 0 && getRobotLocation(key) != null) keys.push(key);
+        else if (keys.length % 2 == 1 && getHeight(key) != null) keys.push(key);
+      }
+
+      // document.getElementById(getRobotLocation(keys[keys.length-2])).innerHTML = '*';
+      // (getHeight(key).split('-')[1].charAt(0).toUpperCase());
+    }
+
+    document.getElementById('test').innerHTML = keys;
+
+    endpoints = [];
+    if (keys.length > 0) {
+      highlight(getRobotLocation(keys[0]), 'white');
+    }
+    if (keys.length > 1) {
+      var endpoint = getEndpoint(getRobotLocation(keys[0]), getHeight(keys[1]));
+      if (endpoint == null) keys.pop();
+      else {
+        highlight(getRobotLocation(keys[0]), 'green');
+        endpoints.push(endpoint);
+      }
+    }
+    if (keys.length > 2) {
+      highlight(getRobotLocation(keys[2]), 'white');
+    }
+    if (keys.length > 3) {
+      var endpoint = getEndpoint(getRobotLocation(keys[2]), getHeight(keys[3]));
+      if (endpoint == null) keys.pop();
+      else {
+        highlight(getRobotLocation(keys[2]), 'red');
+        endpoints.push(endpoint);
       }
     }
 }
 
-// returns the value the key is mapped to
-function getMap(key) {
-  /*
-  a b c d
-  j k l m
-  s t u v
-  1 2 3 4
-  9 0 a w
-  */
+/*
+a b c d
+j k l m
+s t u v
+1 2 3 4
+9 0 a w
+*/
 
-  if (key == 'a') return 'left-rocket-middle';
-  if (key == 'j') return 'left-rocket-bottom';
-  if (key == 'b') return 'left-cargo-far';
-  if (key == 'k') return 'left-cargo-mid';
-  if (key == 't') return 'left-cargo-close';
-  if (key == '2') return 'left-cargo-alliance';
-  if (key == '3') return 'right-cargo-alliance';
-  if (key == 'c') return 'right-cargo-far';
-  if (key == 'l') return 'right-cargo-mid';
-  if (key == 'u') return 'right-cargo-close';
-  if (key == 'd') return 'right-rocket-middle';
-  if (key == 'm') return 'right-rocket-bottom';
-  if (key == 's') return 'left-loading-cargo';
-  if (key == '1') return 'left-loading-plate';
-  if (key == 'v') return 'right-loading-cargo';
-  if (key == '4') return 'right-loading-plate';
+// returns the location on the field corresponding with a given key
+function getRobotLocation(key) {
+  if (key == 'a') return 'left-rocket-1';
+  if (key == 'j') return 'left-rocket-2';
+  if (key == 's') return 'left-rocket-3';
+  if (key == '1') return 'left-loading';
+  if (key == '9') return 'left-depot';
+  if (key == 'b') return 'left-cargo-1';
+  if (key == 'k') return 'left-cargo-2';
+  if (key == 't') return 'left-cargo-3';
+  if (key == '2') return 'left-cargo-4';
+  if (key == 'c') return 'right-cargo-1';
+  if (key == 'l') return 'right-cargo-2';
+  if (key == 'u') return 'right-cargo-3';
+  if (key == '3') return 'right-cargo-4';
+  if (key == 'd') return 'right-rocket-1';
+  if (key == 'm') return 'right-rocket-2';
+  if (key == 'v') return 'right-rocket-3';
+  if (key == '4') return 'right-loading';
+  if (key == 'w') return 'right-depot';
+  // return null;
+}
 
-  if (key == '9') return 'clear';
-  if (key == '0') return 'backspace';
-  if (key == 'w') return 'enter';
+// returns the arm height corresponding with a given key
+function getHeight(key) {
+  if (key == 'a') return 'rocket-middle';
+  if (key == 'b') return 'rocket-bottom';
+  if (key == 'j') return 'cargo-ball';
+  if (key == 'k') return 'cargo-plate';
+  if (key == 's') return 'loading-ball';
+  if (key == 't') return 'loading-plate';
+  // return null;
+}
 
-  return 'unmapped';
+// combines location and height to return an endpoint
+function getEndpoint(location, height) {
+  if (location.includes('rocket') && height.includes('rocket')) {
+    return location.replace('rocket', height);
+  }
+  if (location.includes('cargo') && height.includes('cargo')) {
+    return location.replace('cargo', height);
+  }
+  if (location.includes('loading') && height.includes('loading')) {
+    return location.replace('loading', height);
+  }
+  if (location.includes('depot')) {
+    return location;
+  }
+  // return null;
 }
 
 function highlight(toHighlight, color) {
-  var location = document.getElementById(toHighlight);
-  if (color == 'green') location.style.fill = `rgb(0,255,0)`;
-  if (color == 'red') location.style.fill = `rgb(255,0,0)`;
-  if (color == 'blue') location.style.fill = `rgb(0,0,255)`;
-  if (color == 'clear') location.style.fill = `rgb(0,0,0)`;
+  var endpoint = document.getElementById(toHighlight);
+  if (color == 'green') endpoint.style.fill = `rgb(0,255,0)`;
+  if (color == 'red') endpoint.style.fill = `rgb(255,0,0)`;
+  if (color == 'blue') endpoint.style.fill = `rgb(0,0,255)`;
+  if (color == 'white') endpoint.style.fill = `rgb(255,255,255)`;
+  if (color == 'clear') endpoint.style.fill = `rgb(0,0,0)`;
 }
 
 function clearHighlight() {
-  var len = allFieldLocations.length;
+  var len = allEndpoints.length;
   for (var i = 0; i < len; i++) {
-    var location = allFieldLocations[i];
-    document.getElementById(location).style.fill = `rgb(0,0,0)`;
+    var endpoint = allEndpoints[i];
+    document.getElementById(endpoint).style.fill = `rgb(0,0,0)`;
   }
 }
 
 function finalize() {
-  highlight(getMap(keys[0]), 'green');
-  highlight(getMap(keys[1]), 'red');
+  document.getElementById('test').innerHTML = endpoints.length;
+  NetworkTables.putValue('/SmartDashboard/endpoints', endpoints);
+  keys = [];
 
-  var armStart = 'plate';
-  if (getMap(keys[0]).includes('cargo')) {
-    armStart = 'cargo';
-  }
-
-  var armEnd = 'bottom';
-  if (getMap(keys[1]).includes('top')) {
-    armEnd = 'top';
-  } else if (getMap(keys[1]).includes('middle')) {
-    armEnd = 'middle';
-  }
+  // highlight(getMap(keys[0]), 'green');
+  // highlight(getMap(keys[1]), 'red');
+  //
+  // var armStart = 'plate';
+  // if (getMap(keys[0]).includes('cargo')) {
+  //   armStart = 'cargo';
+  // }
+  //
+  // var armEnd = 'bottom';
+  // if (getMap(keys[1]).includes('top')) {
+  //   armEnd = 'top';
+  // } else if (getMap(keys[1]).includes('middle')) {
+  //   armEnd = 'middle';
+  // }
 
   NetworkTables.putValue('/SmartDashboard/path/robot-start', keys[0]);
   NetworkTables.putValue('/SmartDashboard/path/robot-end', keys[1]);

@@ -137,13 +137,17 @@ body.login #login {
   position: absolute;
   transform: translate(70vw);
 }
+#arm {
+  position: absolute;
+  transform: translate(81vw);
+}
 #turret {
   position: absolute;
   transform: translate(85vw);
 }
 #field-map {
   position: absolute;
-  transform: translate(60vw, 40vh);
+  transform: translate(55vw, 40vh);
 }
 .bottom-tick {
   transform-origin: top center;
@@ -160,24 +164,24 @@ body.login #login {
   transform-origin: top left;
   transform: rotate(90deg);
 }
-#left-cargo-far {
+#left-cargo-1 {
   transform: translate(-40px);
 }
-#left-cargo-mid {
+#left-cargo-2 {
   transform: translate(-40px);
 }
-#left-cargo-close {
+#left-cargo-3 {
   transform: translate(-40px);
 }
-#left-cargo-alliance {
+#left-cargo-4 {
   transform: translate(-30px);
 }
-#right-cargo-far {
+#right-cargo-1 {
   transform: translate(10px);
 }
-#right-cargo-mid {
+#right-cargo-2 {
   transform: translate(10px);
 }
-#right-cargo-close {
+#right-cargo-3 {
   transform: translate(10px);
 }
