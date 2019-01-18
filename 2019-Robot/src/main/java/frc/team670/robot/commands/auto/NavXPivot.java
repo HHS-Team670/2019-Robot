@@ -10,6 +10,7 @@ package frc.team670.robot.commands.auto;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.Robot;
+import frc.team670.robot.dataCollection.NullPIDOutput;
 import frc.team670.robot.utils.Logger;
 import jaci.pathfinder.Pathfinder;
 
@@ -27,7 +28,7 @@ public class NavXPivot extends Command {
   public NavXPivot(double angle) {
 	this.angle = angle;
 	
-	pivotController = new PIDController(P, I, D, Robot.sensors.getZeroableNavXPIDSource(), null);
+	pivotController = new PIDController(P, I, D, Robot.sensors.getZeroableNavXPIDSource(), new NullPIDOutput());
 
 	pivotController.setInputRange(-180, 180);
 	pivotController.setOutputRange(-1, 1);
@@ -55,7 +56,7 @@ public class NavXPivot extends Command {
 	
 	double output = pivotController.get();
 
-	Robot.driveBase.tankDrive(output, -output);
+	Robot.driveBase.tankDrive(output, -output, false);
 
 	Logger.consoleLog("Output:%s CurrentAngle:%s", output, Robot.sensors.getYawDouble());
 

@@ -18,11 +18,29 @@ import edu.wpi.first.wpilibj.SerialPort.Port;
  */
 public class RobotMap {
 
+  // TODO set all of these.
+
   // Drive Base
   public static final int sparkLeftMotor1 = 0;
   public static final int sparkLeftMotor2 = 1;
   public static final int sparkRightMotor1 = 2;
   public static final int sparkRightMotor2 = 3;
+    //Encoders
+    public static final int leftEncoderChannelA = 0;
+    public static final int leftEncoderChannelB = 1;
+    public static final int rightEncoderChannelA = 2;
+    public static final int rightEncoderChannelB = 3;
+
+  // Arm
+  public static final int armTranslationMotor = 4;
+  public static final int armExtensionMotor = 5;
+  public static final int armElbowRotationMotorTalon = 6;
+  public static final int armElbowRotationMotorVictor = 7;
+  public static final int armWristRotation = 8;
+
+  // Climber
+  public static final int backClimberPistonController = 14;
+  public static final int frontClimberPistonController = 15;
   
   // Sensor Ports
   public final static Port navXPort = SerialPort.Port.kUSB;

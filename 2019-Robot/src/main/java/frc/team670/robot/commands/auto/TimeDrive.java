@@ -36,7 +36,7 @@ public class TimeDrive extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() { 
-    Robot.driveBase.tankDrive(speed, speed);
+    Robot.driveBase.tankDrive(speed, speed, false);
     if (executeCounter % 10 == 0) {
         Logger.consoleLog("Timed Driving");
     }
@@ -53,7 +53,7 @@ public class TimeDrive extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Robot.driveBase.tankDrive(0, 0);
+    Robot.driveBase.stop();
     Logger.consoleLog("Speed: %s Seconds: %s", speed, seconds);
   }
 

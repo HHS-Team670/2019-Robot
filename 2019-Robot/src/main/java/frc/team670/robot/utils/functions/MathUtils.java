@@ -67,19 +67,19 @@ public class MathUtils {
     }
 
     /**
-     * Converts a tick value taken from the drive base encoders to inches.
+     * Converts a tick value taken from a drive base DIO encoder to inches.
      */
     public static double convertDriveBaseTicksToInches(double ticks) {
-       double rotations = ticks / RobotConstants.TICKS_PER_ROTATION;
+       double rotations = ticks / RobotConstants.DIO_TICKS_PER_ROTATION;
        return rotations * Math.PI * RobotConstants.WHEEL_DIAMETER_INCHES;
     }
 
     /**
-     * Converts an inch value for the drive base to drive into ticks.
+     * Converts an inch value into drive base DIO Encoder ticks.
      */
     public static int convertInchesToDriveBaseTicks(double inches) {
         double rotations = inches / (Math.PI * RobotConstants.WHEEL_DIAMETER_INCHES);
-        return (int)(rotations * RobotConstants.TICKS_PER_ROTATION);
+        return (int)(rotations * RobotConstants.DIO_TICKS_PER_ROTATION);
     }
 
     /**
