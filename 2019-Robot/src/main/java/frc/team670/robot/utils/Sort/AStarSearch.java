@@ -1,99 +1,100 @@
-package frc.team670.robot.utils.Sort;
+package frc.team670.robot.utils.sort;
 
-import java.util.List;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.awt.geom.Point2D;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 /**
  * Implementation of an A* search algorithm
  * https://www.geeksforgeeks.org/a-search-algorithm/
- * @author ctchen, laksh, rohit
+ * @author ctchen, laksh, rghosh670
  */
-public class AStarSearch implements Edge{
-
-    private List<Node> openNodes = new ArrayList<>();
-    private List<Node> closedNodes = new ArrayList<>();
-    private List<Edge> values = new ArrayList<>();
-    private int numRecursion = -1;
-    private Node start, destination;
-    private double indexX, indexY;
-
-    public AStarSearch(Node star, Node destination){
-        this.start = start;
-        this.destination = destination;
-    }
-
+public class AStarSearch {
+    private Queue<Node> openList;
+    private List<Node> closedList;
+    private Node start;
+    private Node destination;
 
     /**
-     * Implements the AStar search algorithm given start and end/goal
-     * @param startNode Node to start searching at
-     * @param destination The goal
-     * @return The quickest path (list of edges) to get from start to destination
+     * @param start Desired node to start from
+     * @param destination Desired node to reach 
      */
-    public List<Edge> search(Node startNode, Node destination){
+    public AStarSearch(Node start, Node destination){
+        this.start = start;
+        this.destination = destination;
 
-        int i = 0;
-        int ID = 0;
-
-        numRecursion++;
-
-        Node smallest = new Node(0, 0);
-        Node current = openNodes.get(i);
-
-        if(startNode != destination){
-
-            if(openNodes.size() != 0){
-                while(i < openNodes.size()){
-                    current = openNodes.get(i);
-                    if(calculateF(startNode, current) < calculateF(startNode, smallest)){
-                        smallest = current;
-                        ID = i;                                                                                                
-                    }                                                                                                
-                }
-            
-             indexX = openNodes.get(ID).getX();
-             indexY = openNodes.get(ID).getY();
-             Node popped = openNodes.remove(ID);
+        openList = new LinkedList<Node>();
+        closedList = new ArrayList<Node>();
+    }
 
 
+    //TODO change it to return Edges
+    /**
+     * Runs the search function
+     * @return A path of nodes that the search algorithm has found
+     */
+    public List<Node> search(){
+        Node current = null;
+        openList.add(start);
 
+        while(!openList.isEmpty()){
+            current = openList.poll();
+            closedList.add(current);
 
-            search(popped, destination);
-            } 
+            for(Edge e : current.getEdges()){
+                Node child = e.getDest();
+                double tempG = current.getG() + getCost(current, child);
+                double tempF = tempG + calcH(child);
 
-        }  else{
-            //Reached Destination
-            return null;
+                 if(openList.contains(child) && (tempF >= child.getF())){
+                        continue;
+                  } else if(!openList.contains(child) || (tempF < child.getF())){
+                    child.setParent(current);
+                    child.setG(tempG);
+                    child.setF(tempF);
 
+                    if(openList.contains(child)){
+                        openList.remove(child);
+                    }
+
+                    openList.add(child);
+                  }
+    
+            }
+
+            if(current.getState().equals(destination.getState())){
+                break;
+            }
         }
-        
-        
-
-       return values;
+        return getPath();
     }
 
 
-    public String getID(){
-        return "TODO";
+    private List<Node> getPath(){
+        List<Node> path = new ArrayList<Node>();
+
+            for(Node node = destination; node != null; node = node.getParent()){
+                path.add(node);
+            }
+
+        Collections.reverse(path);
+        return path;
     }
 
-    public List<Edge> getEdges(){
-        return new ArrayList<>();
+    private double getCost(Node d1, Node d2){
+        double d1X = d1.getCoord().getX();
+        double d1Y = d1.getCoord().getX();
+        double d2X = d2.getCoord().getX();
+        double d2Y = d2.getCoord().getX();
+
+        return Math.sqrt((d2Y - d1Y) * (d2Y - d1Y) + (d2X - d1X) * (d2X - d1X));
     }
 
-    public double getCost(Node d1, Node d2){
-        return Math.sqrt((d2.getY() - d1.getY()) * (d2.getY() - d1.getY())
-        + (d2.getX() - d1.getX()) * (d2.getX() - d1.getX()));
+    private double calcH(Node node){
+        return getCost(node, destination);
     }
-
-    /** 
-     * 
-     * @return the f-value for a node, d1
-     */ 
-    public double calculateF(Node d1, Node d2){
-        return getCost(d1, d2) + getCost(d1, destination);
-    }
-
-
+    
 }
+

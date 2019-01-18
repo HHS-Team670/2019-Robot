@@ -7,6 +7,7 @@
 
 package frc.team670.robot.subsystems;
 
+
 import java.awt.geom.Point2D;
 import java.util.HashMap;
 
@@ -20,6 +21,8 @@ import frc.team670.robot.commands.arm.armTransitions.ArmTransition;
 import frc.team670.robot.commands.arm.armTransitions.NeutralToCargoPickup;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
+import frc.team670.robot.utils.sort.AStarSearch;
+import frc.team670.robot.utils.sort.Node;
 
 /**
  * Represents the arm mechanism on the robot.
@@ -99,11 +102,13 @@ public class Arm extends Subsystem {
   /**
    * Represents a potential state for the arm including a wrist angle, elbow angle, and extension.
    */
-  public class ArmState {
+  public class ArmState implements Node{
     private double elbowAngle, wristAngle;
     private double extensionLength;
     private Point2D.Double coord;
     private LegalState state;
+    private double f, g; //TODO Put this in Node file
+    private Node parent; //TODO Put this in Node file
 
     private ArmTransition[] transitions;
 
@@ -140,9 +145,50 @@ public class Arm extends Subsystem {
     }
 
     //USE THIS
-    public ArmTransition[] getTransitions() {
+    public ArmTransition[] getEdges() {
       return transitions;
     }
+
+    //TODO Put this in Node file
+    public void setF(double f){
+
+    }
+
+    //TODO Put this in Node file
+    public double getF(){
+      return 0d;
+    }
+
+    //TODO Put this in Node file
+    public void setG(double g){
+
+    }
+
+    //TODO Put this in Node file
+    public double getG(){
+      return 0d;
+    }
+    //TODO Put this in Node file
+    public void setParent(Node parent){
+      this.parent = parent;
+    }
+
+    //TODO Put this in Node file
+    public Node getParent(){
+      return parent;
+    }
+
+    public int compareTo(Node other){
+      if(this.f < other.getF()){
+          return -1;
+      } else if(this.f > other.getF()){
+          return 1;
+      } else{
+          return 0;
+      }
+  }
+
+
 
     public CommandGroup getTransition(LegalState destination) {
       CommandGroup result = new CommandGroup();
@@ -152,6 +198,7 @@ public class Arm extends Subsystem {
           return result;
         }
       }
+
 
       /*
        * Implement this so it searches for the quickest path of transititons to the destination.

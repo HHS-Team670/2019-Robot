@@ -1,51 +1,65 @@
-package frc.team670.robot.utils.Sort;
+package frc.team670.robot.utils.sort;
 
-import java.util.List;
 import java.awt.geom.Point2D;
+
+import frc.team670.robot.subsystems.Arm.LegalState;
 
 /**
 * Models a node on a graph. Needed for A* sort 
 * https://www.geeksforgeeks.org/a-search-algorithm/ 
 */
-public class Node{  
-    private Point2D.Double node;
-    private boolean q; 
-    private int ID;   
-
-    public Node(double x, double y){
-        this.node = new Point2D.Double(x, y);
-    }
-
-    public Node(Point2D.Double node, int ID){
-        this.node = node;
-        q = false;
-        this.ID = ID;
-    }
-
-    public int getID(){
-        return ID;
-    }
+public interface Node extends Comparable<Node>{  
     
     /**
      * @return a list of the edges that hit this node
      */
-    public List<Edge> getEdges(){
-        return null;
-    }
+    public Edge[] getEdges();
+    
+    /**
+     * @return coordinates of the node
+     */
+    public Point2D.Double getCoord();
 
-    public double getX(){
-        return node.getX();
-    }
+     /**
+     * @return the state of the node
+     */
+    public LegalState getState();
 
-    public double getY(){
-        return node.getY();
-    }
+    /**
+     * @param the desired F value to set the Node to for AStarSearch
+     */
+    public void setF(double f);
 
-    public boolean getQ(){
-        return q;
-    }
+    
+     /**
+     * @return the F value for AStarSearch
+     */
+    public double getF();
 
-    public void setQ(boolean q){
-        this.q = q;
-    }
+   
+      /**
+     * @param g  The desired G value to set the Node to for AStarSearch
+     */
+    public void setG(double g);
+
+     /**
+     * @return the G value for AStarSearch
+     */
+    public double getG();
+
+
+    /**
+     * @param parent The desired Parent to set the Node to for AStarSearch
+     */
+    public void setParent(Node parent);
+
+    /**
+     * @return the Parent for AStarSearch
+     */
+    public Node getParent();
+
+    /**
+     * @param other Another node to compare this node to
+     */
+    public int compareTo(Node other);
 }
