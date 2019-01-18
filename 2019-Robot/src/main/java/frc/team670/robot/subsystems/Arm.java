@@ -159,6 +159,9 @@ public class Arm extends Subsystem {
        * for the time spent performing them. Currently this is measured as a tick count since we have no way of actually
        * timing it.
        * Long Stanford explanation on this: https://cs.stanford.edu/people/abisee/gs.pdf
+
+        find minimum g+h 
+        minimize distance
        */
 
       return result;
