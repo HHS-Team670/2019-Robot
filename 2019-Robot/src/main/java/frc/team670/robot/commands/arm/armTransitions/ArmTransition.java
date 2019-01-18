@@ -9,12 +9,13 @@ package frc.team670.robot.commands.arm.armTransitions;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.team670.robot.subsystems.Arm.LegalState;
+import frc.team670.robot.utils.sort.Edge;
 
   /**
    * The base for arm transitions. All iterations of this class should be made so that they can be rerun each time initialize is called.
    * Essentially, initialize should reset all necessary values within the object.
    */
-public abstract class ArmTransition extends CommandGroup {
+public abstract class ArmTransition extends CommandGroup implements Edge {
 
   /**
    * The LegalState that this Command will end at.

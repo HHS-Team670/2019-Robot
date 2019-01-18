@@ -192,6 +192,7 @@ public class Arm extends Subsystem {
 
     public CommandGroup getTransition(LegalState destination) {
       CommandGroup result = new CommandGroup();
+
       for(ArmTransition transition : transitions) {
         if(transition.getDestination().equals(destination)) {
           result.addSequential(transition);

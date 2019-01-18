@@ -12,16 +12,13 @@ import java.util.Queue;
  * @author ctchen, laksh, rghosh670
  */
 public class AStarSearch {
-    private Node destination;
-
     /**
      * Runs the search function
      * @param start The node that the user wishes to start from
      * @param destination The target node that the use wishes to reach
      * @return A path of nodes that the search algorithm has found
      */
-    public List<Node> search(Node start, Node destination){
-        this.destination = destination;
+    public static List<Node> search(Node start, Node destination){
 
         Queue<Node> openList = new LinkedList<Node>();
         List<Node> closedList = new ArrayList<Node>();
@@ -36,7 +33,7 @@ public class AStarSearch {
             for(Edge e : current.getEdges()){
                 Node child = e.getDest();
                 double tempG = current.getG() + getCost(current, child);
-                double tempF = tempG + calcH(child);
+                double tempF = tempG + calcH(child, destination);
 
                  if(openList.contains(child) && (tempF >= child.getF())){
                         continue;
@@ -58,11 +55,11 @@ public class AStarSearch {
                 break;
             }
         }
-        return getPath();
+        return getPath(destination);
     }
 
 
-    private List<Node> getPath(){
+    private static List<Node> getPath(Node destination){
         List<Node> path = new ArrayList<Node>();
 
             for(Node node = destination; node != null; node = node.getParent()){
@@ -73,7 +70,7 @@ public class AStarSearch {
         return path;
     }
 
-    private double getCost(Node d1, Node d2){
+    private static double getCost(Node d1, Node d2){
         double d1X = d1.getCoord().getX();
         double d1Y = d1.getCoord().getX();
         double d2X = d2.getCoord().getX();
@@ -82,7 +79,7 @@ public class AStarSearch {
         return Math.sqrt((d2Y - d1Y) * (d2Y - d1Y) + (d2X - d1X) * (d2X - d1X));
     }
 
-    private double calcH(Node node){
+    private static double calcH(Node node, Node destination){
         return getCost(node, destination);
     }
     
