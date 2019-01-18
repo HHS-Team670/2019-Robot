@@ -21,7 +21,7 @@ public interface Node extends Comparable<Node>{
     public Point2D.Double getCoord();
 
      /**
-     * @return the state of the node
+     * @return the current state of the node
      */
     public LegalState getState();
 
