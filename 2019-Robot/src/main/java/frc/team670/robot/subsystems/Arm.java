@@ -139,6 +139,7 @@ public class Arm extends Subsystem {
       return wristAngle;
     }
 
+    //USE THIS
     public ArmTransition[] getTransitions() {
       return transitions;
     }
