@@ -26,9 +26,17 @@ public class AStarSearch {
         Node current = null;
         openList.add(start);
 
-        while(!openList.isEmpty()){
+        boolean end = false;
+
+     
+
+        while(!openList.isEmpty() && !end){
             current = openList.poll();
             closedList.add(current);
+           
+            if(current.getState().equals(destination.getState())){
+                end = true;
+            }
 
             for(Edge e : current.getEdges()){
                 Node child = e.getDest();
@@ -51,9 +59,7 @@ public class AStarSearch {
     
             }
 
-            if(current.getState().equals(destination.getState())){
-                break;
-            }
+            
         }
         return getPath(destination);
     }
