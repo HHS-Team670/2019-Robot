@@ -57,7 +57,7 @@ public Pose(double x, double y, double angle, int leftEncoderPosition, int right
     timeOfPose = System.currentTimeMillis();
   }
 
-  private Pose(long lEncoderTick, long rEncoderTick, double angle, long currRobotX, long currRobotY, long timeOfPose, double leftVelocity, double rightVelocity, double deltaAngle) {
+  private Pose(long lEncoderTick, long rEncoderTick, double angle, long currRobotX, long currRobotY, long timeOfPose, double leftVelocity, double rightVelocity, double averagedAngle) {
     leftEncoderTick = lEncoderTick;
     rightEncoderTick = rEncoderTick;
     currentAngle = angle;
@@ -66,7 +66,7 @@ public Pose(double x, double y, double angle, int leftEncoderPosition, int right
     this.leftVelocity = leftVelocity;
     this.rightVelocity = rightVelocity;
     this.timeOfPose = timeOfPose;
-    this.averagedAngle = deltaAngle;
+    this.averagedAngle = averagedAngle;
   }
 
   public Pose(long lEncoderTick, long rEncoderTick, double angle, long currRobotX, long currRobotY, int leftVelocity,
