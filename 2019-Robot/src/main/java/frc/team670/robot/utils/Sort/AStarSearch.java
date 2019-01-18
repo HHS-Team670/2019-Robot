@@ -12,30 +12,20 @@ import java.util.Queue;
  * @author ctchen, laksh, rghosh670
  */
 public class AStarSearch {
-    private Queue<Node> openList;
-    private List<Node> closedList;
-    private Node start;
     private Node destination;
 
     /**
-     * @param start Desired node to start from
-     * @param destination Desired node to reach 
-     */
-    public AStarSearch(Node start, Node destination){
-        this.start = start;
-        this.destination = destination;
-
-        openList = new LinkedList<Node>();
-        closedList = new ArrayList<Node>();
-    }
-
-
-    //TODO change it to return Edges
-    /**
      * Runs the search function
+     * @param start The node that the user wishes to start from
+     * @param destination The target node that the use wishes to reach
      * @return A path of nodes that the search algorithm has found
      */
-    public List<Node> search(){
+    public List<Node> search(Node start, Node destination){
+        this.destination = destination;
+
+        Queue<Node> openList = new LinkedList<Node>();
+        List<Node> closedList = new ArrayList<Node>();
+
         Node current = null;
         openList.add(start);
 
