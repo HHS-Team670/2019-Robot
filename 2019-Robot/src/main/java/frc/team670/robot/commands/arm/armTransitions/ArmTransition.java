@@ -23,7 +23,7 @@ public abstract class ArmTransition extends CommandGroup implements Edge {
   public abstract LegalState getDestination();
 
   /**
-   * The LegalState that this Command must begin at.
+   * The LegalState that this Command should begin at.
    */
   public abstract LegalState getStart();
 
