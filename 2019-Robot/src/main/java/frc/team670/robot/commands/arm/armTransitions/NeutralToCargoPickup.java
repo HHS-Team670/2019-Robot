@@ -22,7 +22,7 @@ public class NeutralToCargoPickup extends ArmTransition {
   }
 
   @Override
-  public int getTickLength() {
+  public int getLength() {
     return 0; // Set this
   }
 
