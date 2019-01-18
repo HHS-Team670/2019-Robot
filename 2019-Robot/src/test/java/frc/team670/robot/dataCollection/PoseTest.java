@@ -12,7 +12,6 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 
 import frc.team670.robot.dataCollection.Pose;
-import sun.nio.fs.DefaultFileTypeDetector;
 
 /**
  * A Test for the MathUtils class. Serves as a test example for functions. Add to this for all other functions added.
