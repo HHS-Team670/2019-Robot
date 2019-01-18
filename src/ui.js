@@ -64,11 +64,8 @@ window.onkeyup = function(event) {
 
     if (key == '9') {
       keys.pop();
-    } else if (key == '0') {
-      // toggle arm heights
-    } else if (key == 'w') {
-      finalize();
     } else {
+      if (keys.length % 2 == 1 && key == 'w') finalize();
       if (keys.length < 4) {
         if (keys.length % 2 == 0 && getRobotLocation(key) != null) keys.push(key);
         else if (keys.length % 2 == 1 && getHeight(key) != null) keys.push(key);
@@ -88,8 +85,12 @@ window.onkeyup = function(event) {
       var endpoint = getEndpoint(getRobotLocation(keys[0]), getHeight(keys[1]));
       if (endpoint == null) keys.pop();
       else {
-        highlight(getRobotLocation(keys[0]), 'green');
+        var location = getRobotLocation(keys[0]);
+        highlight(location, 'green');
         endpoints.push(endpoint);
+        var startText = document.getElementById('start-text');
+        positionText(startText, location);
+        startText.innerHTML = getHeight(keys[1]).split('-')[1].charAt(0).toUpperCase();
       }
     }
     if (keys.length > 2) {
@@ -99,8 +100,12 @@ window.onkeyup = function(event) {
       var endpoint = getEndpoint(getRobotLocation(keys[2]), getHeight(keys[3]));
       if (endpoint == null) keys.pop();
       else {
-        highlight(getRobotLocation(keys[2]), 'red');
+        var location = getRobotLocation(keys[2]);
+        highlight(location, 'red');
         endpoints.push(endpoint);
+        var endText = document.getElementById('end-text');
+        positionText(endText, location);
+        endText.innerHTML = getHeight(keys[3]).split('-')[1].charAt(0).toUpperCase();
       }
     }
 }
@@ -119,7 +124,7 @@ function getRobotLocation(key) {
   if (key == 'j') return 'left-rocket-2';
   if (key == 's') return 'left-rocket-3';
   if (key == '1') return 'left-loading';
-  if (key == '9') return 'left-depot';
+  if (key == '0') return 'left-depot';
   if (key == 'b') return 'left-cargo-1';
   if (key == 'k') return 'left-cargo-2';
   if (key == 't') return 'left-cargo-3';
@@ -179,6 +184,27 @@ function clearHighlight() {
     var endpoint = allEndpoints[i];
     document.getElementById(endpoint).style.fill = `rgb(0,0,0)`;
   }
+}
+
+function positionText(text, position) {
+  if (position === 'left-rocket-1') text.style.transform = `translate(15px, 20px)`;
+  if (position === 'left-rocket-2') text.style.transform = `translate(15px, 50px)`;
+  if (position === 'left-rocket-3') text.style.transform = `translate(15px, 80px)`;
+  if (position === 'left-cargo-1') text.style.transform = `translate(120px, 20px)`;
+  if (position === 'left-cargo-2') text.style.transform = `translate(120px, 50px)`;
+  if (position === 'left-cargo-3') text.style.transform = `translate(120px, 80px)`;
+  if (position === 'left-cargo-4') text.style.transform = `translate(130px, 110px)`;
+  if (position === 'left-loading') text.style.transform = `translate(15px, 280px)`;
+  if (position === 'left-depot') text.style.transform = `translate(65px, 280px)`;
+  if (position === 'right-rocket-1') text.style.transform = `translate(275px, 20px)`;
+  if (position === 'right-rocket-2') text.style.transform = `translate(275px, 50px)`;
+  if (position === 'right-rocket-3') text.style.transform = `translate(275px, 80px)`;
+  if (position === 'right-cargo-1') text.style.transform = `translate(170px, 20px)`;
+  if (position === 'right-cargo-2') text.style.transform = `translate(170px, 50px)`;
+  if (position === 'right-cargo-3') text.style.transform = `translate(170px, 80px)`;
+  if (position === 'right-cargo-4') text.style.transform = `translate(160px, 110px)`;
+  if (position === 'right-loading') text.style.transform = `translate(275px, 280px)`;
+  if (position === 'right-depot') text.style.transform = `translate(225px, 280px)`;
 }
 
 function finalize() {
