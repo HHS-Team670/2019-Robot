@@ -111,6 +111,52 @@ void CylonBounce(byte red, byte green, byte blue, int EyeSize, int SpeedDelay, i
   delay(ReturnDelay);
 }
 
+void updateStillDriveData() {
+  int Position=0;
+  if(stateData==stillDrive)
+  {
+    if(allianceData=blueAlliance)
+    {                        
+    for(int j=0; j<strip.numPixels()*2; j++)
+    {
+      Position++; // = 0; //Position + Rate;
+      for(int i=0; i<strip.numPixels(); i++) {
+        // sine wave, 3 offset waves make a rainbow!
+        //float level = sin(i+Position) * 127 + 128;
+        //setPixel(i,level,0,0);
+        //float level = sin(i+Position) * 127 + 128;
+        strip.setPixelColor(i,((sin(i+Position) * 127 + 128)/255)*0,
+                   ((sin(i+Position) * 127 + 128)/255)*0,
+                   ((sin(i+Position) * 127 + 128)/255)*255);
+      }
+      
+      strip.show();
+      delay(100);
+  }    
+  } 
+    else if(allianceData == redAlliance)
+    {                  
+for(int j=0; j<strip.numPixels() *2; j++)
+    {
+      Position++; // = 0; //Position + Rate;
+      for(int i=0; i<strip.numPixels(); i++) {
+        // sine wave, 3 offset waves make a rainbow!
+        //float level = sin(i+Position) * 127 + 128;
+        //setPixel(i,level,0,0);
+        //float level = sin(i+Position) * 127 + 128;
+        strip.setPixelColor(i,((sin(i+Position) * 127 + 128)/255)*255,
+                   ((sin(i+Position) * 127 + 128)/255)*0,
+                   ((sin(i+Position) * 127 + 128)/255)*0);
+      }
+      
+      strip.show();
+      delay(100);
+  }    
+    }
+  }
+ 
+  
+}
 void RunningLights(byte red, byte green, byte blue, int WaveDelay) {
   
   int Position=0;
@@ -150,7 +196,7 @@ void setup()
 
 void loop()
 {                                                   //Ran indefinitly after setup()
-reset();
+updateStillDriveData();
   connectionTimer++;                                //Adds a count to the ConnectionTimer
   if(robotClient.available())                       //Runs when bytes are available to read
   {                                                 
@@ -168,17 +214,7 @@ reset();
   
   //Below here is code to control the LED's from the data obtained above
   strip.setBrightness(100); 
-  if(stateData == stillDrive)
-  {
-    if(allianceData == blueAlliance)
-    {                        
-      setStripColor(0,0,255);                        //If the alliance is blue, set the base LED color to blue
-    } 
-    else if(allianceData==redAlliance)
-    {                  
-      setStripColor(255,0,0);                          //If the alliance is red, set the base LED color to red
-    }
-  }
+  
 
   //climbing green LEDs effect
   if(stateData == climbing)
