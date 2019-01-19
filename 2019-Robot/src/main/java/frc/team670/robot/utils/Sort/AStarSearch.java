@@ -31,8 +31,6 @@ public class AStarSearch {
 
         Comparator<Node> fValueComp = new Comparator<Node>() {
             @Override
-
-
             public int compare(Node o1, Node o2) {
                 int o1f = Integer.MAX_VALUE;
                 int o2f = Integer.MAX_VALUE;
