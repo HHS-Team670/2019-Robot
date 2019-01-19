@@ -7,8 +7,8 @@
 
 package frc.team670.robot;
 
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import frc.team670.robot.commands.ZeroNavX;
 import frc.team670.robot.commands.drive.XboxRocketLeagueDrive;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.utils.MustangController;
@@ -50,6 +50,7 @@ public class OI {
   // Controllers/Joysticks
   // private Joystick leftStick, rightStick, operatorStick, arcadeButtons;
   private MustangController driverController;
+  private JoystickButton resetNavX;
 
   // Buttons
   private JoystickButton toggleReverseDrive;
@@ -59,6 +60,8 @@ public class OI {
     driverController = new MustangController(RobotMap.DRIVER_CONTROLLER_PORT);
     toggleReverseDrive = new JoystickButton(driverController, XboxButtons.leftBumper);
     toggleReverseDrive.whenPressed(new XboxRocketLeagueDrive());
+    resetNavX = new JoystickButton(driverController, XboxButtons.a);
+    resetNavX.whenPressed(new ZeroNavX());
   }
 
   public MustangController getDriverController() {
