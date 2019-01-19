@@ -54,6 +54,30 @@ public class MathUtilsTest {
         assertEquals(1, MathUtils.findDistance(0, 0, 1, 0), 0.000001);
     }
 
+    @Test
+    public void convertDriveBaseTicksToInchesTest(){
+        assertEquals(37.68, MathUtils.convertDriveBaseTicksToInches(2048), 0.1);
+    }
+
+    @Test
+    public void convertInchesToDriveBaseTicksTest() {
+        assertEquals(2716, MathUtils.convertInchesToDriveBaseTicks(50), 1);
+    }
+
+    @Test
+    public void convertDriveBaseRotationsToInchesTest() {
+        assertEquals(11.14, MathUtils.convertDriveBaseRotationsToInches(5), 0.1);
+    }
+
+    @Test
+    public void convertInchesToDriveBaseRotationsTest() {
+        assertEquals(22.425, MathUtils.convertInchesToDriveBaseRotations(50), 0.1);
+    }
+
+    @Test
+    public void convertInchesPerSecondToDriveBaseRoundsPerMinuteTest() {
+        assertEquals(159.23, MathUtils.convertInchesPerSecondToDriveBaseRoundsPerMinute(50), 0.1);        
+    }
     /*
      * Add in more tests for all Util methods here.
      */ 
