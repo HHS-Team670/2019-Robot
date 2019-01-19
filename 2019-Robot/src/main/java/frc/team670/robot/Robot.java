@@ -36,7 +36,6 @@ public class Robot extends TimedRobot {
   public static MustangSensors sensors = new MustangSensors();
   public static MustangPi visionPi = new MustangPi();
   public static DriveBase driveBase = new DriveBase();
-  private MustangLEDs_2019 leds = new MustangLEDs_2019();
 
   private long savedTime=0;
 
@@ -44,7 +43,7 @@ public class Robot extends TimedRobot {
   public static Intake intake = new Intake();
   public static Claw claw = new Claw();
   public static Climber climber = new Climber();
-  public static MustangLEDs leds = new MustangLEDs();
+  public static MustangLEDs_2019 leds = new MustangLEDs_2019();
 
   Command autonomousCommand;
   SendableChooser<Command> auton_chooser = new SendableChooser<>();

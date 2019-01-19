@@ -29,7 +29,7 @@ public class MustangLEDs_2019 {
 	final byte[] forwardDrive = { '0', 'R' };
 	final byte[] reverseDrive = { '1', 'R' };
 	final byte[] stillDrive = { '3', 'R' };
-
+	final byte[] visionLockLost={'5','R'};
 	// variables for data which will be sent over server
 	byte[] stateData = stillDrive;
 	byte[] allianceData = blueAlliance;
@@ -94,7 +94,11 @@ public class MustangLEDs_2019 {
 			stateData = visionLock;
 		}
 	}
-
+	public void visionLockLost(boolean trigger){
+		if(trigger == true){
+			stateData = visionLockLost;
+		}
+	}
 	public void setForwardData(boolean trigger) {// updates if we are driving forward
 		if (trigger = true) {
 			stateData = forwardDrive;

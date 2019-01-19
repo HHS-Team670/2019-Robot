@@ -14,7 +14,10 @@
 #include <Adafruit_NeoPixel.h>                      //Adafruit library for led methods
 
 Adafruit_NeoPixel strip =                           //Defines an Adafruit Neopixel strip, containing 120 LEDs, using 
-Adafruit_NeoPixel(15, 6, NEO_GRB + NEO_KHZ800);    //Arduino pin #6, and using the GRB format at 800KHZ bitstream
+Adafruit_NeoPixel(15, 6, NEO_GRB + NEO_KHZ800);    //Arduino pin #6, and using the RGB format at 800KHZ bitstream
+
+Adafruit_NeoPixel strip2=
+Adafruit_NeoPixel(15,7,NEO_GRB + NEO_KHZ800);
 
 EthernetClient robotClient;                         //Defines a client to be used to connect to the Robo Rio
 byte mac[] =                                        //Creates a mac address for use in defining an Ethernet instance
@@ -39,7 +42,7 @@ const String visionLock = "2R";
 const String forwardDrive = "0R";
 const String reverseDrive = "1R";
 const String stillDrive = "3R";
-
+const String visionLockLost= "5R";
 //variables to store data recived from server
 String dataString = "";                             //Used for building a string to then splice into multiple parts to control the LEDs
 String stateData = stillDrive;                      //Sets default values for states
@@ -69,7 +72,11 @@ void stillDriveLights() //to be used when the robot is not moving, will flash al
     }
   }
 }
-
+void visionLockLostLights(){
+  if(stateData==visionLockLost){
+    bounceBackground(0,255,0,3,40,40);
+  }
+}
 
 void forwardDriveLights() //to be used when the robot is moving forward, will display solid green
 {
@@ -79,7 +86,6 @@ void forwardDriveLights() //to be used when the robot is moving forward, will di
   } 
 }
 
-//reverse drive indicated by red
 void reverseDriveLights() //to be used when the robot is moving in reverse, will display solid red
 {
   if(stateData==reverseDrive) 
@@ -88,7 +94,6 @@ void reverseDriveLights() //to be used when the robot is moving in reverse, will
   }
 }
 
-//solid blue color indicates vision lock
 void visionLockLights() //to be used when there is a vision lock, will display solid purple
 {
   if(stateData==visionLock)
@@ -98,7 +103,6 @@ void visionLockLights() //to be used when there is a vision lock, will display s
 
 }
 
-//climbing green LEDs effect
 void climbingLights() //to be used when we are climbing, will display climbing green LEDS
 {
   if(stateData == climbing)
@@ -268,17 +272,17 @@ void setup()
   strip.begin();                                    //Starts communication with the NeoPixel strip
 }
 
-void loop()
-{                                                   //Ran indefinitly after setup()
+void loop()  //Ran indefinitly after setup()
+{                                                  
   parseData();
   
-  //Below here is code to control the LED's from the data obtained above
   strip.setBrightness(100); 
   
   stillDriveLights();
   forwardDriveLights();
   reverseDriveLights();
   visionLockLights();
+  visionLockLostLights();
   climbingLights();
     
   resetConnectionTimer();
