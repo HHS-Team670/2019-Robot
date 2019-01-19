@@ -25,14 +25,14 @@ public class Logger {
      * Open print stream that writes to the log file. Example of use:
      * exception.printStackTrace(Util.logPrintStream);
      */
-    public static final PrintStream logPrintStream = new PrintStream(new LoggingOutputStream());
+    public static final PrintStream LOG_PRINT_STREAM = new PrintStream(new LoggingOutputStream());
 
     /**
      * Logging class for use by other classes to log though this custom logging scheme. All
      * logging should be done by calls to methods on this class instance or with the 
      * convenience methods of the Logging class.
      */
-    public final static java.util.logging.Logger logger = java.util.logging.Logger.getGlobal();
+    public final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getGlobal();
         
     // Private constructor means this class cannot be instantiated. All access is static.
     private Logger() {}
@@ -135,15 +135,15 @@ public class Logger {
             count = 0;
         }
 
-        public void write(final int b) throws IOException 
+        public void write(final int B) throws IOException 
         {
             if (hasBeenClosed) {throw new IOException("The stream has been closed.");}
                 
             // don't log nulls
-            if (b == 0) return;
+            if (B == 0) return;
                 
             // force flush on newline character, dropping the newline.
-            if ((byte) b == '\n') 
+            if ((byte) B == '\n') 
             {
                 flush();
                 return;
@@ -153,14 +153,14 @@ public class Logger {
             if (count == curBufLength) 
             {
                 // grow the buffer
-                final int newBufLength = curBufLength + DEFAULT_BUFFER_LENGTH;
-                final byte[] newBuf = new byte[newBufLength];
-                System.arraycopy(buf, 0, newBuf, 0, curBufLength);
-                buf = newBuf;
-                curBufLength = newBufLength;
+                final int NEW_BUF_LENGTH = curBufLength + DEFAULT_BUFFER_LENGTH;
+                final byte[] NEW_BUF = new byte[NEW_BUF_LENGTH];
+                System.arraycopy(buf, 0, NEW_BUF, 0, curBufLength);
+                buf = NEW_BUF;
+                curBufLength = NEW_BUF_LENGTH;
             }
 
-            buf[count] = (byte) b;
+            buf[count] = (byte) B;
                
             count++;
         }
@@ -169,11 +169,11 @@ public class Logger {
         {
             if (count == 0) return;
                 
-            final byte[] bytes = new byte[count];
+            final byte[] BYTES = new byte[count];
 
-            System.arraycopy(buf, 0, bytes, 0, count);
+            System.arraycopy(buf, 0, BYTES, 0, count);
                 
-            String str = new String(bytes);
+            String str = new String(BYTES);
                 
             consoleLog(str);
                 
@@ -227,7 +227,7 @@ public class Logger {
     public static void consoleLog(String message, Object... parameters)
     {
         // logs to the console as well as our log file on RR disk.
-        logger.log(Level.INFO, String.format("robot: %s: %s", currentMethod(2), String.format(message, parameters)));
+        LOGGER.log(Level.INFO, String.format("robot: %s: %s", currentMethod(2), String.format(message, parameters)));
     }
     
     /**
@@ -236,7 +236,7 @@ public class Logger {
     public static void consoleLog()
     {
         // logs to the console as well as our log file on RR disk.
-        logger.log(Level.INFO, String.format("robot: %s", currentMethod(2)));
+        LOGGER.log(Level.INFO, String.format("robot: %s", currentMethod(2)));
     }
 
     /**
@@ -248,6 +248,6 @@ public class Logger {
     {
         DriverStation.reportError(e.toString(), false);
                 
-        e.printStackTrace(Logger.logPrintStream);
+        e.printStackTrace(Logger.LOG_PRINT_STREAM);
     }
 }

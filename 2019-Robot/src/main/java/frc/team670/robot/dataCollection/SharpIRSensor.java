@@ -10,26 +10,26 @@ import edu.wpi.first.wpilibj.Counter;
  * Driver for an analog Sharp IR sensor (or any distance sensor where output voltage is a function of range, really).
  */
 public class SharpIRSensor {
-    protected final AnalogInput mAnalogInput;
-    protected final AnalogTrigger mAnalogTrigger;
-    protected final Counter mCounter;
+    protected final AnalogInput M_ANALOG_INPUT;
+    protected final AnalogTrigger M_ANALOG_TRIGGER;
+    protected final Counter M_COUNTER;
 
     public SharpIRSensor(int port, double min_trigger_voltage, double max_trigger_voltage) {
-        mAnalogInput = new AnalogInput(port);
-        mAnalogInput.setAverageBits(6);
-        mAnalogTrigger = new AnalogTrigger(mAnalogInput);
-        mAnalogTrigger.setAveraged(true);
-        mAnalogTrigger.setFiltered(false);
-        mAnalogTrigger.setLimitsVoltage(min_trigger_voltage, max_trigger_voltage);
-        mCounter = new Counter(mAnalogTrigger.createOutput(AnalogTriggerType.kState));
+        M_ANALOG_INPUT = new AnalogInput(port);
+        M_ANALOG_INPUT.setAverageBits(6);
+        M_ANALOG_TRIGGER = new AnalogTrigger(M_ANALOG_INPUT);
+        M_ANALOG_TRIGGER.setAveraged(true);
+        M_ANALOG_TRIGGER.setFiltered(false);
+        M_ANALOG_TRIGGER.setLimitsVoltage(min_trigger_voltage, max_trigger_voltage);
+        M_COUNTER = new Counter(M_ANALOG_TRIGGER.createOutput(AnalogTriggerType.kState));
     }
 
     public int getCount() {
-        return mCounter.get();
+        return M_COUNTER.get();
     }
 
     public double getVoltage() {
-        return mAnalogInput.getAverageVoltage();
+        return M_ANALOG_INPUT.getAverageVoltage();
     }
 
    // public boolean seesTape(){
@@ -38,6 +38,6 @@ public class SharpIRSensor {
 
 
     public void resetCount() {
-        mCounter.reset();
+        M_COUNTER.reset();
     }
 }

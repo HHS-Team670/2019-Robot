@@ -17,7 +17,7 @@ public class SparkCANPIDEncoderDrive extends Command {
   private double inchesToTravel;
   private double rotationsToTravel;
   private int leftStartingPosition, rightStartingPosition, leftEndingPosition, rightEndingPosition, leftCurrentPosition, rightCurrentPosition;
-  private final double threshold = 1; // TODO Define threshold
+  private final double THRESHOLD = 1; // TODO Define threshold
 
   public SparkCANPIDEncoderDrive(int inchesToTravel) {
     requires (Robot.driveBase);
@@ -52,8 +52,8 @@ public class SparkCANPIDEncoderDrive extends Command {
   @Override
   protected boolean isFinished() {
 
-    if (Math.abs(Robot.driveBase.getLeftSparkEncoderPosition() - (rotationsToTravel + leftStartingPosition)) <= threshold &&
-     Math.abs(Robot.driveBase.getRightSparkEncoderPosition() - (rotationsToTravel + rightStartingPosition)) <= threshold ){
+    if (Math.abs(Robot.driveBase.getLeftSparkEncoderPosition() - (rotationsToTravel + leftStartingPosition)) <= THRESHOLD &&
+     Math.abs(Robot.driveBase.getRightSparkEncoderPosition() - (rotationsToTravel + rightStartingPosition)) <= THRESHOLD ){
       return true;
     }
     return false;

@@ -29,14 +29,14 @@ public class VisionTargetPidDrive extends Command {
 
   private PIDController  visionDistanceController, visionHeadingController;
   private static final double P = 0.01, I = 0.0, D = 0.0, F = 0.0;
-  private static final double degreeTolerance = 0.05; //degrees
-  private static final double distanceTolerance = 0.05; //inches
+  private static final double DEGREE_TOLERANCE = 0.05; //degrees
+  private static final double DISTANCE_TOLERANCE = 0.05; //inches
   private double visionHeadingControllerLowerBound = -.15, visionHeadingControllerUpperBound = .15;
   private double visionDistanceControllerLowerBound = -.7, visionDistanceControllerUpperBound = .7;
 
-  private final double cameraOffset = 2.5; //distance from camera to front of the robot in inches. TODO set this
+  private final double CAMERA_OFFSET = 2.5; //distance from camera to front of the robot in inches. TODO set this
   private int executeCount;
-  private final double minimumAngleAdjustment = 0.03;
+  private final double MINIMUM_ANGLE_ADJUSTMENT = 0.03;
 
   private Pose robotPosition;
 
@@ -51,11 +51,11 @@ public class VisionTargetPidDrive extends Command {
     
     visionHeadingController.setInputRange(-30.0,  30.0);
     visionHeadingController.setOutputRange(visionHeadingControllerLowerBound, visionHeadingControllerUpperBound);
-    visionHeadingController.setAbsoluteTolerance(degreeTolerance);
+    visionHeadingController.setAbsoluteTolerance(DEGREE_TOLERANCE);
     visionHeadingController.setContinuous(false);
 
     visionDistanceController.setOutputRange(visionDistanceControllerLowerBound, visionDistanceControllerUpperBound);
-    visionDistanceController.setAbsoluteTolerance(distanceTolerance);
+    visionDistanceController.setAbsoluteTolerance(DISTANCE_TOLERANCE);
     visionDistanceController.setContinuous(false);    
   }
 
@@ -70,7 +70,7 @@ public class VisionTargetPidDrive extends Command {
     Logger.consoleLog("Initialized VisionTargetPidDrive");
 
     visionHeadingController.setSetpoint(0);
-    visionDistanceController.setSetpoint(0 - cameraOffset);
+    visionDistanceController.setSetpoint(0 - CAMERA_OFFSET);
 
     executeCount = 0;
 
@@ -87,9 +87,9 @@ public class VisionTargetPidDrive extends Command {
     double headingOutput = visionHeadingController.get();
 
     if(headingOutput >=0) {
-      headingOutput += minimumAngleAdjustment;
+      headingOutput += MINIMUM_ANGLE_ADJUSTMENT;
     } else {
-      headingOutput -=  minimumAngleAdjustment; 
+      headingOutput -=  MINIMUM_ANGLE_ADJUSTMENT; 
     }
 
     double leftSpeed = distanceOutput - headingOutput;

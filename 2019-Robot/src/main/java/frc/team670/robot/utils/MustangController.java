@@ -10,42 +10,42 @@ public class MustangController extends Joystick {
 
     public static class XboxButtons {
         // Controller Buttons
-        public static final int a = 1;
-        public static final int b = 2;
-        public static final int x = 3;
-        public static final int y = 4;
-        public static final int rightBumper = 6;
-        public static final int leftBumper = 5;
-        public static final int back = 7;
-        public static final int start = 8;
-        public static final int leftJoystickButton = 9;
-        public static final int rightJoystickButton = 10;
+        public static final int A = 1;
+        public static final int B = 2;
+        public static final int X = 3;
+        public static final int Y = 4;
+        public static final int RIGHT_BUMPER = 6;
+        public static final int LEFT_BUMPER = 5;
+        public static final int BACK = 7;
+        public static final int START = 8;
+        public static final int LEFT_JOYSTICK_BUTTON = 9;
+        public static final int RIGHT_JOYSTICK_BUTTON = 10;
 
         // Controller Axes
         /**
          * Left = Negative, Right = Positive [-1, 1]
          */
-        public static final int leftStickX = 0;
+        public static final int LEFT_STICK_X = 0;
         /**
          * Up = Negative, Down = Positive [-1, 1]
          */
-        public static final int leftStickY = 1;
+        public static final int LEFT_STICK_Y = 1;
         /**
          * Left = Positive, Right = Negative [-1, 1]
          */
-        public static final int leftTriggerAxis = 2;
+        public static final int LEFT_TRIGGER_AXIS = 2;
         /**
          * Pressed = Positive [0, 1]
          */
-        public static final int rightTriggerAxis = 3;
+        public static final int RIGHT_TRIGGER_AXIS = 3;
         /**
          * Left = Negative, Right = Positive [-1, 1]
          */
-        public static final int rightStickX = 4;
+        public static final int RIGHT_STICK_X = 4;
         /**
          * Up = Negative, Down = Positive [-1, 1]
          */
-        public static final int rightStickY = 5;
+        public static final int RIGHT_STICK_Y = 5;
     }
 
     public MustangController(int port) {
@@ -54,67 +54,67 @@ public class MustangController extends Joystick {
 
     // helps you get varoius axis and buttons on the XBox controller
     public double getLeftStickX() {
-        return super.getRawAxis(XboxButtons.leftStickX);
+        return super.getRawAxis(XboxButtons.LEFT_STICK_X);
     }
 
     public double getLeftStickY() {
-        return super.getRawAxis(XboxButtons.leftStickY);
+        return super.getRawAxis(XboxButtons.LEFT_STICK_Y);
     }
 
     public double getLeftTriggerAxis() {
-        return super.getRawAxis(XboxButtons.leftTriggerAxis);
+        return super.getRawAxis(XboxButtons.LEFT_TRIGGER_AXIS);
     }
 
     public double getRightTriggerAxis() {
-        return super.getRawAxis(XboxButtons.rightTriggerAxis);
+        return super.getRawAxis(XboxButtons.RIGHT_TRIGGER_AXIS);
     }
 
     public double getRightStickX() {
-        return super.getRawAxis(XboxButtons.rightStickX);
+        return super.getRawAxis(XboxButtons.RIGHT_STICK_X);
     }
 
     public double getRightStickY() {
-        return super.getRawAxis(XboxButtons.rightStickY);
+        return super.getRawAxis(XboxButtons.RIGHT_STICK_Y);
     }
 
     public boolean getAButton() {
-        return super.getRawButton(XboxButtons.a);
+        return super.getRawButton(XboxButtons.A);
     }
 
     public boolean getBButton() {
-        return super.getRawButton(XboxButtons.b);
+        return super.getRawButton(XboxButtons.B);
     }
 
     public boolean getXButton() {
-        return super.getRawButton(XboxButtons.x);
+        return super.getRawButton(XboxButtons.X);
     }
 
     public boolean getYButton() {
-        return super.getRawButton(XboxButtons.y);
+        return super.getRawButton(XboxButtons.Y);
     }
 
     public boolean getLeftBumper() {
-        return super.getRawButton(XboxButtons.leftBumper);
+        return super.getRawButton(XboxButtons.LEFT_BUMPER);
     }
 
     public boolean getRightBumper() {
-        return super.getRawButton(XboxButtons.rightBumper);
+        return super.getRawButton(XboxButtons.RIGHT_BUMPER);
     }
 
     public boolean getBackButton() {
-        return super.getRawButton(XboxButtons.back);
+        return super.getRawButton(XboxButtons.BACK);
     }
 
     public boolean getStartButton() {
-        return super.getRawButton(XboxButtons.start);
+        return super.getRawButton(XboxButtons.START);
     }
 
     public boolean getLeftJoystickButton() {
-        return super.getRawButton(XboxButtons.leftJoystickButton);
+        return super.getRawButton(XboxButtons.LEFT_JOYSTICK_BUTTON);
     }
 
     public boolean getRightJoystickButton() {
-        return super.getRawButton(XboxButtons.rightJoystickButton);
+        return super.getRawButton(XboxButtons.RIGHT_JOYSTICK_BUTTON);
     }
 
     public int getPOVValue() {

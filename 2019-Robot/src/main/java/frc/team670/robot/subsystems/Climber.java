@@ -25,8 +25,8 @@ public class Climber extends Subsystem {
   private TalonSRX frontPistons;
 
   public Climber() {
-    backPistons = new TalonSRX(RobotMap.backClimberPistonController);
-    frontPistons = new TalonSRX(RobotMap.frontClimberPistonController);
+    backPistons = new TalonSRX(RobotMap.BACK_CLIMBER_PISTON_CONTROLLER);
+    frontPistons = new TalonSRX(RobotMap.FRONT_CLIMBER_PISTON_CONTROLLER);
 
     // TODO figure out if these motors need to be inverted.
   }

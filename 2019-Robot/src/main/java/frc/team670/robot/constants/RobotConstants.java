@@ -32,16 +32,16 @@ public class RobotConstants {
     public static final int LED_PORT = 5810;
 
     // Pure Pursuit Constants
-    public static final double minLookahead = 12.0; //Inches. TODO: set the value; 1 ft for now idk
-    public static final double maxLookahead = 18.0; //Inches. TODO: set this to something legit
-    public static final double pathFollowingMaxAccel = 0; //TODO: set value of this
-    public static final double segmentCompletionTolerance = 0; //TODO: set value of this
-    public static final double kTrackWidthInches = 0; //TODO: figure out what this is
-    public static final double kTrackScrubFactor = 0; //TODO: figure out what this is
-    public static final double minLookaheadSpeed = 0; //TODO: figure this out
-    public static final double maxLookaheadSpeed = 0; //TODO: figure this out
-    public static final Lookahead lookahead = new Lookahead(minLookahead, maxLookahead,
-    minLookaheadSpeed, maxLookaheadSpeed);
+    public static final double MIN_LOOKAHEAD = 12.0; //Inches. TODO: set the value; 1 ft for now idk
+    public static final double MAX_LOOKAHEAD = 18.0; //Inches. TODO: set this to something legit
+    public static final double PATH_FOLLOWING_MAX_ACCEL = 0; //TODO: set value of this
+    public static final double SEGMENT_COMPLETION_TOLERANCE = 0; //TODO: set value of this
+    public static final double KTRACK_WIDTH_INCHES = 0; //TODO: figure out what this is
+    public static final double KTRACK_SCRUB_FACTOR = 0; //TODO: figure out what this is
+    public static final double MIN_LOOKAHEAD_SPEED = 0; //TODO: figure this out
+    public static final double MAX_LOOKAHEAD_SPEED = 0; //TODO: figure this out
+    public static final Lookahead LOOKAHEAD = new Lookahead(MIN_LOOKAHEAD, MAX_LOOKAHEAD,
+    MIN_LOOKAHEAD_SPEED, MAX_LOOKAHEAD_SPEED);
 
     // Arm Constants
     public static final double ARM_START_HEIGHT = 0;

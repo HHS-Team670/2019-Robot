@@ -39,10 +39,10 @@ public class DriveMotionProfile extends Command {
   private final int TICKS_PER_ROTATION = 4096;
   // Max Velocities in m/s. For generation, we need it to be lower than the actual max velocity, 
   // otherwise we get motor outputs >1.0 and <-1.0 which makes us unable to turn properly.
-  private static final double real_maxVelocity = 0.8, generation_MaxVelocity = 0.8;
+  private static final double REAL_MAX_VELOCITY = 0.8, generation_MaxVelocity = 0.8;
   private static final String BASE_PATH_NAME = "home/deploy/";
   // Values for logging purposes
-  private final int executeLogInterval = 8;
+  private final int EXECUTE_LOG_INTERVAL = 8;
   private long executeCount;
   private boolean isReversed;
 

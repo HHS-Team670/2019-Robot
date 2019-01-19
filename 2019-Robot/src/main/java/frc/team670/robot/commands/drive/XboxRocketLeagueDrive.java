@@ -18,13 +18,13 @@ import frc.team670.robot.utils.functions.JoystickUtils;
  */
 public class XboxRocketLeagueDrive extends InstantCommand {
 
-   private final boolean smoothRocketLeagueSteer, smoothRocketLeagueTrigger;
+   private final boolean SMOOTH_ROCKET_LEAGUE_STEER, SMOOTH_ROCKET_LEAGUE_TRIGGER;
    private static boolean isReversed;
 
   public XboxRocketLeagueDrive() {
     super();
-    smoothRocketLeagueSteer = true;
-    smoothRocketLeagueTrigger = true;
+    SMOOTH_ROCKET_LEAGUE_STEER = true;
+    SMOOTH_ROCKET_LEAGUE_TRIGGER = true;
     isReversed = false;
     requires(Robot.driveBase);
   }
