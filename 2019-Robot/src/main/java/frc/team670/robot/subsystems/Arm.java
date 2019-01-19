@@ -14,8 +14,10 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
+import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.team670.robot.Robot;
 import frc.team670.robot.commands.arm.armTransitions.ArmTransition;
 import frc.team670.robot.commands.arm.armTransitions.NeutralToCargoPickup;
 import frc.team670.robot.constants.RobotConstants;
@@ -163,6 +165,13 @@ public class Arm extends Subsystem {
 
       return result;
     }
+  }
+
+  public void setElbowCurrentLimit(int current, boolean enable){
+    elbowRotationMain.configPeakCurrentLimit(RobotConstants.peakAmps, RobotConstants.timeoutMS);
+    elbowRotationMain.configPeakCurrentDuration(RobotConstants.peakTimeMS, RobotConstants.timeoutMS);
+    elbowRotationMain.configContinuousCurrentLimit(RobotConstants.triggerAmps, RobotConstants.timeoutMS);
+    elbowRotationMain.enableCurrentLimit(true);
   }
 
   private class Neutral extends ArmState {
