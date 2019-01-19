@@ -48,7 +48,7 @@ public class OI {
   // button.whenReleased(new ExampleCommand());
 
   // Controllers/Joysticks
-  private Joystick leftStick, rightStick, operatorStick, arcadeButtons;
+  // private Joystick leftStick, rightStick, operatorStick, arcadeButtons;
   private MustangController driverController;
 
   // Buttons

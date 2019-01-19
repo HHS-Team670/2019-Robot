@@ -8,6 +8,7 @@
 package frc.team670.robot.subsystems;
 
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.revrobotics.CANEncoder;
@@ -49,6 +50,7 @@ public class DriveBase extends Subsystem {
     right1 = new CANSparkMax(RobotMap.sparkRightMotor1, CANSparkMaxLowLevel.MotorType.kBrushless);
     right2 = new CANSparkMax(RobotMap.sparkRightMotor2, CANSparkMaxLowLevel.MotorType.kBrushless);
 
+    allMotors = new ArrayList<CANSparkMax>();
     leftControllers = Arrays.asList(left1,left2);
     rightControllers = Arrays.asList(right1, right2);
     allMotors.addAll(leftControllers);
@@ -59,7 +61,7 @@ public class DriveBase extends Subsystem {
      // and then invert the SpeedController to compensate for automatic inversion.
     setMotorsInvert(rightControllers, true);
 
-    left2.follow(left1);
+    left2.follow(left1); // This should be the other way around
     right2.follow(right1);
 
     left = new SpeedControllerGroup(left1, left2);
@@ -69,6 +71,7 @@ public class DriveBase extends Subsystem {
     right.setInverted(true);
 
     driveTrain = new DifferentialDrive(left, right);
+    driveTrain.setMaxOutput(1.0);
 
     // Set PID Values
     left1.getPIDController().setP(pP, encodersPIDSlot);
@@ -81,6 +84,8 @@ public class DriveBase extends Subsystem {
     right1.getPIDController().setI(vI, velocityPIDSlot);
     right1.getPIDController().setD(vD, velocityPIDSlot);
     right1.getPIDController().setFF(vFF, velocityPIDSlot);
+
+    setRampRate(allMotors, 0.254); // Will automatically cook some Cheezy Poofs
 
     // DIO Encoders
     // leftDIOEncoder = new Encoder(RobotMap.leftEncoderChannelA, RobotMap.leftEncoderChannelB);
@@ -424,5 +429,14 @@ public class DriveBase extends Subsystem {
 
   public List<CANSparkMax> getRightControllers(){
     return rightControllers;
+  }
+
+  /**
+   * @param rampRate The ramp rate in seconds from 0 to full throttle
+   */
+  public void setRampRate(List<CANSparkMax> motors, double rampRate) {
+    for(CANSparkMax m : motors) {
+      m.setRampRate(rampRate);
+    }
   }
 }

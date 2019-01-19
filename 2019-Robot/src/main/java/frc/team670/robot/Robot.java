@@ -82,7 +82,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    System.out.println("Voltage: "+(irSensor.getVoltage()));
+    // System.out.println("Voltage: "+(irSensor.getVoltage()));
     // Pose.updateFieldCentricPose(); // Update our field centric Pose to the new robot position. Commented out to avoid null-pointers until sensors hooked up.
   }
 
@@ -152,7 +152,7 @@ public class Robot extends TimedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
-    leds.socketSetup(RobotConstants.LED_PORT);
+    // leds.socketSetup(RobotConstants.LED_PORT);
 
   }
 

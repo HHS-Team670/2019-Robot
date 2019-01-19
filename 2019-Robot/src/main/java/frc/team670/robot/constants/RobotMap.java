@@ -20,8 +20,12 @@ public class RobotMap {
 
   // TODO set all of these.
 
+  // Do not put Talon or other CTRE things to CAN ID 0 because that's the PDP. CAN conflicts are only within device families.
+
+  public static int PDP_ID = 0;
+
   // Drive Base
-  public static final int sparkLeftMotor1 = 0;
+  public static final int sparkLeftMotor1 = 0; // These are properly set.
   public static final int sparkLeftMotor2 = 1;
   public static final int sparkRightMotor1 = 2;
   public static final int sparkRightMotor2 = 3;
