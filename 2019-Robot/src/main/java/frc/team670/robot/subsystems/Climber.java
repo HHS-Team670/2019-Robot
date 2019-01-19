@@ -11,9 +11,10 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotMap;
-import frc.team670.robot.utils.functions.MathUtils;
 
 /**
  * Represents the climbing mechanism on the robot.
@@ -28,25 +29,74 @@ public class Climber extends Subsystem {
 
   private Encoder frontEncoder, backEncoder;
 
+  private PIDController frontController;
+  private PIDController backController;
+
+  private static final double P = 0.01, I = 0.0, D = 0.0, F = 0.0;
+  private double pistonControllerLowerOutput = 0., pistonControllerUpperOutput = 1.; // [0, 1]
+
+  private boolean backPistonsRetracted;
+
   //TODO set these
   private int frontEncoderEnd = 0; // where the front encoder should be when it is finished climbing
   private int backEncoderEnd = 0; // """" back encoder """"
   private int finishTolerance = 10; // return true for isFinished if the encoder value is within this many ticks of the endpoint
+  private final double minimumPistonPower = 0.1;
+
+
 
   public Climber() {
     backPistons = new TalonSRX(RobotMap.backClimberPistonController);
     frontPistons = new TalonSRX(RobotMap.frontClimberPistonController);
 
     // TODO figure out if these motors need to be inverted.
+
+    frontController = new PIDController(P, I, D, F, Robot.sensors.getNavXPitchPIDSource(), null); 
+    backController = new PIDController(P, I, D, F, Robot.sensors.getNavXPitchPIDSource(), null); 
+    // TODO implement pitch from NavX instead of yaw
+
+    frontController.setOutputRange(pistonControllerLowerOutput, pistonControllerUpperOutput);
+    backController.setOutputRange(pistonControllerLowerOutput, pistonControllerUpperOutput);
+    frontController.setContinuous(true);
+    backController.setContinuous(true);
+
+    frontController.setSetpoint(frontEncoderEnd);
+    backController.setSetpoint(backEncoderEnd);
+    
+
   }
 
   /**
    * Drives pistons downwards with the given powers.
    */
   public void drivePistons(double frontPower, double backPower) {
+    
     frontPistons.set(ControlMode.PercentOutput, frontPower);
     backPistons.set(ControlMode.PercentOutput, backPower);
   }
+  public void drivePistonsPID() {
+    double frontPower = frontController.get();
+    double backPower = backController.get();
+    if (frontPower < minimumPistonPower) {
+      frontPower = minimumPistonPower;
+    }
+    if (backPower < minimumPistonPower) {
+      backPower = minimumPistonPower;
+    }
+    frontPistons.set(ControlMode.PercentOutput, frontPower);
+    backPistons.set(ControlMode.PercentOutput, backPower);
+  }
+
+  public void retractFrontPistons() {
+    driveFrontPistons(0);
+  }
+
+  public void retractBackPistons() {
+    driveBackPistons(0);
+    backPistonsRetracted = true;
+  }
+
+
 
   /**
    * Drives front pistons downwards with given power
@@ -63,12 +113,17 @@ public class Climber extends Subsystem {
   }
 
   public boolean isFinished() {
-    return MathUtils.doublesEqual(frontEncoder.get(), frontEncoderEnd, finishTolerance)
-      && MathUtils.doublesEqual(backEncoder.get(), backEncoderEnd, finishTolerance);
+    // wait for the expected method to be called and then retract back pistons
+
+    return backPistonsRetracted;
+    //return frontController.onTarget() && backController.onTarget();
+
+    // return MathUtils.doublesEqual(frontEncoder.get(), frontEncoderEnd, finishTolerance)
+    //   && MathUtils.doublesEqual(backEncoder.get(), backEncoderEnd, finishTolerance);
   }
 
   @Override
   public void initDefaultCommand() {
-    
   }
+
 }

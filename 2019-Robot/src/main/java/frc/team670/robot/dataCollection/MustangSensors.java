@@ -3,6 +3,7 @@ package frc.team670.robot.dataCollection;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team670.robot.constants.RobotMap;
+import frc.team670.robot.dataCollection.NavX.NavX_Pitch_PIDSource;
 import frc.team670.robot.dataCollection.NavX.ZeroableNavX_PIDSource;
 
 /**
@@ -103,6 +104,13 @@ public class MustangSensors extends Subsystem {
   public ZeroableNavX_PIDSource getZeroableNavXPIDSource() {
     if(navXMicro != null){
       return navXMicro.getZeroableNavXPIDSource();
+    }
+    return null;
+  }
+
+  public NavX_Pitch_PIDSource getNavXPitchPIDSource() {
+    if(navXMicro != null){
+      return navXMicro.getNavXPitchPIDSource();
     }
     return null;
   }
