@@ -65,8 +65,8 @@ public class Arm extends Subsystem {
    */
   public Point2D.Double getPosition(double extensionLength, double wristAngle, double elbowAngle) {
 
-    double x = extensionLength * Math.sin(elbowAngle) + RobotConstants.clawRadius * Math.sin(wristAngle);
-    double y = extensionLength * Math.cos(elbowAngle) + RobotConstants.clawRadius * Math.cos(wristAngle) + RobotConstants.armBaseHeight;
+    double x = extensionLength * Math.sin(elbowAngle) + RobotConstants.CLAW_RADIUS * Math.sin(wristAngle);
+    double y = extensionLength * Math.cos(elbowAngle) + RobotConstants.CLAW_RADIUS * Math.cos(wristAngle) + RobotConstants.ARM_BASE_HEIGHT;
 
     return new Point2D.Double(x, y);
 
@@ -167,11 +167,18 @@ public class Arm extends Subsystem {
     }
   }
 
-  public void setElbowCurrentLimit(int current, boolean enable){
+  public void setElbowCurrentLimit(int current){
     elbowRotationMain.configPeakCurrentLimit(RobotConstants.PEAK_AMPS, RobotConstants.TIMEOUT_MS);
     elbowRotationMain.configPeakCurrentDuration(RobotConstants.PEAK_TIME_MS, RobotConstants.TIMEOUT_MS);
-    elbowRotationMain.configContinuousCurrentLimit(RobotConstants.TRIGGER_AMPS, RobotConstants.TIMEOUT_MS);
-    elbowRotationMain.enableCurrentLimit(enable);
+    elbowRotationMain.configContinuousCurrentLimit(current, RobotConstants.TIMEOUT_MS);
+  }
+
+  public void enableElbowCurrentLimit(){
+    elbowRotationMain.enableCurrentLimit(true);
+  }
+
+  public void disableElbowCurrentLimit(){
+    elbowRotationMain.enableCurrentLimit(false);
   }
 
   public void setElbowAtFullPower(){
