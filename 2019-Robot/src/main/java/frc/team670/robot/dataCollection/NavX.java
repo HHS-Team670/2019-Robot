@@ -124,8 +124,15 @@ public class NavX {
     /**
      * Gets the NavX as a PIDSource that responds to the NavX being zeroed.
      */
-    public synchronized ZeroableNavX_PIDSource getZeroableNavXPIDSource() {
-        return new ZeroableNavX_PIDSource();
+    public synchronized ZeroableNavX_Yaw_PIDSource getZeroableNavXYawPIDSource() {
+        return new ZeroableNavX_Yaw_PIDSource();
+    }
+
+    /**
+     * Gets the NavX's pitch as a PIDSource
+     */
+    public synchronized NavX_Pitch_PIDSource getNavXPitchPIDSource() {
+        return new NavX_Pitch_PIDSource();
     }
 
     /**
@@ -150,11 +157,11 @@ public class NavX {
         return mAHRS.getPitch();
     }
     
-    public class ZeroableNavX_PIDSource implements PIDSource{
+    public class ZeroableNavX_Yaw_PIDSource implements PIDSource{
 
         private PIDSourceType type;
 
-        public ZeroableNavX_PIDSource() {
+        public ZeroableNavX_Yaw_PIDSource() {
             type = PIDSourceType.kDisplacement;
         }
 
@@ -173,6 +180,29 @@ public class NavX {
             return getYawDouble();
         }
 
+    }
+
+    public class NavX_Pitch_PIDSource implements PIDSource {
+        private PIDSourceType type;
+
+        public NavX_Pitch_PIDSource() {
+            type = PIDSourceType.kDisplacement;
+        }
+
+        @Override
+        public void setPIDSourceType(PIDSourceType pidSource) {
+            type = pidSource;
+        }
+
+        @Override
+        public PIDSourceType getPIDSourceType() {
+            return type;
+        }
+
+        @Override
+        public double pidGet() {
+            return getPitch();
+        }
     }
 
 }
