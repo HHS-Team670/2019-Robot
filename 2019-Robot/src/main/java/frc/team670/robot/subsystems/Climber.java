@@ -74,13 +74,16 @@ public class Climber extends Subsystem {
     frontPistons.set(ControlMode.PercentOutput, frontPower);
     backPistons.set(ControlMode.PercentOutput, backPower);
   }
+
   public void drivePistonsPID() {
     double frontPower = frontController.get();
     double backPower = backController.get();
-    if (frontPower < minimumPistonPower) {
+    frontPower += minimumPistonPower;
+    backPower += minimumPistonPower;
+    if (frontPower <= minimumPistonPower) {
       frontPower = minimumPistonPower;
     }
-    if (backPower < minimumPistonPower) {
+    if (backPower <= minimumPistonPower) {
       backPower = minimumPistonPower;
     }
     frontPistons.set(ControlMode.PercentOutput, frontPower);
@@ -88,10 +91,12 @@ public class Climber extends Subsystem {
   }
 
   public void retractFrontPistons() {
+    frontController.setSetpoint(0); // TODO set to the actual value
     driveFrontPistons(0);
   }
 
   public void retractBackPistons() {
+    backController.setSetpoint(0); // TODO set to the actual value
     driveBackPistons(0);
     backPistonsRetracted = true;
   }
@@ -127,3 +132,10 @@ public class Climber extends Subsystem {
   }
 
 }
+// TODO
+// the scale is from the outer PID defined by the NAVX
+// the innerPIDs only exist because we dont want to overshoot the encoder values
+// scale factor is for the output range of the inner PIDs (pistons)
+// retract - setpoint is 0, full power backward
+// utility command to retract both at a low rate FIRST CHECK: command only if BOTH OF THEM are up (NOT just one)
+// this command is just like the climb but down.
