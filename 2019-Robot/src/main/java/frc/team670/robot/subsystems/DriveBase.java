@@ -62,7 +62,7 @@ public class DriveBase extends Subsystem {
      // and then invert the SpeedController to compensate for automatic inversion.
     setMotorsInvert(rightControllers, true);
 
-    left2.follow(left1); // This should be the other way around
+    left2.follow(left1);
     right2.follow(right1);
 
     left = new SpeedControllerGroup(left1, left2);
