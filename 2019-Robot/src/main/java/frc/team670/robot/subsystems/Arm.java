@@ -168,11 +168,16 @@ public class Arm extends Subsystem {
   }
 
   public void setElbowCurrentLimit(int current, boolean enable){
-    elbowRotationMain.configPeakCurrentLimit(RobotConstants.peakAmps, RobotConstants.timeoutMS);
-    elbowRotationMain.configPeakCurrentDuration(RobotConstants.peakTimeMS, RobotConstants.timeoutMS);
-    elbowRotationMain.configContinuousCurrentLimit(RobotConstants.triggerAmps, RobotConstants.timeoutMS);
-    elbowRotationMain.enableCurrentLimit(true);
+    elbowRotationMain.configPeakCurrentLimit(RobotConstants.PEAK_AMPS, RobotConstants.TIMEOUT_MS);
+    elbowRotationMain.configPeakCurrentDuration(RobotConstants.PEAK_TIME_MS, RobotConstants.TIMEOUT_MS);
+    elbowRotationMain.configContinuousCurrentLimit(RobotConstants.TRIGGER_AMPS, RobotConstants.TIMEOUT_MS);
+    elbowRotationMain.enableCurrentLimit(enable);
   }
+
+  public void setElbowAtFullPower(){
+    elbowRotationMain.set(ControlMode.PercentOutput, 1);
+  }
+
 
   private class Neutral extends ArmState {
     public Neutral() {
