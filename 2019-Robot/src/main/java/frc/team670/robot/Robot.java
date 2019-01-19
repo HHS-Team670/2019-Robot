@@ -15,13 +15,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.dataCollection.MustangPi;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.dataCollection.Pose;
-import frc.team670.robot.dataCollection.SharpIRSensor;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Claw;
 import frc.team670.robot.subsystems.Climber;
 import frc.team670.robot.subsystems.DriveBase;
-import frc.team670.robot.subsystems.MustangLEDs_2019;
 import frc.team670.robot.subsystems.Intake;
+import frc.team670.robot.subsystems.MustangLEDs_2019;
 import frc.team670.robot.utils.Logger;
 
 /**
@@ -104,8 +103,8 @@ public class Robot extends TimedRobot {
     //   savedTime = System.currentTimeMillis();
     // }  
       
-    Logger.consoleLog("LeftEncoderPos: %s", driveBase.getLeftDIOEncoderPosition());
-    Logger.consoleLog("RightEncoderPos: %s", driveBase.getRightDIOEncoderPosition());
+    // Logger.consoleLog("LeftEncoderPos: %s, RightEncoderPos: %s", driveBase.getLeftDIOEncoderPosition(), driveBase.getRightDIOEncoderPosition());
+    // Logger.consoleLog("LeftEncoderVel: %s, RightEncoderVel: %s", driveBase.getLeftDIOEncoderVelocityInches(), driveBase.getRightDIOEncoderVelocityInches());
 
     leds.setClimbingData(true);//we climb
 

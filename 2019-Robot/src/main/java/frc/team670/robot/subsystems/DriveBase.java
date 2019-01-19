@@ -92,11 +92,11 @@ public class DriveBase extends Subsystem {
     leftDIOEncoder = new Encoder(RobotMap.LEFT_ENCODER_CHANNEL_A, RobotMap.LEFT_ENCODER_CHANNEL_B);
     rightDIOEncoder = new Encoder(RobotMap.RIGHT_ENCODER_CHANNEL_A, RobotMap.RIGHT_ENCODER_CHANNEL_B);
 
-    double distancePerPulse = Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER* RobotConstants.DIO_TICKS_PER_ROTATION;
+    double distancePerPulse = (1/RobotConstants.DIO_TICKS_PER_ROTATION) * (Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
     leftDIOEncoder.setDistancePerPulse(distancePerPulse);
     rightDIOEncoder.setDistancePerPulse(distancePerPulse);
-    leftDIOEncoder.setReverseDirection(false); // TODO One of these will need to be reversed to fit with the motors, figure out which
-    rightDIOEncoder.setReverseDirection(true);
+    leftDIOEncoder.setReverseDirection(true); // These have been set properly.
+    rightDIOEncoder.setReverseDirection(false);
   }
 
   /**

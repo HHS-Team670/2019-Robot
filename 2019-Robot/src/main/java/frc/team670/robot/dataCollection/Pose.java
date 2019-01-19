@@ -20,7 +20,7 @@ public class Pose {
 
   private long timeOfPose;
 
-  private static Pose fieldCentricPose;
+  private static Pose fieldCentricPose = new Pose();
 
   /**
    * Makes new pose using current robot encoder values and angles. Does everything in ticks using the DIO Encoders
