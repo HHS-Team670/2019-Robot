@@ -34,7 +34,7 @@ public class PurePursuitCommand extends Command
 
     public PurePursuitCommand(Path path)
     {
-        this(path, RobotConstants.lookahead, RobotConstants.segmentCompletionTolerance);
+        this(path, RobotConstants.LOOKAHEAD, RobotConstants.SEGMENT_COMPLETION_TOLERANCE);
     }
 
 

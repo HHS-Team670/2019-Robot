@@ -24,13 +24,13 @@ public class BasicVisionPidDrive extends Command {
 
   private PIDController  distanceController, headingController;
   private static final double P = 0.01, I = 0.0, D = 0.0, F = 0.0; //TODO Set the F value
-  private static final double degreeTolerance = 0.05; //degrees
-  private static final double distanceTolerance = 0.05; //inches
+  private static final double DEGREE_TOLERANCE = 0.05; //degrees
+  private static final double DISTANCE_TOLERANCE = 0.05; //inches
   private double headingControllerLowerBound = -.15, headingControllerUpperBound = .15;
   private double distanceControllerLowerBound = -.7, distanceControllerUpperBound = .7;
-  private final double cameraOffset = 2.5; //TODO: define camera offset.
+  private final double CAMERA_OFFSET = 2.5; //TODO: define camera offset.
   private int executeCount;
-  private final double minimumAngleAdjustment = 0.03;
+  private final double MINIMUM_ANGLE_ADJUSTMENT = 0.03;
 
   public BasicVisionPidDrive() {
 
@@ -41,11 +41,11 @@ public class BasicVisionPidDrive extends Command {
 
     headingController.setInputRange(-30.0,  30.0);
     headingController.setOutputRange(headingControllerLowerBound, headingControllerUpperBound);
-    headingController.setAbsoluteTolerance(degreeTolerance);
+    headingController.setAbsoluteTolerance(DEGREE_TOLERANCE);
     headingController.setContinuous(false);
 
     distanceController.setOutputRange(distanceControllerLowerBound, distanceControllerUpperBound);
-    distanceController.setAbsoluteTolerance(distanceTolerance);
+    distanceController.setAbsoluteTolerance(DISTANCE_TOLERANCE);
     distanceController.setContinuous(false);
 
 
@@ -59,7 +59,7 @@ public class BasicVisionPidDrive extends Command {
     Logger.consoleLog("Initialized BasicVisionPidDrive");
 
     headingController.setSetpoint(0);
-    distanceController.setSetpoint(0 + cameraOffset);
+    distanceController.setSetpoint(0 + CAMERA_OFFSET);
 
     executeCount = 0;
 
@@ -73,9 +73,9 @@ public class BasicVisionPidDrive extends Command {
     double distanceOutput = distanceController.get() * -1;
 
     if(headingOutput >=0) {
-      headingOutput += minimumAngleAdjustment;
+      headingOutput += MINIMUM_ANGLE_ADJUSTMENT;
     } else {
-      headingOutput -=  minimumAngleAdjustment;
+      headingOutput -=  MINIMUM_ANGLE_ADJUSTMENT;
     }
 
     double leftSpeed = distanceOutput - headingOutput;

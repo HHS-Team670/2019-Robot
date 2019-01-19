@@ -10,15 +10,15 @@ import frc.team670.robot.constants.*;
  */
 
 public class Kinematics {
-    private static final double kEpsilon = 1E-9;
+    private static final double K_EPSILON = 1E-9;
 
     /**
      * Forward kinematics using only encoders, rotation is implicit (less accurate than below, but useful for predicting
      * motion)
      */
     public static Twist2d forwardKinematics(double left_wheel_delta, double right_wheel_delta) {
-        double delta_v = (right_wheel_delta - left_wheel_delta) / 2 * RobotConstants.kTrackScrubFactor;
-        double delta_rotation = delta_v * 2 / RobotConstants.kTrackWidthInches;
+        double delta_v = (right_wheel_delta - left_wheel_delta) / 2 * RobotConstants.KTRACK_SCRUB_FACTOR;
+        double delta_rotation = delta_v * 2 / RobotConstants.KTRACK_WIDTH_INCHES;
         return forwardKinematics(left_wheel_delta, right_wheel_delta, delta_rotation);
     }
 
@@ -27,8 +27,8 @@ public class Kinematics {
      */
     public static Twist2d forwardKinematics(double left_wheel_delta, double right_wheel_delta,
             double delta_rotation_rads) {
-        final double dx = (left_wheel_delta + right_wheel_delta) / 2.0;
-        return new Twist2d(dx, 0, delta_rotation_rads);
+        final double DX = (left_wheel_delta + right_wheel_delta) / 2.0;
+        return new Twist2d(DX, 0, delta_rotation_rads);
     }
 
     /**
@@ -60,12 +60,12 @@ public class Kinematics {
      * Class that contains left and right wheel velocities
      */
     public static class DriveVelocity {
-        public final double left;
-        public final double right;
+        public final double LEFT;
+        public final double RIGHT;
 
         public DriveVelocity(double left, double right) {
-            this.left = left;
-            this.right = right;
+            this.LEFT = left;
+            this.RIGHT = right;
         }
     }
 
@@ -73,10 +73,10 @@ public class Kinematics {
      * Uses inverse kinematics to convert a Twist2d into left and right wheel velocities
      */
     public static DriveVelocity inverseKinematics(Twist2d velocity) {
-        if (Math.abs(velocity.dtheta) < kEpsilon) {
+        if (Math.abs(velocity.dtheta) < K_EPSILON) {
             return new DriveVelocity(velocity.dx, velocity.dx);
         }
-        double delta_v = RobotConstants.kTrackWidthInches * velocity.dtheta / (2 * RobotConstants.kTrackScrubFactor);
+        double delta_v = RobotConstants.KTRACK_WIDTH_INCHES * velocity.dtheta / (2 * RobotConstants.KTRACK_SCRUB_FACTOR);
         return new DriveVelocity(velocity.dx - delta_v, velocity.dx + delta_v);
     }
 }

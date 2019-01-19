@@ -23,14 +23,14 @@ public class MustangPi {
     private VisionValues wallTarget; 
 
     // The keys for the NetworkTable entries that the raspberry pi is putting up. Ensure that these are placed on the raspi also. Maybe make a shared config file
-    private static final String[] raspiKeys = new String[] {"reflect_tape_vision_data"};
+    private static final String[] RASPI_KEYS = new String[] {"reflect_tape_vision_data"};
     // The name of the subtable set on the raspberry pi
-    private static final String tableName = "raspberryPi";
+    private static final String TABLE_NAME = "raspberryPi";
 
     // TODO Literally all of this code below needs a review from someone who knows what they're talking about - Shaylan
 
     public MustangPi() {
-        this(raspiKeys);
+        this(RASPI_KEYS);
     }
 
     private MustangPi(String[] keys) {
@@ -38,7 +38,7 @@ public class MustangPi {
         for(String key : keys){
            entries.put(key, new NetworkTableObject(key));
         }
-        wallTarget = new VisionValues(raspiKeys[0]);
+        wallTarget = new VisionValues(RASPI_KEYS[0]);
     }
 
     private class NetworkTableObject {
@@ -51,7 +51,7 @@ public class MustangPi {
          */
         public NetworkTableObject(String key) {
             NetworkTableInstance instance = NetworkTableInstance.getDefault();
-            NetworkTable table = instance.getTable(tableName);
+            NetworkTable table = instance.getTable(TABLE_NAME);
             entry = instance.getEntry(key);
             table.addEntryListener(key, (table2, key2, entry, value, flags) -> {
                 this.entry = entry;
@@ -98,7 +98,7 @@ public class MustangPi {
             System.out.println("entries null");
             return null;
         }
-        return entries.get(raspiKeys[0]).getValue();
+        return entries.get(RASPI_KEYS[0]).getValue();
     }
 
     /**

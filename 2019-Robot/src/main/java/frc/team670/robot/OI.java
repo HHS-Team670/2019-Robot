@@ -58,9 +58,9 @@ public class OI {
 
   public OI() {
     driverController = new MustangController(RobotMap.DRIVER_CONTROLLER_PORT);
-    toggleReverseDrive = new JoystickButton(driverController, XboxButtons.leftBumper);
+    toggleReverseDrive = new JoystickButton(driverController, XboxButtons.LEFT_BUMPER);
     toggleReverseDrive.whenPressed(new XboxRocketLeagueDrive());
-    resetNavX = new JoystickButton(driverController, XboxButtons.a);
+    resetNavX = new JoystickButton(driverController, XboxButtons.A);
     resetNavX.whenPressed(new ZeroNavX());
   }
 
