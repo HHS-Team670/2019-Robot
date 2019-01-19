@@ -7,10 +7,12 @@
 
 package frc.team670.robot.utils.functions;
 
+import frc.team670.robot.constants.RobotConstants;
+
 /**
  * Provides useful math-related functions.
  * 
- * @author shaylandias
+ * @author shaylandias, meganchoy, varunjoshi
  */
 public class MathUtils {
 
@@ -33,6 +35,84 @@ public class MathUtils {
      */
     public static boolean doublesEqual(double d1, double d2, double comparator) {
         return (Math.abs(d1-d2) < comparator);
+    }
+
+    /**
+     * Returns the average value of the input doubles.
+     */
+    public static double average(double[] nums) {
+        if(nums.length == 0) {
+            return 0;
+        }
+        double sum = 0;
+        for(int i = 0; i < nums.length; i++) {
+            sum += nums[i];
+        }
+        return sum/nums.length;
+    }
+
+
+    /**
+     * Returns the average value of the input doubles.
+     */
+    public static double average(Double ... nums) {
+        if(nums.length == 0) {
+            return 0;
+        }
+        double sum = 0;
+        for(int i = 0; i < nums.length; i++) {
+            sum += nums[i];
+        }
+        return sum/nums.length;
+    }
+
+    /**
+     * Converts a tick value taken from a drive base DIO encoder to inches.
+     */
+    public static double convertDriveBaseTicksToInches(double ticks) {
+       double rotations = ticks / RobotConstants.DIO_TICKS_PER_ROTATION;
+       return rotations * Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER;
+    }
+
+    /**
+     * Converts an inch value into drive base DIO Encoder ticks.
+     */
+    public static int convertInchesToDriveBaseTicks(double inches) {
+        double rotations = inches / (Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
+        return (int)(rotations * RobotConstants.DIO_TICKS_PER_ROTATION);
+    }
+
+    /**
+     * Gets inches per rotations of a NEO motor on the drive base since SparkMAX encoders work in rotations.
+     */
+    public static double convertDriveBaseRotationsToInches(double rotations) {
+        return RobotConstants.DRIVEBASE_INCHES_PER_ROTATION * rotations;
+    }
+
+    /**
+     * Gets rotations of a NEO motor on the drive base per a value in inches ince SparkMAX encoders work in rotations.
+     */
+    public static double convertInchesToDriveBaseRotations(double inches) {
+        return inches / RobotConstants.DRIVEBASE_INCHES_PER_ROTATION;
+    }
+
+    /**
+     * Converts a value of per second of the DriveBase Rounds Per Minute
+     */
+    public static double convertInchesPerSecondToDriveBaseRoundsPerMinute(double inchesPerSecond) {
+        // (Inches/seconds) * (60 seconds/1 minute) * ((2 * Diameter inches)/Rotation)
+        return inchesPerSecond * 60 / (Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
+    }
+
+    /**
+     * Returns the distance (always positive) between two points in a coordinate system.
+     * @param x1 The x-coord of point 1
+     * @param y1 The y-coord of point 1
+     * @param x2 The x-coord of point 2
+     * @param y2 The y-coord of point 2
+     */
+    public static double findDistance(double x1, double y1, double x2, double y2) {
+        return Math.sqrt(Math.pow((x1-x2), 2) + Math.pow(y2-y1, 2));
     }
 
     /*

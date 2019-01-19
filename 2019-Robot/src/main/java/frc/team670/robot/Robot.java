@@ -12,13 +12,16 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team670.robot.commands.ExampleCommand;
-import frc.team670.robot.constants.OI;
-import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangPi;
 import frc.team670.robot.dataCollection.MustangSensors;
+import frc.team670.robot.dataCollection.Pose;
+import frc.team670.robot.dataCollection.SharpIRSensor;
+import frc.team670.robot.subsystems.Arm;
+import frc.team670.robot.subsystems.Claw;
+import frc.team670.robot.subsystems.Climber;
 import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.subsystems.MustangLEDs_2019;
+import frc.team670.robot.subsystems.Intake;
 import frc.team670.robot.utils.Logger;
 
 /**
@@ -36,6 +39,12 @@ public class Robot extends TimedRobot {
   private MustangLEDs_2019 leds = new MustangLEDs_2019();
 
   private long savedTime=0;
+
+  public static Arm arm = new Arm();
+  public static Intake intake = new Intake();
+  public static Claw claw = new Claw();
+  public static Climber climber = new Climber();
+  public static MustangLEDs leds = new MustangLEDs();
 
   Command autonomousCommand;
   SendableChooser<Command> auton_chooser = new SendableChooser<>();
@@ -59,7 +68,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    auton_chooser.addDefault("Default Auto", new ExampleCommand());
+    // auton_chooser.addDefault("Default Auto", new TimeDrive());
     // chooser.addObject("My Auto", new MyAutoCommand());
     SmartDashboard.putData("Auto mode", auton_chooser);
     Logger.consoleLog();
@@ -82,7 +91,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-
     // if(System.currentTimeMillis() > savedTime + 1000) {
     //   leds.updateClimbingBoolean(true);
     // }
@@ -97,11 +105,10 @@ public class Robot extends TimedRobot {
     //   savedTime = System.currentTimeMillis();
     // }  
       
-      leds.setClimbingData(true);//we climb
-      
-    
-    
-    
+    leds.setClimbingData(true);//we climb
+
+    // System.out.println("Voltage: "+(irSensor.getVoltage()));
+    Pose.updateFieldCentricPose(); // Update our field centric Pose to the new robot position. Commented out to avoid null-pointers until sensors hooked up.
   }
 
   /**
@@ -132,6 +139,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    sensors.resetNavX(); // Reset NavX completely, zero the field centric based on how robot faces from start of game.
+    Pose.instantiateFieldCentricPose(); // Commented out until motor controllers/encoders attached. Resets the Field Centric Pose of the robot for the start of the game.
+
     Logger.consoleLog("Auton Started");
     autonomousCommand = auton_chooser.getSelected();
 
@@ -167,7 +177,7 @@ public class Robot extends TimedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
-
+    // leds.socketSetup(RobotConstants.LED_PORT);
   }
 
   /**

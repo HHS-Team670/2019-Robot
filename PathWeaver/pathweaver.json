@@ -1,0 +1,10 @@
+{
+  "lengthUnit": "Inch",
+  "timeStep": 0.05,
+  "maxVelocity": 30.0,
+  "maxAcceleration": 40.0,
+  "maxJerk": 60.0,
+  "wheelBase": 25.0,
+  "gameName": "Destination: Deep Space",
+  "outputDir": "../2019-Robot/src/main/deploy"
+}

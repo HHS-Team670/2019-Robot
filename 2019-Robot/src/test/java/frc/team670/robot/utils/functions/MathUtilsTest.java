@@ -9,6 +9,7 @@ package frc.team670.robot.utils.functions;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.Assert;
 import org.junit.Test;
 import frc.team670.robot.utils.functions.MathUtils;
 
@@ -31,6 +32,26 @@ public class MathUtilsTest {
         assertEquals(false, MathUtils.doublesEqual(351.0, 361.0));
         assertEquals(false, MathUtils.doublesEqual(-351.0, -371.0));
         assertEquals(true, MathUtils.doublesEqual(-351.0, -351.0));
+    }
+
+    @Test
+    public void averageTest() {
+        assertEquals(6, MathUtils.average(6.0), 0.0001);
+        assertEquals(6, MathUtils.average(5.0, 7.0), 0.0001);
+        assertEquals(-6.0, MathUtils.average(-6.0), 0.0001);
+        assertEquals(-6, MathUtils.average(-5.0, -7.0), 0.0001);
+        assertEquals(0, MathUtils.average(0.0), 0.0001);
+        assertEquals(0, MathUtils.average(), 0.0001);
+    }
+
+    @Test
+    public void findDistanceTest() {
+        assertEquals(1, MathUtils.findDistance(0, 0, 0, 1), 0.000001);
+        assertEquals(1, MathUtils.findDistance(0, 0, 0, -1), 0.000001);
+        assertEquals(5, MathUtils.findDistance(0, 0, 3, 4), 0.000001);
+        assertEquals(1, MathUtils.findDistance(1, 0, 0, 0), 0.000001);
+        assertEquals(1, MathUtils.findDistance(0, 1, 0, 0), 0.000001);
+        assertEquals(1, MathUtils.findDistance(0, 0, 1, 0), 0.000001);
     }
 
     /*

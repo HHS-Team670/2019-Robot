@@ -7,11 +7,19 @@
 
 package frc.team670.robot.utils.functions;
 
+import edu.wpi.first.wpilibj.PIDController;
+
 /**
  * Contains utility functions for setting values on certain objects.
  */
 public class SettingUtils {
 
-    // Add the "releaseController" method in here from the Command it is in.
+  /**
+   * Disables controller and releases its resources.
+   */
+  public static void releaseController(PIDController controller) {
+    controller.disable();
+    controller.free();
+  }
 
 }
