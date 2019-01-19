@@ -9,12 +9,14 @@ package frc.team670.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotMap;
+import frc.team670.robot.dataCollection.SensorCollection_PIDSource;
 
 /**
  * Represents the climbing mechanism on the robot.
@@ -23,9 +25,9 @@ import frc.team670.robot.constants.RobotMap;
 public class Climber extends Subsystem {
 
   // Motor that drives the two pistons in the back of the robot
-  private TalonSRX backPistons;
+  private WPI_TalonSRX backPistons;
   // Motor that drives the two pistons in the front of the robot. May be split into two controllers.
-  private TalonSRX frontPistons;
+  private WPI_TalonSRX frontPistons;
 
   private Encoder frontEncoder, backEncoder;
 
@@ -33,8 +35,7 @@ public class Climber extends Subsystem {
   private PIDController backController;
 
   private static final double P = 0.01, I = 0.0, D = 0.0, F = 0.0;
-  private double pistonControllerLowerOutput = 0., pistonControllerUpperOutput = 1.; // [0, 1]
-
+  private double pistonControllerLowerOutput = -0.75, pistonControllerUpperOutput = 0.75; // [-1, 1]0.75
   private boolean backPistonsRetracted;
 
   //TODO set these
@@ -46,23 +47,22 @@ public class Climber extends Subsystem {
 
 
   public Climber() {
-    backPistons = new TalonSRX(RobotMap.backClimberPistonController);
-    frontPistons = new TalonSRX(RobotMap.frontClimberPistonController);
+    backPistons = new WPI_TalonSRX(RobotMap.backClimberPistonController);
+    frontPistons = new WPI_TalonSRX(RobotMap.frontClimberPistonController);
 
     // TODO figure out if these motors need to be inverted.
 
-    frontController = new PIDController(P, I, D, F, Robot.sensors.getNavXPitchPIDSource(), null); 
-    backController = new PIDController(P, I, D, F, Robot.sensors.getNavXPitchPIDSource(), null); 
+    frontController = new PIDController(P, I, D, F, new SensorCollection_PIDSource(frontPistons.getSensorCollection()), frontPistons); 
+    backController = new PIDController(P, I, D, F, new SensorCollection_PIDSource(frontPistons.getSensorCollection()), backPistons); 
     // TODO implement pitch from NavX instead of yaw
 
     frontController.setOutputRange(pistonControllerLowerOutput, pistonControllerUpperOutput);
-    backController.setOutputRange(pistonControllerLowerOutput, pistonControllerUpperOutput);
-    frontController.setContinuous(true);
-    backController.setContinuous(true);
-
     frontController.setSetpoint(frontEncoderEnd);
+    frontController.setContinuous(true);
+
+    backController.setOutputRange(pistonControllerLowerOutput, pistonControllerUpperOutput);
     backController.setSetpoint(backEncoderEnd);
-    
+    backController.setContinuous(true);
 
   }
 
@@ -129,6 +129,14 @@ public class Climber extends Subsystem {
 
   @Override
   public void initDefaultCommand() {
+  }
+
+  public PIDController getFrontController() {
+    return frontController;
+  }
+
+  public PIDController getBackController() {
+    return backController;
   }
 
 }
