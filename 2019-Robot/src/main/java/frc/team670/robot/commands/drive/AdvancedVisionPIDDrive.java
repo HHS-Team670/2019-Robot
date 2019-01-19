@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.commands.auto;
+package frc.team670.robot.commands.drive;
 
 import java.util.ArrayList;
 

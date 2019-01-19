@@ -1,8 +1,6 @@
 package frc.team670.robot.constants;
 
-import jaci.pathfinder.Trajectory;
-import jaci.pathfinder.Trajectory.FitMethod;
-import frc.team254.lib.util.control.*;
+import frc.team254.lib.util.control.Lookahead;
 
 public class RobotConstants {
 
@@ -46,7 +44,7 @@ public class RobotConstants {
     minLookaheadSpeed, maxLookaheadSpeed);
 
     // Arm Constants
-    public static final double armBaseHeight = 0;
-    public static final double clawRadius = 0;
+    public static final double ARM_START_HEIGHT = 0;
+    public static final double CLAW_RADIUS = 0;
 
 }

@@ -12,9 +12,9 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangPi;
 import frc.team670.robot.dataCollection.MustangSensors;
+import frc.team670.robot.dataCollection.Pose;
 import frc.team670.robot.dataCollection.SharpIRSensor;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Claw;
@@ -41,7 +41,6 @@ public class Robot extends TimedRobot {
   public static Claw claw = new Claw();
   public static Climber climber = new Climber();
   public static MustangLEDs leds = new MustangLEDs();
-  private SharpIRSensor irSensor = new SharpIRSensor(1, 0.25, 0.55);
 
   Command autonomousCommand;
   SendableChooser<Command> auton_chooser = new SendableChooser<>();
@@ -83,7 +82,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
     // System.out.println("Voltage: "+(irSensor.getVoltage()));
-    // Pose.updateFieldCentricPose(); // Update our field centric Pose to the new robot position. Commented out to avoid null-pointers until sensors hooked up.
+    Pose.updateFieldCentricPose(); // Update our field centric Pose to the new robot position. Commented out to avoid null-pointers until sensors hooked up.
   }
 
   /**
@@ -115,7 +114,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     sensors.resetNavX(); // Reset NavX completely, zero the field centric based on how robot faces from start of game.
-    // Pose.instantiateFieldCentricPose(); // Commented out until motor controllers/encoders attached. Resets the Field Centric Pose of the robot for the start of the game.
+    Pose.instantiateFieldCentricPose(); // Commented out until motor controllers/encoders attached. Resets the Field Centric Pose of the robot for the start of the game.
 
     Logger.consoleLog("Auton Started");
     autonomousCommand = auton_chooser.getSelected();

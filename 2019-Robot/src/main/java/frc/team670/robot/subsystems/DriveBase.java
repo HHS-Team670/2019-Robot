@@ -7,8 +7,8 @@
 
 package frc.team670.robot.subsystems;
 
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.revrobotics.CANEncoder;
@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.team670.robot.commands.drive.XboxRocketLeagueDrive;
+import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.utils.functions.MathUtils;
 
@@ -45,10 +46,10 @@ public class DriveBase extends Subsystem {
 
 
   public DriveBase() {
-    left1 = new CANSparkMax(RobotMap.sparkLeftMotor1, CANSparkMaxLowLevel.MotorType.kBrushless);
-    left2 = new CANSparkMax(RobotMap.sparkLeftMotor2, CANSparkMaxLowLevel.MotorType.kBrushless);
-    right1 = new CANSparkMax(RobotMap.sparkRightMotor1, CANSparkMaxLowLevel.MotorType.kBrushless);
-    right2 = new CANSparkMax(RobotMap.sparkRightMotor2, CANSparkMaxLowLevel.MotorType.kBrushless);
+    left1 = new CANSparkMax(RobotMap.SPARK_LEFT_MOTOR_1, CANSparkMaxLowLevel.MotorType.kBrushless);
+    left2 = new CANSparkMax(RobotMap.SPARK_LEFT_MOTOR_2, CANSparkMaxLowLevel.MotorType.kBrushless);
+    right1 = new CANSparkMax(RobotMap.SPARK_RIGHT_MOTOR_1, CANSparkMaxLowLevel.MotorType.kBrushless);
+    right2 = new CANSparkMax(RobotMap.SPARK_RIGHT_MOTOR_2, CANSparkMaxLowLevel.MotorType.kBrushless);
 
     allMotors = new ArrayList<CANSparkMax>();
     leftControllers = Arrays.asList(left1,left2);
@@ -88,14 +89,14 @@ public class DriveBase extends Subsystem {
     setRampRate(allMotors, 0.254); // Will automatically cook some Cheezy Poofs
 
     // DIO Encoders
-    // leftDIOEncoder = new Encoder(RobotMap.leftEncoderChannelA, RobotMap.leftEncoderChannelB);
-    // rightDIOEncoder = new Encoder(RobotMap.rightEncoderChannelA, RobotMap.rightEncoderChannelB);
+    leftDIOEncoder = new Encoder(RobotMap.leftEncoderChannelA, RobotMap.leftEncoderChannelB);
+    rightDIOEncoder = new Encoder(RobotMap.rightEncoderChannelA, RobotMap.rightEncoderChannelB);
 
-    // double distancePerPulse = Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER* RobotConstants.DIO_TICKS_PER_ROTATION;
-    // leftDIOEncoder.setDistancePerPulse(distancePerPulse);
-    // rightDIOEncoder.setDistancePerPulse(distancePerPulse);
-    // leftDIOEncoder.setReverseDirection(false); // TODO One of these will need to be reversed to fit with the motors, figure out which
-    // rightDIOEncoder.setReverseDirection(true);
+    double distancePerPulse = Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER* RobotConstants.DIO_TICKS_PER_ROTATION;
+    leftDIOEncoder.setDistancePerPulse(distancePerPulse);
+    rightDIOEncoder.setDistancePerPulse(distancePerPulse);
+    leftDIOEncoder.setReverseDirection(false); // TODO One of these will need to be reversed to fit with the motors, figure out which
+    rightDIOEncoder.setReverseDirection(true);
   }
 
   /**

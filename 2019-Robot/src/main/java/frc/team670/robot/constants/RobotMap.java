@@ -25,10 +25,10 @@ public class RobotMap {
   public static int PDP_ID = 0;
 
   // Drive Base
-  public static final int sparkLeftMotor1 = 0; // These are properly set.
-  public static final int sparkLeftMotor2 = 1;
-  public static final int sparkRightMotor1 = 2;
-  public static final int sparkRightMotor2 = 3;
+  public static final int SPARK_LEFT_MOTOR_1 = 0; // These are properly set.
+  public static final int SPARK_LEFT_MOTOR_2 = 1;
+  public static final int SPARK_RIGHT_MOTOR_1 = 2;
+  public static final int SPARK_RIGHT_MOTOR_2 = 3;
     //Encoders
     public static final int leftEncoderChannelA = 0;
     public static final int leftEncoderChannelB = 1;

@@ -63,8 +63,8 @@ public class Arm extends Subsystem {
    */
   public Point2D.Double getPosition(double extensionLength, double wristAngle, double elbowAngle) {
 
-    double x = extensionLength * Math.sin(elbowAngle) + RobotConstants.clawRadius * Math.sin(wristAngle);
-    double y = extensionLength * Math.cos(elbowAngle) + RobotConstants.clawRadius * Math.cos(wristAngle) + RobotConstants.armBaseHeight;
+    double x = extensionLength * Math.sin(elbowAngle) + RobotConstants.CLAW_RADIUS * Math.sin(wristAngle);
+    double y = extensionLength * Math.cos(elbowAngle) + RobotConstants.CLAW_RADIUS * Math.cos(wristAngle) + RobotConstants.ARM_START_HEIGHT;
 
     return new Point2D.Double(x, y);
 
