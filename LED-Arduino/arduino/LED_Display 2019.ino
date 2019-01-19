@@ -14,7 +14,7 @@
 #include <Adafruit_NeoPixel.h>                      //Adafruit library for led methods
 
 Adafruit_NeoPixel strip =                           //Defines an Adafruit Neopixel strip, containing 120 LEDs, using 
-Adafruit_NeoPixel(120, 6, NEO_GRB + NEO_KHZ800);    //Arduino pin #6, and using the GRB format at 800KHZ bitstream
+Adafruit_NeoPixel(15, 6, NEO_GRB + NEO_KHZ800);    //Arduino pin #6, and using the GRB format at 800KHZ bitstream
 
 EthernetClient robotClient;                         //Defines a client to be used to connect to the Robo Rio
 byte mac[] =                                        //Creates a mac address for use in defining an Ethernet instance
@@ -55,6 +55,68 @@ void setStripColor(int r,int g, int b)
   strip.show();
 }
 
+void stillDriveLights()
+{
+  if(stateData==stillDrive)
+  {
+    if(allianceData=blueAlliance)
+    {                        
+      RunningLights(0,0,255,100);    
+    } 
+    else if(allianceData == redAlliance)
+    {                  
+      RunningLights(255,0,0,100);    
+    }
+  }
+}
+
+//forward drive is indicated by green
+void forwardDriveLights()
+{
+  if(stateData==forwardDrive)
+  {
+    setStripColor(0,200,0);
+  } 
+}
+
+//reverse drive indicated by red
+void reverseDriveLights()
+{
+  if(stateData==reverseDrive) 
+  {
+    setStripColor(255,0,0);
+  }
+}
+
+//solid blue color indicates vision lock
+void visionLockLights()
+{
+  if(stateData==visionLock)
+  {
+    setStripColor(10,67,35);
+  }
+
+}
+
+//climbing green LEDs effect
+void climbingLights()
+{
+  if(stateData == climbing)
+  {
+    for(int i = 0; i <= numberOfPixels; i++)
+    {                                 
+      strip.setPixelColor(i,0,200,0);
+      strip.show();
+       delay(40);                              //Slows down the leds so we can see the effects    
+    }
+    for(int i=0;i<=numberOfPixels;i++){
+         strip.setPixelColor(i,0,0,0);
+         strip.show();
+         delay(40);                            //Slows down the leds so we can see the effects
+    }
+  }
+}
+
 void Strobe(byte red, byte green, byte blue, int StrobeCount, int FlashDelay, int EndPause){
   for(int j = 0; j < StrobeCount; j++) {
     setStripColor(red,green,blue);
@@ -81,6 +143,34 @@ void randomStrobe(int StrobeCount, int FlashDelay, int EndPause){
     strip.show();
     delay(FlashDelay);
   }
+}
+void bounceBackground(byte red, byte green, byte blue, int EyeSize, int SpeedDelay, int ReturnDelay){
+
+  for(int i = 0; i < strip.numPixels()-EyeSize-2; i++) {
+    setStripColor(255,255,255);
+    strip.setPixelColor(i, red/10, green/10, blue/10);
+    for(int j = 1; j <= EyeSize; j++) {
+      strip.setPixelColor(i+j, red, green, blue); 
+    }
+    strip.setPixelColor(i+EyeSize+1, red/10, green/10, blue/10);
+    strip.show();
+    delay(SpeedDelay);
+  }
+
+  delay(ReturnDelay);
+
+  for(int i = strip.numPixels()-EyeSize-2; i > 0; i--) {
+    setStripColor(255,255,255);
+    strip.setPixelColor(i, red/10, green/10, blue/10);
+    for(int j = 1; j <= EyeSize; j++) {
+      strip.setPixelColor(i+j, red, green, blue); 
+    }
+    strip.setPixelColor(i+EyeSize+1, red/10, green/10, blue/10);
+    strip.show();;
+    delay(SpeedDelay);
+  }
+  
+  delay(ReturnDelay);
 }
 void CylonBounce(byte red, byte green, byte blue, int EyeSize, int SpeedDelay, int ReturnDelay){
 
@@ -111,52 +201,8 @@ void CylonBounce(byte red, byte green, byte blue, int EyeSize, int SpeedDelay, i
   delay(ReturnDelay);
 }
 
-void updateStillDriveData() {
-  int Position=0;
-  if(stateData==stillDrive)
-  {
-    if(allianceData=blueAlliance)
-    {                        
-    for(int j=0; j<strip.numPixels()*2; j++)
-    {
-      Position++; // = 0; //Position + Rate;
-      for(int i=0; i<strip.numPixels(); i++) {
-        // sine wave, 3 offset waves make a rainbow!
-        //float level = sin(i+Position) * 127 + 128;
-        //setPixel(i,level,0,0);
-        //float level = sin(i+Position) * 127 + 128;
-        strip.setPixelColor(i,((sin(i+Position) * 127 + 128)/255)*0,
-                   ((sin(i+Position) * 127 + 128)/255)*0,
-                   ((sin(i+Position) * 127 + 128)/255)*255);
-      }
-      
-      strip.show();
-      delay(100);
-  }    
-  } 
-    else if(allianceData == redAlliance)
-    {                  
-for(int j=0; j<strip.numPixels() *2; j++)
-    {
-      Position++; // = 0; //Position + Rate;
-      for(int i=0; i<strip.numPixels(); i++) {
-        // sine wave, 3 offset waves make a rainbow!
-        //float level = sin(i+Position) * 127 + 128;
-        //setPixel(i,level,0,0);
-        //float level = sin(i+Position) * 127 + 128;
-        strip.setPixelColor(i,((sin(i+Position) * 127 + 128)/255)*255,
-                   ((sin(i+Position) * 127 + 128)/255)*0,
-                   ((sin(i+Position) * 127 + 128)/255)*0);
-      }
-      
-      strip.show();
-      delay(100);
-  }    
-    }
-  }
- 
-  
-}
+//USE
+
 void RunningLights(byte red, byte green, byte blue, int WaveDelay) {
   
   int Position=0;
@@ -185,18 +231,8 @@ void reset()
   strip.show();
 }
 
-  
-void setup() 
-{                                                   //Sets up constants before program begins     
-  Ethernet.begin(mac,ip);                           //Initalizes an Ethernet instance
-  Serial.begin(9600);                               //Initalizes serial communications to monitor data transfer
-  robotClient.connect(robotIp, 5801);               //Connects the client instance to the robot's socket at 5801;
-  strip.begin();                                    //Starts communication with the NeoPixel strip
-}
-
-void loop()
-{                                                   //Ran indefinitly after setup()
-updateStillDriveData();
+void parseData()
+{
   connectionTimer++;                                //Adds a count to the ConnectionTimer
   if(robotClient.available())                       //Runs when bytes are available to read
   {                                                 
@@ -212,45 +248,38 @@ updateStillDriveData();
     stateData = dataString.substring(0,2);           //Grabs the expected location of various data, puts it in variables
     allianceData = dataString.substring(2,4);              
   
-  //Below here is code to control the LED's from the data obtained above
-  strip.setBrightness(100); 
-  
+}
 
-  //climbing green LEDs effect
-  if(stateData == climbing)
-  {
-    for(int i = 0; i <= numberOfPixels; i++)
-    {
-      delay(50);                                       //Slows down the leds so we can see the effects
-      strip.setPixelColor(i,0,200,0);
-      strip.show();
-      
-    }
-    reset();   
-  }
-
-  //solid blue color indicates vision lock
-  else if(stateData==visionLock)
-  {
-    setStripColor(10,67,35);
-  }
-
-  //forward drive is indicated by green
-  else if(stateData==forwardDrive)
-  {
-    setStripColor(0,200,0);
-  } 
-    
-  //reverse drive indicated by red
-  else if(stateData==reverseDrive) 
-  {
-    setStripColor(255,0,0);
-  }
-        
+void resetConnectionTimer()
+{
   if(connectionTimer > 20)                          //About 1 second has passed since the last packet when one should come in every 1/4 of a second
   {                                                  
     connectionTimer = 0;                            //Resets the timer
     robotClient.stop();                             //Forces a socket disconnect from the RoboRio
     robotClient.connect(robotIp, 5801);             //Re-initalizes socket communication with the Rio
   }
+}
+  
+void setup() 
+{                                                   //Sets up constants before program begins     
+  Ethernet.begin(mac,ip);                           //Initalizes an Ethernet instance
+  Serial.begin(9600);                               //Initalizes serial communications to monitor data transfer
+  robotClient.connect(robotIp, 5801);               //Connects the client instance to the robot's socket at 5801;
+  strip.begin();                                    //Starts communication with the NeoPixel strip
+}
+
+void loop()
+{                                                   //Ran indefinitly after setup()
+  parseData();
+  
+  //Below here is code to control the LED's from the data obtained above
+  strip.setBrightness(100); 
+  
+  stillDriveLights();
+  forwardDriveLights();
+  reverseDriveLights();
+  visionLockLights();
+  climbingLights();
+    
+  resetConnectionTimer();
 }
