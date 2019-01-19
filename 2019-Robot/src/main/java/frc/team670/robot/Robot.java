@@ -104,6 +104,9 @@ public class Robot extends TimedRobot {
     //   savedTime = System.currentTimeMillis();
     // }  
       
+    Logger.consoleLog("LeftEncoderPos: %s", driveBase.getLeftDIOEncoderPosition());
+    Logger.consoleLog("RightEncoderPos: %s", driveBase.getRightDIOEncoderPosition());
+
     leds.setClimbingData(true);//we climb
 
     // System.out.println("Voltage: "+(irSensor.getVoltage()));
