@@ -55,7 +55,7 @@ void setStripColor(int r,int g, int b)
   strip.show();
 }
 
-void stillDriveLights()
+void stillDriveLights() //to be used when the robot is not moving, will flash alliance color
 {
   if(stateData==stillDrive)
   {
@@ -70,17 +70,17 @@ void stillDriveLights()
   }
 }
 
-//forward drive is indicated by green
-void forwardDriveLights()
+
+void forwardDriveLights() //to be used when the robot is moving forward, will display solid green
 {
   if(stateData==forwardDrive)
   {
-    setStripColor(0,200,0);
+    setStripColor(0,255,0);
   } 
 }
 
 //reverse drive indicated by red
-void reverseDriveLights()
+void reverseDriveLights() //to be used when the robot is moving in reverse, will display solid red
 {
   if(stateData==reverseDrive) 
   {
@@ -89,17 +89,17 @@ void reverseDriveLights()
 }
 
 //solid blue color indicates vision lock
-void visionLockLights()
+void visionLockLights() //to be used when there is a vision lock, will display solid purple
 {
   if(stateData==visionLock)
   {
-    setStripColor(10,67,35);
+    setStripColor(255,0,255);
   }
 
 }
 
 //climbing green LEDs effect
-void climbingLights()
+void climbingLights() //to be used when we are climbing, will display climbing green LEDS
 {
   if(stateData == climbing)
   {
