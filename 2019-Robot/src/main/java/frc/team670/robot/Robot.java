@@ -44,7 +44,6 @@ public class Robot extends TimedRobot {
   public static Intake intake = new Intake();
   public static Claw claw = new Claw();
   public static Climber climber = new Climber();
-  public static MustangLEDs leds = new MustangLEDs();
 
   Command autonomousCommand;
   SendableChooser<Command> auton_chooser = new SendableChooser<>();

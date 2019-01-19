@@ -31,9 +31,6 @@ public class RobotConstants {
     public static final double DERIVATIVE = 5*KU*TU/40;
     public static final double DRIVEBASE_TRACK_WIDTH = 25; //TODO set this value to the actual
 
-    // LED Constants
-    public static final int LED_PORT = 5810;
-
     // Pure Pursuit Constants
     public static final double MIN_LOOKAHEAD = 12.0; //Inches. TODO: set the value; 1 ft for now idk
     public static final double MAX_LOOKAHEAD = 18.0; //Inches. TODO: set this to something legit
