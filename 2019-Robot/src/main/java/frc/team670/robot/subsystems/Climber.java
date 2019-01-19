@@ -35,7 +35,8 @@ public class Climber extends Subsystem {
   private PIDController backController;
 
   private static final double P = 0.01, I = 0.0, D = 0.0, F = 0.0;
-  private double pistonControllerLowerOutput = -0.75, pistonControllerUpperOutput = 0.75; // [-1, 1]0.75
+  private double frontPistonControllerLowerOutput = -0.75, frontPistonControllerUpperOutput = 0.75; // [-1, 1]0.75
+  private double backPistonControllerLowerOutput = -0.75, backPistonControllerUpperOutput = 0.75; // [-1, 1]0.75
   private boolean backPistonsRetracted;
 
   //TODO set these
@@ -56,11 +57,11 @@ public class Climber extends Subsystem {
     backController = new PIDController(P, I, D, F, new SensorCollection_PIDSource(frontPistons.getSensorCollection()), backPistons); 
     // TODO implement pitch from NavX instead of yaw
 
-    frontController.setOutputRange(pistonControllerLowerOutput, pistonControllerUpperOutput);
+    frontController.setOutputRange(frontPistonControllerLowerOutput, frontPistonControllerUpperOutput);
     frontController.setSetpoint(frontEncoderEnd);
     frontController.setContinuous(true);
 
-    backController.setOutputRange(pistonControllerLowerOutput, pistonControllerUpperOutput);
+    backController.setOutputRange(backPistonControllerLowerOutput, backPistonControllerUpperOutput);
     backController.setSetpoint(backEncoderEnd);
     backController.setContinuous(true);
 
@@ -137,6 +138,30 @@ public class Climber extends Subsystem {
 
   public PIDController getBackController() {
     return backController;
+  }
+
+  public WPI_TalonSRX getFrontPistons(){
+    return frontPistons;
+  }
+
+  public WPI_TalonSRX getBackPistons(){
+    return backPistons;
+  }
+
+  public double getFrontMinOutput(){
+    return frontPistonControllerLowerOutput;
+  }
+
+  public double getFrontMaxOutput(){
+    return frontPistonControllerUpperOutput;
+  }
+
+  public double getBackMinOutput(){
+    return backPistonControllerLowerOutput;
+  }
+
+  public double getBackMaxOutput(){
+    return backPistonControllerUpperOutput;
   }
 
 }

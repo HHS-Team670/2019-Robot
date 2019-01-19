@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.dataCollection.NavX.NavX_Pitch_PIDSource;
-import frc.team670.robot.dataCollection.NavX.ZeroableNavX_PIDSource;
 
 /**
  * Instantiates sensor representation objects and contains methods for accessing the sensor data.
