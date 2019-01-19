@@ -25,10 +25,15 @@ public class TestNode implements Node{
     }
 
     public int getHeuristicDistance(Node target){
-        return 0; //TODO figure this out
+        TestNode t = (TestNode)target;
+        return (int)(Math.sqrt((x-t.getX())*(x-t.getX())+(y-t.getY())*(y-t.getY())));
     }
 
-    public int getHeuristicDistance(TestNode target){
-        return (int)(Math.sqrt((x-target.getX())*(x-target.getX())+(y-target.getY())*(y-target.getY())));
+    public String toString(){
+        return "("+this.x+","+this.y+")";
+    }
+
+    public void setEdges(Edge[] edges){
+        this.edges = edges;
     }
 }

@@ -8,6 +8,7 @@
 package frc.team670.robot.commands.arm.armTransitions;
 
 import frc.team670.robot.subsystems.Arm.LegalState;
+import frc.team670.robot.utils.sort.Node;
 
 public class NeutralToCargoPickup extends ArmTransition {
   
@@ -24,6 +25,18 @@ public class NeutralToCargoPickup extends ArmTransition {
   @Override
   public int getLength() {
     return 0; // Set this
+  }
+
+  public int getCost(){
+    return 0;
+  }
+
+  public Node getSource(){
+    return null;
+  }
+
+  public Node getDest(){
+    return null;
   }
 
   /**

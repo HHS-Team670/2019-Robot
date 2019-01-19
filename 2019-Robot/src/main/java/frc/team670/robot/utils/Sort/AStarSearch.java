@@ -21,10 +21,15 @@ public class AStarSearch {
      * 
      * @param start       The node that the user wishes to start from
      * @param destination The target node that the use wishes to reach
-     * @return A path of nodes that the search algorithm has found
+     * @return A path of nodes that the search algorithm has found. 
+     * If start or destination node is an island, returns empty path. 
+     * Returns empty if destination and start are same
+     * TODO: maybe exception for islands (but realistically they wont happen)
      */
     public static List<Edge> search(Node start, Node destination) {
-
+        if (start.equals(destination)) {
+            return new ArrayList<Edge>();
+        }
         HashMap<Node, Edge> cameFrom = new HashMap<Node, Edge>();
         Map<Node, Integer> fValues = new HashMap<Node, Integer>();
         Map<Node, Integer> gValues = new HashMap<Node, Integer>();
@@ -41,7 +46,7 @@ public class AStarSearch {
                 if (fValues.get(o2) != null)
                     o2f = fValues.get(o2);
 
-                return fValues.get(o1).compareTo(fValues.get(o2));
+                return ((Integer)(o1f)).compareTo(o2f);
             }
         };
 
@@ -68,6 +73,10 @@ public class AStarSearch {
             openList.remove(current);
             closedList.add(current);
 
+
+
+            //System.out.println(current);
+
             for (Edge e : current.getEdges()) {
                 Node child = e.getDest();
 
@@ -90,6 +99,10 @@ public class AStarSearch {
 
         }
 
+        if(openList.isEmpty()){//either start or end is island
+            throw new IllegalArgumentException("Invalid input, check for island");
+            //return new ArrayList<Edge>();
+        }
         return getPath(start, destination, cameFrom);
     }
 
@@ -97,6 +110,10 @@ public class AStarSearch {
         List<Edge> path = new ArrayList<Edge>();
         Node node = destination;
 
+        if(cameFrom.isEmpty()){//start and dest same?
+            throw new IllegalArgumentException("Start and end are same");
+            //return path;
+    }
         while (!node.equals(start)) {
             Edge e = cameFrom.get(node);
             path.add(e);

@@ -149,45 +149,9 @@ public class Arm extends Subsystem {
       return transitions;
     }
 
-    //TODO Put this in Node file
-    public void setF(double f){
-
+    public int getHeuristicDistance(Node other){
+      return 0;
     }
-
-    //TODO Put this in Node file
-    public double getF(){
-      return 0d;
-    }
-
-    //TODO Put this in Node file
-    public void setG(double g){
-
-    }
-
-    //TODO Put this in Node file
-    public double getG(){
-      return 0d;
-    }
-    //TODO Put this in Node file
-    public void setParent(Node parent){
-      this.parent = parent;
-    }
-
-    //TODO Put this in Node file
-    public Node getParent(){
-      return parent;
-    }
-
-    public int compareTo(Node other){
-      if(this.f < other.getF()){
-          return -1;
-      } else if(this.f > other.getF()){
-          return 1;
-      } else{
-          return 0;
-      }
-  }
-
 
 
     public CommandGroup getTransition(LegalState destination) {
