@@ -17,6 +17,9 @@ public class RobotConstants {
     /** The number of ticks per rotation of a drivebase wheel for the DIO Encoders  */
     public static final double DIO_TICKS_PER_ROTATION = 4690;
 
+    // LEDs
+    public static final int LED_PORT = 5801;
+
     // Vision Constants
     public static final double VISION_ERROR_CODE = -99999;
 

@@ -20,8 +20,8 @@ import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Claw;
 import frc.team670.robot.subsystems.Climber;
 import frc.team670.robot.subsystems.DriveBase;
+import frc.team670.robot.subsystems.MustangLEDs_2019;
 import frc.team670.robot.subsystems.Intake;
-import frc.team670.robot.subsystems.MustangLEDs;
 import frc.team670.robot.utils.Logger;
 
 /**
@@ -36,6 +36,10 @@ public class Robot extends TimedRobot {
   public static MustangSensors sensors = new MustangSensors();
   public static MustangPi visionPi = new MustangPi();
   public static DriveBase driveBase = new DriveBase();
+  private MustangLEDs_2019 leds = new MustangLEDs_2019();
+
+  private long savedTime=0;
+
   public static Arm arm = new Arm();
   public static Intake intake = new Intake();
   public static Claw claw = new Claw();
@@ -68,7 +72,13 @@ public class Robot extends TimedRobot {
     // chooser.addObject("My Auto", new MyAutoCommand());
     SmartDashboard.putData("Auto mode", auton_chooser);
     Logger.consoleLog();
+    savedTime = System.currentTimeMillis();
+    System.out.println("Robot init");
 
+    leds.socketSetup(5801);
+    System.out.println("LED Setup Run");
+    //leds.socketSetup(RobotConstants.LED_PORT);    
+    
   }
 
   /**
@@ -81,6 +91,22 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    // if(System.currentTimeMillis() > savedTime + 1000) {
+    //   leds.updateClimbingBoolean(true);
+    // }
+    // else if(System.currentTimeMillis() > savedTime + 2000) {
+    //   leds.updateForwardDrive(true);
+    // }
+    // else if(System.currentTimeMillis() > savedTime + 3000) {
+    //   leds.updateReverseDrive(true);
+    // }
+    // else if(System.currentTimeMillis() > savedTime + 4000) {
+    //   leds.updateVisionData(true);
+    //   savedTime = System.currentTimeMillis();
+    // }  
+      
+    leds.setClimbingData(true);//we climb
+
     // System.out.println("Voltage: "+(irSensor.getVoltage()));
     Pose.updateFieldCentricPose(); // Update our field centric Pose to the new robot position. Commented out to avoid null-pointers until sensors hooked up.
   }
@@ -152,7 +178,6 @@ public class Robot extends TimedRobot {
       autonomousCommand.cancel();
     }
     // leds.socketSetup(RobotConstants.LED_PORT);
-
   }
 
   /**

@@ -190,7 +190,6 @@ public class MustangPi {
             double result = entries.get(key).getValue()[index];
             return result;
         }
-
     }
 
 }
