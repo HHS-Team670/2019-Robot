@@ -8,13 +8,11 @@
 package frc.team670.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.dataCollection.SensorCollection_PIDSource;
 
@@ -35,8 +33,11 @@ public class Climber extends Subsystem {
   private PIDController backController;
 
   private static final double P = 0.01, I = 0.0, D = 0.0, F = 0.0;
-  private double frontPistonControllerLowerOutput = -0.75, frontPistonControllerUpperOutput = 0.75; // [-1, 1]0.75
-  private double backPistonControllerLowerOutput = -0.75, backPistonControllerUpperOutput = 0.75; // [-1, 1]0.75
+
+  //First element is min output and second value is max output
+  private double[] frontPistonOutputs; 
+  private double[] backPistonOutputs; 
+
   private boolean backPistonsRetracted;
 
   //TODO set these
@@ -45,11 +46,14 @@ public class Climber extends Subsystem {
   private int finishTolerance = 10; // return true for isFinished if the encoder value is within this many ticks of the endpoint
   private final double minimumPistonPower = 0.1;
 
-
+  public final double DEFAULT_MIN_OUTPUT = -0.75, DEFAULT_MAX_OUTPUT = 0.75;
 
   public Climber() {
     backPistons = new WPI_TalonSRX(RobotMap.backClimberPistonController);
     frontPistons = new WPI_TalonSRX(RobotMap.frontClimberPistonController);
+
+    frontPistonOutputs = new double[]{DEFAULT_MIN_OUTPUT, DEFAULT_MAX_OUTPUT};
+    backPistonOutputs = new double[]{DEFAULT_MIN_OUTPUT, DEFAULT_MAX_OUTPUT};
 
     // TODO figure out if these motors need to be inverted.
 
@@ -57,26 +61,29 @@ public class Climber extends Subsystem {
     backController = new PIDController(P, I, D, F, new SensorCollection_PIDSource(frontPistons.getSensorCollection()), backPistons); 
     // TODO implement pitch from NavX instead of yaw
 
-    frontController.setOutputRange(frontPistonControllerLowerOutput, frontPistonControllerUpperOutput);
+    frontController.setOutputRange(frontPistonOutputs[0], frontPistonOutputs[1]);
     frontController.setSetpoint(frontEncoderEnd);
-    frontController.setContinuous(true);
+    frontController.setAbsoluteTolerance(finishTolerance);
+    frontController.setContinuous(false);
 
-    backController.setOutputRange(backPistonControllerLowerOutput, backPistonControllerUpperOutput);
+    backController.setOutputRange(backPistonOutputs[0], backPistonOutputs[1]);
     backController.setSetpoint(backEncoderEnd);
-    backController.setContinuous(true);
-
+    backController.setAbsoluteTolerance(finishTolerance);
+    backController.setContinuous(false);
   }
 
   /**
    * Drives pistons downwards with the given powers.
    */
   public void drivePistons(double frontPower, double backPower) {
-    
     frontPistons.set(ControlMode.PercentOutput, frontPower);
     backPistons.set(ControlMode.PercentOutput, backPower);
   }
 
   public void drivePistonsPID() {
+    frontController.setOutputRange(frontPistonOutputs[0], frontPistonOutputs[1]);
+    backController.setOutputRange(backPistonOutputs[0], backPistonOutputs[1]);
+
     double frontPower = frontController.get();
     double backPower = backController.get();
     frontPower += minimumPistonPower;
@@ -132,36 +139,42 @@ public class Climber extends Subsystem {
   public void initDefaultCommand() {
   }
 
+  /**
+   * Returns the front PIDController
+   * @return the PID controller that controls the front pistons
+   */
   public PIDController getFrontController() {
     return frontController;
   }
 
+  /**
+   * Returns the back PIDController
+   * @return the PID controller that controls the back pistons
+   */
   public PIDController getBackController() {
     return backController;
   }
 
-  public WPI_TalonSRX getFrontPistons(){
-    return frontPistons;
+  /**
+   * Returns the min and max outputs of the PIDController which controls the front pistons. The first value
+   * represents the min output and second represents the max.
+   * 
+   * @return an array with the min and max outputs of the PIDController which controls the front pistons. The first value
+   * represents the min output and second represents the max.
+   */
+  public double[] getFrontPistonOutputs(){
+    return frontPistonOutputs;
   }
 
-  public WPI_TalonSRX getBackPistons(){
-    return backPistons;
-  }
-
-  public double getFrontMinOutput(){
-    return frontPistonControllerLowerOutput;
-  }
-
-  public double getFrontMaxOutput(){
-    return frontPistonControllerUpperOutput;
-  }
-
-  public double getBackMinOutput(){
-    return backPistonControllerLowerOutput;
-  }
-
-  public double getBackMaxOutput(){
-    return backPistonControllerUpperOutput;
+  /**
+   * Returns the min and max outputs of the PIDController which controls the back pistons. The first value
+   * represents the min output and second represents the max.
+   * 
+   * @return an array with the min and max outputs of the PIDController which controls the back pistons. The first value
+   * represents the min output and second represents the max.
+   */
+  public double[] getBackPistonOutputs(){
+    return backPistonOutputs;
   }
 
 }
