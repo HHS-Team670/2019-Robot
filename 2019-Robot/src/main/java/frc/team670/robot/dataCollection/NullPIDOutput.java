@@ -16,7 +16,7 @@ public class NullPIDOutput implements PIDOutput {
 
    @Override
    public void pidWrite(double output) {
-    
+
    }
 
 }

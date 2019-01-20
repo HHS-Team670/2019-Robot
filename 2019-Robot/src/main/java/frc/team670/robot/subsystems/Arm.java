@@ -39,12 +39,12 @@ public class Arm extends Subsystem {
 
 
   public Arm() {
-    translationMotor = new TalonSRX(RobotMap.armTranslationMotor);
-    extensionMotor = new TalonSRX(RobotMap.armExtensionMotor);
-    elbowRotationMain = new TalonSRX(RobotMap.armElbowRotationMotorTalon);
-    wristRotation = new TalonSRX(RobotMap.armWristRotation);
+    translationMotor = new TalonSRX(RobotMap.ARM_TRANSLATION_MOTOR);
+    extensionMotor = new TalonSRX(RobotMap.ARM_EXTENSION_MOTOR);
+    elbowRotationMain = new TalonSRX(RobotMap.ARM_ELBOW_ROTATION_MOTOR_TALON);
+    wristRotation = new TalonSRX(RobotMap.ARM_WRIST_ROTATION);
 
-    elbowRotationSlave = new VictorSPX(RobotMap.armElbowRotationMotorVictor);
+    elbowRotationSlave = new VictorSPX(RobotMap.ARM_ELBOW_ROTATION_MOTOR_VICTOR);
     elbowRotationSlave.set(ControlMode.Follower, elbowRotationMain.getDeviceID());
 
     states = new HashMap<LegalState, ArmState>();
@@ -62,12 +62,9 @@ public class Arm extends Subsystem {
    * left the variable stuff as parameters for now
    */
   public Point2D.Double getPosition(double extensionLength, double wristAngle, double elbowAngle) {
-
     double x = extensionLength * Math.sin(elbowAngle) + RobotConstants.CLAW_RADIUS * Math.sin(wristAngle);
-    double y = extensionLength * Math.cos(elbowAngle) + RobotConstants.CLAW_RADIUS * Math.cos(wristAngle) + RobotConstants.ARM_BASE_HEIGHT;
-
+    double y = extensionLength * Math.cos(elbowAngle) + RobotConstants.CLAW_RADIUS * Math.cos(wristAngle) + RobotConstants.ARM_START_HEIGHT;
     return new Point2D.Double(x, y);
-
   }
 
   @Override

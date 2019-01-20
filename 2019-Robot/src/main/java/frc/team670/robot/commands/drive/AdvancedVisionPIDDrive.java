@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.commands.auto;
+package frc.team670.robot.commands.drive;
 
 import java.util.ArrayList;
 
@@ -37,14 +37,14 @@ public class AdvancedVisionPIDDrive extends Command {
 
   private PIDController distanceController, headingController;
   private static final double P = 0.01, I = 0.0, D = 0.0, F = 0.0;
-  private static final double degreeTolerance = 0.05; // degrees
-  private static final double distanceTolerance = 0.05; // inches
+  private static final double DEGREE_TOLERANCE = 0.05; // degrees
+  private static final double DISTANCE_TOLERANCE = 0.05; // inches
   private double visionHeadingControllerLowerOutput = -.03, visionHeadingControllerUpperOutput = .03;
   private double visionDistanceControllerLowerOutput = -.15, visionDistanceControllerUpperOutput = .15;
 
-  private final double cameraOffset = 12; // distance from camera to front of the robot in inches.
+  private final double CAMERA_OFFSET = 12; // distance from camera to front of the robot in inches.
   private int executeCount;
-  private final double minimumAngleAdjustment = 0.03;
+  private final double MINIMUM_ANGLE_ADJUSTMENT = 0.03;
   private VisionAngleAndDistanceWithPose visionDistanceAndPose;
   private Pose robotPosition;
 
@@ -56,11 +56,11 @@ public class AdvancedVisionPIDDrive extends Command {
 
     headingController.setInputRange(-180.0, 180.0);
     headingController.setOutputRange(visionHeadingControllerLowerOutput, visionHeadingControllerUpperOutput);
-    headingController.setAbsoluteTolerance(degreeTolerance);
+    headingController.setAbsoluteTolerance(DEGREE_TOLERANCE);
     headingController.setContinuous(true);
 
     distanceController.setOutputRange(visionDistanceControllerLowerOutput, visionDistanceControllerUpperOutput);
-    distanceController.setAbsoluteTolerance(distanceTolerance);
+    distanceController.setAbsoluteTolerance(DISTANCE_TOLERANCE);
     distanceController.setContinuous(false);
 
     // visionDistance = new
@@ -86,6 +86,9 @@ public class AdvancedVisionPIDDrive extends Command {
     }
 
     executeCount = 0;
+
+    distanceController.enable();
+    headingController.enable();
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -105,9 +108,9 @@ public class AdvancedVisionPIDDrive extends Command {
     double headingOutput = headingController.get();
 
     if (headingOutput >= 0) {
-      headingOutput += minimumAngleAdjustment;
+      headingOutput += MINIMUM_ANGLE_ADJUSTMENT;
     } else {
-      headingOutput -= minimumAngleAdjustment;
+      headingOutput -= MINIMUM_ANGLE_ADJUSTMENT;
     }
 
     double leftSpeed = distanceOutput - headingOutput;
@@ -155,7 +158,7 @@ public class AdvancedVisionPIDDrive extends Command {
    * @param angle    The angle in degrees [-30, 30]
    */
   private void setSetpoints(double distance, double angle) {
-    distanceController.setSetpoint(MathUtils.convertInchesToDriveBaseTicks(distance + cameraOffset));
+    distanceController.setSetpoint(MathUtils.convertInchesToDriveBaseTicks(distance + CAMERA_OFFSET));
     headingController.setSetpoint(angle);
   }
 

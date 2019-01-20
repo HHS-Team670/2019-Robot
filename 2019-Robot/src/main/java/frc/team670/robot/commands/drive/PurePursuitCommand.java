@@ -5,18 +5,19 @@
   // each time need to update estimate of location
   // update set points (setSetPoint() during execute)
 
-package frc.team670.robot.commands.auto;
-
-import frc.team670.robot.constants.*;
-import frc.team670.robot.subsystems.DriveBase;
-import frc.team670.robot.Robot;
-import frc.team254.lib.util.control.*;
-import frc.team254.lib.util.motion.*;
-import frc.team254.lib.util.math.RigidTransform2d;
+package frc.team670.robot.commands.drive;
 
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 import edu.wpi.first.wpilibj.command.Command;
+import frc.team254.lib.util.control.AdaptivePurePursuitController;
+import frc.team254.lib.util.control.Lookahead;
+import frc.team254.lib.util.control.Path;
+import frc.team254.lib.util.control.PathFollower;
+import frc.team254.lib.util.math.RigidTransform2d;
+import frc.team670.robot.Robot;
+import frc.team670.robot.constants.RobotConstants;
+import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.utils.Logger;
 
 public class PurePursuitCommand extends Command
@@ -34,7 +35,7 @@ public class PurePursuitCommand extends Command
 
     public PurePursuitCommand(Path path)
     {
-        this(path, RobotConstants.lookahead, RobotConstants.segmentCompletionTolerance);
+        this(path, RobotConstants.LOOKAHEAD, RobotConstants.SEGMENT_COMPLETION_TOLERANCE);
     }
 
 

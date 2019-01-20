@@ -7,8 +7,8 @@
 
 package frc.team670.robot.subsystems;
 
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.revrobotics.CANEncoder;
@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.team670.robot.commands.drive.XboxRocketLeagueDrive;
+import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.utils.functions.MathUtils;
 
@@ -32,7 +33,7 @@ import frc.team670.robot.utils.functions.MathUtils;
  */
 public class DriveBase extends Subsystem {
 
-  private static final int velocityPIDSlot = 1, encodersPIDSlot = 2;
+  private static final int VELOCITY_PID_SLOT = 1, encodersPIDSlot = 2;
 
   private CANSparkMax left1, left2, right1, right2;
   private SpeedControllerGroup left, right;
@@ -40,15 +41,15 @@ public class DriveBase extends Subsystem {
   private List<CANSparkMax> leftControllers, rightControllers;
   private List<CANSparkMax> allMotors;
   private Encoder leftDIOEncoder, rightDIOEncoder;
-  private final double pP = 0.1, pI = 1E-4, pD = 1, pFF = 0; // Position PID Values. Set based off the default in REV Robotics example code.
-  private final double vP = 5E-5, vI = 1E-5, vD = 0, vFF = 0; // Velocity PID Values. Set based off the default in REV Robotics example code.
+  private final double P_P = 0.1, P_I = 1E-4, P_D = 1, P_FF = 0; // Position PID Values. Set based off the default in REV Robotics example code.
+  private final double V_P = 5E-5, V_I = 1E-5, V_D = 0, V_FF = 0; // Velocity PID Values. Set based off the default in REV Robotics example code.
 
 
   public DriveBase() {
-    left1 = new CANSparkMax(RobotMap.sparkLeftMotor1, CANSparkMaxLowLevel.MotorType.kBrushless);
-    left2 = new CANSparkMax(RobotMap.sparkLeftMotor2, CANSparkMaxLowLevel.MotorType.kBrushless);
-    right1 = new CANSparkMax(RobotMap.sparkRightMotor1, CANSparkMaxLowLevel.MotorType.kBrushless);
-    right2 = new CANSparkMax(RobotMap.sparkRightMotor2, CANSparkMaxLowLevel.MotorType.kBrushless);
+    left1 = new CANSparkMax(RobotMap.SPARK_LEFT_MOTOR_1, CANSparkMaxLowLevel.MotorType.kBrushless);
+    left2 = new CANSparkMax(RobotMap.SPARK_LEFT_MOTOR_2, CANSparkMaxLowLevel.MotorType.kBrushless);
+    right1 = new CANSparkMax(RobotMap.SPARK_RIGHT_MOTOR_1, CANSparkMaxLowLevel.MotorType.kBrushless);
+    right2 = new CANSparkMax(RobotMap.SPARK_RIGHT_MOTOR_2, CANSparkMaxLowLevel.MotorType.kBrushless);
 
     allMotors = new ArrayList<CANSparkMax>();
     leftControllers = Arrays.asList(left1,left2);
@@ -61,7 +62,7 @@ public class DriveBase extends Subsystem {
      // and then invert the SpeedController to compensate for automatic inversion.
     setMotorsInvert(rightControllers, true);
 
-    left2.follow(left1); // This should be the other way around
+    left2.follow(left1);
     right2.follow(right1);
 
     left = new SpeedControllerGroup(left1, left2);
@@ -74,28 +75,28 @@ public class DriveBase extends Subsystem {
     driveTrain.setMaxOutput(1.0);
 
     // Set PID Values
-    left1.getPIDController().setP(pP, encodersPIDSlot);
-    left1.getPIDController().setI(pI, encodersPIDSlot);
-    left1.getPIDController().setD(pD, encodersPIDSlot);
-    left1.getPIDController().setFF(pFF, encodersPIDSlot);
+    left1.getPIDController().setP(P_P, encodersPIDSlot);
+    left1.getPIDController().setI(P_I, encodersPIDSlot);
+    left1.getPIDController().setD(P_D, encodersPIDSlot);
+    left1.getPIDController().setFF(P_FF, encodersPIDSlot);
     left1.getPIDController().setOutputRange(-1, 1);
 
-    right1.getPIDController().setP(vP, velocityPIDSlot);
-    right1.getPIDController().setI(vI, velocityPIDSlot);
-    right1.getPIDController().setD(vD, velocityPIDSlot);
-    right1.getPIDController().setFF(vFF, velocityPIDSlot);
+    right1.getPIDController().setP(V_P, VELOCITY_PID_SLOT);
+    right1.getPIDController().setI(V_I, VELOCITY_PID_SLOT);
+    right1.getPIDController().setD(V_D, VELOCITY_PID_SLOT);
+    right1.getPIDController().setFF(V_FF, VELOCITY_PID_SLOT);
 
     setRampRate(allMotors, 0.254); // Will automatically cook some Cheezy Poofs
 
     // DIO Encoders
-    // leftDIOEncoder = new Encoder(RobotMap.leftEncoderChannelA, RobotMap.leftEncoderChannelB);
-    // rightDIOEncoder = new Encoder(RobotMap.rightEncoderChannelA, RobotMap.rightEncoderChannelB);
+    leftDIOEncoder = new Encoder(RobotMap.LEFT_ENCODER_CHANNEL_A, RobotMap.LEFT_ENCODER_CHANNEL_B);
+    rightDIOEncoder = new Encoder(RobotMap.RIGHT_ENCODER_CHANNEL_A, RobotMap.RIGHT_ENCODER_CHANNEL_B);
 
-    // double distancePerPulse = Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER* RobotConstants.DIO_TICKS_PER_ROTATION;
-    // leftDIOEncoder.setDistancePerPulse(distancePerPulse);
-    // rightDIOEncoder.setDistancePerPulse(distancePerPulse);
-    // leftDIOEncoder.setReverseDirection(false); // TODO One of these will need to be reversed to fit with the motors, figure out which
-    // rightDIOEncoder.setReverseDirection(true);
+    double distancePerPulse = (1/RobotConstants.DIO_TICKS_PER_ROTATION) * (Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
+    leftDIOEncoder.setDistancePerPulse(distancePerPulse);
+    rightDIOEncoder.setDistancePerPulse(distancePerPulse);
+    leftDIOEncoder.setReverseDirection(true); // These have been set properly.
+    rightDIOEncoder.setReverseDirection(false);
   }
 
   /**
@@ -217,8 +218,8 @@ public class DriveBase extends Subsystem {
   public void setSparkVelocityControl(double leftVel, double rightVel) {
     leftVel = MathUtils.convertInchesPerSecondToDriveBaseRoundsPerMinute(MathUtils.convertInchesToDriveBaseTicks(leftVel));
     rightVel = MathUtils.convertInchesPerSecondToDriveBaseRoundsPerMinute(MathUtils.convertInchesToDriveBaseTicks(rightVel));
-    left1.getPIDController().setReference(leftVel, ControlType.kVelocity, velocityPIDSlot);
-    right1.getPIDController().setReference(rightVel, ControlType.kVelocity, velocityPIDSlot);
+    left1.getPIDController().setReference(leftVel, ControlType.kVelocity, VELOCITY_PID_SLOT);
+    right1.getPIDController().setReference(rightVel, ControlType.kVelocity, VELOCITY_PID_SLOT);
   }
 
     /**
