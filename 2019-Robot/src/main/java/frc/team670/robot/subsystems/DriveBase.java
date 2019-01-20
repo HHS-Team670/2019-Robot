@@ -19,6 +19,7 @@ import com.revrobotics.ControlType;
 
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.team670.robot.commands.drive.XboxRocketLeagueDrive;
@@ -89,8 +90,8 @@ public class DriveBase extends Subsystem {
     setRampRate(allMotors, 0.254); // Will automatically cook some Cheezy Poofs
 
     // DIO Encoders
-    leftDIOEncoder = new Encoder(RobotMap.LEFT_ENCODER_CHANNEL_A, RobotMap.LEFT_ENCODER_CHANNEL_B);
-    rightDIOEncoder = new Encoder(RobotMap.RIGHT_ENCODER_CHANNEL_A, RobotMap.RIGHT_ENCODER_CHANNEL_B);
+    leftDIOEncoder = new Encoder(RobotMap.LEFT_ENCODER_CHANNEL_A, RobotMap.LEFT_ENCODER_CHANNEL_B, false, EncodingType.k4X);
+    rightDIOEncoder = new Encoder(RobotMap.RIGHT_ENCODER_CHANNEL_A, RobotMap.RIGHT_ENCODER_CHANNEL_B, false, EncodingType.k4X);
 
     double distancePerPulse = (1/RobotConstants.DIO_TICKS_PER_ROTATION) * (Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
     leftDIOEncoder.setDistancePerPulse(distancePerPulse);

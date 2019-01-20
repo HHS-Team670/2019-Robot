@@ -14,7 +14,7 @@ public class RobotConstants {
     /** Inches per rotation of the NEO motors on the drivebase */
     public static final double DRIVEBASE_INCHES_PER_ROTATION = 1/DRIVEBASE_GEAR_RATIO * DRIVE_BASE_WHEEL_DIAMETER * Math.PI;
     /** The number of ticks per rotation of a drivebase wheel for the DIO Encoders  */
-    public static final int DIO_TICKS_PER_ROTATION = 1024;
+    public static final int DIO_TICKS_PER_ROTATION = 4096;
 
     // LEDs
     public static final int LED_PORT = 5801;

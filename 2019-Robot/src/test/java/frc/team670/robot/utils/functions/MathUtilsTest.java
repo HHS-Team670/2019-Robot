@@ -56,16 +56,16 @@ public class MathUtilsTest {
 
     @Test
     public void convertDriveBaseTicksToInchesTest(){
-        assertEquals(37.68, MathUtils.convertDriveBaseTicksToInches(2048), 0.1);
-        assertEquals(55.22, MathUtils.convertDriveBaseTicksToInches(3000), 0.1);
-        assertEquals(34.42, MathUtils.convertDriveBaseTicksToInches(1870), 0.1);
+        assertEquals(9.42, MathUtils.convertDriveBaseTicksToInches(2048), 0.1);
+        assertEquals(13.805, MathUtils.convertDriveBaseTicksToInches(3000), 0.1);
+        assertEquals(8.605, MathUtils.convertDriveBaseTicksToInches(1870), 0.1);
     }
 
     @Test
     public void convertInchesToDriveBaseTicksTest() {
-        assertEquals(2716, MathUtils.convertInchesToDriveBaseTicks(50), 1);
-        assertEquals(4345, MathUtils.convertInchesToDriveBaseTicks(80), 1);
-        assertEquals(5432, MathUtils.convertInchesToDriveBaseTicks(100), 1);
+        assertEquals(10864, MathUtils.convertInchesToDriveBaseTicks(50), 1);
+        assertEquals(17383, MathUtils.convertInchesToDriveBaseTicks(80), 1);
+        assertEquals(21728, MathUtils.convertInchesToDriveBaseTicks(100), 1);
 
     }
 
