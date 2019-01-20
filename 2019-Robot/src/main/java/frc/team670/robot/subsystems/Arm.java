@@ -28,8 +28,8 @@ import frc.team670.robot.utils.sort.Node;
 /**
  * Represents the arm mechanism on the robot. Link to a model of the arm:
  * https://a360.co/2TLH2NO
- * 
- * @author shaylandias
+ * TODO: we won't be using legalstates, we can get rid of them
+ * @author shaylandias, ctchen, rghosh670
  * 
  */
 public class Arm extends Subsystem {
@@ -40,7 +40,8 @@ public class Arm extends Subsystem {
   private VictorSPX elbowRotationSlave;
   private TalonSRX wristRotation;
   // All of the states
-  private HashMap<LegalState, ArmState> states;
+  //private HashMap<LegalState, ArmState> states;
+  private List<ArmState> armStates;
   private static ArmState currentState;
 
   public Arm() {
