@@ -7,6 +7,10 @@ import java.util.List;
 import org.junit.Test;
 import org.junit.Assert.*;
 
+/**
+ * Test implementation of A* search algorithm
+ * @author ctchen, rghosh670
+ */
 public class AStarTest{
 
     // TestNode t0, t1, t2, t3, t4, t5;

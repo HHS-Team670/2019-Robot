@@ -7,8 +7,9 @@
 
 package frc.team670.robot.subsystems;
 
-
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -25,21 +26,21 @@ import frc.team670.robot.utils.sort.AStarSearch;
 import frc.team670.robot.utils.sort.Node;
 
 /**
- * Represents the arm mechanism on the robot.
- * Link to a model of the arm: https://a360.co/2TLH2NO
+ * Represents the arm mechanism on the robot. Link to a model of the arm:
+ * https://a360.co/2TLH2NO
+ * 
  * @author shaylandias
  */
 public class Arm extends Subsystem {
-  
+
   private TalonSRX translationMotor;
   private TalonSRX extensionMotor;
   private TalonSRX elbowRotationMain;
   private VictorSPX elbowRotationSlave;
   private TalonSRX wristRotation;
-
   // All of the states
   private HashMap<LegalState, ArmState> states;
-
+  private static ArmState currentState;
 
   public Arm() {
     translationMotor = new TalonSRX(RobotMap.armTranslationMotor);
@@ -49,7 +50,7 @@ public class Arm extends Subsystem {
 
     elbowRotationSlave = new VictorSPX(RobotMap.armElbowRotationMotorVictor);
     elbowRotationSlave.set(ControlMode.Follower, elbowRotationMain.getDeviceID());
-
+    currentState = new Neutral(); //Default state
     states = new HashMap<LegalState, ArmState>();
     states.put(LegalState.NEUTRAL, new Neutral());
     /*
@@ -58,6 +59,13 @@ public class Arm extends Subsystem {
 
   }
 
+  public static void setState(ArmState state){
+    currentState = state;
+  }
+
+  public static ArmState getState(){
+    return currentState;
+  }
 
   /**
    * Returns the arm's point in forward facing plane relative to (0,0) at the base of the arm.
@@ -150,11 +158,12 @@ public class Arm extends Subsystem {
     }
 
     public int getHeuristicDistance(Node other){
-      return 0;
+      ArmState state2 = (ArmState)other;
+      return (int)(Math.sqrt((this.coord.getX()-state2.coord.getX())*(this.coord.getX()-state2.coord.getX())+(this.coord.getY()-state2.coord.getY())*(this.coord.getY()-state2.coord.getY())));
     }
 
 
-    public CommandGroup getTransition(LegalState destination) {
+    public CommandGroup getTransition(ArmState destination) {
       CommandGroup result = new CommandGroup();
 
       for(ArmTransition transition : transitions) {
@@ -163,6 +172,12 @@ public class Arm extends Subsystem {
           return result;
         }
       }
+
+      // get all states (nodes) from hashmap
+      //Collection<ArmState> values = states.values();  
+      //Creating an ArrayList of values        
+      //ArrayList<ArmState> armStates = new ArrayList<ArmState>(values);
+      ArmTransition[] armTransitions = (ArmTransition[])(AStarSearch.search((Node)(currentState), (Node)(destination)).toArray());
 
       /*
        * Implement this so it searches for the quickest path of transititons to the destination.
