@@ -20,8 +20,6 @@ public class Pose {
 
   private long timeOfPose;
 
-  private static Pose fieldCentricPose = new Pose();
-
   /**
    * Makes new pose using current robot encoder values and angles. Does everything in ticks using the DIO Encoders
    */
@@ -189,27 +187,6 @@ public Pose(double x, double y, double angle, int leftEncoderPosition, int right
   public Pose clone() {
     return new Pose(leftEncoderTick, rightEncoderTick, currentAngle, currRobotX, currRobotY, timeOfPose, leftVelocity,
         rightVelocity, averagedAngle);
-  }
-
-  /**
-   * Instantiates the field centric Pose. Call this in Robot.autonomousInit()
-   */
-  public static void instantiateFieldCentricPose() {
-    fieldCentricPose = new Pose();
-  }
-
-  /**
-   * Updates the field centric Pose that is stored
-   */
-  public static void updateFieldCentricPose() {
-    fieldCentricPose.update();
-  }
-
-  /**
-   * Gets a Pose that is kept up to date with the robot field centrically.
-   */
-  public static Pose getFieldCentricPose() {
-    return fieldCentricPose;
   }
 
 }

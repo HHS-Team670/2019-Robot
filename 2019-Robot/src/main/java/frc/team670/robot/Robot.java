@@ -109,7 +109,6 @@ public class Robot extends TimedRobot {
     leds.setClimbingData(true);//we climb
 
     // System.out.println("Voltage: "+(irSensor.getVoltage()));
-    Pose.updateFieldCentricPose(); // Update our field centric Pose to the new robot position. Commented out to avoid null-pointers until sensors hooked up.
   }
 
   /**
@@ -141,7 +140,6 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     sensors.resetNavX(); // Reset NavX completely, zero the field centric based on how robot faces from start of game.
-    Pose.instantiateFieldCentricPose(); // Commented out until motor controllers/encoders attached. Resets the Field Centric Pose of the robot for the start of the game.
 
     Logger.consoleLog("Auton Started");
     autonomousCommand = auton_chooser.getSelected();
