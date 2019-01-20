@@ -38,7 +38,7 @@ public class Robot extends TimedRobot {
   public static MustangPi visionPi = new MustangPi();
   public static DriveBase driveBase = new DriveBase();
   private MustangLEDs_2019 leds = new MustangLEDs_2019();
-  public static Pose fieldCentricPose;
+  public static Pose fieldCentricPose = new Pose();
 
   private long savedTime=0;
 
