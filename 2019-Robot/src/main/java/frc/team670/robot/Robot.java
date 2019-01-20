@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team670.robot.commands.drive.DriveMotionProfile;
 import frc.team670.robot.commands.drive.NavXPivot;
 import frc.team670.robot.dataCollection.MustangPi;
 import frc.team670.robot.dataCollection.MustangSensors;
@@ -153,7 +154,7 @@ public class Robot extends TimedRobot {
     Pose.instantiateFieldCentricPose(); // Commented out until motor controllers/encoders attached. Resets the Field Centric Pose of the robot for the start of the game.
 
     Logger.consoleLog("Auton Started");
-    autonomousCommand = new NavXPivot(90);
+    autonomousCommand = new DriveMotionProfile("/output/DriveRightCurve.pf1.csv", false);
 
     /*
      * String autoSelected = SmartDashboard.getString("Auto Selector",
