@@ -29,14 +29,16 @@ public class MoveArm extends CommandGroup {
   private CommandGroup movements;
   private ArmState destination;
   private Map<ArmState, List<ArmTransition>> searched = new HashMap<ArmState, List<ArmTransition>>();
-  // private ArmState currentState;
 
   public MoveArm(ArmState destination) {
     this.destination = destination;
     requires(Robot.arm);
   }
 
-  // Called just before this Command runs the first time
+  /** 
+   * Looks for an existing path. If none exists, search for the path to move to.
+   * Called just before this Command runs the first time
+   * */
   @Override
   protected void initialize() {
     ArmState currentState = Arm.getCurrentState();
@@ -49,9 +51,9 @@ public class MoveArm extends CommandGroup {
         Logger.logException(e);
         Logger.consoleLog("You really messed up.");
       }
-      searched.put(currentState, transitions);
+      searched.put(currentState, transitions); //Stores current path in instance variable
     }
-    for (ArmTransition t : transitions){
+    for (ArmTransition t : transitions) {
       movements.addSequential(t);
     }
     movements.start();

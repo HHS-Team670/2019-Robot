@@ -10,7 +10,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 /**
- * Implementation oxf an A* search algorithm
+ * Implementation of an A* search algorithm
  * https://www.geeksforgeeks.org/a-search-algorithm/
  * 
  * @author ctchen, laksh, rghosh670
@@ -22,8 +22,8 @@ public class AStarSearch {
      * @param start       The node that the user wishes to start from
      * @param destination The target node that the user wishes to reach
      * @return A path of nodes that the search algorithm has found. 
-     * If start or destination node is an island, returns empty path. 
-     * Returns empty if destination and start are same
+     * Exception
+     * Returns empty if destination and start are same node
      */
     public static List<Edge> search(Node start, Node destination) {
         if (start.equals(destination)) {
@@ -45,7 +45,7 @@ public class AStarSearch {
                 if (fValues.get(o2) != null)
                     o2f = fValues.get(o2);
 
-                return ((Integer)(o1f)).compareTo(o2f);
+                return ((Integer) (o1f)).compareTo(o2f);
             }
         };
 
@@ -72,10 +72,6 @@ public class AStarSearch {
             openList.remove(current);
             closedList.add(current);
 
-
-
-            //System.out.println(current);
-
             for (Edge e : current.getEdges()) {
                 Node child = e.getDest();
 
@@ -98,21 +94,22 @@ public class AStarSearch {
 
         }
 
-        if(openList.isEmpty()){//either start or end is island
+        if (openList.isEmpty()) { //either start or end is island
             throw new IllegalArgumentException("Invalid input, check for island");
-            //return new ArrayList<Edge>();
         }
         return getPath(start, destination, cameFrom);
     }
-
+    
+    /**
+     * @return the found path (list of edges)
+     */
     private static List<Edge> getPath(Node start, Node destination, HashMap<Node, Edge> cameFrom) {
         List<Edge> path = new ArrayList<Edge>();
         Node node = destination;
 
-        if(cameFrom.isEmpty()){//start and dest same?
-            throw new IllegalArgumentException("Start and end are same");
-            //return path;
-    }
+        if(cameFrom.isEmpty()) { 
+            throw new IllegalArgumentException("Invalid argument, check for island");
+        }
         while (!node.equals(start)) {
             Edge e = cameFrom.get(node);
             path.add(e);
