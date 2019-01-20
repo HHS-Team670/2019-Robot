@@ -15,6 +15,7 @@ import java.util.HashMap;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import java.util.List;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -40,7 +41,7 @@ public class Arm extends Subsystem {
   private VictorSPX elbowRotationSlave;
   private TalonSRX wristRotation;
   // All of the states
-  //private HashMap<LegalState, ArmState> states;
+  private HashMap<LegalState, ArmState> states;
   private List<ArmState> armStates;
   private static ArmState currentState;
 

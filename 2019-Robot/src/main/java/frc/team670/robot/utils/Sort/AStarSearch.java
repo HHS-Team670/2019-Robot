@@ -20,11 +20,10 @@ public class AStarSearch {
      * Runs the search function
      * 
      * @param start       The node that the user wishes to start from
-     * @param destination The target node that the use wishes to reach
+     * @param destination The target node that the user wishes to reach
      * @return A path of nodes that the search algorithm has found. 
      * If start or destination node is an island, returns empty path. 
      * Returns empty if destination and start are same
-     * TODO: maybe exception for islands (but realistically they wont happen)
      */
     public static List<Edge> search(Node start, Node destination) {
         if (start.equals(destination)) {
