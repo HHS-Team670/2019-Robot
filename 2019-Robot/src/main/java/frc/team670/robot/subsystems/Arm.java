@@ -30,6 +30,7 @@ import frc.team670.robot.utils.sort.Node;
  * https://a360.co/2TLH2NO
  * 
  * @author shaylandias
+ * 
  */
 public class Arm extends Subsystem {
 
@@ -177,8 +178,7 @@ public class Arm extends Subsystem {
       //Collection<ArmState> values = states.values();  
       //Creating an ArrayList of values        
       //ArrayList<ArmState> armStates = new ArrayList<ArmState>(values);
-      ArmTransition[] armTransitions = (ArmTransition[])(AStarSearch.search((Node)(currentState), (Node)(destination)).toArray());
-
+      
       /*
        * Implement this so it searches for the quickest path of transititons to the destination.
        * The A* Search Algorithm might be a good choice for this: https://www.geeksforgeeks.org/a-search-algorithm/ 
