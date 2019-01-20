@@ -10,7 +10,6 @@ copper goes to negative
 '''
 
 import copy
-import logging
 import math
 from threading import Thread
 import cv2
@@ -18,9 +17,10 @@ import imutils
 import numpy as np
 import time
 from networktables import NetworkTables
-import os
-import traceback
-DEBUG_MODE = True # NOTE MAKE this @FALSE TO MAKE NO SCREENS APPEAR
+
+start_time = time.time()
+
+DEBUG_MODE = False # NOTE MAKE this @FALSE TO MAKE NO SCREENS APPEAR
 ERROR = -99999
 
 # TODO SET THESE to correct values
@@ -29,16 +29,19 @@ NETWORK_TABLE_NAME = "raspberryPi" # TODO set this to network table name
 NETWORK_KEY = "reflect_tape_vision_data" # TODO key for Shaylan's robot code vision tuple -- what??
 
 # Variables (These should be changed to reflect the camera)
-capture_source = 0 # Number of port for camera, file path for video
+capture_source = 0  # Number of port for camera, file path for video
 capture_color = 'x'  # Possible: r (Red), g (Green), b (Blue), y (Yellow), x (reflector tape), anything else: Red
-known_object_height = 31  # Height of the tape from the ground (in inches)
-known_camera_height = 11.5 
+known_object_height = 7.375  # Height of the tape from the ground (in inches)
+known_camera_height = 2.5
 camera_fov_vertical = 39.7  # FOV of the camera (in degrees)
 camera_fov_horizontal = 60.0
+camera_vertical_angle = 2.1 # camera angle offset up or down
+camera_horizontal_angle = 0.0 # camera angle offset right left
+camera_horizontal_offset = 0.0 # camera horizontal offset distancewise in inches
 image_width = 1080  # Desired width of inputted image (for processing speed)
 screen_resize = 1  # Scale that the GUI image should be scaled to
 calibrate_angle = 0  # Test to calibrate the angle and see if that works
-exposure = -9
+exposure = -7
 timestamp = round(time.time() * 1000) # time in milliseconds
 
 # HSV Values to detect
@@ -46,7 +49,7 @@ min_hsv = [70, 230, 130]
 max_hsv = [150, 255, 255]
 
 # Min area to make sure not to pick up noise
-MIN_AREA = 10
+MIN_AREA = 100
 
 # Network table (by default returns error codes, but changes in program)
 returns = [ERROR, ERROR, timestamp]
@@ -66,8 +69,15 @@ def main():
     # This may not need to be calculated, can use Andra's precalculated values
     vert_focal_length = find_vert_focal_length(vs.raw_read()[0], camera_fov_vertical)
     hor_focal_length = find_hor_focal_length(vs.raw_read()[0], camera_fov_horizontal)
+    frames = 0
 
-    while True:
+    desired_time = time.time() + 15
+    while time.time() < desired_time:
+
+        # Increment frame for each run in while loop        
+        frames += 1
+
+
         # Read input image from video
         input_raw = vs.raw_read()
         input_image = input_raw[0]
@@ -150,6 +160,12 @@ def main():
             cv2.setMouseCallback("Output", mouse_click_handler,
                                 {"input_image": input_image,
                                 "screen_resize": screen_resize})
+        
+
+    end_time = time.time()
+
+    print("Time elapsed in seconds                       : " , end_time - start_time)
+    print("Total framerate (frames / end_time-start_time): " , str(frames / (end_time-start_time)))
 
     # Release & close when done
     vs.stop()
@@ -252,7 +268,7 @@ def find_colored_object(image, capture_color='g', debug=False):
                                     np.array([125, 255, 255]))  # Blue
         elif capture_color == 'g':
             masked_image = cv2.inRange(hsv_image, np.array([35, 50, 50]),
-                                    np.array([60, 245, 255]))  # Green
+                                    np.array([80, 255, 255]))  # Green
             # Correct values: [58, 0, 254], [67, 62, 255]
         elif capture_color == 'x':
             masked_image = cv2.inRange(hsv_image, np.array(min_hsv), np.array(max_hsv))
