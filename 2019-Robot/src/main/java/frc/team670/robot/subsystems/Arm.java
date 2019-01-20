@@ -153,28 +153,6 @@ public class Arm extends Subsystem {
     }
   }
 
-  /**
-   * Sets the peak current limit for the elbow motor.
-   * @param current Current in amps
-   */
-  public void setElbowCurrentLimit(int current) {
-    elbowRotationMain.configPeakCurrentLimit(RobotConstants.PEAK_AMPS, RobotConstants.TIMEOUT_MS); // Peak Limit at 0
-    elbowRotationMain.configPeakCurrentDuration(RobotConstants.PEAK_TIME_MS, RobotConstants.TIMEOUT_MS); // Duration at over peak set to 0
-    elbowRotationMain.configContinuousCurrentLimit(current, RobotConstants.TIMEOUT_MS);
-  }
-
-  public void enableElbowCurrentLimit() {
-    elbowRotationMain.enableCurrentLimit(true);
-  }
-
-  public void disableElbowCurrentLimit() {
-    elbowRotationMain.enableCurrentLimit(false);
-  }
-
-  public void setElbowOutput(double output){
-    elbowRotationMain.set(ControlMode.PercentOutput, output);
-  }
-
   private class Neutral extends ArmState {
     public Neutral() {
       super(0, 45, 45, new ArmTransition[] {new NeutralToCargoPickup()});

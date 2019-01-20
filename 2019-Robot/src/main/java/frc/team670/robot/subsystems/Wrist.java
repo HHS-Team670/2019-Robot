@@ -7,9 +7,9 @@
 
 package frc.team670.robot.subsystems;
 
-import edu.wpi.first.wpilibj.command.Subsystem;
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
+import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team670.robot.constants.RobotMap;
 
 /**
@@ -22,7 +22,7 @@ public class Wrist extends Subsystem {
   private TalonSRX wristRotation;
 
   public Wrist() {   
-    wristRotation = new TalonSRX(RobotMap.armWristRotation);
+    wristRotation = new TalonSRX(RobotMap.ARM_WRIST_ROTATION);
   }
   
   @Override

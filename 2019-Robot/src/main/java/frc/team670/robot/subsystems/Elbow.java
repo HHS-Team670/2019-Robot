@@ -7,10 +7,12 @@
 
 package frc.team670.robot.subsystems;
 
-import edu.wpi.first.wpilibj.command.Subsystem;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+
+import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
 
 /**
@@ -24,9 +26,31 @@ public class Elbow extends Subsystem {
   private VictorSPX elbowRotationSlave;
 
   public Elbow() {  
-    elbowRotationMain = new TalonSRX(RobotMap.armElbowRotationMotorTalon);   
-    elbowRotationSlave = new VictorSPX(RobotMap.armElbowRotationMotorVictor);
+    elbowRotationMain = new TalonSRX(RobotMap.ARM_ELBOW_ROTATION_MOTOR_TALON);   
+    elbowRotationSlave = new VictorSPX(RobotMap.ARM_ELBOW_ROTATION_MOTOR_VICTOR);
     elbowRotationSlave.set(ControlMode.Follower, elbowRotationMain.getDeviceID());
+  }
+
+  /**
+   * Sets the peak current limit for the elbow motor.
+   * @param current Current in amps
+   */
+  public void setCurrentLimit(int current) {
+    elbowRotationMain.configPeakCurrentLimit(RobotConstants.PEAK_AMPS, RobotConstants.TIMEOUT_MS); // Peak Limit at 0
+    elbowRotationMain.configPeakCurrentDuration(RobotConstants.PEAK_TIME_MS, RobotConstants.TIMEOUT_MS); // Duration at over peak set to 0
+    elbowRotationMain.configContinuousCurrentLimit(current, RobotConstants.TIMEOUT_MS);
+  }
+
+  public void enableCurrentLimit() {
+    elbowRotationMain.enableCurrentLimit(true);
+  }
+
+  public void disableCurrentLimit() {
+    elbowRotationMain.enableCurrentLimit(false);
+  }
+
+  public void setOutput(double output){
+    elbowRotationMain.set(ControlMode.PercentOutput, output);
   }
 
   @Override

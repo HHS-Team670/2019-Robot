@@ -7,9 +7,9 @@
 
 package frc.team670.robot.subsystems;
 
-import edu.wpi.first.wpilibj.command.Subsystem;
-import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
+import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team670.robot.constants.RobotMap;
 
 /**
@@ -21,7 +21,7 @@ public class Extension extends Subsystem {
   private TalonSRX extensionMotor;
 
   public Extension() {
-    extensionMotor = new TalonSRX(RobotMap.armExtensionMotor);
+    extensionMotor = new TalonSRX(RobotMap.ARM_EXTENSION_MOTOR);
   }
 
 
