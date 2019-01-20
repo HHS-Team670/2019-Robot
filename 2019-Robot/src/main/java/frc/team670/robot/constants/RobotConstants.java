@@ -45,5 +45,8 @@ public class RobotConstants {
     // Arm Constants
     public static final double ARM_START_HEIGHT = 0;
     public static final double CLAW_RADIUS = 0;
-
+    public static final int PEAK_AMPS = 0; // check the peak limit and set again
+    public static final int TIMEOUT_MS = 0; //  
+    public static final int PEAK_TIME_MS = 0; //  Duration after current exceed peak current to trigger current limit
+    public static final int TRIGGER_AMPS = 10; // TODO figure required limited current
 }

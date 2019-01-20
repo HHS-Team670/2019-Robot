@@ -62,12 +62,9 @@ public class Arm extends Subsystem {
    * left the variable stuff as parameters for now
    */
   public Point2D.Double getPosition(double extensionLength, double wristAngle, double elbowAngle) {
-
     double x = extensionLength * Math.sin(elbowAngle) + RobotConstants.CLAW_RADIUS * Math.sin(wristAngle);
     double y = extensionLength * Math.cos(elbowAngle) + RobotConstants.CLAW_RADIUS * Math.cos(wristAngle) + RobotConstants.ARM_START_HEIGHT;
-
     return new Point2D.Double(x, y);
-
   }
 
   @Override
@@ -163,6 +160,28 @@ public class Arm extends Subsystem {
 
       return result;
     }
+  }
+
+  /**
+   * Sets the peak current limit for the elbow motor.
+   * @param current Current in amps
+   */
+  public void setElbowCurrentLimit(int current) {
+    elbowRotationMain.configPeakCurrentLimit(RobotConstants.PEAK_AMPS, RobotConstants.TIMEOUT_MS); // Peak Limit at 0
+    elbowRotationMain.configPeakCurrentDuration(RobotConstants.PEAK_TIME_MS, RobotConstants.TIMEOUT_MS); // Duration at over peak set to 0
+    elbowRotationMain.configContinuousCurrentLimit(current, RobotConstants.TIMEOUT_MS);
+  }
+
+  public void enableElbowCurrentLimit() {
+    elbowRotationMain.enableCurrentLimit(true);
+  }
+
+  public void disableElbowCurrentLimit() {
+    elbowRotationMain.enableCurrentLimit(false);
+  }
+
+  public void setElbowOutput(double output){
+    elbowRotationMain.set(ControlMode.PercentOutput, output);
   }
 
   private class Neutral extends ArmState {
