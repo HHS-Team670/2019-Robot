@@ -38,6 +38,7 @@ public class Robot extends TimedRobot {
   public static MustangPi visionPi = new MustangPi();
   public static DriveBase driveBase = new DriveBase();
   private MustangLEDs_2019 leds = new MustangLEDs_2019();
+  public static Pose fieldCentricPose;
 
   private long savedTime=0;
 
@@ -119,7 +120,7 @@ public class Robot extends TimedRobot {
     leds.setClimbingData(true);//we climb
 
     // System.out.println("Voltage: "+(irSensor.getVoltage()));
-    Pose.updateFieldCentricPose(); // Update our field centric Pose to the new robot position. Commented out to avoid null-pointers until sensors hooked up.
+    fieldCentricPose.update(); // Update our field centric Pose to the new robot position. Commented out to avoid null-pointers until sensors hooked up.
   }
 
   /**
@@ -151,8 +152,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     sensors.resetNavX(); // Reset NavX completely, zero the field centric based on how robot faces from start of game.
-    Pose.instantiateFieldCentricPose(); // Commented out until motor controllers/encoders attached. Resets the Field Centric Pose of the robot for the start of the game.
-
+    fieldCentricPose = new Pose();
     Logger.consoleLog("Auton Started");
     autonomousCommand = new DriveMotionProfile("/output/DriveRightCurve.pf1.csv", false);
 
