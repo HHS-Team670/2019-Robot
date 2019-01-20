@@ -8,6 +8,7 @@
 package frc.team670.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.Encoder;
@@ -52,8 +53,8 @@ public class Climber extends Subsystem {
     frontPistonOutputs = new double[]{DEFAULT_MIN_OUTPUT, DEFAULT_MAX_OUTPUT};
     backPistonOutputs = new double[]{DEFAULT_MIN_OUTPUT, DEFAULT_MAX_OUTPUT};
     
-    backPistons = new TalonSRX(RobotMap.BACK_CLIMBER_PISTON_CONTROLLER);
-    frontPistons = new TalonSRX(RobotMap.FRONT_CLIMBER_PISTON_CONTROLLER);
+    backPistons = new WPI_TalonSRX(RobotMap.BACK_CLIMBER_PISTON_CONTROLLER);
+    frontPistons = new WPI_TalonSRX(RobotMap.FRONT_CLIMBER_PISTON_CONTROLLER);
 
     // TODO figure out if these motors need to be inverted.
 

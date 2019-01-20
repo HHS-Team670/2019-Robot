@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.dataCollection.NavX.NavX_Pitch_PIDSource;
+import frc.team670.robot.dataCollection.NavX.ZeroableNavX_Yaw_PIDSource;
 
 /**
  * Instantiates sensor representation objects and contains methods for accessing the sensor data.
@@ -104,9 +105,9 @@ public class MustangSensors extends Subsystem {
     return navXMicro.getYawFieldCentric();
   }
 
-  public ZeroableNavX_PIDSource getZeroableNavXPIDSource() {
+  public ZeroableNavX_Yaw_PIDSource getZeroableNavXPIDSource() {
     if(navXMicro != null){
-      return navXMicro.getZeroableNavXPIDSource();
+      return navXMicro.getZeroableNavXYawPIDSource();
     }
     return null;
   }
