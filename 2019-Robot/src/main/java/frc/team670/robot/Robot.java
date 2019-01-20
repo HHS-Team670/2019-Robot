@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.drive.DriveMotionProfile;
-import frc.team670.robot.commands.drive.NavXPivot;
 import frc.team670.robot.dataCollection.MustangPi;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.dataCollection.Pose;
@@ -21,8 +20,11 @@ import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Claw;
 import frc.team670.robot.subsystems.Climber;
 import frc.team670.robot.subsystems.DriveBase;
+import frc.team670.robot.subsystems.Elbow;
+import frc.team670.robot.subsystems.Extension;
 import frc.team670.robot.subsystems.Intake;
 import frc.team670.robot.subsystems.MustangLEDs_2019;
+import frc.team670.robot.subsystems.Wrist;
 import frc.team670.robot.utils.Logger;
 
 /**
@@ -43,6 +45,9 @@ public class Robot extends TimedRobot {
   private long savedTime=0;
 
   public static Arm arm = new Arm();
+  public static Elbow elbow = new Elbow();
+  public static Wrist wrist = new Wrist();
+  public static Extension extension = new Extension();
   public static Intake intake = new Intake();
   public static Claw claw = new Claw();
   public static Climber climber = new Climber();

@@ -23,8 +23,8 @@ public class HoldElbowDownWithCurrentLimit extends Command {
      */
     @Override
     protected void initialize(){
-        Robot.arm.setElbowCurrentLimit(currentLimit);
-        Robot.arm.enableElbowCurrentLimit();
+        Robot.elbow.setCurrentLimit(currentLimit);
+        Robot.elbow.enableCurrentLimit();
     }
 
     /**
@@ -32,7 +32,7 @@ public class HoldElbowDownWithCurrentLimit extends Command {
      */
     @Override
     protected void execute(){
-        Robot.arm.setElbowOutput(elbowOutput);
+        Robot.elbow.setOutput(elbowOutput);
     }
 
     /**
@@ -45,7 +45,7 @@ public class HoldElbowDownWithCurrentLimit extends Command {
 
     @Override
     protected void end(){
-        Robot.arm.disableElbowCurrentLimit();   
+        Robot.elbow.disableCurrentLimit();   
         //Return to default state
     }
 

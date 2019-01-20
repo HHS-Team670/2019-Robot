@@ -8,53 +8,67 @@
 package frc.team670.robot.subsystems;
 
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
-import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team670.robot.commands.arm.armTransitions.ArmTransition;
 import frc.team670.robot.commands.arm.armTransitions.NeutralToCargoPickup;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
+import frc.team670.robot.utils.sort.Node;
 
 /**
- * Represents the arm mechanism on the robot.
- * Link to a model of the arm: https://a360.co/2TLH2NO
- * @author shaylandias
+ * Represents the arm mechanism on the robot. Link to a model of the arm:
+ * https://a360.co/2TLH2NO
+ * TODO: we won't be using legalstates, we can get rid of them
+ * @author shaylandias, ctchen, rghosh670
  */
 public class Arm extends Subsystem {
-  
-  private TalonSRX translationMotor;
-  private TalonSRX extensionMotor;
-  private TalonSRX elbowRotationMain;
-  private VictorSPX elbowRotationSlave;
-  private TalonSRX wristRotation;
 
   // All of the states
-  private HashMap<LegalState, ArmState> states;
-
+  private static HashMap<LegalState, ArmState> states = new HashMap<LegalState, ArmState>();
+  private static ArmState currentState;
 
   public Arm() {
-    translationMotor = new TalonSRX(RobotMap.ARM_TRANSLATION_MOTOR);
-    extensionMotor = new TalonSRX(RobotMap.ARM_EXTENSION_MOTOR);
-    elbowRotationMain = new TalonSRX(RobotMap.ARM_ELBOW_ROTATION_MOTOR_TALON);
-    wristRotation = new TalonSRX(RobotMap.ARM_WRIST_ROTATION);
-
-    elbowRotationSlave = new VictorSPX(RobotMap.ARM_ELBOW_ROTATION_MOTOR_VICTOR);
-    elbowRotationSlave.set(ControlMode.Follower, elbowRotationMain.getDeviceID());
-
+    
+    // State Setup
+    currentState = new Neutral(); //Default state
     states = new HashMap<LegalState, ArmState>();
     states.put(LegalState.NEUTRAL, new Neutral());
+    states.put(LegalState.CARGO_PICKUP, new Neutral()); // This obviously needs to be changed
     /*
      * Add in all of the states here.
      */
 
   }
 
+  /**
+   * Sets the current state of the arm.
+   */
+  public static void setState(ArmState state) {
+    currentState = state;
+  }
+
+  /**
+   * Gets the State that the arm most recently was located at.
+   */
+  public static ArmState getCurrentState(){
+    return currentState;
+  }
+
+  /**
+   * Gets the ArmState object that corresponds to the LegalState
+   * Ex. If you want the Neutral ArmState, use 'getArmState(LegalState.NEUTRAL)''
+   */
+  public static ArmState getArmState(LegalState state) {
+    return states.get(state);
+  }
 
   /**
    * Returns the arm's point in forward facing plane relative to (0,0) at the base of the arm.
@@ -96,28 +110,19 @@ public class Arm extends Subsystem {
   /**
    * Represents a potential state for the arm including a wrist angle, elbow angle, and extension.
    */
-  public class ArmState {
+  public class ArmState implements Node {
     private double elbowAngle, wristAngle;
     private double extensionLength;
     private Point2D.Double coord;
-    private LegalState state;
 
     private ArmTransition[] transitions;
 
-    /**
-     * @param transitionableStates Should h
-     */
-    public ArmState(LegalState state, double extensionLength, double elbowAngle, double wristAngle, ArmTransition[] transitions) {
-      this.state = state;
+    public ArmState(double extensionLength, double elbowAngle, double wristAngle, ArmTransition[] transitions) {
       this.extensionLength = extensionLength;
       this.elbowAngle = elbowAngle;
       this.wristAngle = wristAngle;
       coord = getPosition(extensionLength, wristAngle, elbowAngle);
       this.transitions = transitions;
-    }
-
-    public LegalState getState() {
-      return state;
     }
 
     public Point2D.Double getCoord() {
@@ -136,57 +141,21 @@ public class Arm extends Subsystem {
       return wristAngle;
     }
 
-    public ArmTransition[] getTransitions() {
+    @Override
+    public ArmTransition[] getEdges() {
       return transitions;
     }
 
-    public CommandGroup getTransition(LegalState destination) {
-      CommandGroup result = new CommandGroup();
-      for(ArmTransition transition : transitions) {
-        if(transition.getDestination().equals(destination)) {
-          result.addSequential(transition);
-          return result;
-        }
-      }
-
-      /*
-       * Implement this so it searches for the quickest path of transititons to the destination.
-       * The A* Search Algorithm might be a good choice for this: https://www.geeksforgeeks.org/a-search-algorithm/ 
-       * Otherwise you could potentially do a breadth-first search, but A* will work best if we weight certain transitions
-       * for the time spent performing them. Currently this is measured as a tick count since we have no way of actually
-       * timing it.
-       * Long Stanford explanation on this: https://cs.stanford.edu/people/abisee/gs.pdf
-       */
-
-      return result;
+    @Override
+    public int getHeuristicDistance(Node other){
+      ArmState state2 = (ArmState)other;
+      return (int)(Math.sqrt((this.coord.getX()-state2.coord.getX())*(this.coord.getX()-state2.coord.getX())+(this.coord.getY()-state2.coord.getY())*(this.coord.getY()-state2.coord.getY())));
     }
-  }
-
-  /**
-   * Sets the peak current limit for the elbow motor.
-   * @param current Current in amps
-   */
-  public void setElbowCurrentLimit(int current) {
-    elbowRotationMain.configPeakCurrentLimit(RobotConstants.PEAK_AMPS, RobotConstants.TIMEOUT_MS); // Peak Limit at 0
-    elbowRotationMain.configPeakCurrentDuration(RobotConstants.PEAK_TIME_MS, RobotConstants.TIMEOUT_MS); // Duration at over peak set to 0
-    elbowRotationMain.configContinuousCurrentLimit(current, RobotConstants.TIMEOUT_MS);
-  }
-
-  public void enableElbowCurrentLimit() {
-    elbowRotationMain.enableCurrentLimit(true);
-  }
-
-  public void disableElbowCurrentLimit() {
-    elbowRotationMain.enableCurrentLimit(false);
-  }
-
-  public void setElbowOutput(double output){
-    elbowRotationMain.set(ControlMode.PercentOutput, output);
   }
 
   private class Neutral extends ArmState {
     public Neutral() {
-      super(LegalState.NEUTRAL, 0, 45, 45, new ArmTransition[] {new NeutralToCargoPickup()});
+      super(0, 45, 45, new ArmTransition[] {new NeutralToCargoPickup()});
     }
   }
 
