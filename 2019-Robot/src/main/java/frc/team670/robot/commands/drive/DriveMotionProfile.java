@@ -191,10 +191,10 @@ public class DriveMotionProfile extends Command {
     // It tracks the wrong angle (mirrors the correct one)
     double gyroHeading;
     if(isReversed) {
-      gyroHeading = Pathfinder.boundHalfDegrees(-1 * Robot.sensors.getYawDouble());   // Assuming the gyro is giving a value in degrees
+      gyroHeading = Pathfinder.boundHalfDegrees(-1 * Robot.sensors.getYawDoubleForPathfinder());   // Assuming the gyro is giving a value in degrees
     }
     else {
-      gyroHeading = Pathfinder.boundHalfDegrees(Robot.sensors.getYawDouble());   // Assuming the gyro is giving a value in degrees
+      gyroHeading = Pathfinder.boundHalfDegrees(Robot.sensors.getYawDoubleForPathfinder());   // Assuming the gyro is giving a value in degrees
     }
     double desiredHeading = Pathfinder.boundHalfDegrees(Pathfinder.r2d(left.getHeading()));  // Should also be in degrees 
     // Make sure gyro and desired angle match up [-180, 180], navX reports the opposite orientation as Pathfinder expects
@@ -229,7 +229,7 @@ public class DriveMotionProfile extends Command {
   protected void end() {
     Robot.driveBase.stop();
     Logger.consoleLog("Ended. EndingAngle: %s, LeftTicksTraveled: %s, RightTicksTraveled: %s, DistanceTraveled: %s", Pathfinder.boundHalfDegrees(Robot.sensors.getYawDoubleForPathfinder()), 
-                     (Robot.driveBase.getLeftDIOEncoderPosition() - initialLeftEncoder), (Robot.driveBase.getRightDIOEncoderPosition() - initialRightEncoder), (MathUtils.convertDriveBaseTicksToInches((Robot.driveBase.getLeftDIOEncoderPosition() - initialLeftEncoder) + (Robot.driveBase.getRightDIOEncoderPosition() - initialRightEncoder))/2));
+                     (Robot.driveBase.getLeftDIOEncoderPosition() - initialLeftEncoder), (Robot.driveBase.getRightDIOEncoderPosition() - initialRightEncoder), MathUtils.convertDriveBaseTicksToInches(MathUtils.average((double)(Robot.driveBase.getLeftDIOEncoderPosition() - initialLeftEncoder), (double)(Robot.driveBase.getRightDIOEncoderPosition() - initialRightEncoder))));
   }
 
   // Called when another command which requires one or more of the same
