@@ -74,6 +74,8 @@ public class VisionTargetPidDrive extends Command {
 
     executeCount = 0;
 
+    visionDistanceController.enable();
+    visionHeadingController.enable();
   }
 
   // Called repeatedly when this Command is scheduled to run

@@ -50,6 +50,7 @@ public class NavXPivot extends Command {
 		// 		startAngle, finalAngle, angle);
 
 		pivotController.setSetpoint(finalAngle);
+
 		pivotController.enable();
   }
 
