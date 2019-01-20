@@ -5,18 +5,24 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.dataCollection;
+package frc.team670.robot.commands;
 
-import edu.wpi.first.wpilibj.PIDOutput;
+import edu.wpi.first.wpilibj.command.InstantCommand;
+import frc.team670.robot.Robot;
 
 /**
- * Pass this object into PIDControllers as the PIDSource if you do not want the controller directly controlling motors.
+ * Zeros the NavX yaw at its current position while leaving the field centric angle untouched.
  */
-public class NullPIDOutput implements PIDOutput {
+public class ZeroNavX extends InstantCommand {
 
-   @Override
-   public void pidWrite(double output) {
+  public ZeroNavX() {
+    super();
+  }
 
-   }
+  // Called once when the command executes
+  @Override
+  protected void initialize() {
+    Robot.sensors.zeroYaw();
+  }
 
 }

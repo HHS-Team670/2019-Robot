@@ -12,8 +12,8 @@ import java.util.List;
  */
 
 public class PathBuilder {
-    private static final double kEpsilon = 1E-9;
-    private static final double kReallyBigNumber = 1E9;
+    private static final double K_EPSILON = 1E-9;
+    private static final double K_REALLY_BIG_NUMBER = 1E9;
 
     public static Path buildPathFromWaypoints(List<Waypoint> w) {
         Path p = new Path();
@@ -99,7 +99,7 @@ public class PathBuilder {
 
         private void addToPath(Path p, double endSpeed) {
             double pathLength = new Translation2d(end, start).norm();
-            if (pathLength > kEpsilon) {
+            if (pathLength > K_EPSILON) {
                 if (b.marker != null) {
                     p.addSegment(new PathSegment(start.x(), start.y(), end.x(), end.y(), b.speed,
                             p.getLastMotionState(), endSpeed, b.marker));
@@ -136,16 +136,16 @@ public class PathBuilder {
 
         private void addToPath(Path p) {
             a.addToPath(p, speed);
-            if (radius > kEpsilon && radius < kReallyBigNumber) {
+            if (radius > K_EPSILON && radius < K_REALLY_BIG_NUMBER) {
                 p.addSegment(new PathSegment(a.end.x(), a.end.y(), b.start.x(), b.start.y(), center.x(), center.y(),
                         speed, p.getLastMotionState(), b.speed));
             }
         }
 
         private static Translation2d intersect(Line l1, Line l2) {
-            final RigidTransform2d lineA = new RigidTransform2d(l1.end, new Rotation2d(l1.slope, true).normal());
-            final RigidTransform2d lineB = new RigidTransform2d(l2.start, new Rotation2d(l2.slope, true).normal());
-            return lineA.intersection(lineB);
+            final RigidTransform2d LINE_A = new RigidTransform2d(l1.end, new Rotation2d(l1.slope, true).normal());
+            final RigidTransform2d LINE_B = new RigidTransform2d(l2.start, new Rotation2d(l2.slope, true).normal());
+            return LINE_A.intersection(LINE_B);
         }
     }
 }

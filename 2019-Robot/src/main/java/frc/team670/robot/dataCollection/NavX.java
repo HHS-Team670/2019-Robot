@@ -20,7 +20,7 @@ public class NavX {
                 Object context) {
             synchronized (NavX.this) {
                 // This handles the fact that the sensor is inverted from our coordinate conventions.
-                if (mLastSensorTimestampMs != kInvalidTimestamp && mLastSensorTimestampMs < sensor_timestamp) {
+                if (mLastSensorTimestampMs != K_INVALID_TIMESTAMP && mLastSensorTimestampMs < sensor_timestamp) {
                     mYawRateDegreesPerSecond = -1 * 1000.0 * (-mYawDegrees - update.yaw) // Multiply by -1 because our system is opposite of Bellarmine's
                             / (double) (sensor_timestamp - mLastSensorTimestampMs);
                 }
@@ -35,7 +35,7 @@ public class NavX {
     protected Rotation2d mAngleAdjustment = Rotation2d.identity();
     protected double mYawDegrees;
     protected double mYawRateDegreesPerSecond;
-    protected final long kInvalidTimestamp = -1;
+    protected final long K_INVALID_TIMESTAMP = -1;
     protected long mLastSensorTimestampMs;
     private double offSet;
 
@@ -69,7 +69,7 @@ public class NavX {
     }
 
     private void resetState() {
-        mLastSensorTimestampMs = kInvalidTimestamp;
+        mLastSensorTimestampMs = K_INVALID_TIMESTAMP;
         mYawDegrees = 0.0;
         mYawRateDegreesPerSecond = 0.0;
     }

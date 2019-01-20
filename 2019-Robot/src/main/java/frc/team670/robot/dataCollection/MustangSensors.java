@@ -18,7 +18,7 @@ public class MustangSensors extends Subsystem {
 
   public MustangSensors(){
     try {
-			navXMicro = new NavX(RobotMap.navXPort);
+			navXMicro = new NavX(RobotMap.NAVX_PORT);
 		} catch (RuntimeException ex) {
 			DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
 			navXMicro = null;
@@ -98,6 +98,10 @@ public class MustangSensors extends Subsystem {
     if(navXMicro != null){
       navXMicro.zeroYaw();
     }
+  }
+
+  public double getFieldCentricYaw() {
+    return navXMicro.getYawFieldCentric();
   }
 
   public ZeroableNavX_PIDSource getZeroableNavXPIDSource() {

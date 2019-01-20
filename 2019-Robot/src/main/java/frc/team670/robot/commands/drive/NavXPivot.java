@@ -5,11 +5,12 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.commands.auto;
+package frc.team670.robot.commands.drive;
 
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.Robot;
+import frc.team670.robot.dataCollection.NullPIDOutput;
 import frc.team670.robot.utils.Logger;
 import jaci.pathfinder.Pathfinder;
 
@@ -22,12 +23,14 @@ public class NavXPivot extends Command {
 	protected double endingSpeed = 0.2;
 	private PIDController pivotController;
 	// TODO find PID constants
-	private static final double P = 1, I = 0, D = 0;
+	private static final double P = 0.0055, I = 0.00001, D = 0;
+
+	private int onTargetCount;
 
   public NavXPivot(double angle) {
 	this.angle = angle;
 	
-	pivotController = new PIDController(P, I, D, Robot.sensors.getZeroableNavXPIDSource(), null);
+	pivotController = new PIDController(P, I, D, Robot.sensors.getZeroableNavXPIDSource(), new NullPIDOutput());
 
 	pivotController.setInputRange(-180, 180);
 	pivotController.setOutputRange(-1, 1);
@@ -43,10 +46,12 @@ public class NavXPivot extends Command {
 		startAngle = Robot.sensors.getYawDouble();
 		finalAngle = Pathfinder.boundHalfDegrees(startAngle + angle);
 
-		Logger.consoleLog("StartAngle:%s FinalAngle:%s DegreesToTravel:%s", 
-				startAngle, finalAngle, angle);
+		// Logger.consoleLog("StartAngle:%s FinalAngle:%s DegreesToTravel:%s", 
+		// 		startAngle, finalAngle, angle);
 
 		pivotController.setSetpoint(finalAngle);
+
+		pivotController.enable();
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -54,17 +59,23 @@ public class NavXPivot extends Command {
   protected void execute() {
 	
 	double output = pivotController.get();
-
+	// System.out.println("Output: " + output);
 	Robot.driveBase.tankDrive(output, -output, false);
 
-	Logger.consoleLog("Output:%s CurrentAngle:%s", output, Robot.sensors.getYawDouble());
+	// Logger.consoleLog("Output:%s CurrentAngle:%s", output, Robot.sensors.getYawDouble());
 
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-		return pivotController.onTarget();
+	//   if(pivotController.onTarget()) {
+	// 	  onTargetCount ++;
+	//   } else {
+	// 	  onTargetCount = 0;
+	//   }
+	// return (onTargetCount > 10);
+	return pivotController.onTarget();
   }
 
 

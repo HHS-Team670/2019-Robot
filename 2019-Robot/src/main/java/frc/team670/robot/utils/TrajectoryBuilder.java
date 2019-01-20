@@ -20,9 +20,9 @@ public class TrajectoryBuilder {
      * robot will not catch up and come to a stop. It would chain a bunch of DriveMotionProfile Commands together with the Trajectories.
      */
 
-    private static final String defaultTableName = "raspberryPi";
-    private static final String defaultEntryKey = "segmentStream";
-    private static final String defaultConfirmationEntryKey = "segmentStreamFinished";
+    private static final String DEFAULT_TABLE_NAME = "raspberryPi";
+    private static final String DEFAULT_ENTRY_KEY = "segmentStream";
+    private static final String DEFAULT_CONFIRMATION_ENTRY_KEY = "segmentStreamFinished";
 
     private boolean finishedBuilding;
     private Trajectory trajectory;
@@ -33,7 +33,7 @@ public class TrajectoryBuilder {
 
 
     public TrajectoryBuilder() {
-        this(defaultTableName, defaultEntryKey, defaultConfirmationEntryKey);
+        this(DEFAULT_TABLE_NAME, DEFAULT_ENTRY_KEY, DEFAULT_CONFIRMATION_ENTRY_KEY);
     }
 
     /**

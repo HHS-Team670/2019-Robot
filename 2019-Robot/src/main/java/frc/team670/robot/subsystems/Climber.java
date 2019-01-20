@@ -49,11 +49,11 @@ public class Climber extends Subsystem {
   public final double DEFAULT_MIN_OUTPUT = -0.75, DEFAULT_MAX_OUTPUT = 0.75;
 
   public Climber() {
-    backPistons = new WPI_TalonSRX(RobotMap.backClimberPistonController);
-    frontPistons = new WPI_TalonSRX(RobotMap.frontClimberPistonController);
-
     frontPistonOutputs = new double[]{DEFAULT_MIN_OUTPUT, DEFAULT_MAX_OUTPUT};
     backPistonOutputs = new double[]{DEFAULT_MIN_OUTPUT, DEFAULT_MAX_OUTPUT};
+    
+    backPistons = new TalonSRX(RobotMap.BACK_CLIMBER_PISTON_CONTROLLER);
+    frontPistons = new TalonSRX(RobotMap.FRONT_CLIMBER_PISTON_CONTROLLER);
 
     // TODO figure out if these motors need to be inverted.
 
