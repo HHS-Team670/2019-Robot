@@ -8,14 +8,12 @@
 package frc.team670.robot.subsystems;
 
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-import java.util.List;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -23,7 +21,6 @@ import frc.team670.robot.commands.arm.armTransitions.ArmTransition;
 import frc.team670.robot.commands.arm.armTransitions.NeutralToCargoPickup;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
-import frc.team670.robot.utils.sort.AStarSearch;
 import frc.team670.robot.utils.sort.Node;
 
 /**
@@ -113,7 +110,7 @@ public class Arm extends Subsystem {
   /**
    * Represents a potential state for the arm including a wrist angle, elbow angle, and extension.
    */
-  public class ArmState implements Node{
+  public class ArmState implements Node {
     private double elbowAngle, wristAngle;
     private double extensionLength;
     private Point2D.Double coord;
