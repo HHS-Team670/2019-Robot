@@ -8,6 +8,7 @@
 package frc.team670.robot.subsystems;
 
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -15,7 +16,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
-import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team670.robot.commands.arm.armTransitions.ArmTransition;
 import frc.team670.robot.commands.arm.armTransitions.NeutralToCargoPickup;
@@ -38,11 +38,11 @@ public class Arm extends Subsystem {
   private VictorSPX elbowRotationSlave;
   private TalonSRX wristRotation;
   // All of the states
-  private HashMap<LegalState, ArmState> states;
-  private List<ArmState> armStates;
+  private static HashMap<LegalState, ArmState> states = new HashMap<LegalState, ArmState>();
   private static ArmState currentState;
 
   public Arm() {
+    // Motor Setup TODO needs to be finished, and add PID controllers.
     translationMotor = new TalonSRX(RobotMap.armTranslationMotor);
     extensionMotor = new TalonSRX(RobotMap.armExtensionMotor);
     elbowRotationMain = new TalonSRX(RobotMap.armElbowRotationMotorTalon);
@@ -50,21 +50,38 @@ public class Arm extends Subsystem {
 
     elbowRotationSlave = new VictorSPX(RobotMap.armElbowRotationMotorVictor);
     elbowRotationSlave.set(ControlMode.Follower, elbowRotationMain.getDeviceID());
+    
+    // State Setup
     currentState = new Neutral(); //Default state
     states = new HashMap<LegalState, ArmState>();
     states.put(LegalState.NEUTRAL, new Neutral());
+    states.put(LegalState.CARGO_PICKUP, new Neutral()); // This obviously needs to be changed
     /*
      * Add in all of the states here.
      */
 
   }
 
+  /**
+   * Sets the current state of the arm.
+   */
   public static void setState(ArmState state){
     currentState = state;
   }
 
-  public static ArmState getState(){
+  /**
+   * Gets the State that the arm most recently was located at.
+   */
+  public static ArmState getCurrentState(){
     return currentState;
+  }
+
+  /**
+   * Gets the ArmState object that corresponds to the LegalState
+   * Ex. If you want the Neutral ArmState, use 'getArmState(LegalState.NEUTRAL)''
+   */
+  public static ArmState getArmState(LegalState state) {
+    return states.get(state);
   }
 
   /**
@@ -73,12 +90,9 @@ public class Arm extends Subsystem {
    * left the variable stuff as parameters for now
    */
   public Point2D.Double getPosition(double extensionLength, double wristAngle, double elbowAngle) {
-
     double x = extensionLength * Math.sin(elbowAngle) + RobotConstants.clawRadius * Math.sin(wristAngle);
     double y = extensionLength * Math.cos(elbowAngle) + RobotConstants.clawRadius * Math.cos(wristAngle) + RobotConstants.armBaseHeight;
-
     return new Point2D.Double(x, y);
-
   }
 
   @Override
@@ -114,26 +128,15 @@ public class Arm extends Subsystem {
     private double elbowAngle, wristAngle;
     private double extensionLength;
     private Point2D.Double coord;
-    private LegalState state;
-    private double f, g; //TODO Put this in Node file
-    private Node parent; //TODO Put this in Node file
 
     private ArmTransition[] transitions;
 
-    /**
-     * @param transitionableStates Should h
-     */
-    public ArmState(LegalState state, double extensionLength, double elbowAngle, double wristAngle, ArmTransition[] transitions) {
-      this.state = state;
+    public ArmState(double extensionLength, double elbowAngle, double wristAngle, ArmTransition[] transitions) {
       this.extensionLength = extensionLength;
       this.elbowAngle = elbowAngle;
       this.wristAngle = wristAngle;
       coord = getPosition(extensionLength, wristAngle, elbowAngle);
       this.transitions = transitions;
-    }
-
-    public LegalState getState() {
-      return state;
     }
 
     public Point2D.Double getCoord() {
@@ -152,51 +155,21 @@ public class Arm extends Subsystem {
       return wristAngle;
     }
 
-    //USE THIS
+    @Override
     public ArmTransition[] getEdges() {
       return transitions;
     }
 
+    @Override
     public int getHeuristicDistance(Node other){
       ArmState state2 = (ArmState)other;
       return (int)(Math.sqrt((this.coord.getX()-state2.coord.getX())*(this.coord.getX()-state2.coord.getX())+(this.coord.getY()-state2.coord.getY())*(this.coord.getY()-state2.coord.getY())));
-    }
-
-
-    public CommandGroup getTransition(ArmState destination) {
-      CommandGroup result = new CommandGroup();
-
-      for(ArmTransition transition : transitions) {
-        if(transition.getDestination().equals(destination)) {
-          result.addSequential(transition);
-          return result;
-        }
-      }
-
-      // get all states (nodes) from hashmap
-      //Collection<ArmState> values = states.values();  
-      //Creating an ArrayList of values        
-      //ArrayList<ArmState> armStates = new ArrayList<ArmState>(values);
-      
-      /*
-       * Implement this so it searches for the quickest path of transititons to the destination.
-       * The A* Search Algorithm might be a good choice for this: https://www.geeksforgeeks.org/a-search-algorithm/ 
-       * Otherwise you could potentially do a breadth-first search, but A* will work best if we weight certain transitions
-       * for the time spent performing them. Currently this is measured as a tick count since we have no way of actually
-       * timing it.
-       * Long Stanford explanation on this: https://cs.stanford.edu/people/abisee/gs.pdf
-
-        find minimum g+h 
-        minimize distance
-       */
-
-      return result;
     }
   }
 
   private class Neutral extends ArmState {
     public Neutral() {
-      super(LegalState.NEUTRAL, 0, 45, 45, new ArmTransition[] {new NeutralToCargoPickup()});
+      super(0, 45, 45, new ArmTransition[] {new NeutralToCargoPickup()});
     }
   }
 

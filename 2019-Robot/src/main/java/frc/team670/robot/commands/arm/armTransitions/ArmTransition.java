@@ -7,33 +7,50 @@
 
 package frc.team670.robot.commands.arm.armTransitions;
 
+import java.awt.geom.Point2D;
+
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import frc.team670.robot.subsystems.Arm.ArmState;
 import frc.team670.robot.subsystems.Arm.LegalState;
+import frc.team670.robot.utils.functions.MathUtils;
 import frc.team670.robot.utils.sort.Edge;
 
   /**
    * The base for arm transitions. All iterations of this class should be made so that they can be rerun each time initialize is called.
    * Essentially, initialize should reset all necessary values within the object.
    */
-public abstract class ArmTransition extends CommandGroup implements Edge{
+public abstract class ArmTransition extends CommandGroup implements Edge {
 
+  private ArmState source, dest;
+
+  protected ArmTransition(ArmState source, ArmState dest) {
+    this.source = source;
+    this.dest = dest;
+  }
+  
   /**
    * The LegalState that this Command will end at.
    */
-  public abstract LegalState getDestination();
+  @Override
+  public ArmState getSource() {
+    return source;
+  }
 
   /**
    * The LegalState that this Command must begin at.
    */
-  public abstract LegalState getStart();
+  @Override
+  public ArmState getDest() {
+    return dest;
+  }
 
   /**
-   * Returns the sum of the number of inches that the arm must move to cover the path to use as a method of weighting the transition.
-   * Ticks that are traveled parallel to each other should not be counted. So if the arm is moving two joints at once, it should only
-   * count the longer of the movements. Eventually, we can change this method to time spent once we have to robot built and can run
-   * some empirical tests of the mechanisms.
+   * Returns the sum of the number of inches that the arm must move to travel the path.
    */
-  public abstract int getLength();
+  public int getCost() {
+    Point2D.Double sourceCoord = source.getCoord(), destCoord = dest.getCoord();
+    return (int)(MathUtils.findDistance(sourceCoord.x, sourceCoord.y, destCoord.x, destCoord.y));
+  }
 
 }
 

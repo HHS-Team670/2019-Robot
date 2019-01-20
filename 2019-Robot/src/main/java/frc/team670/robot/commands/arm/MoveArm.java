@@ -7,17 +7,19 @@
 
 package frc.team670.robot.commands.arm;
 
-import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.CommandGroup;
-import frc.team670.robot.commands.arm.armTransitions.ArmTransition;
-import frc.team670.robot.subsystems.Arm;
-import frc.team670.robot.subsystems.Arm.ArmState;
-import frc.team670.robot.utils.sort.AStarSearch;
-import frc.team670.robot.utils.sort.Node;
-
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import edu.wpi.first.wpilibj.command.CommandGroup;
+import frc.team670.robot.Robot;
+import frc.team670.robot.commands.arm.armTransitions.ArmTransition;
+import frc.team670.robot.subsystems.Arm;
+import frc.team670.robot.subsystems.Arm.ArmState;
+import frc.team670.robot.utils.Logger;
+import frc.team670.robot.utils.sort.AStarSearch;
 
 /**
  * Move the arm using known ArmStates and found path.
@@ -31,18 +33,22 @@ public class MoveArm extends CommandGroup {
 
   public MoveArm(ArmState destination) {
     this.destination = destination;
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
+    requires(Robot.arm);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    ArmState currentState = Arm.getState();
+    ArmState currentState = Arm.getCurrentState();
     movements = new CommandGroup();
     List<ArmTransition> transitions = searched.get(currentState);
     if (transitions == null) {
-      transitions = (List<ArmTransition>)(List<?>)(AStarSearch.search(currentState, destination));
+      try {
+        transitions = (List<ArmTransition>)(List<?>)(AStarSearch.search(currentState, destination));
+      } catch(ClassCastException e) {
+        Logger.logException(e);
+        Logger.consoleLog("You really messed up.");
+      }
       searched.put(currentState, transitions);
     }
     for (ArmTransition t : transitions){
