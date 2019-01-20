@@ -53,7 +53,7 @@ public class RobotConstants {
     //Climber Constants
     // Climb Constants - TODO all of these need to be set
     public static final double MINIMUM_PISTON_POWER = 0.1;
-    public static final double MAXIMUM_PISTON_POWER = 0.75;    
+    public static final double MAXIMUM_PISTON_POWER = 0.75;  
     public static final int CLIMBER_ENCODER_TOLERANCE = 10;
     //tick values at retracted position
     public static final int FRONT_PISTON_ENCODER_START = 0;

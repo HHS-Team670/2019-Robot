@@ -67,7 +67,7 @@ public class PistonClimbWithTiltControl extends Command {
   @Override
   protected void end() {
     Robot.climber.setFrontPistonOutputRange(RobotConstants.MINIMUM_PISTON_POWER, RobotConstants.MAXIMUM_PISTON_POWER);
-    Robot.climber.setBackPistonOutputRange(RobotConstants.MINIMUM_PISTON_POWER, RobotConstants.MAXIMUM_PISTON_POWER);
+    Robot.climber.setBackPistonOutputRange(RobotConstants.MAXIMUM_PISTON_POWER, RobotConstants.MAXIMUM_PISTON_POWER);
   }
 
   // Called when another command which requires one or more of the same
@@ -75,6 +75,6 @@ public class PistonClimbWithTiltControl extends Command {
   @Override
   protected void interrupted() {
     Robot.climber.setFrontPistonOutputRange(RobotConstants.MINIMUM_PISTON_POWER, RobotConstants.MAXIMUM_PISTON_POWER);
-    Robot.climber.setBackPistonOutputRange(RobotConstants.MINIMUM_PISTON_POWER, RobotConstants.MAXIMUM_PISTON_POWER);
+    Robot.climber.setBackPistonOutputRange(RobotConstants.MAXIMUM_PISTON_POWER, RobotConstants.MAXIMUM_PISTON_POWER);
   }
 }
