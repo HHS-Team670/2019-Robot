@@ -20,7 +20,10 @@ import time
 from networktables import NetworkTables
 import os
 import traceback
-DEBUG_MODE = True # NOTE MAKE this @FALSE TO MAKE NO SCREENS APPEAR
+
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger('logger')
+DEBUG_MODE = False # NOTE MAKE this @FALSE TO MAKE NO SCREENS APPEAR
 ERROR = -99999
 
 # TODO SET THESE to correct values
@@ -42,8 +45,8 @@ exposure = -9
 timestamp = round(time.time() * 1000) # time in milliseconds
 
 # HSV Values to detect
-min_hsv = [70, 230, 130]
-max_hsv = [150, 255, 255]
+min_hsv = [60, 200, 100]
+max_hsv = [100, 255, 255]
 
 # Min area to make sure not to pick up noise
 MIN_AREA = 10
@@ -56,101 +59,111 @@ def main():
     Main method, runs when program is run.
     '''
     # initialize network tables
-    NetworkTables.initialize(ROBORIO_IP)
+    os.system("v4l2-ctl -d /dev/video0 -c exposure_auto=1 -c exposure_absolute=20")
+    print("start")
+    NetworkTables.initialize(server=ROBORIO_IP)
+    print("init nt")
     table = NetworkTables.getTable(NETWORK_TABLE_NAME)
+    print("get table")
+    print(table)
     # Video capture / resizing stuff
-    cv2.VideoCapture(capture_source).set(cv2.CAP_PROP_EXPOSURE, exposure)
     vs = ThreadedVideo(screen_resize, capture_source).start()
     # resize_value = get_resize_values(vs.stream, image_width) # uncomment if screen resize is desired
-
+    cv2.imwrite("input.jpg", vs.raw_read()[0])
     # This may not need to be calculated, can use Andra's precalculated values
     vert_focal_length = find_vert_focal_length(vs.raw_read()[0], camera_fov_vertical)
     hor_focal_length = find_hor_focal_length(vs.raw_read()[0], camera_fov_horizontal)
-
     while True:
-        # Read input image from video
-        input_raw = vs.raw_read()
-        input_image = input_raw[0]
-        timestamp = input_raw[1]
-        if input_image is None:
-            print("Error: Capture source not found or broken.")
-            returns = [ERROR, ERROR, timestamp]
+        try:
+            # Read input image from video
+            input_raw = vs.raw_read()
+            input_image = input_raw[0]
+            timestamp = input_raw[1]
+            if input_image is None:
+                print("Error: Capture source not found or broken.")
+                returns = [ERROR, ERROR, timestamp]
+                push_network_table(table, returns)
+
+                #Debug mode code
+                if DEBUG_MODE:
+                    key = cv2.waitKey(1) & 0xFF
+                    if key == ord('q'):
+                        # Quit if q key is pressed
+                        break
+                continue
+            # Find colored object / box it with a rectangle. Set capture_color at the top to "x" for reflector tape HSV
+            masked_image = find_colored_object(input_image, capture_color, debug=DEBUG_MODE)
+            cv2.imwrite("mask.jpg", masked_image)
+            # Find the two most central objects of a certain color (two pieces of tape)
+
+            object_rects = find_two_important_contours(masked_image, debug=DEBUG_MODE)
+            object_rect, object_rect_2 = object_rects
+
+            # DEBUG mode code
+            if object_rect is -1 and object_rect_2 is -1:
+                returns = [ERROR, ERROR, timestamp]
+                push_network_table(table, returns)
+                if DEBUG_MODE:
+                    output_image = cv2.resize(input_image, (0, 0), fx=screen_resize,
+                                            fy=screen_resize)
+                    cv2.imshow("Output", output_image)
+                    key = cv2.waitKey(1) & 0xFF
+                    if key == ord('q'):
+                        # Quit if q key is pressed
+                        break
+                continue
+
+            # if rectangles don't exist
+            if object_rect == -1:
+                del object_rect
+                del object_rects[0]
+            elif object_rect_2 == -1:
+                del object_rect_2
+                del object_rects[1]
+
+            # find_vert_angle finds the depth / angle of the object
+            # find_hor_angle finds horizontal angle to object
+
+            rect_x_midpoint, high_point = find_rectangle_highpoint(object_rects)
+            vangle = find_vert_angle(input_image, high_point, vert_focal_length) # vangle - 'V'ertical angle
+            hangle = find_hor_angle(input_image, rect_x_midpoint, hor_focal_length) # hangle - 'H'orizontal angle
+            depth = depth_from_angle(input_image, object_rects, vangle, hangle,
+                                     known_object_height - known_camera_height)
+
+            # set and push network table
+            print("outputs")
+            returns = [hangle, depth, timestamp]
+            print(returns)
             push_network_table(table, returns)
 
-            #Debug mode code
+            # Create output image to display in debug mode
             if DEBUG_MODE:
-                key = cv2.waitKey(1) & 0xFF
-                if key == ord('q'):
-                    # Quit if q key is pressed
-                    break
-            continue
-        # Find colored object / box it with a rectangle. Set capture_color at the top to "x" for reflector tape HSV
-        masked_image = find_colored_object(input_image, capture_color, debug=DEBUG_MODE)
-        # Find the two most central objects of a certain color (two pieces of tape)
-
-        object_rects = find_two_important_contours(masked_image, debug=DEBUG_MODE)
-        object_rect, object_rect_2 = object_rects
-
-        # DEBUG mode code
-        if object_rect is -1 and object_rect_2 is -1:
-            returns = [ERROR, ERROR, timestamp]
-            push_network_table(table, returns)
-            if DEBUG_MODE:
-                output_image = cv2.resize(input_image, (0, 0), fx=screen_resize,
-                                        fy=screen_resize)
+                output_image = draw_output_image(input_image,
+                                                 object_rects,
+                                                 depth,
+                                                 vangle,
+                                                 hangle,
+                                                 hipoint = (int(rect_x_midpoint), int(high_point)))
+                if screen_resize != 1:
+                    output_image = cv2.resize(output_image, (0, 0),
+                                              fx=screen_resize, fy=screen_resize)
                 cv2.imshow("Output", output_image)
+
+                # Check for key presses
                 key = cv2.waitKey(1) & 0xFF
                 if key == ord('q'):
                     # Quit if q key is pressed
                     break
-            continue
-
-        # if rectangles don't exist
-        if object_rect == -1:
-            del object_rect
-            del object_rects[0]
-        elif object_rect_2 == -1:
-            del object_rect_2
-            del object_rects[1]
-
-        # find_vert_angle finds the depth / angle of the object
-        # find_hor_angle finds horizontal angle to object
-
-        rect_x_midpoint, high_point = find_rectangle_highpoint(object_rects)
-        vangle = find_vert_angle(input_image, high_point, vert_focal_length) # vangle - 'V'ertical angle
-        hangle = find_vert_angle(input_image, rect_x_midpoint, hor_focal_length, vertical=False) # hangle - 'H'orizontal angle
-        depth = depth_from_angle(input_image, object_rects, vangle, hangle,
-                                 known_object_height - known_camera_height)
-
-        # set and push network table
-        returns = [hangle, depth, timestamp]
-        push_network_table(table, returns)
-
-        # Create output image to display in debug mode
-        if DEBUG_MODE:
-            output_image = draw_output_image(input_image,
-                                             object_rects,
-                                             depth,
-                                             vangle,
-                                             hangle,
-                                             hipoint = (int(rect_x_midpoint), int(high_point)))
-            if screen_resize != 1:
-                output_image = cv2.resize(output_image, (0, 0),
-                                          fx=screen_resize, fy=screen_resize)
-            cv2.imshow("Output", output_image)
-
-            # Check for key presses
-            key = cv2.waitKey(1) & 0xFF
-            if key == ord('q'):
-                # Quit if q key is pressed
-                break
-            # Handle mouse clicks
-            # Comment this out if unneeded for maximum efficiency
-            # currently somewhat broken
-            cv2.setMouseCallback("Output", mouse_click_handler,
-                                {"input_image": input_image,
-                                "screen_resize": screen_resize})
-
+                # Handle mouse clicks
+                # Comment this out if unneeded for maximum efficiency
+                # currently somewhat broken
+                cv2.setMouseCallback("Output", mouse_click_handler,
+                                    {"input_image": input_image,
+                                    "screen_resize": screen_resize})
+        except Exception as e:
+            print(e)
+           
+	    #cv2.imwrite("input.jpg", input_image)
     # Release & close when done
     vs.stop()
     vs.stream.release()
@@ -198,8 +211,8 @@ class ThreadedVideo:
         while not self.stopped:
             if not self.stopped:
                 self.grabbed = (read_video_image(self.stream, self.resize), round(time.time()*1000))
-                if self.grabbed[0] is not None:
-                    self.frame = imutils.resize(self.grabbed[0], width=self.width)
+           #     if self.grabbed[0] is not None:
+           #         self.frame = imutils.resize(self.grabbed[0], width=self.width)
 
 # Methods
 def push_network_table(table, return_list):
@@ -207,11 +220,11 @@ def push_network_table(table, return_list):
     Pushes a tuple to the network table
     prints the table in Debug mode
     '''
-    push_tuple = tuple(return_list)
+    #push_tuple = tuple(return_list)
     table.putNumberArray(NETWORK_KEY, return_list)
 
     if DEBUG_MODE:
-        print(push_tuple)
+        print(return_list)
 
 def get_resize_values(capture, width=1920):
     '''
@@ -252,7 +265,7 @@ def find_colored_object(image, capture_color='g', debug=False):
                                     np.array([125, 255, 255]))  # Blue
         elif capture_color == 'g':
             masked_image = cv2.inRange(hsv_image, np.array([35, 50, 50]),
-                                    np.array([60, 245, 255]))  # Green
+                                    np.array([80, 255, 255]))  # Green
             # Correct values: [58, 0, 254], [67, 62, 255]
         elif capture_color == 'x':
             masked_image = cv2.inRange(hsv_image, np.array(min_hsv), np.array(max_hsv))
@@ -284,7 +297,7 @@ def find_two_important_contours(image, debug=False):
     # Finds ALL the contours of the image
     # Note: the tree and chain things could probably be optimized better.
     contours = cv2.findContours(blur_image, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    contours = contours[1]
+    contours = contours[0] #OpenCV 4 uses 1st element
     if len(contours) != 0:
         # Find the biggest area contour
         conarea = []
@@ -302,7 +315,7 @@ def find_two_important_contours(image, debug=False):
                 dists.append(distance)
 
         #biggest_contour = max(contours, key=cv2.contourArea)
-        centermost_dist = min(dists, default=-1)
+        centermost_dist = min(dists)
         centermost_con = -1
         center_ind = -1
         if (centermost_dist != -1):
@@ -314,7 +327,7 @@ def find_two_important_contours(image, debug=False):
 
         sec_center_con = -1
         center_ind = -1
-        sec_center_dist = min(dists, default=-1)
+        sec_center_dist = min(dists)
         if (sec_center_dist != -1):
             center_ind = dists.index(sec_center_dist)
             sec_center_con = ac_contours[center_ind]
@@ -375,35 +388,27 @@ def find_hor_focal_length(image, hor_fov):
     return calc_focal_length
 
 
-def find_vert_angle(image, y, focal_length, vertical=True, ratio=1): # TODO bleeeheheheh
-    '''
-    Returns the vertical/horizontal angle of the given y/x point in an image.
-    This is the angle that the robot needs to look up / down in order to
-    directly face the image. Requires the actual image and focal
-    length of the camera.
-    '''
 
-    # Find center y point
-    image_height = 0
-    _offset = 0 # if camera is tilted
-    if vertical:
-        image_height = image.shape[:2][0]
-        _offset = camera_vertical_angle
-    else:
-        image_height = image.shape[:2][1]
-        _offset = camera_horizontal_angle
 
+def find_vert_angle(image, y, focal_length):
     # Find center y point
     image_height = image.shape[:2][0]
     center_y = image_height / 2
     y_from_bottom = image_height-y
 
     # Calculate the angle using fancy formula
-    _angle = -1 * math.degrees(math.atan((y_from_bottom - center_y) / focal_length))
-    _angle -= _offset
-    #if not vertical:
-    #    _angle += ratio*90 #TODO bleeeheheheh
-    return _angle
+    vertical_angle = -1 * math.degrees(math.atan((y_from_bottom - center_y) / focal_length))
+    return vertical_angle
+
+def find_hor_angle(image, x, focal_length):
+    # Find center y point
+    image_width = image.shape[:2][1]
+    center_x = image_width / 2
+    x_from_bottom = image_width-x
+
+    # Calculate the angle using fancy formula
+    horizontal_angle = -1 * math.degrees(math.atan((x_from_bottom - center_x) / focal_length))
+    return horizontal_angle
 
 def depth_from_angle(image, rectangles, vangle, hangle, known_height):
     '''
@@ -413,17 +418,10 @@ def depth_from_angle(image, rectangles, vangle, hangle, known_height):
     '''
     # Keep tangent from being undefined
     if vangle == 0:
-        vangle = 0.0000000000001
-    
-    htan = 0
-    if hangle != 0:
-        htan = math.tan(math.radians(hangle))
-    # Do some calculations
-
-    depth = known_height / (math.tan(math.radians(abs(vangle))))
-    depth = math.sqrt((depth*htan-camera_horizontal_offset)**2 + (depth**2))
-    # This was an adjustment to adjust depth for an object that is offcenter
-    # adjusted_depth = depth / math.cos(abs(hangle))
+        vangle = 0.0001
+        
+    depth = known_height / math.tan(math.radians(abs(vangle)))
+    depth = depth / math.cos(math.radians(abs(hangle)))
     return depth
 
 # Debug mode methods
@@ -467,12 +465,8 @@ def draw_output_image(image, rectanglelist, depth, vangle, hangle, hipoint=None)
                 cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 255), 3)
     if hipoint is not None:
         cv2.circle(output_image, hipoint, 10, (0, 255, 255), thickness=10)
-    
-    height, width = output_image.shape[:2]
-    cv2.line(output_image, (round(width / 2), 0), (round(width / 2), height), (255, 0, 0), thickness=4)
-    cv2.line(output_image, (0 , round(height / 2)), (width, round(height / 2)), (255, 0, 0), thickness=4)
-
     return output_image
+
 
 # causes program to run main method when program is run, but allows modular import allows
 if __name__ == "__main__":
