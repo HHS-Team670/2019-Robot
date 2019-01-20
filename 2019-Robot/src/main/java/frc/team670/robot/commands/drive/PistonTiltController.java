@@ -14,7 +14,7 @@ import frc.team670.robot.dataCollection.NullPIDOutput;
 
 public class PistonTiltController extends Command {
 
-  private double tiltControllerLowerOutput = 0.5, tiltControllerUpperOutput = 1.5;
+  private double tiltControllerLowerOutput = 1.0, tiltControllerUpperOutput = 1.5;
   private double tolerance;
   private double P = 0.0, I = 0.0, D = 0.0, F = 0.0;
   private PIDController tiltController;
