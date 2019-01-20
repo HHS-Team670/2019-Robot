@@ -48,6 +48,8 @@ public class NavXPivot extends Command {
 				startAngle, finalAngle, angle);
 
 		pivotController.setSetpoint(finalAngle);
+
+		pivotController.enable();
   }
 
   // Called repeatedly when this Command is scheduled to run

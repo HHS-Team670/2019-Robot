@@ -86,6 +86,9 @@ public class AdvancedVisionPIDDrive extends Command {
     }
 
     executeCount = 0;
+
+    distanceController.enable();
+    headingController.enable();
   }
 
   // Called repeatedly when this Command is scheduled to run

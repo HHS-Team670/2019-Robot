@@ -40,6 +40,9 @@ public class DIOEncoderDrive extends Command {
 
     Logger.consoleLog("leftStartingPosition:%s rightStartingPosition:%s ", Robot.driveBase.getLeftDIOEncoderPosition(),
      Robot.driveBase.getRightDIOEncoderPosition());
+
+    leftPIDController.enable();
+    rightPIDController.enable();
   }
 
   // Called repeatedly when this Command is scheduled to run
