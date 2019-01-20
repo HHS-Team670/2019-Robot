@@ -185,7 +185,6 @@ public class Arm extends Subsystem {
     elbowRotationMain.set(ControlMode.PercentOutput, 1);
   }
 
-
   private class Neutral extends ArmState {
     public Neutral() {
       super(LegalState.NEUTRAL, 0, 45, 45, new ArmTransition[] {new NeutralToCargoPickup()});

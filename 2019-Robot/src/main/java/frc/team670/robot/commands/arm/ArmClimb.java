@@ -16,15 +16,25 @@ public class ArmClimb extends CommandGroup {
    * Add your docs here.
    */
   public ArmClimb() {
-    //Make sure arm is high up while climbing and possibly before this command is called
-    //addParallel: Telescope forward (all the way out)
+    addParallel: new MoveArm()
     //addSequential: Bring arm down to low position
     addParallel(new SetElbowCurrentLimit(RobotConstants.TRIGGER_AMPS));
     //addSequential: Telescope back
-    addParallel(new SetElbowCurrentLimit(RobotConstants.TRIGGER_AMPS));
-    //addSequential: Move Arm to high position
-     //addSequential: Bring arm down
+    addParallel(new SetElbowCurrentLimit(0));
 
-    
+
+    //addSequential: Move Arm to high position
+    //addParallel: Telescope forward (all the way out)
+    //addSequential: Bring arm down
+    addParallel(new SetElbowCurrentLimit(RobotConstants.TRIGGER_AMPS));
+    //addSequential: Telescope back
+    addParallel(new SetElbowCurrentLimit(0));
+
+    //addSequential: Move Arm to high position
+  }
+
+  @Override
+  protected void end(){
+    //Bring arm to high position
   }
 }
