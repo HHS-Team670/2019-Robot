@@ -92,6 +92,10 @@ public class MustangSensors extends Subsystem {
     }
   }
 
+  public double getFieldCentricYaw() {
+    return navXMicro.getYawFieldCentric();
+  }
+
   public ZeroableNavX_PIDSource getZeroableNavXPIDSource() {
     if(navXMicro != null){
       return navXMicro.getZeroableNavXPIDSource();

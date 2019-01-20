@@ -12,6 +12,8 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team670.robot.commands.drive.DriveMotionProfile;
+import frc.team670.robot.commands.drive.NavXPivot;
 import frc.team670.robot.dataCollection.MustangPi;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.dataCollection.Pose;
@@ -36,6 +38,7 @@ public class Robot extends TimedRobot {
   public static MustangPi visionPi = new MustangPi();
   public static DriveBase driveBase = new DriveBase();
   private MustangLEDs_2019 leds = new MustangLEDs_2019();
+  public static Pose fieldCentricPose = new Pose();
 
   private long savedTime=0;
 
@@ -43,6 +46,8 @@ public class Robot extends TimedRobot {
   public static Intake intake = new Intake();
   public static Claw claw = new Claw();
   public static Climber climber = new Climber();
+
+  private long periodCount = 0;
 
   Command autonomousCommand;
   SendableChooser<Command> auton_chooser = new SendableChooser<>();
@@ -105,10 +110,17 @@ public class Robot extends TimedRobot {
       
     // Logger.consoleLog("LeftEncoderPos: %s, RightEncoderPos: %s", driveBase.getLeftDIOEncoderPosition(), driveBase.getRightDIOEncoderPosition());
     // Logger.consoleLog("LeftEncoderVel: %s, RightEncoderVel: %s", driveBase.getLeftDIOEncoderVelocityInches(), driveBase.getRightDIOEncoderVelocityInches());
+      
+    // if(periodCount % 10 == 0) {
+    //   Logger.consoleLog("NavXYawReset: %s, NavXYawFieldCentric: %s", sensors.getYawDouble(), sensors.getFieldCentricYaw());
+    // }
+      SmartDashboard.putNumber("NavX Yaw", sensors.getYawDouble());
 
+    periodCount ++;
     leds.setClimbingData(true);//we climb
 
     // System.out.println("Voltage: "+(irSensor.getVoltage()));
+    fieldCentricPose.update(); // Update our field centric Pose to the new robot position. Commented out to avoid null-pointers until sensors hooked up.
   }
 
   /**
@@ -140,9 +152,9 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     sensors.resetNavX(); // Reset NavX completely, zero the field centric based on how robot faces from start of game.
-
+    fieldCentricPose = new Pose();
     Logger.consoleLog("Auton Started");
-    autonomousCommand = auton_chooser.getSelected();
+    autonomousCommand = new DriveMotionProfile("/output/DriveRightCurve.pf1.csv", false);
 
     /*
      * String autoSelected = SmartDashboard.getString("Auto Selector",
