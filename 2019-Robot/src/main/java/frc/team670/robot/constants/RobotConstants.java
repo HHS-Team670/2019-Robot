@@ -1,4 +1,4 @@
-package frc.team670.robot.Inchesperstants;
+package frc.team670.robot.constants;
 
 import frc.team254.lib.util.control.Lookahead;
 
