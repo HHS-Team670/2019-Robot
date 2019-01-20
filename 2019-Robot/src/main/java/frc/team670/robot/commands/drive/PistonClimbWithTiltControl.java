@@ -10,9 +10,10 @@ package frc.team670.robot.commands.drive;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.Robot;
+import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.NullPIDOutput;
 
-public class PistonTiltController extends Command {
+public class PistonClimbWithTiltControl extends Command {
 
   private double tiltControllerLowerOutput = 1.0, tiltControllerUpperOutput = 1.5;
   private double tolerance;
@@ -20,7 +21,7 @@ public class PistonTiltController extends Command {
   private PIDController tiltController;
   private boolean goingUp;
 
-  public PistonTiltController(boolean goingUp) {
+  public PistonClimbWithTiltControl(boolean goingUp) {
     requires(Robot.climber);
     tiltController = new PIDController(P, I, D, F, Robot.sensors.getNavXPitchPIDSource(), new NullPIDOutput());
     this.goingUp = goingUp;
@@ -39,15 +40,19 @@ public class PistonTiltController extends Command {
   protected void execute() {
     if (goingUp) {
       if (Robot.sensors.getPitchDouble() < -tolerance) {
-        Robot.climber.getFrontPistonOutputs()[1] *= tiltController.get();
+        Robot.climber.setFrontPistonOutputRange(RobotConstants.PISTON_DEFAULT_MIN_OUTPUT * (1.5 - tiltController.get()),
+         RobotConstants.PISTON_DEFAULT_MAX_OUTPUT * tiltController.get());
       } else if (Robot.sensors.getPitchDouble() > tolerance) {
-        Robot.climber.getBackPistonOutputs()[1] *= tiltController.get();
+        Robot.climber.setBackPistonOutputRange(RobotConstants.PISTON_DEFAULT_MIN_OUTPUT * (1.5 - tiltController.get()), 
+        RobotConstants.PISTON_DEFAULT_MAX_OUTPUT * tiltController.get()); 
       }
     } else {
       if (Robot.sensors.getPitchDouble() > tolerance) {
-        Robot.climber.getFrontPistonOutputs()[0] *= tiltController.get();
+        Robot.climber.setFrontPistonOutputRange(RobotConstants.PISTON_DEFAULT_MIN_OUTPUT* tiltController.get(), 
+        RobotConstants.PISTON_DEFAULT_MAX_OUTPUT * (1.5 - tiltController.get()));
       } else if (Robot.sensors.getPitchDouble() < -tolerance) {
-        Robot.climber.getBackPistonOutputs()[0] *= tiltController.get();
+        Robot.climber.setBackPistonOutputRange(RobotConstants.PISTON_DEFAULT_MIN_OUTPUT * tiltController.get(), 
+        RobotConstants.PISTON_DEFAULT_MAX_OUTPUT * (1.5 - tiltController.get()));
       }
     }
   }
@@ -61,21 +66,15 @@ public class PistonTiltController extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Robot.climber.getFrontPistonOutputs()[0] = Robot.climber.DEFAULT_MIN_OUTPUT;
-    Robot.climber.getFrontPistonOutputs()[1] = Robot.climber.DEFAULT_MAX_OUTPUT;
-
-    Robot.climber.getBackPistonOutputs()[0] = Robot.climber.DEFAULT_MIN_OUTPUT;
-    Robot.climber.getBackPistonOutputs()[1] = Robot.climber.DEFAULT_MAX_OUTPUT;
+    Robot.climber.setFrontPistonOutputRange(Robot.climber.DEFAULT_MIN_OUTPUT, Robot.climber.DEFAULT_MAX_OUTPUT);
+    Robot.climber.setBackPistonOutputRange(Robot.climber.DEFAULT_MIN_OUTPUT, Robot.climber.DEFAULT_MAX_OUTPUT);
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    Robot.climber.getFrontPistonOutputs()[0] = Robot.climber.DEFAULT_MIN_OUTPUT;
-    Robot.climber.getFrontPistonOutputs()[1] = Robot.climber.DEFAULT_MAX_OUTPUT;
-
-    Robot.climber.getBackPistonOutputs()[0] = Robot.climber.DEFAULT_MIN_OUTPUT;
-    Robot.climber.getBackPistonOutputs()[1] = Robot.climber.DEFAULT_MAX_OUTPUT;
+    Robot.climber.setFrontPistonOutputRange(Robot.climber.DEFAULT_MIN_OUTPUT, Robot.climber.DEFAULT_MAX_OUTPUT);
+    Robot.climber.setBackPistonOutputRange(Robot.climber.DEFAULT_MIN_OUTPUT, Robot.climber.DEFAULT_MAX_OUTPUT);
   }
 }

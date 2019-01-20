@@ -35,10 +35,6 @@ public class Climber extends Subsystem {
 
   private static final double P = 0.01, I = 0.0, D = 0.0, F = 0.0;
 
-  //First element is min output and second value is max output
-  private double[] frontPistonOutputs; 
-  private double[] backPistonOutputs; 
-
   private boolean backPistonsRetracted;
 
   //TODO set these
@@ -49,10 +45,7 @@ public class Climber extends Subsystem {
 
   public final double DEFAULT_MIN_OUTPUT = -0.75, DEFAULT_MAX_OUTPUT = 0.75;
 
-  public Climber() {
-    frontPistonOutputs = new double[]{DEFAULT_MIN_OUTPUT, DEFAULT_MAX_OUTPUT};
-    backPistonOutputs = new double[]{DEFAULT_MIN_OUTPUT, DEFAULT_MAX_OUTPUT};
-    
+  public Climber() {    
     backPistons = new WPI_TalonSRX(RobotMap.BACK_CLIMBER_PISTON_CONTROLLER);
     frontPistons = new WPI_TalonSRX(RobotMap.FRONT_CLIMBER_PISTON_CONTROLLER);
 
@@ -62,17 +55,15 @@ public class Climber extends Subsystem {
     backController = new PIDController(P, I, D, F, new SensorCollection_PIDSource(frontPistons.getSensorCollection()), backPistons); 
     // TODO implement pitch from NavX instead of yaw
 
-    frontController.setOutputRange(frontPistonOutputs[0], frontPistonOutputs[1]);
+    frontController.setOutputRange(DEFAULT_MIN_OUTPUT, DEFAULT_MAX_OUTPUT);
     frontController.setSetpoint(frontEncoderEnd);
     frontController.setAbsoluteTolerance(finishTolerance);
     frontController.setContinuous(false);
-    frontController.enable();
 
-    backController.setOutputRange(backPistonOutputs[0], backPistonOutputs[1]);
+    backController.setOutputRange(DEFAULT_MIN_OUTPUT, DEFAULT_MAX_OUTPUT);
     backController.setSetpoint(backEncoderEnd);
     backController.setAbsoluteTolerance(finishTolerance);
     backController.setContinuous(false);
-    backController.enable();
   }
 
   /**
@@ -84,9 +75,6 @@ public class Climber extends Subsystem {
   }
 
   public void drivePistonsPID() {
-    frontController.setOutputRange(frontPistonOutputs[0], frontPistonOutputs[1]);
-    backController.setOutputRange(backPistonOutputs[0], backPistonOutputs[1]);
-
     double frontPower = frontController.get();
     double backPower = backController.get();
     frontPower += minimumPistonPower;
@@ -99,6 +87,14 @@ public class Climber extends Subsystem {
     }
     frontPistons.set(ControlMode.PercentOutput, frontPower);
     backPistons.set(ControlMode.PercentOutput, backPower);
+  }
+
+  public void setFrontPistonOutputRange(double minRange, double maxRange){
+    frontController.setOutputRange(minRange, maxRange);
+  }
+
+  public void setBackPistonOutputRange(double minRange, double maxRange){
+    backController.setOutputRange(minRange, maxRange);
   }
 
   public void retractFrontPistons() {
@@ -156,28 +152,6 @@ public class Climber extends Subsystem {
    */
   public PIDController getBackController() {
     return backController;
-  }
-
-  /**
-   * Returns the min and max outputs of the PIDController which controls the front pistons. The first value
-   * represents the min output and second represents the max.
-   * 
-   * @return an array with the min and max outputs of the PIDController which controls the front pistons. The first value
-   * represents the min output and second represents the max.
-   */
-  public double[] getFrontPistonOutputs(){
-    return frontPistonOutputs;
-  }
-
-  /**
-   * Returns the min and max outputs of the PIDController which controls the back pistons. The first value
-   * represents the min output and second represents the max.
-   * 
-   * @return an array with the min and max outputs of the PIDController which controls the back pistons. The first value
-   * represents the min output and second represents the max.
-   */
-  public double[] getBackPistonOutputs(){
-    return backPistonOutputs;
   }
 
 }
