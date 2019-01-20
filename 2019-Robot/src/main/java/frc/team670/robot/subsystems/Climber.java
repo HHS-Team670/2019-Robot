@@ -8,13 +8,12 @@
 package frc.team670.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.dataCollection.SensorCollection_PIDSource;
@@ -26,66 +25,33 @@ import frc.team670.robot.dataCollection.SensorCollection_PIDSource;
 public class Climber extends Subsystem {
 
   // Motor that drives the two pistons in the back of the robot
-  private WPI_TalonSRX backPistons;
+  private WPI_TalonSRX backTalon;
   // Motor that drives the two pistons in the front of the robot. May be split into two controllers.
-  private WPI_TalonSRX frontPistons;
+  private WPI_TalonSRX frontTalon;
 
   private PIDController frontController;
   private PIDController backController;
 
+  private Encoder frontDIOEncoder, backDIOEncoder;
+
   private static final double P = 0.01, I = 0.0, D = 0.0, F = 0.0;
 
-  private boolean backPistonsRetracted;
+  private boolean frontPistonsRetracted, backPistonsRetracted;
+  private boolean frontPistonsDeployed, backPistonsDeployed;
 
   public Climber() {    
-    backPistons = new WPI_TalonSRX(RobotMap.BACK_CLIMBER_PISTON_CONTROLLER);
-    frontPistons = new WPI_TalonSRX(RobotMap.FRONT_CLIMBER_PISTON_CONTROLLER);
+    backTalon = new WPI_TalonSRX(RobotMap.BACK_CLIMBER_PISTON_CONTROLLER);
+    frontTalon = new WPI_TalonSRX(RobotMap.FRONT_CLIMBER_PISTON_CONTROLLER);
 
     // TODO figure out if these motors need to be inverted.
 
-    frontController = new PIDController(P, I, D, F, new SensorCollection_PIDSource(frontPistons.getSensorCollection()), frontPistons); 
-    backController = new PIDController(P, I, D, F, new SensorCollection_PIDSource(frontPistons.getSensorCollection()), backPistons); 
-    // TODO implement pitch from NavX instead of yaw - DONE
-  }
-
-  public void enablePistonControllers() {
-    frontController.setOutputRange(RobotConstants.MINIMUM_PISTON_POWER, RobotConstants.MAXIMUM_PISTON_POWER);
-    frontController.setSetpoint(RobotConstants.FRONT_PISTON_ENCODER_END);
-    frontController.setAbsoluteTolerance(RobotConstants.CLIMBER_ENCODER_TOLERANCE);
-    frontController.setContinuous(false);
-    frontController.enable();
-
-    backController.setOutputRange(RobotConstants.MINIMUM_PISTON_POWER, RobotConstants.MAXIMUM_PISTON_POWER);
-    backController.setSetpoint(RobotConstants.BACK_PISTON_ENCODER_END);
-    backController.setAbsoluteTolerance(RobotConstants.CLIMBER_ENCODER_TOLERANCE);
-    backController.setContinuous(false);
-    backController.enable();
+    frontController = new PIDController(P, I, D, F, new SensorCollection_PIDSource(frontTalon.getSensorCollection()), frontTalon); 
+    backController = new PIDController(P, I, D, F, new SensorCollection_PIDSource(frontTalon.getSensorCollection()), backTalon); 
   }
 
   public void drivePistons(double frontPower, double backPower) {
-    frontPistons.set(ControlMode.PercentOutput, frontPower);
-    backPistons.set(ControlMode.PercentOutput, backPower);
-  }
-
-  public void drivePistonsPID() {
-    frontController.setOutputRange(RobotConstants.MINIMUM_PISTON_POWER, RobotConstants.MAXIMUM_PISTON_POWER);
-    backController.setOutputRange(RobotConstants.MINIMUM_PISTON_POWER, RobotConstants.MAXIMUM_PISTON_POWER);
-
-    // frontController.setOutputRange(frontPistonOutputs[0], frontPistonOutputs[1]);
-    // backController.setOutputRange(backPistonOutputs[0], backPistonOutputs[1]);
-
-    // double frontPower = frontController.get();
-    // double backPower = backController.get();
-    // frontPower += minimumPistonPower;
-    // backPower += minimumPistonPower;
-    // if (frontPower <= minimumPistonPower) {
-    //   frontPower = minimumPistonPower;
-    // }
-    // if (backPower <= minimumPistonPower) {
-    //   backPower = minimumPistonPower;
-    // }
-    // frontPistons.set(ControlMode.PercentOutput, frontPower);
-    // backPistons.set(ControlMode.PercentOutput, backPower);
+    frontTalon.set(ControlMode.PercentOutput, frontPower);
+    backTalon.set(ControlMode.PercentOutput, backPower);
   }
 
   public void setFrontPistonOutputRange(double minRange, double maxRange){
@@ -94,15 +60,6 @@ public class Climber extends Subsystem {
 
   public void setBackPistonOutputRange(double minRange, double maxRange){
     backController.setOutputRange(minRange, maxRange);
-  }
-
-  public void retractFrontPistons() {
-    frontController.setSetpoint(RobotConstants.FRONT_PISTON_ENCODER_START);
-  }
-
-  public void retractBackPistons() {
-    backController.setSetpoint(RobotConstants.BACK_PISTON_ENCODER_START);
-    backPistonsRetracted = true;
   }
 
   public boolean isFinished() {
@@ -115,9 +72,6 @@ public class Climber extends Subsystem {
     //   && MathUtils.doublesEqual(backEncoder.get(), backEncoderEnd, finishTolerance);
   }
 
-  @Override
-  public void initDefaultCommand() {
-  }
 
   /**
    * Returns the front PIDController
@@ -134,6 +88,39 @@ public class Climber extends Subsystem {
   public PIDController getBackController() {
     return backController;
   }
+
+  public int getFrontTalonPosition(){
+    return frontTalon.getSensorCollection().getQuadraturePosition();
+  }
+
+  public int getBackTalonPosition(){
+    return backTalon.getSensorCollection().getQuadraturePosition();
+  }
+
+  /**
+   * Enables the PIDControllers to get them running
+   * 
+   * @param setPoint the desired end goal of the piston climb
+   */
+  public void enableClimberPIDControllers(int setPoint){
+    frontController.setOutputRange(RobotConstants.MINIMUM_PISTON_POWER, RobotConstants.MAXIMUM_PISTON_POWER);
+    frontController.setAbsoluteTolerance(RobotConstants.CLIMBER_ENCODER_TOLERANCE);
+    frontController.setContinuous(false);
+    frontController.setSetpoint(setPoint);
+    frontController.enable();
+
+    backController.setOutputRange(RobotConstants.MINIMUM_PISTON_POWER, RobotConstants.MAXIMUM_PISTON_POWER);
+    backController.setAbsoluteTolerance(RobotConstants.CLIMBER_ENCODER_TOLERANCE);
+    backController.setContinuous(false);
+    backController.setSetpoint(setPoint);
+    backController.enable();
+  }
+
+  @Override
+  public void initDefaultCommand() {
+    
+  }
+
 
 }
 // TODO

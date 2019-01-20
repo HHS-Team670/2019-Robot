@@ -55,10 +55,15 @@ public class RobotConstants {
     public static final double MINIMUM_PISTON_POWER = 0.1;
     public static final double MAXIMUM_PISTON_POWER = 0.75;  
     public static final int CLIMBER_ENCODER_TOLERANCE = 10;
-    //tick values at retracted position
-    public static final int FRONT_PISTON_ENCODER_START = 0;
-    public static final int BACK_PISTON_ENCODER_START = 0;
-    //tick values at extended position
-    public static final int FRONT_PISTON_ENCODER_END = 0;
-    public static final int BACK_PISTON_ENCODER_END = 0;
+    
+    //Fully retracted
+    public static final int PISTON_ENCODER_FLAT = 0;
+
+    //Halfway extended
+    public static final int PISTON_ENCODER_LEVEL_TWO = 0;
+
+    //Fully extended
+    public static final int PISTON_ENCODER_LEVEL_THREE= 0;
+
+    public static final int TILT_TOLERANCE = 0;
 }
