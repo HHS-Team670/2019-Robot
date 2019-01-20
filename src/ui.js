@@ -14,7 +14,7 @@ var ui = {
 };
 
 // naming convention starts from the midfield line and counts towards the alliance station
-let allEndpoints = [
+/* let allEndpoints = [
   "left-rocket-middle-1", "left-rocket-middle-2", "left-rocket-middle-3",
   "left-rocket-bottom-1", "left-rocket-bottom-2", "left-rocket-bottom-3",
   "right-rocket-middle-1", "right-rocket-middle-2", "right-rocket-middle-3",
@@ -31,6 +31,15 @@ let allEndpoints = [
   "right-loading-ball", "right-loading-plate",
   "left-depot", "right-depot",
   "hab-level-1", "left-hab-level-2", "right-hab-level-2", "hab-level-3"
+]; */
+
+let allLocations = [
+  'left-rocket-1', 'left-rocket-2', 'left-rocket-3',
+  'left-loading', 'left-depot',
+  'left-cargo-1', 'left-cargo-2', 'left-cargo-3', 'left-cargo-4',
+  'right-rocket-1', 'right-rocket-2', 'right-rocket-3',
+  'right-loading', 'right-depot',
+  'right-cargo-1', 'right-cargo-2', 'right-cargo-3', 'right-cargo-4'
 ];
 var endpoints = [];
 
@@ -65,7 +74,7 @@ window.onkeyup = function(event) {
     if (key == '9') {
       keys.pop();
     } else {
-      if (keys.length % 2 == 1 && key == 'w') finalize();
+      if (keys.length % 2 == 0 && key == 'w') finalize();
       if (keys.length < 4) {
         if (keys.length % 2 == 0 && getRobotLocation(key) != null) keys.push(key);
         else if (keys.length % 2 == 1 && getHeight(key) != null) keys.push(key);
@@ -82,30 +91,38 @@ window.onkeyup = function(event) {
       highlight(getRobotLocation(keys[0]), 'white');
     }
     if (keys.length > 1) {
-      var endpoint = getEndpoint(getRobotLocation(keys[0]), getHeight(keys[1]));
-      if (endpoint == null) keys.pop();
+      var location = getRobotLocation(keys[0]);
+      var height;
+      if (location.includes('depot')) height = 'depot';
       else {
-        var location = getRobotLocation(keys[0]);
-        highlight(location, 'green');
-        endpoints.push(endpoint);
-        var startText = document.getElementById('start-text');
-        positionText(startText, location);
-        startText.innerHTML = getHeight(keys[1]).split('-')[1].charAt(0).toUpperCase();
+        height = getHeight(keys[1]);
+        if (height == null) keys.pop();
+        else {
+          highlight(location, 'green');
+          endpoints.push([location, height]);
+          var startText = document.getElementById('start-text');
+          positionText(startText, location);
+          startText.innerHTML = getHeight(keys[1]).split('-')[1].charAt(0).toUpperCase();
+        }
       }
     }
     if (keys.length > 2) {
       highlight(getRobotLocation(keys[2]), 'white');
     }
     if (keys.length > 3) {
-      var endpoint = getEndpoint(getRobotLocation(keys[2]), getHeight(keys[3]));
-      if (endpoint == null) keys.pop();
+      var location = getRobotLocation(keys[2]);
+      var height;
+      if (location.includes('depot')) height = 'depot';
       else {
-        var location = getRobotLocation(keys[2]);
-        highlight(location, 'red');
-        endpoints.push(endpoint);
-        var endText = document.getElementById('end-text');
-        positionText(endText, location);
-        endText.innerHTML = getHeight(keys[3]).split('-')[1].charAt(0).toUpperCase();
+        height = getHeight(keys[3]);
+        if (height == null) keys.pop();
+        else {
+          highlight(location, 'red');
+          endpoints.push([location, height]);
+          var endText = document.getElementById('end-text');
+          positionText(endText, location);
+          endText.innerHTML = getHeight(keys[3]).split('-')[1].charAt(0).toUpperCase();
+        }
       }
     }
 }
@@ -145,11 +162,11 @@ function getRobotLocation(key) {
 function getHeight(key) {
   if (key == 'a') return 'rocket-middle';
   if (key == 'b') return 'rocket-bottom';
-  if (key == 'j') return 'cargo-ball';
+  if (key == 'j') return 'cargo-cargo';
   if (key == 'k') return 'cargo-plate';
-  if (key == 's') return 'loading-ball';
+  if (key == 's') return 'loading-cargo';
   if (key == 't') return 'loading-plate';
-  // return null;
+  return null;
 }
 
 // combines location and height to return an endpoint
@@ -179,11 +196,13 @@ function highlight(toHighlight, color) {
 }
 
 function clearHighlight() {
-  var len = allEndpoints.length;
+  var len = allLocations.length;
   for (var i = 0; i < len; i++) {
-    var endpoint = allEndpoints[i];
+    var endpoint = allLocations[i];
     document.getElementById(endpoint).style.fill = `rgb(0,0,0)`;
   }
+  document.getElementById('start-text').innerHTML = '';
+  document.getElementById('end-text').innerHTML = '';
 }
 
 function positionText(text, position) {
@@ -208,9 +227,10 @@ function positionText(text, position) {
 }
 
 function finalize() {
-  document.getElementById('test').innerHTML = endpoints.length;
+  document.getElementById('test').innerHTML = endpoints;
   NetworkTables.putValue('/SmartDashboard/endpoints', endpoints);
   keys = [];
+  clearHighlight();
 
   // highlight(getMap(keys[0]), 'green');
   // highlight(getMap(keys[1]), 'red');

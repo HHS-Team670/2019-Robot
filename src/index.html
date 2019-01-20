@@ -46,7 +46,7 @@
       <rect id="left-depot" x="50" y="260" width="30" height="30"/>
       <rect id="right-loading" x="260" y="260" width="30" height="30"/>
       <rect id="right-depot" x="210" y="260" width="30" height="30"/>
-      <text id="start-text" x="0" y="0" style="text-anchor: middle"></text>
+      <text id="start-text" x="0" y="0" fill="black" style="text-anchor: middle"> </text>
       <text id="end-text" x="0" y="0" style="text-anchor: middle"></text>
     </svg>
 
@@ -73,6 +73,13 @@
     </svg>
 
     <div id="camera"></div>
+
+    <svg id="status-lights" width="200" height="10">
+      <circle id="vision-status" cx="0%" cy="50%" r="5"/>
+      <circle id="auton-status" cx="33%" cy="50%" r="5"/>
+      <circle id="intake-status" cx="66%" cy="50%" r="5"/>
+      <circle id="arm-status" cx="100%" cy="50%" r="5"/>
+    </svg>
 
     <div id="login">
         <input id="connect-address" type="text" value="localhost" disabled>
