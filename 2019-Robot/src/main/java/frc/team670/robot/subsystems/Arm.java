@@ -36,7 +36,6 @@ public class Arm extends Subsystem {
   private static ArmState currentState;
 
   public Arm() {
-    // Motor Setup TODO needs to be finished, and add PID controllers.
     
     // State Setup
     currentState = new Neutral(); //Default state
@@ -77,8 +76,8 @@ public class Arm extends Subsystem {
    * left the variable stuff as parameters for now
    */
   public Point2D.Double getPosition(double extensionLength, double wristAngle, double elbowAngle) {
-    double x = extensionLength * Math.sin(elbowAngle) + RobotConstants.clawRadius * Math.sin(wristAngle);
-    double y = extensionLength * Math.cos(elbowAngle) + RobotConstants.clawRadius * Math.cos(wristAngle) + RobotConstants.armBaseHeight;
+    double x = extensionLength * Math.sin(elbowAngle) + RobotConstants.CLAW_RADIUS * Math.sin(wristAngle);
+    double y = extensionLength * Math.cos(elbowAngle) + RobotConstants.CLAW_RADIUS * Math.cos(wristAngle) + RobotConstants.ARM_START_HEIGHT;
     return new Point2D.Double(x, y);
   }
 
@@ -152,6 +151,28 @@ public class Arm extends Subsystem {
       ArmState state2 = (ArmState)other;
       return (int)(Math.sqrt((this.coord.getX()-state2.coord.getX())*(this.coord.getX()-state2.coord.getX())+(this.coord.getY()-state2.coord.getY())*(this.coord.getY()-state2.coord.getY())));
     }
+  }
+
+  /**
+   * Sets the peak current limit for the elbow motor.
+   * @param current Current in amps
+   */
+  public void setElbowCurrentLimit(int current) {
+    elbowRotationMain.configPeakCurrentLimit(RobotConstants.PEAK_AMPS, RobotConstants.TIMEOUT_MS); // Peak Limit at 0
+    elbowRotationMain.configPeakCurrentDuration(RobotConstants.PEAK_TIME_MS, RobotConstants.TIMEOUT_MS); // Duration at over peak set to 0
+    elbowRotationMain.configContinuousCurrentLimit(current, RobotConstants.TIMEOUT_MS);
+  }
+
+  public void enableElbowCurrentLimit() {
+    elbowRotationMain.enableCurrentLimit(true);
+  }
+
+  public void disableElbowCurrentLimit() {
+    elbowRotationMain.enableCurrentLimit(false);
+  }
+
+  public void setElbowOutput(double output){
+    elbowRotationMain.set(ControlMode.PercentOutput, output);
   }
 
   private class Neutral extends ArmState {

@@ -9,8 +9,8 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.NetworkTableType;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
-import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.utils.functions.MathUtils;
+import frc.team670.robot.constants.RobotConstants;
 
 /**
  * Stores values off of NetworkTables for easy retrieval and gives them Listeners to update the stored values
@@ -23,14 +23,14 @@ public class MustangPi {
     private VisionValues wallTarget; 
 
     // The keys for the NetworkTable entries that the raspberry pi is putting up. Ensure that these are placed on the raspi also. Maybe make a shared config file
-    private static final String[] raspiKeys = new String[] {"reflect_tape_vision_data"}; // Placeholder key. IRL use wallTarget, highTarget, etc.
+    private static final String[] RASPI_KEYS = new String[] {"reflect_tape_vision_data"};
     // The name of the subtable set on the raspberry pi
-    private static final String tableName = "raspberryPi";
+    private static final String TABLE_NAME = "raspberryPi";
 
     // TODO Literally all of this code below needs a review from someone who knows what they're talking about - Shaylan
 
     public MustangPi() {
-        this(raspiKeys);
+        this(RASPI_KEYS);
     }
 
     private MustangPi(String[] keys) {
@@ -38,7 +38,7 @@ public class MustangPi {
         for(String key : keys){
            entries.put(key, new NetworkTableObject(key));
         }
-        wallTarget = new VisionValues(raspiKeys[0]);
+        wallTarget = new VisionValues(RASPI_KEYS[0]);
     }
 
     private class NetworkTableObject {
@@ -51,7 +51,7 @@ public class MustangPi {
          */
         public NetworkTableObject(String key) {
             NetworkTableInstance instance = NetworkTableInstance.getDefault();
-            NetworkTable table = instance.getTable(tableName);
+            NetworkTable table = instance.getTable(TABLE_NAME);
             entry = instance.getEntry(key);
             table.addEntryListener(key, (table2, key2, entry, value, flags) -> {
                 this.entry = entry;
@@ -61,7 +61,7 @@ public class MustangPi {
 
         /**
          * Gets the value of the entry, this will be returned as a Double Array. Make sure to have a try/catch block for the Exception
-         * @return A Double Array with the value or values last received from the pi.
+         * @return A Double Array with the value or values last received from the pi. Fills with Vision Error Code if it can't get it
          */
         public double[] getValue() {
             if(entry.getType().equals(NetworkTableType.kDouble)) {
@@ -69,7 +69,7 @@ public class MustangPi {
             } else if(entry.getType().equals(NetworkTableType.kDoubleArray)) {
                 return entry.getDoubleArray(new double[]{RobotConstants.VISION_ERROR_CODE, RobotConstants.VISION_ERROR_CODE, RobotConstants.VISION_ERROR_CODE});
             } else {
-                return new double[]{RobotConstants.VISION_ERROR_CODE, RobotConstants.VISION_ERROR_CODE, RobotConstants.VISION_ERROR_CODE};
+                return new double[] {RobotConstants.VISION_ERROR_CODE, RobotConstants.VISION_ERROR_CODE, RobotConstants.VISION_ERROR_CODE};
             }
         }
 
@@ -91,6 +91,14 @@ public class MustangPi {
      */
     public VisionValue_PIDSource getDistanceToWallTarget() {
         return wallTarget.getDistance_PIDSource();
+    }
+
+    public double[] getVisionValues() {
+        if(entries == null) {
+            System.out.println("entries null");
+            return null;
+        }
+        return entries.get(RASPI_KEYS[0]).getValue();
     }
 
     /**
@@ -179,9 +187,9 @@ public class MustangPi {
             if (entries.get(key)==null) {
                 return RobotConstants.VISION_ERROR_CODE; // If no data found, returns VISION_ERROR_CODE
             }
-            return entries.get(key).getValue()[index];
+            double result = entries.get(key).getValue()[index];
+            return result;
         }
-
     }
 
 }

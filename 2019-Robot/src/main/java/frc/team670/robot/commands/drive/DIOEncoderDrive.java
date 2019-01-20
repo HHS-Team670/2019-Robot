@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.commands.auto;
+package frc.team670.robot.commands.drive;
 
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.Command;
@@ -40,6 +40,9 @@ public class DIOEncoderDrive extends Command {
 
     Logger.consoleLog("leftStartingPosition:%s rightStartingPosition:%s ", Robot.driveBase.getLeftDIOEncoderPosition(),
      Robot.driveBase.getRightDIOEncoderPosition());
+
+    leftPIDController.enable();
+    rightPIDController.enable();
   }
 
   // Called repeatedly when this Command is scheduled to run

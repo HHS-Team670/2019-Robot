@@ -8,7 +8,7 @@
 
 
 
-package frc.team670.robot.commands.auto;
+package frc.team670.robot.commands.drive;
 
 import java.io.File;
 
@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.utils.Logger;
+import frc.team670.robot.utils.functions.MathUtils;
 import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Trajectory;
 import jaci.pathfinder.Waypoint;
@@ -36,13 +37,19 @@ public class DriveMotionProfile extends Command {
   private Trajectory trajectory;
   private TankModifier modifier;
   private EncoderFollower left, right;
-  private final int TICKS_PER_ROTATION = 4096;
   // Max Velocities in m/s. For generation, we need it to be lower than the actual max velocity, 
   // otherwise we get motor outputs >1.0 and <-1.0 which makes us unable to turn properly.
-  private static final double real_maxVelocity = 0.8, generation_MaxVelocity = 0.8;
   private static final String BASE_PATH_NAME = "home/deploy/";
+  private static final double MAX_VELOCITY = 120, MAX_ACCELERATION = 60, MAX_JERK = 60; // Equivalent units in inches
+  private static final double TIME_STEP = 0.05;
+  private static final double WHEEL_BASE = 25; //Inches
+  private static final double ANGLE_DIVIDE_CONSTANT = 240.0; // Default = 80
+
+
+  private static final double P = 0.5, I = 0, D = 0, KA= 0;
+
   // Values for logging purposes
-  private final int executeLogInterval = 8;
+  private final int EXECUTE_LOG_INTERVAL = 8;
   private long executeCount;
   private boolean isReversed;
 
@@ -58,13 +65,9 @@ public class DriveMotionProfile extends Command {
 
     this.waypoints = waypoints.clone();
 
-    config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, (0.02), (generation_MaxVelocity), (2.0), 60.0);
+    config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, TIME_STEP, MAX_VELOCITY, MAX_ACCELERATION, MAX_JERK);
     trajectory = Pathfinder.generate(waypoints, config);
-    modifier = new TankModifier(trajectory).modify(RobotConstants.DRIVEBASE_TRACK_WIDTH );
-
-     // TODO In the future maybe do this in initialize so when the Command is rerun it starts over
-    left = new EncoderFollower(modifier.getLeftTrajectory());
-    right= new EncoderFollower(modifier.getRightTrajectory());
+    modifier = new TankModifier(trajectory).modify(WHEEL_BASE);
 
   }
 
@@ -102,14 +105,10 @@ public class DriveMotionProfile extends Command {
     else {
       // Set the max velocity to something lower than the actual max velocity, otherwise we get motor outputs >1.0 and <-1.0 which makes us unable to turn properly
       // For here let's set it to 
-      config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, (0.02), (generation_MaxVelocity), (2.0), 60.0);
+      config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, TIME_STEP, MAX_VELOCITY, MAX_ACCELERATION, MAX_JERK);
       trajectory = Pathfinder.generate(waypoints, config);
     }
-
-    modifier = new TankModifier(trajectory).modify(RobotConstants.DRIVEBASE_TRACK_WIDTH);
-    left = new EncoderFollower(modifier.getLeftTrajectory());
-    right= new EncoderFollower(modifier.getRightTrajectory());
-
+    modifier = new TankModifier(trajectory).modify(WHEEL_BASE);
   }
 
   // Called just before this Command runs the first time
@@ -119,6 +118,10 @@ public class DriveMotionProfile extends Command {
     // TODO make sure angle actually serts to zero (firmware update NavX)
     // TODO Think through what we want out of angle, maybe go off an initial angle
     Robot.sensors.resetNavX();
+
+    // For real matches instantiate this in constructor.
+    left = new EncoderFollower(modifier.getLeftTrajectory());
+    right= new EncoderFollower(modifier.getRightTrajectory());
 
     double initialLeftEncoder, initialRightEncoder;
     if(isReversed) {
@@ -139,11 +142,11 @@ public class DriveMotionProfile extends Command {
     // Wheel Diameter is the diameter of your wheels (or pulley for a track system) in meters
 
     if(isReversed){
-      left.configureEncoder(-1 * Robot.driveBase.getLeftDIOEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.WHEEL_DIAMETER);
-      right.configureEncoder(-1 * Robot.driveBase.getRightDIOEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.WHEEL_DIAMETER);  
+      left.configureEncoder(-1 * Robot.driveBase.getLeftDIOEncoderPosition(), RobotConstants.DIO_TICKS_PER_ROTATION, RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
+      right.configureEncoder(-1 * Robot.driveBase.getRightDIOEncoderPosition(), RobotConstants.DIO_TICKS_PER_ROTATION, RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);  
     } else{
-      left.configureEncoder(Robot.driveBase.getLeftDIOEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.WHEEL_DIAMETER);
-      right.configureEncoder(Robot.driveBase.getRightDIOEncoderPosition(), TICKS_PER_ROTATION, RobotConstants.WHEEL_DIAMETER);  
+      left.configureEncoder(Robot.driveBase.getLeftDIOEncoderPosition(), RobotConstants.DIO_TICKS_PER_ROTATION, RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
+      right.configureEncoder(Robot.driveBase.getRightDIOEncoderPosition(), RobotConstants.DIO_TICKS_PER_ROTATION, RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);  
     }
 
     // The first argument is the proportional gain. Usually this will be quite high
@@ -152,8 +155,8 @@ public class DriveMotionProfile extends Command {
     // The fourth argument is the velocity ratio. This is 1 over the maximum velocity you provided in the 
     //      trajectory configuration (it translates m/s to a -1 to 1 scale that your motors can read)
     // The fifth argument is your acceleration gain. Tweak this if you want to get to a higher or lower speed quicker
-    left.configurePIDVA(1.0, 0.0, 0.0, (1) / (generation_MaxVelocity), (0.0));
-    right.configurePIDVA(1.0, 0.0, 0.0, (1) / (generation_MaxVelocity), (0.0));
+    left.configurePIDVA(P, I, D, (1 / MAX_VELOCITY), KA);
+    right.configurePIDVA(P, I, D, (1 / MAX_VELOCITY), KA);
 
     Logger.consoleLog("Initialized DriveMotionProfile: InitialLeftEncoder: %s, InitialRightEncoder: %s, InitialAngle: %s", initialLeftEncoder, initialRightEncoder, Robot.sensors.getYawDouble());
 
@@ -185,6 +188,7 @@ public class DriveMotionProfile extends Command {
     double r = right.calculate(rightEncoder);
     
     // Calculates the angle offset for PID
+    // It tracks the wrong angle (mirrors the correct one)
     double gyroHeading;
     if(isReversed) {
       gyroHeading = Pathfinder.boundHalfDegrees(-1 * Robot.sensors.getYawDoubleForPathfinder());   // Assuming the gyro is giving a value in degrees
@@ -197,9 +201,8 @@ public class DriveMotionProfile extends Command {
     double angleDifference = Pathfinder.boundHalfDegrees(desiredHeading - gyroHeading);    
     
     // Making this constant higher helps prevent the robot from overturning (overturning also will make it not drive far enough in the correct direction)
-    double angleDivideConstant = 240.0; // Default = 80
     // TODO MAKE THE -1 HERE MATCH uP WITH THE DIRECTION THE ROBOT SHOULD TURN
-    double turn = 0.8 * (-1.0/angleDivideConstant) * angleDifference;
+    double turn = 0.8 * (-1.0/ANGLE_DIVIDE_CONSTANT) * angleDifference;
     
     double leftOutput = l + turn;
     double rightOutput = r - turn;
@@ -208,7 +211,7 @@ public class DriveMotionProfile extends Command {
     Robot.driveBase.tankDrive(leftOutput, rightOutput, false); 
 
     if(executeCount % 5 == 0) {
-      Logger.consoleLog("Execute: gyroHeading: %s, desiredHeading: %s, angleDifference: %s, angleDivideConstant: %s, turn: %s, leftOuput: %s, rightOutput: %s", gyroHeading, desiredHeading, angleDifference, angleDivideConstant, turn, leftOutput , rightOutput) ;
+      Logger.consoleLog("Execute: gyroHeading: %s, desiredHeading: %s, angleDifference: %s, angleDivideConstant: %s, turn: %s, leftOuput: %s, rightOutput: %s", gyroHeading, desiredHeading, angleDifference, ANGLE_DIVIDE_CONSTANT, turn, leftOutput , rightOutput) ;
     }
 
     executeCount++;
@@ -225,8 +228,8 @@ public class DriveMotionProfile extends Command {
   @Override
   protected void end() {
     Robot.driveBase.stop();
-    Logger.consoleLog("Ended. EndingAngle: %s, EndingLeftTicks: %s, EndingRightTicks: %s", Pathfinder.boundHalfDegrees(Robot.sensors.getYawDoubleForPathfinder()), 
-                     (Robot.driveBase.getLeftDIOEncoderPosition() - initialLeftEncoder), (Robot.driveBase.getRightDIOEncoderPosition() - initialRightEncoder));
+    Logger.consoleLog("Ended. EndingAngle: %s, LeftTicksTraveled: %s, RightTicksTraveled: %s, DistanceTraveled: %s", Pathfinder.boundHalfDegrees(Robot.sensors.getYawDoubleForPathfinder()), 
+                     (Robot.driveBase.getLeftDIOEncoderPosition() - initialLeftEncoder), (Robot.driveBase.getRightDIOEncoderPosition() - initialRightEncoder), MathUtils.convertDriveBaseTicksToInches(MathUtils.average((double)(Robot.driveBase.getLeftDIOEncoderPosition() - initialLeftEncoder), (double)(Robot.driveBase.getRightDIOEncoderPosition() - initialRightEncoder))));
   }
 
   // Called when another command which requires one or more of the same

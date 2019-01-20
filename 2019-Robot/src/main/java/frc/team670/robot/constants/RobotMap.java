@@ -18,26 +18,36 @@ import edu.wpi.first.wpilibj.SerialPort.Port;
  */
 public class RobotMap {
 
+  // TODO set all of these.
+
+  // Do not put Talon or other CTRE things to CAN ID 0 because that's the PDP. CAN conflicts are only within device families.
+
+  public static int PDP_ID = 0;
+
   // Drive Base
-  public static final int sparkLeftMotor1 = 0;
-  public static final int sparkLeftMotor2 = 1;
-  public static final int sparkRightMotor1 = 2;
-  public static final int sparkRightMotor2 = 3;
+  public static final int SPARK_LEFT_MOTOR_1 = 0; // These are properly set.
+  public static final int SPARK_LEFT_MOTOR_2 = 1;
+  public static final int SPARK_RIGHT_MOTOR_1 = 2;
+  public static final int SPARK_RIGHT_MOTOR_2 = 3;
+    //Encoders
+    public static final int LEFT_ENCODER_CHANNEL_A = 0; // These are properly set
+    public static final int LEFT_ENCODER_CHANNEL_B = 1;
+    public static final int RIGHT_ENCODER_CHANNEL_A = 2;
+    public static final int RIGHT_ENCODER_CHANNEL_B = 3;
 
   // Arm
-  public static final int armTranslationMotor = 4;
-  public static final int armExtensionMotor = 5;
-  public static final int armElbowRotationMotorTalon = 6;
-  public static final int armElbowRotationMotorVictor = 7;
-  public static final int armWristRotation = 8;
-  //Encoders
-  public static final int leftEncoderChannelA = 0;
-  public static final int leftEncoderChannelB = 1;
-  public static final int rightEncoderChannelA = 2;
-  public static final int rightEncoderChannelB = 3;
+  public static final int ARM_TRANSLATION_MOTOR = 4;
+  public static final int ARM_EXTENSION_MOTOR = 5;
+  public static final int ARM_ELBOW_ROTATION_MOTOR_TALON = 6;
+  public static final int ARM_ELBOW_ROTATION_MOTOR_VICTOR = 7;
+  public static final int ARM_WRIST_ROTATION = 8;
+
+  // Climber
+  public static final int BACK_CLIMBER_PISTON_CONTROLLER = 14;
+  public static final int FRONT_CLIMBER_PISTON_CONTROLLER = 15;
   
   // Sensor Ports
-  public final static Port navXPort = SerialPort.Port.kUSB;
+  public final static Port NAVX_PORT = SerialPort.Port.kUSB;
 
   // Joysticks
   public static final int DRIVER_CONTROLLER_PORT = 0;

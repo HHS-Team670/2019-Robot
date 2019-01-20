@@ -7,25 +7,25 @@
 
 package frc.team670.robot.subsystems;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import com.revrobotics.CANEncoder;
-import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.ControlType;
 
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.Encoder;
 import frc.team670.robot.commands.drive.XboxRocketLeagueDrive;
-import frc.team670.robot.utils.functions.MathUtils;
 import frc.team670.robot.constants.RobotConstants;
-
 import frc.team670.robot.constants.RobotMap;
+import frc.team670.robot.utils.functions.MathUtils;
 
 /**
  * Represents a tank drive base.
@@ -34,7 +34,7 @@ import frc.team670.robot.constants.RobotMap;
  */
 public class DriveBase extends Subsystem {
 
-  private static final int velocityPIDSlot = 1, encodersPIDSlot = 2;
+  private static final int VELOCITY_PID_SLOT = 1, encodersPIDSlot = 2;
 
   private CANSparkMax left1, left2, right1, right2;
   private SpeedControllerGroup left, right;
@@ -42,54 +42,62 @@ public class DriveBase extends Subsystem {
   private List<CANSparkMax> leftControllers, rightControllers;
   private List<CANSparkMax> allMotors;
   private Encoder leftDIOEncoder, rightDIOEncoder;
-  private final double P = 1, I = 0, D = 0, FF = 0;
+  private final double P_P = 0.1, P_I = 1E-4, P_D = 1, P_FF = 0; // Position PID Values. Set based off the default in REV Robotics example code.
+  private final double V_P = 5E-5, V_I = 1E-5, V_D = 0, V_FF = 0; // Velocity PID Values. Set based off the default in REV Robotics example code.
+
 
   public DriveBase() {
-    // left1 = new CANSparkMax(RobotMap.sparkLeftMotor1, CANSparkMaxLowLevel.MotorType.kBrushless);
-    // left2 = new CANSparkMax(RobotMap.sparkLeftMotor2, CANSparkMaxLowLevel.MotorType.kBrushless);
-    // right1 = new CANSparkMax(RobotMap.sparkRightMotor1, CANSparkMaxLowLevel.MotorType.kBrushless);
-    // right2 = new CANSparkMax(RobotMap.sparkRightMotor2, CANSparkMaxLowLevel.MotorType.kBrushless);
+    left1 = new CANSparkMax(RobotMap.SPARK_LEFT_MOTOR_1, CANSparkMaxLowLevel.MotorType.kBrushless);
+    left2 = new CANSparkMax(RobotMap.SPARK_LEFT_MOTOR_2, CANSparkMaxLowLevel.MotorType.kBrushless);
+    right1 = new CANSparkMax(RobotMap.SPARK_RIGHT_MOTOR_1, CANSparkMaxLowLevel.MotorType.kBrushless);
+    right2 = new CANSparkMax(RobotMap.SPARK_RIGHT_MOTOR_2, CANSparkMaxLowLevel.MotorType.kBrushless);
 
-    // leftControllers = Arrays.asList(left1,left2);
-    // rightControllers = Arrays.asList(right1, right2);
-    // allMotors.addAll(leftControllers);
-    // allMotors.addAll(rightControllers);
+    allMotors = new ArrayList<CANSparkMax>();
+    leftControllers = Arrays.asList(left1,left2);
+    rightControllers = Arrays.asList(right1, right2);
+    allMotors.addAll(leftControllers);
+    allMotors.addAll(rightControllers);
     
-    // setMotorsInvert(leftControllers, false); // We should not have to invert since DifferentialDrive inverts the right side for us.
-    // setMotorsInvert(rightControllers, false);
+    setMotorsInvert(leftControllers, false);
+     // Invert this so it will work properly with the CANPIDController 
+     // and then invert the SpeedController to compensate for automatic inversion.
+    setMotorsInvert(rightControllers, true);
 
-    // left2.follow(left1);
-    // right2.follow(right1);
+    left2.follow(left1);
+    right2.follow(right1);
 
-    // left = new SpeedControllerGroup(left1, left2);
-    // right = new SpeedControllerGroup(right1, right2);
+    left = new SpeedControllerGroup(left1, left2);
+    right = new SpeedControllerGroup(right1, right2);
+    // The DifferentialDrive inverts the right side automatically, however we want to invert straight from the Spark so that we can
+    // still use it properly with the CANPIDController, so we need to reverse the automatic invert.
+    right.setInverted(true);
 
-    // setMotorsBrushless(allMotors);
+    driveTrain = new DifferentialDrive(left, right);
+    driveTrain.setMaxOutput(1.0);
 
-    // driveTrain = new DifferentialDrive(left, right);
+    // Set PID Values
+    left1.getPIDController().setP(P_P, encodersPIDSlot);
+    left1.getPIDController().setI(P_I, encodersPIDSlot);
+    left1.getPIDController().setD(P_D, encodersPIDSlot);
+    left1.getPIDController().setFF(P_FF, encodersPIDSlot);
+    left1.getPIDController().setOutputRange(-1, 1);
 
-//     leftDIOEncoder = new Encoder(RobotMap.leftEncoderChannelA, RobotMap.leftEncoderChannelB);
-//     rightDIOEncoder = new Encoder(RobotMap.rightEncoderChannelA, RobotMap.rightEncoderChannelB);
+    right1.getPIDController().setP(V_P, VELOCITY_PID_SLOT);
+    right1.getPIDController().setI(V_I, VELOCITY_PID_SLOT);
+    right1.getPIDController().setD(V_D, VELOCITY_PID_SLOT);
+    right1.getPIDController().setFF(V_FF, VELOCITY_PID_SLOT);
 
-    double distancePerPulse = Math.PI * RobotConstants.WHEEL_DIAMETER* RobotConstants.DIO_TICKS_PER_ROTATION;
+    setRampRate(allMotors, 0.254); // Will automatically cook some Cheezy Poofs
+
+    // DIO Encoders
+    leftDIOEncoder = new Encoder(RobotMap.LEFT_ENCODER_CHANNEL_A, RobotMap.LEFT_ENCODER_CHANNEL_B, false, EncodingType.k4X);
+    rightDIOEncoder = new Encoder(RobotMap.RIGHT_ENCODER_CHANNEL_A, RobotMap.RIGHT_ENCODER_CHANNEL_B, false, EncodingType.k4X);
+
+    double distancePerPulse = (1/RobotConstants.DIO_TICKS_PER_ROTATION) * (Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
     leftDIOEncoder.setDistancePerPulse(distancePerPulse);
     rightDIOEncoder.setDistancePerPulse(distancePerPulse);
-    leftDIOEncoder.setReverseDirection(false); // TODO One of these will need to be reversed to fit with the motors, figure out which
-    rightDIOEncoder.setReverseDirection(true);
-
-//     left1.getPIDController().setP(P, encodersPIDSlot);
-//     left1.getPIDController().setI(I, encodersPIDSlot);
-//     left1.getPIDController().setD(D, encodersPIDSlot);
-//     left1.getPIDController().setFF(FF, encodersPIDSlot);
-//     left1.getPIDController().setOutputRange(-1, 1);
-
-//     right1.getPIDController().setP(P, encodersPIDSlot);
-//     right1.getPIDController().setI(I, encodersPIDSlot);
-//     right1.getPIDController().setD(D, encodersPIDSlot);
-//     right1.getPIDController().setFF(FF, encodersPIDSlot);
-//     right1.getPIDController().setOutputRange(-1, 1);
-
-
+    leftDIOEncoder.setReverseDirection(true); // These have been set properly.
+    rightDIOEncoder.setReverseDirection(false);
   }
 
   /**
@@ -211,19 +219,19 @@ public class DriveBase extends Subsystem {
   public void setSparkVelocityControl(double leftVel, double rightVel) {
     leftVel = MathUtils.convertInchesPerSecondToDriveBaseRoundsPerMinute(MathUtils.convertInchesToDriveBaseTicks(leftVel));
     rightVel = MathUtils.convertInchesPerSecondToDriveBaseRoundsPerMinute(MathUtils.convertInchesToDriveBaseTicks(rightVel));
-    left1.getPIDController().setReference(leftVel, ControlType.kVelocity, velocityPIDSlot);
-    right1.getPIDController().setReference(rightVel, ControlType.kVelocity, velocityPIDSlot);
+    left1.getPIDController().setReference(leftVel, ControlType.kVelocity, VELOCITY_PID_SLOT);
+    right1.getPIDController().setReference(rightVel, ControlType.kVelocity, VELOCITY_PID_SLOT);
   }
 
     /**
-   * Gets the encoder position of the front left motor in ticks.
+   * Gets the encoder position of the front left motor in motor revolutions.
    */
   public int getLeftSparkEncoderPosition(){
     return (int)left1.getEncoder().getPosition();
   }
 
   /**
-   * Gets the encoder position of the front right motor in ticks, this encoder gets more positive as it goes forward
+   * Gets the encoder position of the front right motor in motor revolutions.
    */
   public int getRightSparkEncoderPosition(){
     return (int)right1.getEncoder().getPosition();
@@ -424,5 +432,13 @@ public class DriveBase extends Subsystem {
   public List<CANSparkMax> getRightControllers(){
     return rightControllers;
   }
-}
 
+  /**
+   * @param rampRate The ramp rate in seconds from 0 to full throttle
+   */
+  public void setRampRate(List<CANSparkMax> motors, double rampRate) {
+    for(CANSparkMax m : motors) {
+      m.setRampRate(rampRate);
+    }
+  }
+}

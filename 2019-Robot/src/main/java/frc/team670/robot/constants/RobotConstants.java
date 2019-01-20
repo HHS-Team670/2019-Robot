@@ -1,16 +1,23 @@
 package frc.team670.robot.constants;
 
-import jaci.pathfinder.Trajectory;
-import jaci.pathfinder.Trajectory.FitMethod;
-import frc.team254.lib.util.control.*;
+import frc.team254.lib.util.control.Lookahead;
 
 public class RobotConstants {
 
     // Robot Dimensions
     public static final double ROBOT_LENGTH = 0, ROBOT_WIDTH = 0;
 
-    //TODO set wheel diameter and ticks per rotation.
-    public static final double WHEEL_DIAMETER_INCHES = 5, DIO_TICKS_PER_ROTATION = 4690, SPARK_TICKS_PER_ROTATION = 4960;
+    //Drive Base Dimensions TODO set these
+    public static final double DRIVEBASE_GEAR_RATIO = 8.45; // 8.45 if low gear, 10.71 if high gear. TODO check which one it is
+    /** Drive Base Wheel Diameter in Inches */
+    public static final double DRIVE_BASE_WHEEL_DIAMETER = 6;
+    /** Inches per rotation of the NEO motors on the drivebase */
+    public static final double DRIVEBASE_INCHES_PER_ROTATION = 1/DRIVEBASE_GEAR_RATIO * DRIVE_BASE_WHEEL_DIAMETER * Math.PI;
+    /** The number of ticks per rotation of a drivebase wheel for the DIO Encoders  */
+    public static final int DIO_TICKS_PER_ROTATION = 4096;
+
+    // LEDs
+    public static final int LED_PORT = 5801;
 
     // Vision Constants
     public static final double VISION_ERROR_CODE = -99999;
@@ -21,26 +28,25 @@ public class RobotConstants {
     public static final double PROPORTION = 0.2*KU;
     public static final double INTEGRAL = 0;//0.05*KU/TU;
     public static final double DERIVATIVE = 5*KU*TU/40;
-    public static final double DRIVEBASE_TRACK_WIDTH = 0; //TODO set this value
-    public static final double WHEEL_DIAMETER = 6;
-
-    // LED Constants
-    public static final int LED_PORT = 5810;
+    public static final double DRIVEBASE_TRACK_WIDTH = 25; //TODO set this value to the actual
 
     // Pure Pursuit Constants
-    public static final double minLookahead = 12.0; //Inches. TODO: set the value; 1 ft for now idk
-    public static final double maxLookahead = 18.0; //Inches. TODO: set this to something legit
-    public static final double pathFollowingMaxAccel = 0; //TODO: set value of this
-    public static final double segmentCompletionTolerance = 0; //TODO: set value of this
-    public static final double kTrackWidthInches = 0; //TODO: figure out what this is
-    public static final double kTrackScrubFactor = 0; //TODO: figure out what this is
-    public static final double minLookaheadSpeed = 0; //TODO: figure this out
-    public static final double maxLookaheadSpeed = 0; //TODO: figure this out
-    public static final Lookahead lookahead = new Lookahead(minLookahead, maxLookahead,
-    minLookaheadSpeed, maxLookaheadSpeed);
+    public static final double MIN_LOOKAHEAD = 12.0; //Inches. TODO: set the value; 1 ft for now idk
+    public static final double MAX_LOOKAHEAD = 18.0; //Inches. TODO: set this to something legit
+    public static final double PATH_FOLLOWING_MAX_ACCEL = 0; //TODO: set value of this
+    public static final double SEGMENT_COMPLETION_TOLERANCE = 0; //TODO: set value of this
+    public static final double KTRACK_WIDTH_INCHES = 0; //TODO: figure out what this is
+    public static final double KTRACK_SCRUB_FACTOR = 0; //TODO: figure out what this is
+    public static final double MIN_LOOKAHEAD_SPEED = 0; //TODO: figure this out
+    public static final double MAX_LOOKAHEAD_SPEED = 0; //TODO: figure this out
+    public static final Lookahead LOOKAHEAD = new Lookahead(MIN_LOOKAHEAD, MAX_LOOKAHEAD,
+    MIN_LOOKAHEAD_SPEED, MAX_LOOKAHEAD_SPEED);
 
-    // Arm constants
-    public static final double armBaseHeight = 0;
-    public static final double clawRadius = 0;
-
+    // Arm Constants
+    public static final double ARM_START_HEIGHT = 0;
+    public static final double CLAW_RADIUS = 0;
+    public static final int PEAK_AMPS = 0; // check the peak limit and set again
+    public static final int TIMEOUT_MS = 0; //  
+    public static final int PEAK_TIME_MS = 0; //  Duration after current exceed peak current to trigger current limit
+    public static final int TRIGGER_AMPS = 10; // TODO figure required limited current
 }

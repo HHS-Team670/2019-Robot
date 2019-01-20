@@ -5,31 +5,24 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.commands.auto;
+package frc.team670.robot.commands.drive;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.Robot;
-import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.functions.MathUtils;
 
 public class SparkCANPIDEncoderDrive extends Command {
 
-  private int inchesToTravel, ticksToTravel;
-  private double rotations;
+  private double inchesToTravel;
+  private double rotationsToTravel;
   private int leftStartingPosition, rightStartingPosition, leftEndingPosition, rightEndingPosition, leftCurrentPosition, rightCurrentPosition;
-  private double threshold = 300; // TODO Define threshold
+  private final double THRESHOLD = 1; // TODO Define threshold
 
   public SparkCANPIDEncoderDrive(int inchesToTravel) {
     requires (Robot.driveBase);
     this.inchesToTravel = inchesToTravel;
-
-    ticksToTravel = MathUtils.convertInchesToDriveBaseTicks(inchesToTravel);
-
-    rotations = ticksToTravel / RobotConstants.SPARK_TICKS_PER_ROTATION;
-
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
+    rotationsToTravel = MathUtils.convertInchesToDriveBaseRotations(inchesToTravel);
   }
 
   // Called just before this Command runs the first time
@@ -48,7 +41,7 @@ public class SparkCANPIDEncoderDrive extends Command {
     leftCurrentPosition = Robot.driveBase.getLeftSparkEncoderPosition();
     rightCurrentPosition = Robot.driveBase.getRightSparkEncoderPosition();
 
-    Robot.driveBase.setSparkEncodersControl(ticksToTravel, ticksToTravel); // Could be put into initialize
+    Robot.driveBase.setSparkEncodersControl(rotationsToTravel, rotationsToTravel); // Could be put into initialize
     
     // Also possibly takes in rotations not tick values
     Logger.consoleLog("lefCurrentPosition:%s rightCurrentPosition:%s ", leftCurrentPosition, rightCurrentPosition);
@@ -59,8 +52,8 @@ public class SparkCANPIDEncoderDrive extends Command {
   @Override
   protected boolean isFinished() {
 
-    if (Math.abs(Robot.driveBase.getLeftSparkEncoderPosition() - (ticksToTravel + leftStartingPosition)) <= threshold &&
-     Math.abs(Robot.driveBase.getRightSparkEncoderPosition() - (ticksToTravel + rightStartingPosition)) <= threshold ){
+    if (Math.abs(Robot.driveBase.getLeftSparkEncoderPosition() - (rotationsToTravel + leftStartingPosition)) <= THRESHOLD &&
+     Math.abs(Robot.driveBase.getRightSparkEncoderPosition() - (rotationsToTravel + rightStartingPosition)) <= THRESHOLD ){
       return true;
     }
     return false;
@@ -82,8 +75,7 @@ public class SparkCANPIDEncoderDrive extends Command {
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    Robot.driveBase.stop();
-
+    end();
     Logger.consoleLog("CANPIDEncoderDrive interrupted");
   }
 }
