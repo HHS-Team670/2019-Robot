@@ -28,18 +28,18 @@ NETWORK_KEY = "reflect_tape_vision_data" # TODO key for Shaylan's robot code vis
 
 # Variables (These should be changed to reflect the camera)
 capture_source = 0  # Number of port for camera, file path for video
-capture_color = 'x'  # Possible: r (Red), g (Green), b (Blue), y (Yellow), x (reflector tape), anything else: Red
-known_object_height = 7.375  # Height of the tape from the ground (in inches)
-known_camera_height = 2.5
+capture_color = 'g'  # Possible: r (Red), g (Green), b (Blue), y (Yellow), x (reflector tape), anything else: Red
+known_object_height = 8.75  # Height of the tape from the ground (in inches)
+known_camera_height = 1.5
 camera_fov_vertical = 39.7  # FOV of the camera (in degrees)
 camera_fov_horizontal = 60.0
-camera_vertical_angle = 2.1 # camera angle offset up or down
+camera_vertical_angle = 0.6 # camera angle offset up or down (positive=up, negative=down)
 camera_horizontal_angle = 0.0 # camera angle offset right left
-camera_horizontal_offset = 0.0 # camera horizontal offset distancewise in inches
+camera_horizontal_offset = 24 # camera horizontal offset distancewise in inches
 image_width = 1080  # Desired width of inputted image (for processing speed)
 screen_resize = 1  # Scale that the GUI image should be scaled to
 calibrate_angle = 0  # Test to calibrate the angle and see if that works
-exposure = -7
+exposure = -6
 timestamp = round(time.time() * 1000) # time in milliseconds
 
 # HSV Values to detect
@@ -47,7 +47,7 @@ min_hsv = [70, 230, 130]
 max_hsv = [150, 255, 255]
 
 # Min area to make sure not to pick up noise
-MIN_AREA = 100
+MIN_AREA = 320
 
 # Network table (by default returns error codes, but changes in program)
 returns = [ERROR, ERROR, timestamp]
@@ -119,7 +119,7 @@ def main():
 
         rect_x_midpoint, high_point = find_rectangle_highpoint(object_rects)
         vangle = find_vert_angle(input_image, high_point, vert_focal_length) # vangle - 'V'ertical angle
-        hangle = find_hor_angle(input_image, rect_x_midpoint, hor_focal_length) # hangle - 'H'orizontal angle
+        hangle = find_vert_angle(input_image, rect_x_midpoint, hor_focal_length, vertical=False) # hangle - 'H'orizontal angle
         depth = depth_from_angle(input_image, object_rects, vangle, hangle,
                                  known_object_height - known_camera_height)
 
@@ -253,7 +253,7 @@ def find_colored_object(image, capture_color='g', debug=False):
                                     np.array([125, 255, 255]))  # Blue
         elif capture_color == 'g':
             masked_image = cv2.inRange(hsv_image, np.array([35, 50, 50]),
-                                    np.array([80, 255, 255]))  # Green
+                                    np.array([60, 245, 255]))  # Green
             # Correct values: [58, 0, 254], [67, 62, 255]
         elif capture_color == 'x':
             masked_image = cv2.inRange(hsv_image, np.array(min_hsv), np.array(max_hsv))
