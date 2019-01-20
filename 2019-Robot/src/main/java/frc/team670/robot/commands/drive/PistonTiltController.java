@@ -31,6 +31,7 @@ public class PistonTiltController extends Command {
     tiltController.setSetpoint(0);
     tiltController.setAbsoluteTolerance(tolerance);
     tiltController.setOutputRange(tiltControllerLowerOutput, tiltControllerUpperOutput);
+    tiltController.enable();
   }
 
   // Called repeatedly when this Command is scheduled to run

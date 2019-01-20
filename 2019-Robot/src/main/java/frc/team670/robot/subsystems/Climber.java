@@ -65,11 +65,13 @@ public class Climber extends Subsystem {
     frontController.setSetpoint(frontEncoderEnd);
     frontController.setAbsoluteTolerance(finishTolerance);
     frontController.setContinuous(false);
+    frontController.enable();
 
     backController.setOutputRange(backPistonOutputs[0], backPistonOutputs[1]);
     backController.setSetpoint(backEncoderEnd);
     backController.setAbsoluteTolerance(finishTolerance);
     backController.setContinuous(false);
+    backController.enable();
   }
 
   /**
