@@ -4,14 +4,15 @@ import edu.wpi.first.wpilibj.command.*;
 
 import frc.team670.robot.Robot;
 
-public class SetElbowCurrentLimit extends Command{ 
+public class HoldElbowDownWithCurrentLimit extends Command {
+    private static final double elbowOutput = 1.0; // Might have to make this negative depending on how motors are oriented.
     private int currentLimit;
 
     /**
      * Sets the current limit for the arm
      * @param currentLimit the desired current limit
      */
-    public SetElbowCurrentLimit(int currentLimit){
+    public HoldElbowDownWithCurrentLimit(int currentLimit){
         super();
         requires(Robot.arm);
         this.currentLimit = currentLimit;
@@ -31,7 +32,7 @@ public class SetElbowCurrentLimit extends Command{
      */
     @Override
     protected void execute(){
-        Robot.arm.setElbowAtFullPower();
+        Robot.arm.setElbowOutput(elbowOutput);
     }
 
     /**

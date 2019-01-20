@@ -14,10 +14,8 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
-import edu.wpi.first.wpilibj.Talon;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import frc.team670.robot.Robot;
 import frc.team670.robot.commands.arm.armTransitions.ArmTransition;
 import frc.team670.robot.commands.arm.armTransitions.NeutralToCargoPickup;
 import frc.team670.robot.constants.RobotConstants;
@@ -167,22 +165,26 @@ public class Arm extends Subsystem {
     }
   }
 
-  public void setElbowCurrentLimit(int current){
-    elbowRotationMain.configPeakCurrentLimit(RobotConstants.PEAK_AMPS, RobotConstants.TIMEOUT_MS);
-    elbowRotationMain.configPeakCurrentDuration(RobotConstants.PEAK_TIME_MS, RobotConstants.TIMEOUT_MS);
+  /**
+   * Sets the peak current limit for the elbow motor.
+   * @param current Current in amps
+   */
+  public void setElbowCurrentLimit(int current) {
+    elbowRotationMain.configPeakCurrentLimit(RobotConstants.PEAK_AMPS, RobotConstants.TIMEOUT_MS); // Peak Limit at 0
+    elbowRotationMain.configPeakCurrentDuration(RobotConstants.PEAK_TIME_MS, RobotConstants.TIMEOUT_MS); // Duration at over peak set to 0
     elbowRotationMain.configContinuousCurrentLimit(current, RobotConstants.TIMEOUT_MS);
   }
 
-  public void enableElbowCurrentLimit(){
+  public void enableElbowCurrentLimit() {
     elbowRotationMain.enableCurrentLimit(true);
   }
 
-  public void disableElbowCurrentLimit(){
+  public void disableElbowCurrentLimit() {
     elbowRotationMain.enableCurrentLimit(false);
   }
 
-  public void setElbowAtFullPower(){
-    elbowRotationMain.set(ControlMode.PercentOutput, 1);
+  public void setElbowOutput(double output){
+    elbowRotationMain.set(ControlMode.PercentOutput, output);
   }
 
   private class Neutral extends ArmState {
