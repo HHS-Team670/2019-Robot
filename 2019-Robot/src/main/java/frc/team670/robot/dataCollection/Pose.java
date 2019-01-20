@@ -202,7 +202,8 @@ public Pose(double x, double y, double angle, int leftEncoderPosition, int right
    * Updates the field centric Pose that is stored
    */
   public static void updateFieldCentricPose() {
-    fieldCentricPose.update();
+    fieldCentricPose.update(Robot.driveBase.getLeftDIOEncoderPosition(), Robot.driveBase.getRightDIOEncoderPosition(), Robot.sensors.getFieldCentricYaw(),
+    Robot.driveBase.getLeftDIOEncoderVelocityTicks(), Robot.driveBase.getRightDIOEncoderVelocityTicks());
   }
 
   /**

@@ -53,9 +53,33 @@ public class XboxRocketLeagueDrive extends InstantCommand {
     }
 
     if(Robot.oi.isQuickTurnPressed()){
-      Robot.driveBase.curvatureDrive(speed, steer, Robot.oi.isQuickTurnPressed());
-    } else {
-      if (speed < 0.00001){
+
+      if(speed < -0.0001) {
+        if(!isReversed) {
+          Robot.driveBase.curvatureDrive(speed, -1 * steer, Robot.oi.isQuickTurnPressed());
+        }
+        else {
+          Robot.driveBase.curvatureDrive(speed, -1 * steer, Robot.oi.isQuickTurnPressed());
+        }
+      }
+      else if (speed > 0.0001){
+        if(!isReversed) {
+          Robot.driveBase.curvatureDrive(speed, steer, Robot.oi.isQuickTurnPressed());
+        }
+        else {
+          Robot.driveBase.curvatureDrive(speed, steer, Robot.oi.isQuickTurnPressed());
+        }
+      } else {
+        if(!isReversed) {
+          Robot.driveBase.curvatureDrive(speed, steer, Robot.oi.isQuickTurnPressed());
+        }
+        else {
+          Robot.driveBase.curvatureDrive(speed, -1 * steer, Robot.oi.isQuickTurnPressed());
+        }
+      }
+    }
+    else {
+      if (speed < -0.0001){
         Robot.driveBase.curvatureDrive(speed, -1 * steer, Robot.oi.isQuickTurnPressed());
       } else {
         Robot.driveBase.curvatureDrive(speed, steer, Robot.oi.isQuickTurnPressed());

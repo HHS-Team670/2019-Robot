@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team670.robot.commands.drive.NavXPivot;
 import frc.team670.robot.dataCollection.MustangPi;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.dataCollection.Pose;
@@ -43,6 +44,8 @@ public class Robot extends TimedRobot {
   public static Intake intake = new Intake();
   public static Claw claw = new Claw();
   public static Climber climber = new Climber();
+
+  private long periodCount = 0;
 
   Command autonomousCommand;
   SendableChooser<Command> auton_chooser = new SendableChooser<>();
@@ -105,7 +108,13 @@ public class Robot extends TimedRobot {
       
     // Logger.consoleLog("LeftEncoderPos: %s, RightEncoderPos: %s", driveBase.getLeftDIOEncoderPosition(), driveBase.getRightDIOEncoderPosition());
     // Logger.consoleLog("LeftEncoderVel: %s, RightEncoderVel: %s", driveBase.getLeftDIOEncoderVelocityInches(), driveBase.getRightDIOEncoderVelocityInches());
+      
+    // if(periodCount % 10 == 0) {
+    //   Logger.consoleLog("NavXYawReset: %s, NavXYawFieldCentric: %s", sensors.getYawDouble(), sensors.getFieldCentricYaw());
+    // }
+      SmartDashboard.putNumber("NavX Yaw", sensors.getYawDouble());
 
+    periodCount ++;
     leds.setClimbingData(true);//we climb
 
     // System.out.println("Voltage: "+(irSensor.getVoltage()));
@@ -144,7 +153,7 @@ public class Robot extends TimedRobot {
     Pose.instantiateFieldCentricPose(); // Commented out until motor controllers/encoders attached. Resets the Field Centric Pose of the robot for the start of the game.
 
     Logger.consoleLog("Auton Started");
-    autonomousCommand = auton_chooser.getSelected();
+    autonomousCommand = new NavXPivot(90);
 
     /*
      * String autoSelected = SmartDashboard.getString("Auto Selector",
