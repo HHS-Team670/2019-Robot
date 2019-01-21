@@ -124,7 +124,7 @@ public class Climber extends Subsystem {
   }
 
   public double getFrontTalonPositionTicks() {
-    return frontPistons.getSensorCollection().getQuadraturePosition();
+    return frontTalon.getSensorCollection().getQuadraturePosition();
   }
 
   public double getFrontTalonPositionInInches() {
