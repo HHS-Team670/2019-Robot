@@ -42,9 +42,32 @@ public class Arm extends Subsystem {
     currentState = new Neutral(); //Default state
     states = new HashMap<LegalState, ArmState>();
     states.put(LegalState.NEUTRAL, new Neutral());
-    states.put(LegalState.CARGO_PICKUP, new Neutral()); // This obviously needs to be changed
+    states.put(LegalState.START_BALL, new Neutral()); // This obviously needs to be changed
+    states.put(LegalState.START_HATCH, new Neutral());
+    states.put(LegalState.START_EMPTY, new Neutral()); 
+    states.put(LegalState.IN_BALLGROUNDF, new Neutral()); 
+    states.put(LegalState.IN_BALLSTATIONF, new Neutral());
+    states.put(LegalState.IN_BALLSTATIONB, new Neutral());
+    states.put(LegalState.IN_HATCHFSTATION, new Neutral()); 
+    states.put(LegalState.IN_HATCHBSTATION, new Neutral()); 
+    states.put(LegalState.IN_HATCHGROUNDB, new Neutral());//OOF
+    states.put(LegalState.PLACE_BALLCARGOF, new Neutral());
+    states.put(LegalState.PLACE_BALLCARGOB, new Neutral()); 
+    states.put(LegalState.PLACE_HATCHCARGOF, new Neutral());
+    states.put(LegalState.PLACE_HATCHCARGOB, new Neutral());
+    states.put(LegalState.PLACE_HATCHROCKETLOWF, new Neutral()); 
+    states.put(LegalState.PLACE_HATCHROCKETLOWB, new Neutral()); 
+    states.put(LegalState.PLACE_HATCHROCKETMEDF, new Neutral());
+    states.put(LegalState.PLACE_HATCHROCKETMEDB, new Neutral());
     /*
-     * Add in all of the states here.
+     *
+    NEUTRAL(0), START_BALL(1), START_HATCH(2), START_EMPTY(3), IN_BALLGROUNDF(4), IN_BALLSTATIONF(5),
+    IN_BALLSTATIONB(6), IN_HATCHFSTATION(7), IN_HATCHBSTATION(8), IN_HATCHGROUNDB(9),
+    PLACE_BALLCARGOF(10), PLACE_BALLCARGOB(11), PLACE_HATCHCARGOF(12), PLACE_HATCHCARGOB(13),
+    PLACE_HATCHROCKETLOWF(14), PLACE_HATCHROCKETLOWB(15), PLACE_HATCHROCKETMEDF(16), 
+    PLACE_HATCHROCKETMEDB(17), PLACE_BALLROCKETLOWF(18), PLACE_BALLROCKETLOWB(19), 
+    PLACE_BALLROCKETMEDF(20), PLACE_BALLROCKETMEDB(21), CLIMB_START(22), STOW(23), DEFENSE(24),
+    IN_BALLGROUNDB(25);
      */
 
   }
@@ -84,10 +107,17 @@ public class Arm extends Subsystem {
 
   /**
    * Represents the different possible states of the Arm
+   * //B for back, F for front
    */
   public enum LegalState {
-    NEUTRAL(0), CARGO_PICKUP(1);
-
+    NEUTRAL(0), START_BALL(1), START_HATCH(2), START_EMPTY(3), IN_BALLGROUNDF(4), IN_BALLSTATIONF(5),
+    IN_BALLSTATIONB(6), IN_HATCHFSTATION(7), IN_HATCHBSTATION(8), IN_HATCHGROUNDB(9),
+    PLACE_BALLCARGOF(10), PLACE_BALLCARGOB(11), PLACE_HATCHCARGOF(12), PLACE_HATCHCARGOB(13),
+    PLACE_HATCHROCKETLOWF(14), PLACE_HATCHROCKETLOWB(15), PLACE_HATCHROCKETMEDF(16), 
+    PLACE_HATCHROCKETMEDB(17), PLACE_BALLROCKETLOWF(18), PLACE_BALLROCKETLOWB(19), 
+    PLACE_BALLROCKETMEDF(20), PLACE_BALLROCKETMEDB(21), CLIMB_START(22), STOW(23), DEFENSE(24),
+    IN_BALLGROUNDB(25);
+    
     private final int ID;
 
     LegalState(int id) {

@@ -49,4 +49,8 @@ public class RobotConstants {
     public static final int TIMEOUT_MS = 0; //  
     public static final int PEAK_TIME_MS = 0; //  Duration after current exceed peak current to trigger current limit
     public static final int TRIGGER_AMPS = 10; // TODO figure required limited current
+
+    public static double MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 15000; // TODO set this
+    public static double MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS = 6000; // TODO set this
+
 }

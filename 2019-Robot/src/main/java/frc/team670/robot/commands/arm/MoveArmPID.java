@@ -7,20 +7,20 @@
 
 package frc.team670.robot.commands.arm;
 
-import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team670.robot.Robot;
 import frc.team670.robot.subsystems.Arm.ArmState;
+import edu.wpi.first.wpilibj.command.Command;
 
 /**
  * PID controlling of arm as wrist, extension and elbow
  * TODO: once the states are figured out we can do more
  * @author ctchen, arleenliu
  */
-public class MoveArmPID extends InstantCommand {
+public class MoveArmPID extends Command {
+
   private ArmState currentState;
-  /**
-   * Add your docs here.
-   */
+  private final double ANGLE_TOLERANCE, DISTANCE_TOLERANCE;
+
   public MoveArmPID(ArmState state) {
     super();
     requires(Robot.extension);
@@ -35,6 +35,26 @@ public class MoveArmPID extends InstantCommand {
     Robot.elbow.moveElbow(currentState.getElbowAngle());
     Robot.extension.moveExtension(currentState.getExtensionLength());
     Robot.wrist.moveWrist(currentState.getWristAngle());
+  }
+
+  @Override
+  protected void execute() {
+    super.execute();
+  }
+
+  @Override
+  protected boolean isFinished() {
+    return false;
+  }
+
+  @Override
+  protected void end() {
+    super.end();
+  }
+
+  @Override
+  protected void interrupted() {
+    super.interrupted();
   }
 
 }
