@@ -3,7 +3,8 @@ package frc.team670.robot.dataCollection;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team670.robot.constants.RobotMap;
-import frc.team670.robot.dataCollection.NavX.ZeroableNavX_PIDSource;
+import frc.team670.robot.dataCollection.NavX.NavX_Pitch_PIDSource;
+import frc.team670.robot.dataCollection.NavX.ZeroableNavX_Yaw_PIDSource;
 
 /**
  * Instantiates sensor representation objects and contains methods for accessing the sensor data.
@@ -62,6 +63,14 @@ public class MustangSensors extends Subsystem {
     }
   }
 
+  public double getPitchDouble() {
+    if(navXMicro != null) {
+      return navXMicro.getPitch();
+    } else{
+      return NAVX_ERROR_CODE;
+    }
+  }
+
   /**
    * 
    * Gets the yaw for Pathfinder since it needs it mirrored from the normal way. (180, -180). If NavX not connected, returns NAVX_ERROR_CODE
@@ -96,9 +105,16 @@ public class MustangSensors extends Subsystem {
     return navXMicro.getYawFieldCentric();
   }
 
-  public ZeroableNavX_PIDSource getZeroableNavXPIDSource() {
+  public ZeroableNavX_Yaw_PIDSource getZeroableNavXPIDSource() {
     if(navXMicro != null){
-      return navXMicro.getZeroableNavXPIDSource();
+      return navXMicro.getZeroableNavXYawPIDSource();
+    }
+    return null;
+  }
+
+  public NavX_Pitch_PIDSource getNavXPitchPIDSource() {
+    if(navXMicro != null){
+      return navXMicro.getNavXPitchPIDSource();
     }
     return null;
   }
