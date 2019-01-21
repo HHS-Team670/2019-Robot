@@ -24,19 +24,20 @@ import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.utils.sort.Node;
 
 /**
+ * Stores possible arm states. Does arm-related math
  * Represents the arm mechanism on the robot. Link to a model of the arm:
  * https://a360.co/2TLH2NO
  * TODO: we won't be using legalstates, we can get rid of them
  * @author shaylandias, ctchen, rghosh670
  */
-public class Arm extends Subsystem {
+public class Arm  {
 
   // All of the states
   private static HashMap<LegalState, ArmState> states = new HashMap<LegalState, ArmState>();
   private static ArmState currentState;
 
+
   public Arm() {
-    
     // State Setup
     currentState = new Neutral(); //Default state
     states = new HashMap<LegalState, ArmState>();
@@ -79,11 +80,6 @@ public class Arm extends Subsystem {
     double x = extensionLength * Math.sin(elbowAngle) + RobotConstants.CLAW_RADIUS * Math.sin(wristAngle);
     double y = extensionLength * Math.cos(elbowAngle) + RobotConstants.CLAW_RADIUS * Math.cos(wristAngle) + RobotConstants.ARM_START_HEIGHT;
     return new Point2D.Double(x, y);
-  }
-
-  @Override
-  public void initDefaultCommand() {
-    
   }
 
   /**

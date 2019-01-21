@@ -7,9 +7,11 @@
 
 package frc.team670.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
 
 /**
@@ -20,14 +22,55 @@ public class Wrist extends Subsystem {
   // here. Call these from Commands.
   
   private TalonSRX wristRotation;
+  private double wristAngle;
+  private static final double kF = 0, kP = 0, kI = 0, kD = 0; //TODO figure out what these are
+  // Also need to add pull gains slots
+  private static final int kPIDLoopIdx = 0, kSlotIdx = 0, kTimeoutMs = 0;
 
-  public Wrist() {   
+  public Wrist() {
     wristRotation = new TalonSRX(RobotMap.ARM_WRIST_ROTATION);
   }
   
+  /**
+   * Sets the peak current limit for wrist rotation motor.
+   * @param current Current in amps
+   */
+  public void setCurrentLimit(int current) {
+    wristRotation.configPeakCurrentLimit(RobotConstants.PEAK_AMPS, RobotConstants.TIMEOUT_MS); // Peak Limit at 0
+    wristRotation.configPeakCurrentDuration(RobotConstants.PEAK_TIME_MS, RobotConstants.TIMEOUT_MS); // Duration at over peak set to 0
+    wristRotation.configContinuousCurrentLimit(current, RobotConstants.TIMEOUT_MS);
+  }
+
+  public void enableCurrentLimit() {
+    wristRotation.enableCurrentLimit(true);
+  }
+
+  public void disableCurrentLimit() {
+    wristRotation.enableCurrentLimit(false);
+  }
+
+  public void setOutput(double output){
+    wristRotation.set(ControlMode.PercentOutput, output);
+  }
+
   @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
     // setDefaultCommand(new MySpecialCommand());
+  }
+
+  /**
+   * Setup for movement and Motion Magic
+   */
+  public void moveWrist(double wristAngle) {  
+    wristRotation.selectProfileSlot(kSlotIdx, kPIDLoopIdx);
+		wristRotation.config_kF(kSlotIdx, kF, kTimeoutMs);
+		wristRotation.config_kP(kSlotIdx, kP, kTimeoutMs);
+		wristRotation.config_kI(kSlotIdx, kI, kTimeoutMs);
+    wristRotation.config_kD(kSlotIdx, kD, kTimeoutMs);
+    // OPTIONAL: Set acceleration and vcruise velocity
+		//extensionMotor.configMotionCruiseVelocity(15000, kTimeoutMs);
+		//extensionMotor.configMotionAcceleration(6000, kTimeoutMs);
+    wristRotation.set(ControlMode.MotionMagic, wristAngle);
   }
 }
