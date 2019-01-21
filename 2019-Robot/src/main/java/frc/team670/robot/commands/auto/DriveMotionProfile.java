@@ -34,6 +34,7 @@ public class DriveMotionProfile extends Command {
   private Waypoint[] waypoints = new Waypoint[]{new Waypoint(0, 0, 0)};
   private Trajectory.Config config;
   private Trajectory trajectory;
+  private Trajectory leftTrajectory, rightTrajectory;
   private TankModifier modifier;
   private EncoderFollower left, right;
   private final int TICKS_PER_ROTATION = 4096;
@@ -73,12 +74,16 @@ public class DriveMotionProfile extends Command {
 
     String binary = "traj";
     String csv = "csv";
+    boolean encoderFollowersSet = false;
     
     requires(Robot.driveBase);
 
-    String pathname = Filesystem.getDeployDirectory() + "/output/" + fileName;
-    System.out.println("Path Name: " + pathname);
-    File file = new File(pathname);
+    String leftPathname = Filesystem.getDeployDirectory() + "/output/" + fileName.replace(".pf1", ".left.pf1");
+    String rightPathname = Filesystem.getDeployDirectory() + "/output/" + fileName.replace(".pf1", ".right.pf1");
+    System.out.println("Left path name: " + leftPathname);
+    System.out.println("Right path name: " + rightPathname);
+    File leftFile = new File(leftPathname);
+    File rightFile = new File(rightPathname);
 
     String extension = "";
     int i = fileName.lastIndexOf('.');
@@ -88,21 +93,28 @@ public class DriveMotionProfile extends Command {
 
 
     if (extension.equals(csv)){
-      System.out.println("File Name: " + file.getName());
-      trajectory = Pathfinder.readFromCSV(file);
+      leftTrajectory = Pathfinder.readFromCSV(leftFile);
+      rightTrajectory = Pathfinder.readFromCSV(rightFile);
     }
-    else if (extension.equals(binary))
-      trajectory = Pathfinder.readFromFile(file);
-    else {
+    else if (extension.equals(binary)) {
+      leftTrajectory = Pathfinder.readFromFile(leftFile);
+      rightTrajectory = Pathfinder.readFromFile(rightFile);
+    } else {
       // Set the max velocity to something lower than the actual max velocity, otherwise we get motor outputs >1.0 and <-1.0 which makes us unable to turn properly
       // For here let's set it to 
       config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, (0.02), (generation_MaxVelocity), (2.0), 60.0);
       trajectory = Pathfinder.generate(waypoints, config);
+      // follow old method of splitting one trajectory into left and right if generated with waypoints
+      modifier = new TankModifier(trajectory).modify(RobotConstants.DRIVEBASE_TRACK_WIDTH);
+      left = new EncoderFollower(modifier.getLeftTrajectory());
+      right= new EncoderFollower(modifier.getRightTrajectory());
+      encoderFollowersSet = true;
     }
 
-    modifier = new TankModifier(trajectory).modify(RobotConstants.DRIVEBASE_TRACK_WIDTH);
-    left = new EncoderFollower(modifier.getLeftTrajectory());
-    right= new EncoderFollower(modifier.getRightTrajectory());
+    if (!encoderFollowersSet) { // avoids re setting if trajectory is generated from waypoints
+      left = new EncoderFollower(leftTrajectory);
+      right = new EncoderFollower(rightTrajectory);
+    }
 
   }
 
