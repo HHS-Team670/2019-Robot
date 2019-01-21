@@ -72,6 +72,10 @@ public class Elbow extends Subsystem {
     return this.elbowRotationMain;
   }
 
+  public void resetElbow(double encoderValue) {
+    elbowRotationMain.getSensorCollection().setQuadraturePosition((int) encoderValue, RobotConstants.ARM_RESET_TIMEOUTMS);
+  }
+
   /**
    * Setup for movement and Motion Magic
    */
