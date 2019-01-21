@@ -5,10 +5,9 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.commands.arm.armClimb;
+package frc.team670.robot.commands.climb.armClimb;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
 
