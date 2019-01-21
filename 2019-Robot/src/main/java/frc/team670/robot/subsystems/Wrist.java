@@ -13,6 +13,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
+import frc.team670.robot.utils.functions.MathUtils;
 
 /**
  * Controls wrist motors
@@ -34,6 +35,8 @@ public class Wrist extends Subsystem {
 		wristRotation.config_kP(kSlotMotionMagic, kP, kTimeoutMs);
 		wristRotation.config_kI(kSlotMotionMagic, kI, kTimeoutMs);
     wristRotation.config_kD(kSlotMotionMagic, kD, kTimeoutMs);
+    wristRotation.configMotionCruiseVelocity(RobotConstants.MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+		wristRotation.configMotionAcceleration(RobotConstants.MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
   }
   
   /**
@@ -58,6 +61,14 @@ public class Wrist extends Subsystem {
     wristRotation.set(ControlMode.PercentOutput, output);
   }
 
+  public int getPositionTicks() {
+    return wristRotation.getSensorCollection().getQuadraturePosition();
+  }
+  
+  public double getAngle() {
+    return MathUtils.convertWristTicksToDegrees(getPositionTicks());
+  }
+
   @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
@@ -67,9 +78,7 @@ public class Wrist extends Subsystem {
   /**
    * Setup for movement and Motion Magic
    */
-  public void moveWrist(double wristAngle) {  
-		wristRotation.configMotionCruiseVelocity(15000, kTimeoutMs);
-		wristRotation.configMotionAcceleration(6000, kTimeoutMs);
-    wristRotation.set(ControlMode.MotionMagic, wristAngle);
+  public void setMotionMagicSetpoint(double wristAngle) {  
+    wristRotation.set(ControlMode.MotionMagic, MathUtils.convertWristDegreesToTicks(wristAngle));
   }
 }

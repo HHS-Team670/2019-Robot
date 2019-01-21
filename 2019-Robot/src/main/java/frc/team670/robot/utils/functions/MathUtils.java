@@ -139,6 +139,14 @@ public class MathUtils {
         return 0;
     }
 
+    /**
+     * Returns true if the value is within +/- tolerance of target
+     * @param tolerance The tolerance (must be positive)
+     */
+    public static boolean isWithinTolerance(double value, double target, double tolerance) {
+        return (value > target - tolerance && value < target + tolerance);
+    }
+
     /*
      * Continue this file with any other math utilities that may be needed throughout the robot.
      */

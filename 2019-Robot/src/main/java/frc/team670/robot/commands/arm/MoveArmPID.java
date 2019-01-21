@@ -18,24 +18,23 @@ import edu.wpi.first.wpilibj.command.Command;
  */
 public class MoveArmPID extends Command {
 
-  private ArmState currentState;
-  private final double ANGLE_TOLERANCE, DISTANCE_TOLERANCE;
-  private double 
+  private ArmState targetState;
+  private final double ANGLE_TOLERANCE = 0.5, DISTANCE_TOLERANCE = 0.2;
 
   public MoveArmPID(ArmState state) {
     super();
     requires(Robot.extension);
     requires(Robot.wrist);
     requires(Robot.elbow);
-    currentState = state;
+    targetState = state;
   }
 
   // Called once when the command executes
   @Override
   protected void initialize() {
-    Robot.elbow.moveElbow(currentState.getElbowAngle());
-    Robot.extension.moveExtension(currentState.getExtensionLength());
-    Robot.wrist.moveWrist(currentState.getWristAngle());
+    Robot.elbow.setMotionMagicSetpoint(targetState.getElbowAngle());
+    Robot.extension.setMotionMagicSetpoint(targetState.getExtensionLength());
+    Robot.wrist.setMotionMagicSetpoint(targetState.getWristAngle());
   }
 
   @Override

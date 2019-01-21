@@ -13,7 +13,7 @@ import frc.team670.robot.subsystems.Arm.LegalState;
 public class NeutralToCargoPickup extends ArmTransition {
   
   public NeutralToCargoPickup() {
-    super(Arm.getArmState(LegalState.NEUTRAL), Arm.getArmState(LegalState.CARGO_PICKUP));
+    super(Arm.getArmState(LegalState.NEUTRAL), Arm.getArmState(LegalState.NEUTRAL));
 
     /*
      * Enter your addSequential() and addParallel() commands here.

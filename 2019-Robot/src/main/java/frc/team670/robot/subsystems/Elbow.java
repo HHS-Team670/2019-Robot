@@ -14,6 +14,7 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
+import frc.team670.robot.utils.functions.MathUtils;
 
 /**
  * Controls motors for elbow movement
@@ -38,6 +39,8 @@ public class Elbow extends Subsystem {
 		elbowRotationMain.config_kP(kSlotMotionMagic, kP, kTimeoutMs);
 		elbowRotationMain.config_kI(kSlotMotionMagic, kI, kTimeoutMs);
     elbowRotationMain.config_kD(kSlotMotionMagic, kD, kTimeoutMs);
+    elbowRotationMain.configMotionCruiseVelocity(RobotConstants.MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+		elbowRotationMain.configMotionAcceleration(RobotConstants.MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
   }
 
 /**
@@ -62,6 +65,14 @@ public class Elbow extends Subsystem {
     elbowRotationMain.set(ControlMode.PercentOutput, output);
   }
   
+  public int getPositionTicks() {
+    return elbowRotationMain.getSensorCollection().getQuadraturePosition();
+  }
+  
+  public double getAngle() {
+    return MathUtils.convertElbowTicksToDegrees(getPositionTicks());
+  }
+
   @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
@@ -75,10 +86,8 @@ public class Elbow extends Subsystem {
   /**
    * Setup for movement and Motion Magic
    */
-  public void moveElbow(double elbowAngle) {
-		elbowRotationMain.configMotionCruiseVelocity(15000, kTimeoutMs);
-		elbowRotationMain.configMotionAcceleration(6000, kTimeoutMs);
-    elbowRotationMain.set(ControlMode.MotionMagic, elbowAngle);
+  public void setMotionMagicSetpoint(double elbowAngle) {
+    elbowRotationMain.set(ControlMode.MotionMagic, MathUtils.convertElbowDegreesToTicks(elbowAngle));
   }
 
 }

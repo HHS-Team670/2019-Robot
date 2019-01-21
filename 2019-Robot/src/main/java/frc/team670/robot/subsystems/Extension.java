@@ -13,6 +13,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
+import frc.team670.robot.utils.functions.MathUtils;
 
 /**
  * Controls motors for motion of extension
@@ -33,6 +34,9 @@ public class Extension extends Subsystem {
 		extensionMotor.config_kP(kSlotMotionMagic, kP, kTimeoutMs);
 		extensionMotor.config_kI(kSlotMotionMagic, kI, kTimeoutMs);
     extensionMotor.config_kD(kSlotMotionMagic, kD, kTimeoutMs);
+    extensionMotor.configMotionCruiseVelocity(RobotConstants.MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+		extensionMotor.configMotionAcceleration(RobotConstants.MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+ 
   }
 
 /**
@@ -56,7 +60,14 @@ public class Extension extends Subsystem {
   public void setOutput(double output){
     extensionMotor.set(ControlMode.PercentOutput, output);
   }
+
+  public int getLengthTicks() {
+    return extensionMotor.getSensorCollection().getQuadraturePosition();
+  }
   
+  public double getLengthInches() {
+    return MathUtils.convertExtensionTicksToInches(getLengthTicks());
+  }
 
   @Override
   public void initDefaultCommand() {
@@ -64,12 +75,10 @@ public class Extension extends Subsystem {
     // setDefaultCommand(new MySpecialCommand());
   }
 
-    /**
+  /**
    * Setup for movement and Motion Magic
    */
-  public void moveExtension(double extensionLength) {
-		extensionMotor.configMotionCruiseVelocity(15000, kTimeoutMs);
-		extensionMotor.configMotionAcceleration(6000, kTimeoutMs);
+  public void setMotionMagicSetpoint(double extensionLength) {
     extensionMotor.set(ControlMode.MotionMagic, extensionLength);
   }
 }
