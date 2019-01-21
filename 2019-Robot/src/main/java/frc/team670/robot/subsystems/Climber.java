@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
+import frc.team670.robot.utils.functions.MathUtils;
 import frc.team670.robot.dataCollection.SensorCollection_PIDSource;
 
 /**
@@ -120,6 +121,14 @@ public class Climber extends Subsystem {
     backPIDController.setContinuous(false);
     backPIDController.setSetpoint(setPoint);
     backPIDController.enable();
+  }
+
+  public double getFrontTalonPositionTicks() {
+    return frontTalon.getSensorCollection().getQuadraturePosition();
+  }
+
+  public double getFrontTalonPositionInInches() {
+    return 0; // TODO set these
   }
 
   @Override
