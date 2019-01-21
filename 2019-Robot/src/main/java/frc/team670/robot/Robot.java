@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.drive.DriveMotionProfile;
+import frc.team670.robot.commands.drive.FlipCamera;
 import frc.team670.robot.dataCollection.MustangPi;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.dataCollection.Pose;
@@ -126,6 +127,8 @@ public class Robot extends TimedRobot {
 
     // System.out.println("Voltage: "+(irSensor.getVoltage()));
     fieldCentricPose.update(); // Update our field centric Pose to the new robot position. Commented out to avoid null-pointers until sensors hooked up.
+  
+    Robot.oi.getFlipCameras().whenPressed(new FlipCamera());
   }
 
   /**

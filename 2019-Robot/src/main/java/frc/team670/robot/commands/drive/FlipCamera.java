@@ -15,7 +15,6 @@ public class FlipCamera extends InstantCommand{
     // called once when the command executes
     @Override
     protected void initialize(){
-        System.out.println("FlipCamera called");
         SmartDashboard.putString("cameraSource", "next");
         // NetworkTable.putValue("/SmartDashboard/cameraSource", "next");
         // TODO Talk to Kishore about how top set this to flip the camera.

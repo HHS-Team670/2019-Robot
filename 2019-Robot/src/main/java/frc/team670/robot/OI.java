@@ -65,7 +65,6 @@ public class OI {
     toggleReverseDrive = new JoystickButton(driverController, XboxButtons.LEFT_BUMPER);
     toggleReverseDrive.whenPressed(new FlipDriveDirection());
     flipCameras = new JoystickButton(driverController, XboxButtons.B);
-    flipCameras.whenPressed(new FlipCamera());
     resetNavX = new JoystickButton(driverController, XboxButtons.A);
     resetNavX.whenPressed(new ZeroNavX());
   }
@@ -76,5 +75,9 @@ public class OI {
 
   public boolean isQuickTurnPressed() {
     return driverController.getRightBumper();
+  }
+  
+  public JoystickButton getFlipCameras() {
+    return flipCameras;
   }
 }
