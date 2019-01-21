@@ -22,6 +22,10 @@ public class PistonClimbWithTiltControl extends Command {
   private boolean goingUp;
 
   public PistonClimbWithTiltControl(int setPoint) {
+    if(!Robot.climber.getBackPistonsRetracted() || !Robot.climber.getBackPistonsRetracted())
+      super.cancel();
+
+
     requires(Robot.climber);
     tiltController = new PIDController(P, I, D, F, Robot.sensors.getNavXPitchPIDSource(), new NullPIDOutput());
     Robot.climber.enableClimberPIDControllers(setPoint);

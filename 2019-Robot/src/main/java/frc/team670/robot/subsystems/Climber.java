@@ -29,10 +29,8 @@ public class Climber extends Subsystem {
   // Motor that drives the two pistons in the front of the robot. May be split into two controllers.
   private WPI_TalonSRX frontTalon;
 
-  private PIDController frontController;
-  private PIDController backController;
-
-  private Encoder frontDIOEncoder, backDIOEncoder;
+  private PIDController frontPIDController;
+  private PIDController backPIDController;
 
   private static final double P = 0.01, I = 0.0, D = 0.0, F = 0.0;
 
@@ -47,8 +45,8 @@ public class Climber extends Subsystem {
 
     // TODO figure out if these motors need to be inverted.
 
-    frontController = new PIDController(P, I, D, F, new SensorCollection_PIDSource(frontTalon.getSensorCollection()), frontTalon); 
-    backController = new PIDController(P, I, D, F, new SensorCollection_PIDSource(frontTalon.getSensorCollection()), backTalon); 
+    frontPIDController = new PIDController(P, I, D, F, new SensorCollection_PIDSource(frontTalon.getSensorCollection()), frontTalon); 
+    backPIDController = new PIDController(P, I, D, F, new SensorCollection_PIDSource(frontTalon.getSensorCollection()), backTalon); 
   }
 
   public void drivePistons(double frontPower, double backPower) {
@@ -57,30 +55,19 @@ public class Climber extends Subsystem {
   }
 
   public void setFrontPistonOutputRange(double minRange, double maxRange){
-    frontController.setOutputRange(minRange, maxRange);
+    frontPIDController.setOutputRange(minRange, maxRange);
   }
 
   public void setBackPistonOutputRange(double minRange, double maxRange){
-    backController.setOutputRange(minRange, maxRange);
+    backPIDController.setOutputRange(minRange, maxRange);
   }
-
-  public boolean isFinished() {
-    // wait for the expected method to be called and then retract back pistons
-
-    return backPistonsRetracted;
-    //return frontController.onTarget() && backController.onTarget();
-
-    // return MathUtils.doublesEqual(frontEncoder.get(), frontEncoderEnd, finishTolerance)
-    //   && MathUtils.doublesEqual(backEncoder.get(), backEncoderEnd, finishTolerance);
-  }
-
 
   /**
    * Returns the front PIDController
    * @return the PID controller that controls the front pistons
    */
   public PIDController getFrontController() {
-    return frontController;
+    return frontPIDController;
   }
 
   /**
@@ -88,7 +75,7 @@ public class Climber extends Subsystem {
    * @return the PID controller that controls the back pistons
    */
   public PIDController getBackController() {
-    return backController;
+    return backPIDController;
   }
 
   public int getFrontTalonPosition(){
@@ -122,17 +109,17 @@ public class Climber extends Subsystem {
    * @param setPoint the desired end goal of the piston climb
    */
   public void enableClimberPIDControllers(int setPoint){
-    frontController.setOutputRange(RobotConstants.MINIMUM_PISTON_POWER, RobotConstants.MAXIMUM_PISTON_POWER);
-    frontController.setAbsoluteTolerance(RobotConstants.CLIMBER_ENCODER_TOLERANCE);
-    frontController.setContinuous(false);
-    frontController.setSetpoint(setPoint);
-    frontController.enable();
+    frontPIDController.setOutputRange(RobotConstants.MINIMUM_PISTON_POWER, RobotConstants.MAXIMUM_PISTON_POWER);
+    frontPIDController.setAbsoluteTolerance(RobotConstants.CLIMBER_ENCODER_TOLERANCE);
+    frontPIDController.setContinuous(false);
+    frontPIDController.setSetpoint(setPoint);
+    frontPIDController.enable();
 
-    backController.setOutputRange(RobotConstants.MINIMUM_PISTON_POWER, RobotConstants.MAXIMUM_PISTON_POWER);
-    backController.setAbsoluteTolerance(RobotConstants.CLIMBER_ENCODER_TOLERANCE);
-    backController.setContinuous(false);
-    backController.setSetpoint(setPoint);
-    backController.enable();
+    backPIDController.setOutputRange(RobotConstants.MINIMUM_PISTON_POWER, RobotConstants.MAXIMUM_PISTON_POWER);
+    backPIDController.setAbsoluteTolerance(RobotConstants.CLIMBER_ENCODER_TOLERANCE);
+    backPIDController.setContinuous(false);
+    backPIDController.setSetpoint(setPoint);
+    backPIDController.enable();
   }
 
   @Override
