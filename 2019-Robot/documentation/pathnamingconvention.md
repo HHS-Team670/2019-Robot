@@ -4,10 +4,10 @@ Paths will be named following this: ``` Start_Target1_Exchange_Target2 ```
 
 ## Starting Positions ##
 * ``` Left ```
-* ``` MiddleHigh ``` <-- should not exist
+* ``` MiddleHigh ```
 * ``` Right ```
-* ```LeftHigh ``` <-- on hab zone
-* ```RightHigh ``` <-- on hab zone
+* ```LeftHigh ```
+* ```RightHigh ```
 
 ## Targets ##
 
