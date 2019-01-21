@@ -45,7 +45,7 @@ function setLogin() {
   // Add the default address and select xxxx
 
   // address.value = '10.0.0.231'; // for testing at home
-  address.value = '10.6.70.26'; // while on network 670
+  address.value = '10.6.70.2'; // while on network 670
   ipc.send('connect', address.value);
   address.disabled = connect.disabled = true;
 

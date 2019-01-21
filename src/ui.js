@@ -62,7 +62,6 @@ NetworkTables.addKeyListener('/SmartDashboard/gyro', (key, value) => {
 NetworkTables.addKeyListener('/SmartDashboard/cameraSource', (key, value) => {
   if (value == 'next') {
     window.webContents.reload();
-    // location.reload();
   }
 });
 
