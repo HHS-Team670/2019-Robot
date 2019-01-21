@@ -7,13 +7,13 @@
 
 package frc.team670.robot.commands.climb;
 
+import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
-
 import frc.team670.robot.Robot;
+import frc.team670.robot.commands.arm.ArmClimb;
 import frc.team670.robot.commands.climb.pistonClimb.PistonClimbWithTiltControl;
 import frc.team670.robot.commands.climb.pistonClimb.RetractBackPistons;
 import frc.team670.robot.commands.climb.pistonClimb.RetractFrontPistons;
-import edu.wpi.first.wpilibj.command.InstantCommand;
 
 public class CycleClimb extends InstantCommand {
   private int setPoint;

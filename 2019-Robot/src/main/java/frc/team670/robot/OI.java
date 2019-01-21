@@ -9,9 +9,8 @@ package frc.team670.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team670.robot.commands.FlipCamera;
 import frc.team670.robot.commands.ZeroNavX;
-import frc.team670.robot.commands.drive.FlipCamera;
 import frc.team670.robot.commands.drive.FlipDriveDirection;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.utils.MustangController;
