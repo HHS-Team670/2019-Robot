@@ -43,6 +43,9 @@ screen_resize = 1  # Scale that the GUI image should be scaled to
 calibrate_angle = 0  # Test to calibrate the angle and see if that works
 exposure = -9
 timestamp = round(time.time() * 1000) # time in milliseconds
+camera_vertical_angle = 0.0 # camera angle offset up or down (positive=up, negative=down)
+camera_horizontal_angle = 0.0 # camera angle offset right left
+camera_horizontal_offset = 0.0 # camera horizontal offset distancewise in inches
 
 # HSV Values to detect
 min_hsv = [60, 200, 100]
@@ -126,7 +129,7 @@ def main():
 
             rect_x_midpoint, high_point = find_rectangle_highpoint(object_rects)
             vangle = find_vert_angle(input_image, high_point, vert_focal_length) # vangle - 'V'ertical angle
-            hangle = find_hor_angle(input_image, rect_x_midpoint, hor_focal_length) # hangle - 'H'orizontal angle
+            hangle = find_vert_angle(input_image, rect_x_midpoint, hor_focal_length, vertical=False) # hangle - 'H'orizontal angle
             depth = depth_from_angle(input_image, object_rects, vangle, hangle,
                                      known_object_height - known_camera_height)
 
@@ -390,25 +393,33 @@ def find_hor_focal_length(image, hor_fov):
 
 
 
-def find_vert_angle(image, y, focal_length):
+def find_vert_angle(image, y, focal_length, vertical=True):
+    '''
+    Returns the vertical/horizontal angle of the given y/x point in an image.
+    This is the angle that the robot needs to look up / down in order to
+    directly face the image. Requires the actual image and focal
+    length of the camera.
+    '''
+
+    # Find center y point
+    image_height = 0
+    _offset = 0 # if camera is tilted
+    if vertical:
+        image_height = image.shape[:2][0]
+        _offset = camera_vertical_angle
+    else:
+        image_height = image.shape[:2][1]
+        _offset = camera_horizontal_angle
+
     # Find center y point
     image_height = image.shape[:2][0]
     center_y = image_height / 2
     y_from_bottom = image_height-y
 
     # Calculate the angle using fancy formula
-    vertical_angle = -1 * math.degrees(math.atan((y_from_bottom - center_y) / focal_length))
-    return vertical_angle
-
-def find_hor_angle(image, x, focal_length):
-    # Find center y point
-    image_width = image.shape[:2][1]
-    center_x = image_width / 2
-    x_from_bottom = image_width-x
-
-    # Calculate the angle using fancy formula
-    horizontal_angle = -1 * math.degrees(math.atan((x_from_bottom - center_x) / focal_length))
-    return horizontal_angle
+    _angle = -1 * math.degrees(math.atan((y_from_bottom - center_y) / focal_length))
+    _angle -= _offset
+    return _angle
 
 def depth_from_angle(image, rectangles, vangle, hangle, known_height):
     '''
@@ -418,11 +429,19 @@ def depth_from_angle(image, rectangles, vangle, hangle, known_height):
     '''
     # Keep tangent from being undefined
     if vangle == 0:
-        vangle = 0.0001
-        
-    depth = known_height / math.tan(math.radians(abs(vangle)))
-    depth = depth / math.cos(math.radians(abs(hangle)))
+        vangle = 0.0000000000001
+    
+    htan = 0
+    if hangle != 0:
+        htan = math.tan(math.radians(hangle))
+    # Do some calculations
+
+    depth = known_height / (math.tan(math.radians(abs(vangle))))
+    depth = math.sqrt((depth*htan-camera_horizontal_offset)**2 + (depth**2))
+    # This was an adjustment to adjust depth for an object that is offcenter
+    # adjusted_depth = depth / math.cos(abs(hangle))
     return depth
+
 
 # Debug mode methods
 def mouse_click_handler(event, x, y, flags, params):
