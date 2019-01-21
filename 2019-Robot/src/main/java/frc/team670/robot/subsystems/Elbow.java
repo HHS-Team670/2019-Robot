@@ -27,12 +27,17 @@ public class Elbow extends Subsystem {
   private double elbowAngle;
   private static final double kF = 0, kP = 0, kI = 0, kD = 0; //TODO figure out what these are
   // Also need to add pull gains slots
-  private static final int kPIDLoopIdx = 0, kSlotIdx = 0, kTimeoutMs = 0;
+  private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0;
 
   public Elbow() {  
     elbowRotationMain = new TalonSRX(RobotMap.ARM_ELBOW_ROTATION_MOTOR_TALON);   
     elbowRotationSlave = new VictorSPX(RobotMap.ARM_ELBOW_ROTATION_MOTOR_VICTOR);
-    elbowRotationSlave.set(ControlMode.Follower, elbowRotationMain.getDeviceID());
+    elbowRotationSlave.set(ControlMode.Follower, elbowRotationMain.getDeviceID());  
+    elbowRotationMain.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
+		elbowRotationMain.config_kF(kSlotMotionMagic, kF, kTimeoutMs);
+		elbowRotationMain.config_kP(kSlotMotionMagic, kP, kTimeoutMs);
+		elbowRotationMain.config_kI(kSlotMotionMagic, kI, kTimeoutMs);
+    elbowRotationMain.config_kD(kSlotMotionMagic, kD, kTimeoutMs);
   }
 
 /**
@@ -71,14 +76,8 @@ public class Elbow extends Subsystem {
    * Setup for movement and Motion Magic
    */
   public void moveElbow(double elbowAngle) {
-    elbowRotationMain.selectProfileSlot(kSlotIdx, kPIDLoopIdx);
-		elbowRotationMain.config_kF(kSlotIdx, kF, kTimeoutMs);
-		elbowRotationMain.config_kP(kSlotIdx, kP, kTimeoutMs);
-		elbowRotationMain.config_kI(kSlotIdx, kI, kTimeoutMs);
-    elbowRotationMain.config_kD(kSlotIdx, kD, kTimeoutMs);
-    // OPTIONAL: Set acceleration and vcruise velocity
-		//extensionMotor.configMotionCruiseVelocity(15000, kTimeoutMs);
-		//extensionMotor.configMotionAcceleration(6000, kTimeoutMs);
+		elbowRotationMain.configMotionCruiseVelocity(15000, kTimeoutMs);
+		elbowRotationMain.configMotionAcceleration(6000, kTimeoutMs);
     elbowRotationMain.set(ControlMode.MotionMagic, elbowAngle);
   }
 

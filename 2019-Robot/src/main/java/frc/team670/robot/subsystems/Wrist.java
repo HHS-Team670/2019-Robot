@@ -25,10 +25,15 @@ public class Wrist extends Subsystem {
   private double wristAngle;
   private static final double kF = 0, kP = 0, kI = 0, kD = 0; //TODO figure out what these are
   // Also need to add pull gains slots
-  private static final int kPIDLoopIdx = 0, kSlotIdx = 0, kTimeoutMs = 0;
+  private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0;
 
   public Wrist() {
-    wristRotation = new TalonSRX(RobotMap.ARM_WRIST_ROTATION);
+    wristRotation = new TalonSRX(RobotMap.ARM_WRIST_ROTATION); 
+    wristRotation.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
+		wristRotation.config_kF(kSlotMotionMagic, kF, kTimeoutMs);
+		wristRotation.config_kP(kSlotMotionMagic, kP, kTimeoutMs);
+		wristRotation.config_kI(kSlotMotionMagic, kI, kTimeoutMs);
+    wristRotation.config_kD(kSlotMotionMagic, kD, kTimeoutMs);
   }
   
   /**
@@ -63,14 +68,8 @@ public class Wrist extends Subsystem {
    * Setup for movement and Motion Magic
    */
   public void moveWrist(double wristAngle) {  
-    wristRotation.selectProfileSlot(kSlotIdx, kPIDLoopIdx);
-		wristRotation.config_kF(kSlotIdx, kF, kTimeoutMs);
-		wristRotation.config_kP(kSlotIdx, kP, kTimeoutMs);
-		wristRotation.config_kI(kSlotIdx, kI, kTimeoutMs);
-    wristRotation.config_kD(kSlotIdx, kD, kTimeoutMs);
-    // OPTIONAL: Set acceleration and vcruise velocity
-		//extensionMotor.configMotionCruiseVelocity(15000, kTimeoutMs);
-		//extensionMotor.configMotionAcceleration(6000, kTimeoutMs);
+		wristRotation.configMotionCruiseVelocity(15000, kTimeoutMs);
+		wristRotation.configMotionAcceleration(6000, kTimeoutMs);
     wristRotation.set(ControlMode.MotionMagic, wristAngle);
   }
 }

@@ -24,10 +24,15 @@ public class Extension extends Subsystem {
   private double extensionLength;
   private static final double kF = 0, kP = 0, kI = 0, kD = 0; //TODO figure out what these are
   // Also need to add pull gains slots
-  private static final int kPIDLoopIdx = 0, kSlotIdx = 0, kTimeoutMs = 0;
+  private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0;
 
   public Extension() {
-    extensionMotor = new TalonSRX(RobotMap.ARM_EXTENSION_MOTOR);
+    extensionMotor = new TalonSRX(RobotMap.ARM_EXTENSION_MOTOR);   
+    extensionMotor.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
+		extensionMotor.config_kF(kSlotMotionMagic, kF, kTimeoutMs);
+		extensionMotor.config_kP(kSlotMotionMagic, kP, kTimeoutMs);
+		extensionMotor.config_kI(kSlotMotionMagic, kI, kTimeoutMs);
+    extensionMotor.config_kD(kSlotMotionMagic, kD, kTimeoutMs);
   }
 
 /**
@@ -63,14 +68,8 @@ public class Extension extends Subsystem {
    * Setup for movement and Motion Magic
    */
   public void moveExtension(double extensionLength) {
-    extensionMotor.selectProfileSlot(kSlotIdx, kPIDLoopIdx);
-		extensionMotor.config_kF(kSlotIdx, kF, kTimeoutMs);
-		extensionMotor.config_kP(kSlotIdx, kP, kTimeoutMs);
-		extensionMotor.config_kI(kSlotIdx, kI, kTimeoutMs);
-    extensionMotor.config_kD(kSlotIdx, kD, kTimeoutMs);
-    // OPTIONAL: Set acceleration and vcruise velocity
-		//extensionMotor.configMotionCruiseVelocity(15000, kTimeoutMs);
-		//extensionMotor.configMotionAcceleration(6000, kTimeoutMs);
+		extensionMotor.configMotionCruiseVelocity(15000, kTimeoutMs);
+		extensionMotor.configMotionAcceleration(6000, kTimeoutMs);
     extensionMotor.set(ControlMode.MotionMagic, extensionLength);
   }
 }
