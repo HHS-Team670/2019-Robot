@@ -50,7 +50,7 @@ public class RobotConstants {
     public static final int PEAK_TIME_MS = 0; //  Duration after current exceed peak current to trigger current limit
     public static final int TRIGGER_AMPS = 10; // TODO figure required limited current
 
-    //Climber Constants
+    // Climber Constants
     // Climb Constants - TODO all of these need to be set
     public static final double LOWERING_PISTON_POWER = 0.05;
     public static final double MINIMUM_PISTON_POWER = 0.1;

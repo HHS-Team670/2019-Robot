@@ -5,56 +5,47 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.commands.climb;
+package frc.team670.robot.commands.climb.pistonClimb;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
+import frc.team670.robot.utils.functions.SettingUtils;
 
+public class RetractBackPistons extends Command {
 
-public class LinearPistonClimb extends Command {
-
-  public LinearPistonClimb() {
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
+  public RetractBackPistons() {
+    Robot.climber.setBackPistonsRetracted(false);
     requires(Robot.climber);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    Robot.climber.enableClimberPIDControllers(0);
+    Robot.climber.getBackController().setSetpoint(RobotConstants.PISTON_ENCODER_FLAT);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    double frontPower = 0.5;
-    double backPower = 0.5;
-    if (Robot.sensors.getPitchDouble() > 5) { // i'm assuming this means tilted backwards
-      frontPower -= 0.1;
-    }
-    if (Robot.sensors.getPitchDouble() < 5) { // assuming this means tilted forwards
-      backPower -= 0.1;
-    }
-    Robot.climber.drivePistons(frontPower, backPower);
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return Robot.climber.getBackPistonsRetracted() && Robot.climber.getBackController().onTarget();
+    return Robot.climber.getBackController().onTarget();
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Robot.climber.drivePistons(RobotConstants.MINIMUM_PISTON_POWER, RobotConstants.MINIMUM_PISTON_POWER);
+    SettingUtils.releaseController(Robot.climber.getBackController());
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    SettingUtils.releaseController(Robot.climber.getBackController());
   }
 }

@@ -5,28 +5,23 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.commands.climb;
+package frc.team670.robot.commands.climb.pistonClimb;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.utils.functions.SettingUtils;
 
-public class DeployBackPistons extends Command {
+public class RetractFrontPistons extends Command {
 
-  public DeployBackPistons() {
-    if(!Robot.climber.getFrontPistonsRetracted()){
-      this.cancel();
-    }
-
-    Robot.climber.setBackPistonsRetracted(false);
+  public RetractFrontPistons() {
     requires(Robot.climber);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    Robot.climber.getBackController().setSetpoint(RobotConstants.PISTON_ENCODER_FLAT);
+    Robot.climber.getFrontController().setSetpoint(RobotConstants.PISTON_ENCODER_FLAT);
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -37,19 +32,20 @@ public class DeployBackPistons extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return Robot.climber.getBackController().onTarget();
+    return Robot.climber.getFrontController().onTarget();
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    SettingUtils.releaseController(Robot.climber.getBackController());
+    SettingUtils.releaseController(Robot.climber.getFrontController());
+    Robot.climber.setFrontPistonsRetracted(false);
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    SettingUtils.releaseController(Robot.climber.getBackController());
+    SettingUtils.releaseController(Robot.climber.getFrontController());
   }
 }
