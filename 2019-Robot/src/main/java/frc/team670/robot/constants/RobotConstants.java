@@ -43,10 +43,23 @@ public class RobotConstants {
     MIN_LOOKAHEAD_SPEED, MAX_LOOKAHEAD_SPEED);
 
     // Arm Constants
-    public static final double ARM_START_HEIGHT = 0;
+    public static final double ARM_HEIGHT = 0;
     public static final double CLAW_RADIUS = 0;
+    public static final int FIXED_ARM_LENGTH = 0;
+
+    //Elbow constants
     public static final int PEAK_AMPS = 0; // check the peak limit and set again
     public static final int TIMEOUT_MS = 0; //  
     public static final int PEAK_TIME_MS = 0; //  Duration after current exceed peak current to trigger current limit
-    public static final int TRIGGER_AMPS = 10; // TODO figure required limited current
+    public static final int CLIMB_CURRENT_LIMIT = 10; // TODO figure required limited current
+    public static final int NORMAL_CURRENT_LIMIT = 0; // TODO figure out normal current
+
+    //Extension constants
+    public static final int EXTENSION_ENCODER_OUT = 0;
+    public static final double DEFAULT_EXTENSION_POWER = 0; 
+    public static final double INCHES_TO_TRAVEL_ONTO_PLATFORM = 4;
+
+    //Arm PID Constants
+	public static final int kPIDLoopIdx = 0;
+	public static final int kTimeoutMs = 10;
 }

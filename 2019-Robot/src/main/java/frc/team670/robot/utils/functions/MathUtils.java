@@ -115,6 +115,16 @@ public class MathUtils {
         return Math.sqrt(Math.pow((x1-x2), 2) + Math.pow(y2-y1, 2));
     }
 
+    /**
+     * Returns the hypotenuse of a triangle given two legs according to the Pythagorean Theorem
+     * 
+     * @param leg1 The length of the first leg
+     * @param leg2 The length of the second leg
+     */
+    public static double findHypotenuse(double leg1, double leg2){
+        return Math.sqrt(leg1 * leg1 + leg2 * leg2);
+    }
+
     /*
      * Continue this file with any other math utilities that may be needed throughout the robot.
      */

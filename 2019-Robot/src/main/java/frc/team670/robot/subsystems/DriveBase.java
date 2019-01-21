@@ -34,7 +34,7 @@ import frc.team670.robot.utils.functions.MathUtils;
  */
 public class DriveBase extends Subsystem {
 
-  private static final int VELOCITY_PID_SLOT = 1, encodersPIDSlot = 2;
+  private static final int VELOCITY_PID_SLOT = 1, ENCODERS_PID_SLOT = 2;
 
   private CANSparkMax left1, left2, right1, right2;
   private SpeedControllerGroup left, right;
@@ -76,10 +76,10 @@ public class DriveBase extends Subsystem {
     driveTrain.setMaxOutput(1.0);
 
     // Set PID Values
-    left1.getPIDController().setP(P_P, encodersPIDSlot);
-    left1.getPIDController().setI(P_I, encodersPIDSlot);
-    left1.getPIDController().setD(P_D, encodersPIDSlot);
-    left1.getPIDController().setFF(P_FF, encodersPIDSlot);
+    left1.getPIDController().setP(P_P, ENCODERS_PID_SLOT);
+    left1.getPIDController().setI(P_I, ENCODERS_PID_SLOT);
+    left1.getPIDController().setD(P_D, ENCODERS_PID_SLOT);
+    left1.getPIDController().setFF(P_FF, ENCODERS_PID_SLOT);
     left1.getPIDController().setOutputRange(-1, 1);
 
     right1.getPIDController().setP(V_P, VELOCITY_PID_SLOT);
@@ -207,8 +207,8 @@ public class DriveBase extends Subsystem {
    * @param deltaRight The desired change in right position in encoder ticks
    */
   public void setSparkEncodersControl(double deltaLeft, double deltaRight) {
-    left1.getPIDController().setReference(left1.getEncoder().getPosition() + deltaLeft, ControlType.kPosition, encodersPIDSlot);
-    right1.getPIDController().setReference(right1.getEncoder().getPosition() + deltaRight, ControlType.kPosition, encodersPIDSlot);
+    left1.getPIDController().setReference(left1.getEncoder().getPosition() + deltaLeft, ControlType.kPosition, ENCODERS_PID_SLOT);
+    right1.getPIDController().setReference(right1.getEncoder().getPosition() + deltaRight, ControlType.kPosition, ENCODERS_PID_SLOT);
   }
 
   /**
