@@ -17,7 +17,7 @@ import frc.team670.robot.commands.arm.armTransitions.ArmTransition;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
 import frc.team670.robot.utils.Logger;
-import frc.team670.robot.utils.Sort.AStarSearch;
+import frc.team670.robot.utils.sort.AStarSearch;
 
 /**
  * Move the arm using known ArmStates and found path.

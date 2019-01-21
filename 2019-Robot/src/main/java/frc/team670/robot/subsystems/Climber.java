@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team670.robot.constants.RobotMap;
+import frc.team670.robot.utils.functions.MathUtils;
 
 /**
  * Represents the climbing mechanism on the robot.
@@ -37,6 +38,14 @@ public class Climber extends Subsystem {
   public void drivePistons(double power) {
     backPistons.set(ControlMode.PercentOutput, power);
     frontPistons.set(ControlMode.PercentOutput, power);
+  }
+
+  public double getFrontTalonPositionTicks() {
+    return frontPistons.getSensorCollection().getQuadraturePosition();
+  }
+
+  public double getFrontTalonPositionInInches() {
+    return 0; // TODO set these
   }
 
   @Override

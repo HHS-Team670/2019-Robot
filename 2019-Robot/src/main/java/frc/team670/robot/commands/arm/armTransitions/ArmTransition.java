@@ -11,9 +11,8 @@ import java.awt.geom.Point2D;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.team670.robot.subsystems.Arm.ArmState;
-import frc.team670.robot.subsystems.Arm.LegalState;
 import frc.team670.robot.utils.functions.MathUtils;
-import frc.team670.robot.utils.Sort.Edge;
+import frc.team670.robot.utils.sort.Edge;
 
   /**
    * The base for arm transitions. All iterations of this class should be made so that they can be rerun each time initialize is called.
