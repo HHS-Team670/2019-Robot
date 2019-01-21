@@ -59,6 +59,7 @@ public class AdvancedVisionPIDDrive extends Command {
     headingController.setAbsoluteTolerance(DEGREE_TOLERANCE);
     headingController.setContinuous(true);
 
+    // Might have to set an InputRange here for the controller to work properly. Maybe the initial found distance plus a little and do this in initialize?
     distanceController.setOutputRange(visionDistanceControllerLowerOutput, visionDistanceControllerUpperOutput);
     distanceController.setAbsoluteTolerance(DISTANCE_TOLERANCE);
     distanceController.setContinuous(false);
