@@ -9,9 +9,10 @@ package frc.team670.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.ZeroNavX;
+import frc.team670.robot.commands.drive.FlipCamera;
 import frc.team670.robot.commands.drive.FlipDriveDirection;
-import frc.team670.robot.commands.drive.XboxRocketLeagueDrive;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.utils.MustangController;
 import frc.team670.robot.utils.MustangController.XboxButtons;
@@ -56,12 +57,15 @@ public class OI {
 
   // Buttons
   private JoystickButton toggleReverseDrive;
+  private JoystickButton flipCameras;
 
 
   public OI() {
     driverController = new MustangController(RobotMap.DRIVER_CONTROLLER_PORT);
     toggleReverseDrive = new JoystickButton(driverController, XboxButtons.LEFT_BUMPER);
     toggleReverseDrive.whenPressed(new FlipDriveDirection());
+    flipCameras = new JoystickButton(driverController, XboxButtons.B);
+    flipCameras.whenPressed(new FlipCamera());
     resetNavX = new JoystickButton(driverController, XboxButtons.A);
     resetNavX.whenPressed(new ZeroNavX());
   }
