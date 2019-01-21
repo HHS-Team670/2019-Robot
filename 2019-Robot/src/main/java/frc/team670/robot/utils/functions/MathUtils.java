@@ -116,27 +116,27 @@ public class MathUtils {
     }
 
     public static double convertElbowDegreesToTicks(double degrees) {
-        return 0;
+        return (degrees / 360) * RobotConstants.ELBOW_TICKS_PER_ROTATION;
     }
 
     public static double convertElbowTicksToDegrees(double ticks) {
-        return 0;
+        return (ticks / RobotConstants.ELBOW_TICKS_PER_ROTATION) * 360;
     }
 
     public static double convertWristDegreesToTicks(double degrees) {
-        return 0;
+        return (degrees / 360) * RobotConstants.WRIST_TICKS_PER_ROTATION;
     }
 
     public static double convertWristTicksToDegrees(double ticks) {
-        return 0;
+        return (ticks / RobotConstants.WRIST_TICKS_PER_ROTATION) * 360;
     }
 
     public static double convertExtensionInchesToTicks(double inches) {
-        return 0;
+        return RobotConstants.EXTENSION_TICKS_PER_INCH / inches;
     }
 
     public static double convertExtensionTicksToInches(double ticks) {
-        return 0;
+        return ticks / RobotConstants.EXTENSION_TICKS_PER_INCH;
     }
 
     /**

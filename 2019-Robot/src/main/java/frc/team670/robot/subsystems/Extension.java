@@ -75,6 +75,10 @@ public class Extension extends Subsystem {
     // setDefaultCommand(new MySpecialCommand());
   }
 
+  public void resetExtension(int encoderValue) {
+    extensionMotor.getSensorCollection().setQuadraturePosition(encoderValue, RobotConstants.ARM_RESET_TIMEOUTMS);
+  }
+
   /**
    * Setup for movement and Motion Magic
    */

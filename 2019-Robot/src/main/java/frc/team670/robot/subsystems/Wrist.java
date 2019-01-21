@@ -75,6 +75,10 @@ public class Wrist extends Subsystem {
     // setDefaultCommand(new MySpecialCommand());
   }
 
+  public void resetWrist(double encoderValue) {
+    wristRotation.getSensorCollection().setQuadraturePosition((int) encoderValue, RobotConstants.ARM_RESET_TIMEOUTMS);
+  }
+
   /**
    * Setup for movement and Motion Magic
    */
