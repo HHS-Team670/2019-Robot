@@ -127,8 +127,6 @@ public class Robot extends TimedRobot {
 
     // System.out.println("Voltage: "+(irSensor.getVoltage()));
     fieldCentricPose.update(); // Update our field centric Pose to the new robot position. Commented out to avoid null-pointers until sensors hooked up.
-  
-    Robot.oi.getFlipCameras().whenPressed(new FlipCamera());
   }
 
   /**

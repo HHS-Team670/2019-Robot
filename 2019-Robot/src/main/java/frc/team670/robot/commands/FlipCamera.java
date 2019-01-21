@@ -1,4 +1,4 @@
-package frc.team670.robot.commands.drive;
+package frc.team670.robot.commands;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
