@@ -30,15 +30,18 @@ public class MustangLEDs_2019 {
 	final byte[] reverseDrive = { '1', 'R' };
 	final byte[] stillDrive = { '3', 'R' };
 
+	final byte[] runningAllianceColors = {'0','L'};
+	final byte[] solidGreen = {'1','L'};
+	final byte[] solidRed = {'2','L'};
+	final byte[] solidPurple = {'3','L'};
+	final byte[] 
+	
+
 	// variables for data which will be sent over server
 	byte[] stateData = stillDrive;
 	byte[] allianceData = blueAlliance;
-
-	// string representations for xFinal
-	// final String xFinalLeft="1X";
-	// final String xFinalCenter="2X";
-	// final String xFinalRight="3X";
-	// String xFinalData=xFinalCenter;
+	byte[] lightShowData = 
+	//byte[] lightShowData= 
 
 	// Socket Init
 	ServerSocket serverSocket = null;
@@ -67,23 +70,8 @@ public class MustangLEDs_2019 {
 
 	}
 
-	// public void updateAlliance(){ // Updates the Alliance Color in data
-	// transmission
 
-	// DriverStation.Alliance color = DriverStation.getInstance().getAlliance();
-
-	// if(color == DriverStation.Alliance.Blue){
-	// allianceData=blueAlliance;
-	// }
-	// if(color == DriverStation.Alliance.Red){
-	// allianceData=redAlliance;
-	// }
-	// if(color == DriverStation.Alliance.Invalid){
-	// allianceData=invalidAlliance;
-	// }
-	// }
-
-	public void setClimbingData(boolean trigger) { // Updates if we are climbing
+	public void setClimbingData(boolean trigger, int val) { // Updates if we are climbing
 		if (trigger == true) {
 			stateData = climbing;
 		}
@@ -114,20 +102,16 @@ public class MustangLEDs_2019 {
 			stateData = stillDrive;
 		}
 	}
+	public void setLightShow(String val){
+		switch(val){
 
-	// public void update_xFinal(double acceptedXFinal){ // Updates xFinal in data
-	// if(acceptedXFinal > 10 && acceptedXFinal != -666){
-	// xFinalData=xFinalRight;
-	// }
-	// else{
-	// if(acceptedXFinal < -10 && acceptedXFinal != -666){
-	// xFinalData=xFinalLeft;
-	// }
-	// else{
-	// xFinalData=xFinalCenter;
-	// }
-	// }
-	// }
+				
+
+
+		}
+	}
+
+
 
 	public class clientManagement extends Thread {
 
@@ -162,9 +146,6 @@ public class MustangLEDs_2019 {
 				try {
 					output.write(stateData);
 					output.write(allianceData);
-					// output.write(toSend);
-					// output.write(stateData); // data.getBytes());
-					// output.write(allianceData);
 					output.flush();
 					output.close();
 				} catch (Exception e) {
