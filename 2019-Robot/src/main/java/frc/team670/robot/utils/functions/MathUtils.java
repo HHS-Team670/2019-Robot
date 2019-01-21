@@ -115,6 +115,30 @@ public class MathUtils {
         return Math.sqrt(Math.pow((x1-x2), 2) + Math.pow(y2-y1, 2));
     }
 
+    public static double convertElbowDegreesToTicks(double degrees) {
+        return 0;
+    }
+
+    public static double convertElbowTicksToDegrees(double ticks) {
+        return 0;
+    }
+
+    public static double convertWristDegreesToTicks(double degrees) {
+        return 0;
+    }
+
+    public static double convertWristTicksToDegrees(double ticks) {
+        return 0;
+    }
+
+    public static double convertExtensionInchesToTicks(double inches) {
+        return 0;
+    }
+
+    public static double convertExtensionTicksToInches(double ticks) {
+        return 0;
+    }
+
     /*
      * Continue this file with any other math utilities that may be needed throughout the robot.
      */

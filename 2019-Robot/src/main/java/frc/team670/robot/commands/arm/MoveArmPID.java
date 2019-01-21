@@ -20,6 +20,7 @@ public class MoveArmPID extends Command {
 
   private ArmState currentState;
   private final double ANGLE_TOLERANCE, DISTANCE_TOLERANCE;
+  private double 
 
   public MoveArmPID(ArmState state) {
     super();
