@@ -30,7 +30,7 @@ import frc.team670.robot.utils.sort.Node;
  * TODO: we won't be using legalstates, we can get rid of them
  * @author shaylandias, ctchen, rghosh670
  */
-public class Arm  {
+public class Arm extends Subsystem {
 
   // All of the states
   private static HashMap<LegalState, ArmState> states = new HashMap<LegalState, ArmState>();
@@ -151,8 +151,13 @@ public class Arm  {
 
   private class Neutral extends ArmState {
     public Neutral() {
-      super(0, 45, 45, new ArmTransition[] {new NeutralToCargoPickup()});
+      super(0, 45, 45, new ArmTransition[] { new NeutralToCargoPickup() });
     }
+  }
+  
+  @Override
+  public void initDefaultCommand() {
+    
   }
 
 }
