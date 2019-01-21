@@ -37,11 +37,13 @@ public class Climber extends Subsystem {
   private static final double P = 0.01, I = 0.0, D = 0.0, F = 0.0;
 
   private boolean frontPistonsRetracted, backPistonsRetracted;
-  private boolean frontPistonsDeployed, backPistonsDeployed;
 
   public Climber() {    
     backTalon = new WPI_TalonSRX(RobotMap.BACK_CLIMBER_PISTON_CONTROLLER);
     frontTalon = new WPI_TalonSRX(RobotMap.FRONT_CLIMBER_PISTON_CONTROLLER);
+
+    frontPistonsRetracted = true;
+    backPistonsRetracted = true;
 
     // TODO figure out if these motors need to be inverted.
 
@@ -96,6 +98,23 @@ public class Climber extends Subsystem {
   public int getBackTalonPosition(){
     return backTalon.getSensorCollection().getQuadraturePosition();
   }
+
+  public boolean getFrontPistonsRetracted(){
+    return frontPistonsRetracted;
+  }
+
+  public boolean getBackPistonsRetracted(){
+    return backPistonsRetracted;
+  }
+
+  public void setFrontPistonsRetracted(boolean setRetracted){
+    frontPistonsRetracted = setRetracted;
+  }
+
+  public void setBackPistonsRetracted(boolean setRetracted){
+    backPistonsRetracted = setRetracted;
+  }
+
 
   /**
    * Enables the PIDControllers to get them running

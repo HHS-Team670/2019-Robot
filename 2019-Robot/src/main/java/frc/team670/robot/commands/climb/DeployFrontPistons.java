@@ -12,17 +12,17 @@ import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.utils.functions.SettingUtils;
 
-public class RetractBackPistons extends Command {
+public class DeployFrontPistons extends Command {
 
-  public RetractBackPistons() {
+  public DeployFrontPistons() {
     requires(Robot.climber);
+    Robot.climber.setFrontPistonsRetracted(false);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    if(Robot.climber.get)
-    Robot.climber.getBackController().setSetpoint(RobotConstants.PISTON_ENCODER_FLAT);
+    Robot.climber.getFrontController().setSetpoint(RobotConstants.PISTON_ENCODER_FLAT);
   }
 
   // Called repeatedly when this Command is scheduled to run
