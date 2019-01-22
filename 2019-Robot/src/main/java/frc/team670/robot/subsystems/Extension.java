@@ -75,8 +75,18 @@ public class Extension extends Subsystem {
     // setDefaultCommand(new MySpecialCommand());
   }
 
+  /**
+   * Sets the SensorCollection encoder value to encoderValue (use this to reset the encoder when at a known position)
+   */
   public void resetExtension(int encoderValue) {
     extensionMotor.getSensorCollection().setQuadraturePosition(encoderValue, RobotConstants.ARM_RESET_TIMEOUTMS);
+  }
+
+  /**
+   * Selects the PID Slot dedicated to MotionMagic to give it the correct PID Values
+   */
+  public void initializeMotionmagic() {
+    extensionMotor.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
   }
 
   /**

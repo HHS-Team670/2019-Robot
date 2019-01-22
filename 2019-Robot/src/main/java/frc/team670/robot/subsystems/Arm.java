@@ -143,6 +143,12 @@ public class Arm extends Subsystem {
 
     private ArmTransition[] transitions;
 
+    /**
+     * @param extensionLength The absolute Extension length with Extension length in absolute inches with 0 being completely unextended.
+     * @param elbowAngle The absolute Wrist angle with 0 being vertical in the space (180,-180) with 180 being towards the front of the robot.
+     * @param elbowAngle The absolute Elbow angle with 0 being in line with the arm in the space (180,-180) with 180 being towards the front of the robot.
+     * @param transitions The ArmTransitions that begin at this ArmState
+     */
     public ArmState(double extensionLength, double elbowAngle, double wristAngle, ArmTransition[] transitions) {
       this.extensionLength = extensionLength;
       this.elbowAngle = elbowAngle;
@@ -155,14 +161,23 @@ public class Arm extends Subsystem {
       return new Point2D.Double(coord.x, coord.y);
     }
 
+    /**
+     * Gets the absolute Extension length in inches.
+     */
     public double getExtensionLength() {
       return extensionLength;
     }
 
+    /**
+     * Gets the absolue Elbow angle in degrees.
+     */
     public double getElbowAngle() {
       return elbowAngle;
     }
 
+    /**
+     * Gets the absolute Wrist angle in degrees.
+     */
     public double getWristAngle() {
       return wristAngle;
     }

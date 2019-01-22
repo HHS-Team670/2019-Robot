@@ -23,7 +23,6 @@ public class Wrist extends Subsystem {
   // here. Call these from Commands.
   
   private TalonSRX wristRotation;
-  private double wristAngle;
   private static final double kF = 0, kP = 0, kI = 0, kD = 0; //TODO figure out what these are
   // Also need to add pull gains slots
   private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0;
@@ -75,8 +74,18 @@ public class Wrist extends Subsystem {
     // setDefaultCommand(new MySpecialCommand());
   }
 
+   /**
+   * Sets the SensorCollection encoder value to encoderValue (use this to reset the encoder when at a known position)
+   */
   public void resetWrist(double encoderValue) {
     wristRotation.getSensorCollection().setQuadraturePosition((int) encoderValue, RobotConstants.ARM_RESET_TIMEOUTMS);
+  }
+
+  /**
+   * Selects the PID Slot dedicated to MotionMagic to give it the correct PID Values
+   */
+  public void initializeMotionmagic() {
+    wristRotation.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
   }
 
   /**

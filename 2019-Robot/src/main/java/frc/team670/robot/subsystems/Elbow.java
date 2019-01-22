@@ -65,6 +65,13 @@ public class Elbow extends Subsystem {
     elbowRotationMain.set(ControlMode.PercentOutput, output);
   }
   
+  /**
+   * Selects the PID Slot dedicated to MotionMagic to give it the correct PID Values
+   */
+  public void initializeMotionmagic() {
+    elbowRotationMain.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
+  }
+
   public int getPositionTicks() {
     return elbowRotationMain.getSensorCollection().getQuadraturePosition();
   }
@@ -83,6 +90,9 @@ public class Elbow extends Subsystem {
     return this.elbowRotationMain;
   }
 
+  /**
+   * Sets the SensorCollection encoder value to encoderValue (use this to reset the encoder when at a known position)
+   */
   public void resetElbow(double encoderValue) {
     elbowRotationMain.getSensorCollection().setQuadraturePosition((int) encoderValue, RobotConstants.ARM_RESET_TIMEOUTMS);
   }

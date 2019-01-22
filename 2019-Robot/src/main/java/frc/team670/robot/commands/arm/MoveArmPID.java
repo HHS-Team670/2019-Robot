@@ -7,54 +7,35 @@
 
 package frc.team670.robot.commands.arm;
 
+import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.command.WaitForChildren;
 import frc.team670.robot.Robot;
 import frc.team670.robot.subsystems.Arm.ArmState;
-import edu.wpi.first.wpilibj.command.Command;
+import frc.team670.robot.subsystems.Elbow;
+import frc.team670.robot.subsystems.Extension;
+import frc.team670.robot.subsystems.Wrist;
 
 /**
- * PID controlling of arm as wrist, extension and elbow
- * TODO: once the states are figured out we can do more
+ * Uses MotionMagic to move the Arm directly to a known ArmState. BE VERY CAREFUL WITH THIS. It does not take into account
+ * any other position of the robot, so it will very easily slam into the intake or the climber pistons!!!!!
+ * Can be useful if trying to move back to an ArmState that is out of the way of Robot parts when you know you are near it.
+ * This should not be used to reset the encoders by hitting the limit switches because it requires the encoders to be accurately absolute.
  * @author ctchen, arleenliu
  */
-public class MoveArmPID extends Command {
+public class MoveArmPID extends CommandGroup {
 
   private ArmState targetState;
-  private final double ANGLE_TOLERANCE = 0.5, DISTANCE_TOLERANCE = 0.2;
 
-  public MoveArmPID(ArmState state) {
+  public MoveArmPID(ArmState state, Elbow elbow, Wrist wrist, Extension extension) {
     super();
     requires(Robot.extension);
     requires(Robot.wrist);
     requires(Robot.elbow);
-    targetState = state;
-  }
 
-  // Called once when the command executes
-  @Override
-  protected void initialize() {
-    Robot.elbow.setMotionMagicSetpoint(targetState.getElbowAngle());
-    Robot.extension.setMotionMagicSetpoint(targetState.getExtensionLength());
-    Robot.wrist.setMotionMagicSetpoint(targetState.getWristAngle());
-  }
-
-  @Override
-  protected void execute() {
-    super.execute();
-  }
-
-  @Override
-  protected boolean isFinished() {
-    return false;
-  }
-
-  @Override
-  protected void end() {
-    super.end();
-  }
-
-  @Override
-  protected void interrupted() {
-    super.interrupted();
+    addParallel(new MoveExtension(extension, targetState.getExtensionLength()));
+    addParallel(new MoveWrist(wrist, targetState.getWristAngle()));
+    addSequential(new MoveElbow(elbow, targetState.getElbowAngle()));
+    addSequential(new WaitForChildren());
   }
 
 }
