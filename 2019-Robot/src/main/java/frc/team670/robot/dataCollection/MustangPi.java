@@ -10,6 +10,7 @@ import edu.wpi.first.networktables.NetworkTableType;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import frc.team670.robot.utils.functions.MathUtils;
+import frc.team670.robot.constants.RobotConstants;
 
 /**
  * Stores values off of NetworkTables for easy retrieval and gives them Listeners to update the stored values
@@ -17,27 +18,27 @@ import frc.team670.robot.utils.functions.MathUtils;
  */
 public class MustangPi {
 
-    public static final double VISION_ERROR_CODE = -99999;
-
     private HashMap<String, NetworkTableObject> entries;
 
-    private PidSource_VisionValue angleToTarget, distanceToTarget; 
+    private VisionValues wallTarget; 
 
     // The keys for the NetworkTable entries that the raspberry pi is putting up. Ensure that these are placed on the raspi also. Maybe make a shared config file
-    private static final String[] raspiKeys = new String[] {"angleToTarget", "distanceToTarget"};
+    private static final String[] RASPI_KEYS = new String[] {"reflect_tape_vision_data"};
     // The name of the subtable set on the raspberry pi
-    private static final String tableName = "raspberryPi";
+    private static final String TABLE_NAME = "raspberryPi";
 
     // TODO Literally all of this code below needs a review from someone who knows what they're talking about - Shaylan
 
     public MustangPi() {
-        this(raspiKeys);
+        this(RASPI_KEYS);
     }
 
     private MustangPi(String[] keys) {
+        entries = new HashMap<String, NetworkTableObject>();
         for(String key : keys){
-            entries.put(key, new NetworkTableObject(key));
+           entries.put(key, new NetworkTableObject(key));
         }
+        wallTarget = new VisionValues(RASPI_KEYS[0]);
     }
 
     private class NetworkTableObject {
@@ -50,7 +51,7 @@ public class MustangPi {
          */
         public NetworkTableObject(String key) {
             NetworkTableInstance instance = NetworkTableInstance.getDefault();
-            NetworkTable table = instance.getTable(tableName);
+            NetworkTable table = instance.getTable(TABLE_NAME);
             entry = instance.getEntry(key);
             table.addEntryListener(key, (table2, key2, entry, value, flags) -> {
                 this.entry = entry;
@@ -60,16 +61,15 @@ public class MustangPi {
 
         /**
          * Gets the value of the entry, this will be returned as a Double Array. Make sure to have a try/catch block for the Exception
-         * @return A Double Array with the value or values last received from the pi.
-         * @exception IllegalStateException Throws if the value received from the pi was Unassigned or not a Double or Double Array
+         * @return A Double Array with the value or values last received from the pi. Fills with Vision Error Code if it can't get it
          */
-        public double[] getValue() throws IllegalStateException {
+        public double[] getValue() {
             if(entry.getType().equals(NetworkTableType.kDouble)) {
-                return new double[] {entry.getDouble(0)};
+                return new double[] {entry.getDouble(RobotConstants.VISION_ERROR_CODE), RobotConstants.VISION_ERROR_CODE, RobotConstants.VISION_ERROR_CODE};
             } else if(entry.getType().equals(NetworkTableType.kDoubleArray)) {
-                return entry.getDoubleArray(new double[]{});
+                return entry.getDoubleArray(new double[]{RobotConstants.VISION_ERROR_CODE, RobotConstants.VISION_ERROR_CODE, RobotConstants.VISION_ERROR_CODE});
             } else {
-                throw new IllegalStateException("Entry was not a Double, Double Array, or Unassigned");
+                return new double[] {RobotConstants.VISION_ERROR_CODE, RobotConstants.VISION_ERROR_CODE, RobotConstants.VISION_ERROR_CODE};
             }
         }
 
@@ -82,28 +82,92 @@ public class MustangPi {
     /** 
      * Angle to the vision target in degrees, as a PIDSource. Provides the VISION_ERROR_CODE if no value found.
      */
-    public PidSource_VisionValue getAngleToTarget() {
-        return angleToTarget;
+    public VisionValue_PIDSource getAngleToWallTarget() {
+        return wallTarget.getAngle_PIDSource();
     }
 
     /**
      * Distance to the vision target in inches, as a PIDSource. Provides the VISION_ERROR_CODE if no value found.
      */
-    public PidSource_VisionValue getDistanceToTarget() {
-        return distanceToTarget;
+    public VisionValue_PIDSource getDistanceToWallTarget() {
+        return wallTarget.getDistance_PIDSource();
+    }
+
+    public double[] getVisionValues() {
+        if(entries == null) {
+            System.out.println("entries null");
+            return null;
+        }
+        return entries.get(RASPI_KEYS[0]).getValue();
     }
 
     /**
-     * Represents a value received off the raspberry pi through vision processing as a PIDSource for WPILib PIDControllers
+     * Represents a set of vision data received from the raspberry pi containing an array of doubles in the form [angle, distance, timestamp]
      */
-    private class PidSource_VisionValue implements PIDSource {
+    public class VisionValues {
+        private static final int ANGLE_INDEX = 0, DISTANCE_INDEX = 1, TIMESTAMP_INDEX = 2;
+        private VisionValue_PIDSource angle, distance;
+        
+        private VisionValues(String keyName) {
+            angle = new VisionValue_PIDSource(keyName, ANGLE_INDEX);
+            distance = new VisionValue_PIDSource(keyName, DISTANCE_INDEX);
+        }
+
+        public VisionValue_PIDSource getAngle_PIDSource() {
+            return angle;
+        }
+
+        public VisionValue_PIDSource getDistance_PIDSource() {
+            return distance;
+        }
+
+        /**
+         * Angle to the located target in degrees.
+         */
+        public double getAngle() {
+            return angle.pidGet();
+        }
+
+        /**
+         * Distance to the located target in inches.
+         */
+        public double getDistance() {
+            return distance.pidGet();
+        }
+
+        /**
+         * Gets the time stamp of the last vision calculation off the pi.
+         */
+        public double getTimeStamp() {
+            return angle.getEntry(TIMESTAMP_INDEX);
+        }
+
+        /**
+         * Returns true if a vision target is able to be located in the raspberry pi camera
+         */
+        public boolean canSeeVisionTarget() {
+            return !MathUtils.doublesEqual(angle.pidGet(), RobotConstants.VISION_ERROR_CODE);
+        }
+    }
+
+    /**
+     * Implements a VisionValue (distance or angle) as a PIDSource
+     */
+    public class VisionValue_PIDSource implements PIDSource {
 
         private PIDSourceType pidSourceType;
-        private String keyName;
-        
-        private PidSource_VisionValue(String keyName) {
+        private String key;
+        private int indexOfValue;
+
+        private VisionValue_PIDSource(String keyName, int indexOfValue) {
             pidSourceType = PIDSourceType.kDisplacement;
-            this.keyName = keyName;
+            key = keyName;
+            this.indexOfValue = indexOfValue;
+        }
+
+        @Override
+        public double pidGet() {
+            return getEntry(indexOfValue);
         }
 
         @Override
@@ -117,27 +181,15 @@ public class MustangPi {
         }
 
         /**
-         * Returns the PID Value given by this source. If no vision target can be located, returns VISION_ERROR_CODE
+         * Gets the entry at the given index in the array at the NetworkTable entry that corresponds to this object's key.
          */
-        @Override
-        public double pidGet() {
-            double entry = getEntry();
-            if(MathUtils.doublesEqual(entry, VISION_ERROR_CODE)) {
-                return VISION_ERROR_CODE;
-            } else {
-                return entry;
+        public double getEntry(int index) {
+            if (entries.get(key)==null) {
+                return RobotConstants.VISION_ERROR_CODE; // If no data found, returns VISION_ERROR_CODE
             }
-        }
-
-        private double getEntry() {
-            return entries.get(keyName).getValue()[0]; // Gets the 0th value of the array. Make sure that is the correct one if vision software provides an array.
-        }
-
-        /**
-         * Returns true if a vision target is able to be located in the raspberry pi camera
-         */
-        public boolean canSeeVisionTarget() {
-            return !MathUtils.doublesEqual(getEntry(), VISION_ERROR_CODE);
+            double result = entries.get(key).getValue()[index];
+            return result;
         }
     }
+
 }

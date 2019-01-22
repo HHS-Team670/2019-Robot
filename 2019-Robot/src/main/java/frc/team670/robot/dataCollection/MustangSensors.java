@@ -1,21 +1,17 @@
 package frc.team670.robot.dataCollection;
 
-
-import com.kauailabs.navx.frc.AHRS;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import frc.team254.lib.util.drivers.NavX;
-import frc.team254.lib.util.math.Rotation2d;
 import frc.team670.robot.constants.RobotMap;
-
+import frc.team670.robot.dataCollection.sensors.NavX;
+import frc.team670.robot.dataCollection.sensors.NavX.NavX_Pitch_PIDSource;
+import frc.team670.robot.dataCollection.sensors.NavX.ZeroableNavX_Yaw_PIDSource;
 
 /**
  * Instantiates sensor representation objects and contains methods for accessing the sensor data.
+ * @author shaylandias
  */
 public class MustangSensors extends Subsystem {
-  // Put methods for controlling this subsystem
-  // here. Call these from Commands.
 
   // NavX
   private NavX navXMicro = null;
@@ -23,9 +19,8 @@ public class MustangSensors extends Subsystem {
 
 
   public MustangSensors(){
-
     try {
-			navXMicro = new NavX(RobotMap.navXPort);
+			navXMicro = new NavX(RobotMap.NAVX_PORT);
 		} catch (RuntimeException ex) {
 			DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
 			navXMicro = null;
@@ -38,7 +33,7 @@ public class MustangSensors extends Subsystem {
   }
 
   /**
-   * Resets the NavX Angle
+   * Resets the NavX. This means that the NavX performs a shut-down and recalibration, taking time. Use this if it significantly drifs.
    */
   public void resetNavX() {
 		if(navXMicro != null) {
@@ -47,7 +42,7 @@ public class MustangSensors extends Subsystem {
 	}
 
   /**
-   * Returns the rate of change of the yaw angle in degrees per second.
+   * Returns the rate of change of the yaw angle in degrees per second. If NavX not connected, returns NAVX_ERROR_CODE. 
    */
   public double getYawRateDegreesPerSecond() {
     if(navXMicro != null) {
@@ -63,7 +58,15 @@ public class MustangSensors extends Subsystem {
    */
   public double getYawDouble(){
     if(navXMicro != null) {
-      return navXMicro.getYaw().getDegrees();
+      return navXMicro.getYawDouble();
+    } else{
+      return NAVX_ERROR_CODE;
+    }
+  }
+
+  public double getPitchDouble() {
+    if(navXMicro != null) {
+      return navXMicro.getPitch();
     } else{
       return NAVX_ERROR_CODE;
     }
@@ -71,7 +74,7 @@ public class MustangSensors extends Subsystem {
 
   /**
    * 
-   * Gets the yaw for Pathfinder since it needs it mirrored from the normal way. (180, -180)
+   * Gets the yaw for Pathfinder since it needs it mirrored from the normal way. (180, -180). If NavX not connected, returns NAVX_ERROR_CODE
    * 
    * @return Yaw as a double (180, -180)
    */
@@ -80,26 +83,41 @@ public class MustangSensors extends Subsystem {
   }
 
   /**
-   * Gets the yaw as one of 254's Rotation2d Objects (a point on the unit circle).
+   * Gets the yaw as one of 254's Rotation2d Objects (a point on the unit circle). Returns null if the navX is not connected.
    */
-  public Rotation2d getYaw() {
-    if(navXMicro != null) {
-    return navXMicro.getYaw();
-    } else {
-      return null;
-    }
-  }
-
-
+  // public Rotation2d getYaw() {
+  //   if(navXMicro != null) {
+  //   return navXMicro.getYaw();
+  //   } else {
+  //     return null;
+  //   }
+  // }
 
   /**
-   * Resets the yaw angle to zero and the acceleration of the angle to zero.
+   * Adds a "user-offset" variable to the NavX, effectively zeroing the value you will receive at this point.
    */
   public void zeroYaw(){
     if(navXMicro != null){
       navXMicro.zeroYaw();
     }
   }
-  
-  
+
+  public double getFieldCentricYaw() {
+    return navXMicro.getYawFieldCentric();
+  }
+
+  public ZeroableNavX_Yaw_PIDSource getZeroableNavXPIDSource() {
+    if(navXMicro != null){
+      return navXMicro.getZeroableNavXYawPIDSource();
+    }
+    return null;
+  }
+
+  public NavX_Pitch_PIDSource getNavXPitchPIDSource() {
+    if(navXMicro != null){
+      return navXMicro.getNavXPitchPIDSource();
+    }
+    return null;
+  }
+
 }

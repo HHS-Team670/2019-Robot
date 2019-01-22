@@ -161,7 +161,7 @@ public class Path {
     public void checkSegmentDone(Translation2d robotPos) {
         PathSegment currentSegment = segments.get(0);
         double remainingDist = currentSegment.getRemainingDistance(currentSegment.getClosestPoint(robotPos));
-        if (remainingDist < RobotConstants.segmentCompletionTolerance) {
+        if (remainingDist < RobotConstants.SEGMENT_COMPLETION_TOLERANCE) {
             removeCurrentSegment();
         }
     }
@@ -183,7 +183,7 @@ public class Path {
         for (int i = segments.size() - 1; i >= 0; i--) {
             PathSegment segment = segments.get(i);
             maxStartSpeed += Math
-                    .sqrt(maxStartSpeed * maxStartSpeed + 2 * RobotConstants.pathFollowingMaxAccel * segment.getLength());
+                    .sqrt(maxStartSpeed * maxStartSpeed + 2 * RobotConstants.PATH_FOLLOWING_MAX_ACCEL * segment.getLength());
             startSpeeds[i] = segment.getStartState().vel();
             // System.out.println(maxStartSpeed + ", " + startSpeeds[i]);
             if (startSpeeds[i] > maxStartSpeed) {
