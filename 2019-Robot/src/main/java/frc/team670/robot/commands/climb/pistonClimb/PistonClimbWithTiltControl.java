@@ -25,12 +25,13 @@ public class PistonClimbWithTiltControl extends Command {
   private double P = 0.0, I = 0.0, D = 0.0, F = 0.0;
   private PIDController tiltController;
   private boolean goingUp;
+  private int loggingIterationCounter;
 
   /**
    * @param setPoint the desired end goal of the climber (Level 2 or Level 3)
    */
   public PistonClimbWithTiltControl(int setPoint) {
-    if (!Robot.climber.getBackPistonsRetracted() || !Robot.climber.getBackPistonsRetracted())
+    if (!Robot.climber.getBackPistonsRetracted() || !Robot.climber.getFrontPistonsRetracted())
       super.cancel();
 
     requires(Robot.climber);
@@ -91,8 +92,11 @@ public class PistonClimbWithTiltControl extends Command {
       }
     }
 
-    Logger.consoleLog("currentBackPistonPosition:%s currentFrontPistonPosition:%s tiltControlScalar:%s", Robot.climber.getBackTalonPosition(),
-    Robot.climber.getFrontTalonPosition(), tiltController.get());
+    if (loggingIterationCounter % 7 == 0)
+      Logger.consoleLog("currentBackPistonPosition:%s currentFrontPistonPosition:%s tiltControlScalar:%s",
+          Robot.climber.getBackTalonPosition(), Robot.climber.getFrontTalonPosition(), tiltController.get());
+  
+    loggingIterationCounter++;
   }
 
   // Make this return true when this Command no longer needs to run execute()
@@ -109,7 +113,7 @@ public class PistonClimbWithTiltControl extends Command {
     SettingUtils.releaseController(tiltController);
 
     Logger.consoleLog("endBackPistonPosition:%s endFrontPistonPosition:%s ", Robot.climber.getBackTalonPosition(),
-    Robot.climber.getFrontTalonPosition());
+        Robot.climber.getFrontTalonPosition());
   }
 
   // Called when another command which requires one or more of the same

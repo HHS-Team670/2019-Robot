@@ -14,7 +14,8 @@ import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.utils.Logger;
 
 /**
- * Command to run the "dragging forward motion" of the arm to get it onto the platform
+ * Command to run the "dragging forward motion" of the arm to get it onto the
+ * platform
  * 
  */
 public class ArmClimb extends Command {
@@ -22,6 +23,7 @@ public class ArmClimb extends Command {
                                                  // oriented.
   private double height;
   private static boolean userWishesToStillClimb;
+  private int loggingIterationCounter;
 
   public ArmClimb() {
     super();
@@ -54,9 +56,12 @@ public class ArmClimb extends Command {
 
     Robot.extension.setPIDControllerSetpoint(RobotConstants.EXTENSION_ENCODER_OUT - deltaSetPoint); // Changes the
                                                                                                     // setpoint
+    if (loggingIterationCounter % 7 == 0)
+      Logger.consoleLog("heightOfRobot%s angleOfElbow%s extensionSetpoint%s ", height, Robot.elbow.getElbowAngle(),
+          RobotConstants.EXTENSION_ENCODER_OUT - deltaSetPoint);
 
-    Logger.consoleLog("heightOfRobot%s angleOfElbow%s extensionSetpoint%s ", height, Robot.elbow.getElbowAngle(),
-        RobotConstants.EXTENSION_ENCODER_OUT - deltaSetPoint);
+    loggingIterationCounter++;
+
   }
 
   // Make this return true when this Command no longer needs to run execute()

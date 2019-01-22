@@ -14,9 +14,9 @@ import frc.team670.robot.utils.functions.SettingUtils;
 import frc.team670.robot.utils.Logger;
 
 public class RetractBackPistons extends Command {
+  private int loggingIterationCounter;
 
   public RetractBackPistons() {
-    Robot.climber.setBackPistonsRetracted(false);
     requires(Robot.climber);
   }
 
@@ -31,7 +31,10 @@ public class RetractBackPistons extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Logger.consoleLog("CurrentBackPistonPosition:%s", Robot.climber.getBackTalonPosition());
+    if (loggingIterationCounter % 7 == 0)
+      Logger.consoleLog("CurrentBackPistonPosition:%s", Robot.climber.getBackTalonPosition());
+
+      loggingIterationCounter++;
   }
 
   // Make this return true when this Command no longer needs to run execute()
@@ -44,6 +47,7 @@ public class RetractBackPistons extends Command {
   @Override
   protected void end() {
     SettingUtils.releaseController(Robot.climber.getBackController());
+    Robot.climber.setBackPistonsRetracted(false);
     Logger.consoleLog("EndBackPistonPosition:%s", Robot.climber.getBackTalonPosition());
   }
 

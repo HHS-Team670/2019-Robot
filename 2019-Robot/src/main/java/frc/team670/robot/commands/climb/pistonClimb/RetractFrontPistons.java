@@ -14,6 +14,7 @@ import frc.team670.robot.utils.functions.SettingUtils;
 import frc.team670.robot.utils.Logger;
 
 public class RetractFrontPistons extends Command {
+  private int loggingIterationCounter;
 
   public RetractFrontPistons() {
     requires(Robot.climber);
@@ -29,6 +30,10 @@ public class RetractFrontPistons extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    if (loggingIterationCounter % 7 == 0)
+      Logger.consoleLog("CurrentFrontPistonPosition:%s", Robot.climber.getFrontTalonPosition());
+
+      loggingIterationCounter++;
   }
 
   // Make this return true when this Command no longer needs to run execute()
