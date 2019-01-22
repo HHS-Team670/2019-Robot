@@ -52,7 +52,7 @@ public class ArmClimb extends Command {
 
     Robot.extension.setPIDControllerSetpoint(RobotConstants.EXTENSION_ENCODER_OUT - deltaSetPoint);
 
-    if (Robot.extension.getExtensionLengthInTicks() < (Math.cos(Robot.elbow.getElbowAngle() / height))) {
+    if (Robot.extension.getLengthTicks() < (Math.cos(Robot.elbow.getElbowAngle() / height))) {
       super.cancel();
     }
   }
