@@ -5,24 +5,26 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.commands;
+package frc.team670.robot.commands.climb.armClimb;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team670.robot.Robot;
 
 /**
- * Zeros the NavX yaw at its current position while leaving the field centric angle untouched.
+ * Add your docs here.
  */
-public class ZeroNavX extends InstantCommand {
+public class CancelArmClimb extends InstantCommand {
 
-  public ZeroNavX() {
+  public CancelArmClimb() {
     super();
+    requires(Robot.arm);
+    requires(Robot.elbow);
   }
 
   // Called once when the command executes
   @Override
   protected void initialize() {
-    Robot.sensors.zeroYaw();
+    ArmClimb.setCanClimb(false);
   }
 
 }

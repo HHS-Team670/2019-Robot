@@ -1,8 +1,7 @@
-package frc.team670.robot.commands;
+package frc.team670.robot.commands.drive.teleop;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import frc.team670.robot.commands.drive.FlipCamera;
-import frc.team670.robot.commands.drive.FlipDriveDirection;
+import frc.team670.robot.commands.cameras.FlipCamera;
 
 public class FlipDriveWithCamera extends CommandGroup{
 

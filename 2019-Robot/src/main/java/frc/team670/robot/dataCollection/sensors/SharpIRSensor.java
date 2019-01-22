@@ -1,4 +1,4 @@
-package frc.team670.robot.dataCollection;
+package frc.team670.robot.dataCollection.sensors;
 
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogTrigger;

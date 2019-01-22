@@ -8,12 +8,14 @@
 package frc.team670.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.utils.functions.MathUtils;
+import frc.team670.robot.utils.functions.SettingUtils;
 
 /**
  * Controls motors for motion of extension
@@ -24,6 +26,8 @@ public class Extension extends Subsystem {
   private TalonSRX extensionMotor;
   private double extensionLength;
   private static final double kF = 0, kP = 0, kI = 0, kD = 0; //TODO figure out what these are
+  private static final int POSITION_SLOT = 0;
+  private final double P = 0.1, I = 0.0, D = 0.0, F = 0.0, RAMP_RATE = 0.15;
   // Also need to add pull gains slots
   private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0;
 
@@ -39,7 +43,7 @@ public class Extension extends Subsystem {
  
   }
 
-/**
+  /**
    * Sets the peak current limit for the elbow motor.
    * @param current Current in amps
    */
@@ -67,6 +71,34 @@ public class Extension extends Subsystem {
   
   public double getLengthInches() {
     return MathUtils.convertExtensionTicksToInches(getLengthTicks());
+  }
+
+  public Extension() {
+    extensionMotor = new TalonSRX(RobotMap.ARM_EXTENSION_MOTOR);
+
+  }
+
+  /**
+   * Enables the PID Controller for extension
+   */
+  public void enableExtensionPIDController() {
+    SettingUtils.initTalonPID(extensionMotor, POSITION_SLOT, P, I, D, F, -RobotConstants.DEFAULT_EXTENSION_POWER,
+        RobotConstants.DEFAULT_EXTENSION_POWER, FeedbackDevice.CTRE_MagEncoder_Relative, RAMP_RATE);
+        extensionMotor.selectProfileSlot(POSITION_SLOT, 0);
+  }
+
+  /**
+   * Modifies the setpoint for the PID Controller
+   */
+  public void setPIDControllerSetpoint(int setpoint) {
+    extensionMotor.set(ControlMode.Position, setpoint);
+  }
+
+  /**
+   * Returns the length of the extension in ticks
+   */
+  public int getExtensionLengthInTicks() {
+    return extensionMotor.getSensorCollection().getQuadraturePosition();
   }
 
   @Override

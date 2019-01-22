@@ -5,49 +5,47 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.commands.arm;
+package frc.team670.robot.commands.climb.pistonClimb;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.team670.robot.Robot;
+import frc.team670.robot.constants.RobotConstants;
+import frc.team670.robot.utils.functions.SettingUtils;
 
-public class InitArmClimb extends Command {
-  private CommandGroup armClimbGroup;
+public class RetractFrontPistons extends Command {
 
-  public InitArmClimb() {
-    super();
-    requires(Robot.arm);
-    armClimbGroup = new ArmClimb();
+  public RetractFrontPistons() {
+    requires(Robot.climber);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-  
+    Robot.climber.getFrontController().setSetpoint(RobotConstants.PISTON_ENCODER_FLAT);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-      armClimbGroup.start();
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return false;
+    return Robot.climber.getFrontController().onTarget();
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    armClimbGroup.cancel();
+    SettingUtils.releaseController(Robot.climber.getFrontController());
+    Robot.climber.setFrontPistonsRetracted(false);
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    end();
+    SettingUtils.releaseController(Robot.climber.getFrontController());
   }
 }

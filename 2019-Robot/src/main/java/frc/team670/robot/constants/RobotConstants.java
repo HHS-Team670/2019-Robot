@@ -5,7 +5,7 @@ import frc.team254.lib.util.control.Lookahead;
 public class RobotConstants {
 
     // Robot Dimensions
-    public static final double ROBOT_LENGTH = 0, ROBOT_WIDTH = 0;
+    public static final double ROBOT_LENGTH = 0, ROBOT_WIDTH = 0, DRIVEBASE_TO_GROUND = 0;
 
     //Drive Base Dimensions TODO set these
     public static final double DRIVEBASE_GEAR_RATIO = 8.45; // 8.45 if low gear, 10.71 if high gear. TODO check which one it is
@@ -48,11 +48,29 @@ public class RobotConstants {
     MIN_LOOKAHEAD_SPEED, MAX_LOOKAHEAD_SPEED);
 
     // Arm Constants
-    public static final double ARM_START_HEIGHT = 0;
+    public static final double ARM_HEIGHT = 0;
     public static final double CLAW_RADIUS = 0;
+    public static final int FIXED_ARM_LENGTH = 0;
+
+    //Elbow constants
     public static final int PEAK_AMPS = 0; // check the peak limit and set again
     public static final int TIMEOUT_MS = 0; //  
     public static final int PEAK_TIME_MS = 0; //  Duration after current exceed peak current to trigger current limit
+
+    // Climbing Current Limits
+    public static final int CLIMB_CURRENT_LIMIT = 10; // TODO figure required limited current
+    public static final int NORMAL_CURRENT_LIMIT = 0; // TODO figure out normal current
+
+    //Extension constants
+    public static final int EXTENSION_ENCODER_OUT = 0;
+    public static final double DEFAULT_EXTENSION_POWER = 0; 
+    public static final double INCHES_TO_TRAVEL_ONTO_PLATFORM = 4;
+
+    //Arm PID Constants
+    public static final int kPIDLoopIdx = 0;
+    public static final int kTimeoutMs = 0;
+    public static final int ALLOWABLE_PID_ERROR = 0;
+
     public static final int TRIGGER_AMPS = 10; // TODO figure required limited current
 
     public static int MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 15000; // TODO set this
@@ -71,4 +89,21 @@ public class RobotConstants {
     public static double EXTENSION_IN_POS = 0;
     public static double EXTENSION_OUT_POS = 12000;
 
+    // Climber Constants
+    // Climb Constants - TODO all of these need to be set
+    public static final double LOWERING_PISTON_POWER = 0.05;
+    public static final double MINIMUM_PISTON_POWER = 0.1;
+    public static final double MAXIMUM_PISTON_POWER = 0.75;  
+    public static final int CLIMBER_ENCODER_TOLERANCE = 10;
+
+    //Fully retracted
+    public static final int PISTON_ENCODER_FLAT = 0;
+
+    //Halfway extended
+    public static final int PISTON_ENCODER_LEVEL_TWO = 0;
+
+    //Fully extended
+    public static final int PISTON_ENCODER_LEVEL_THREE= 0;
+
+    public static final int TILT_TOLERANCE = 0;
 }

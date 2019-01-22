@@ -145,6 +145,15 @@ public class MathUtils {
      */
     public static boolean isWithinTolerance(double value, double target, double tolerance) {
         return (value > target - tolerance && value < target + tolerance);
+
+    /**
+     * Returns the hypotenuse of a triangle given two legs according to the Pythagorean Theorem
+     * 
+     * @param leg1 The length of the first leg
+     * @param leg2 The length of the second leg
+     */
+    public static double findHypotenuse(double leg1, double leg2){
+        return Math.sqrt(leg1 * leg1 + leg2 * leg2);
     }
 
     /*

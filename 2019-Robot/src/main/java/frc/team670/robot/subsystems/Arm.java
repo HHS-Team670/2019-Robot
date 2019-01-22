@@ -8,20 +8,15 @@
 package frc.team670.robot.subsystems;
 
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team670.robot.commands.arm.armTransitions.ArmTransition;
 import frc.team670.robot.commands.arm.armTransitions.NeutralToCargoPickup;
 import frc.team670.robot.constants.RobotConstants;
-import frc.team670.robot.constants.RobotMap;
+
 import frc.team670.robot.utils.sort.Node;
+import frc.team670.robot.utils.sort.Edge;
 
 /**
  * Stores possible arm states. Does arm-related math
@@ -101,8 +96,13 @@ public class Arm extends Subsystem {
    */
   public Point2D.Double getPosition(double extensionLength, double wristAngle, double elbowAngle) {
     double x = extensionLength * Math.sin(elbowAngle) + RobotConstants.CLAW_RADIUS * Math.sin(wristAngle);
-    double y = extensionLength * Math.cos(elbowAngle) + RobotConstants.CLAW_RADIUS * Math.cos(wristAngle) + RobotConstants.ARM_START_HEIGHT;
+    double y = extensionLength * Math.cos(elbowAngle) + RobotConstants.CLAW_RADIUS * Math.cos(wristAngle) + RobotConstants.ARM_HEIGHT;
     return new Point2D.Double(x, y);
+  }
+ 
+  @Override
+  public void initDefaultCommand() {
+    
   }
 
   /**
