@@ -5,7 +5,7 @@ import frc.team254.lib.util.control.Lookahead;
 public class RobotConstants {
 
     // Robot Dimensions
-    public static final double ROBOT_LENGTH = 0, ROBOT_WIDTH = 0;
+    public static final double ROBOT_LENGTH = 0, ROBOT_WIDTH = 0, DRIVEBASE_TO_GROUND = 0;
 
     //Drive Base Dimensions TODO set these
     public static final double DRIVEBASE_GEAR_RATIO = 8.45; // 8.45 if low gear, 10.71 if high gear. TODO check which one it is
