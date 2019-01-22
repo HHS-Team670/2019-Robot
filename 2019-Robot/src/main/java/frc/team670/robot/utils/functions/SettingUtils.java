@@ -37,7 +37,7 @@ public class SettingUtils {
    * @param D The derivative constant for PID
    * @param F The feed forward constant for PID
    * @param minOutput The minimum output for PID
-   * @param maxOutput The maximum ouptut for PID
+   * @param maxOutput The maximum ouptut for PID  
    */
   public static void initTalonPID(TalonSRX talon, int slot, double P, double I, double D, double F,
       double minOutput, double maxOutput) {

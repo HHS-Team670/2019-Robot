@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.utils.functions.SettingUtils;
+import frc.team670.robot.utils.Logger;
 
 public class RetractFrontPistons extends Command {
 
@@ -22,6 +23,7 @@ public class RetractFrontPistons extends Command {
   @Override
   protected void initialize() {
     Robot.climber.getFrontController().setSetpoint(RobotConstants.PISTON_ENCODER_FLAT);
+    Logger.consoleLog("startFrontPistonPosition:%s", Robot.climber.getFrontTalonPosition());
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -40,6 +42,7 @@ public class RetractFrontPistons extends Command {
   protected void end() {
     SettingUtils.releaseController(Robot.climber.getFrontController());
     Robot.climber.setFrontPistonsRetracted(false);
+    Logger.consoleLog("EndFrontPistonPosition:%s", Robot.climber.getFrontTalonPosition());
   }
 
   // Called when another command which requires one or more of the same
@@ -47,5 +50,6 @@ public class RetractFrontPistons extends Command {
   @Override
   protected void interrupted() {
     SettingUtils.releaseController(Robot.climber.getFrontController());
+    Logger.consoleLog("RetractFrontPiston interrupted");
   }
 }

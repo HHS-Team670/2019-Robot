@@ -33,6 +33,11 @@ public class CycleClimb extends InstantCommand {
   }
 
   // Called just before this Command runs the first time
+
+  /**
+   * Has an enum which stores what command to run based on what how many times the command has been called. 
+   * This allows one button to cycle through a set of different commands
+   */
   @Override
   protected void initialize() {
     switch (cg) {
@@ -42,7 +47,7 @@ public class CycleClimb extends InstantCommand {
       break;
     case ARM_CLIMB:
       Scheduler.getInstance().add(new ArmClimb());
-      if (!ArmClimb.canClimb()) {
+      if (!ArmClimb.getUserWishesToStillClimb()) {
         cg = ClimbStage.RETRACT_FRONT_PISTONS;
       }
       break;
@@ -63,6 +68,11 @@ public class CycleClimb extends InstantCommand {
     }
   }
 
+
+  /**
+   * An enum to represent the different stages of climbing that the command can call
+   * 
+   */
   public enum ClimbStage {
     DEPLOY_PISTONS, ARM_CLIMB, RETRACT_FRONT_PISTONS, RETRACT_BACK_PISTONS;
   }

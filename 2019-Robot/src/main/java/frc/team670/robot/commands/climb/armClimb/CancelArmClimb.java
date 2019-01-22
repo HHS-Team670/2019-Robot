@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team670.robot.Robot;
 
 /**
- * Add your docs here.
+ * Turns a boolean in the ArmClimb class to false which stops it from running
  */
 public class CancelArmClimb extends InstantCommand {
 
@@ -24,7 +24,7 @@ public class CancelArmClimb extends InstantCommand {
   // Called once when the command executes
   @Override
   protected void initialize() {
-    ArmClimb.setCanClimb(false);
+    ArmClimb.setUserWishesToStillClimb(false);
   }
 
 }

@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.utils.functions.SettingUtils;
+import frc.team670.robot.utils.Logger;
 
 public class RetractBackPistons extends Command {
 
@@ -23,11 +24,14 @@ public class RetractBackPistons extends Command {
   @Override
   protected void initialize() {
     Robot.climber.getBackController().setSetpoint(RobotConstants.PISTON_ENCODER_FLAT);
+
+    Logger.consoleLog("startBackPistonPosition:%s", Robot.climber.getBackTalonPosition());
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    Logger.consoleLog("CurrentBackPistonPosition:%s", Robot.climber.getBackTalonPosition());
   }
 
   // Make this return true when this Command no longer needs to run execute()
@@ -40,6 +44,7 @@ public class RetractBackPistons extends Command {
   @Override
   protected void end() {
     SettingUtils.releaseController(Robot.climber.getBackController());
+    Logger.consoleLog("EndBackPistonPosition:%s", Robot.climber.getBackTalonPosition());
   }
 
   // Called when another command which requires one or more of the same
@@ -47,5 +52,6 @@ public class RetractBackPistons extends Command {
   @Override
   protected void interrupted() {
     end();
+    Logger.consoleLog("RetractBackPiston interrupted");
   }
 }
