@@ -11,6 +11,7 @@
 package frc.team670.robot.commands.drive;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.command.Command;
@@ -34,7 +35,7 @@ public class DriveMotionProfile extends Command {
 
   private Waypoint[] waypoints = new Waypoint[]{new Waypoint(0, 0, 0)};
   private Trajectory.Config config;
-  private Trajectory trajectory;
+  // private Trajectory trajectory;
   private Trajectory leftTrajectory, rightTrajectory;
   private TankModifier modifier;
   private EncoderFollower left, right;
@@ -43,7 +44,6 @@ public class DriveMotionProfile extends Command {
   private static final String BASE_PATH_NAME = "home/deploy/";
   private static final double MAX_VELOCITY = 120, MAX_ACCELERATION = 60, MAX_JERK = 60; // Equivalent units in inches
   private static final double TIME_STEP = 0.05;
-  private static final double WHEEL_BASE = 25; //Inches
   private static final double ANGLE_DIVIDE_CONSTANT = 240.0; // Default = 80
 
 
@@ -67,12 +67,14 @@ public class DriveMotionProfile extends Command {
     this.waypoints = waypoints.clone();
 
     config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, TIME_STEP, MAX_VELOCITY, MAX_ACCELERATION, MAX_JERK);
-    trajectory = Pathfinder.generate(waypoints, config);
-    modifier = new TankModifier(trajectory).modify(WHEEL_BASE);
+    Trajectory trajectory = Pathfinder.generate(waypoints, config);
+    modifier = new TankModifier(trajectory).modify(RobotConstants.WHEEL_BASE);
+    leftTrajectory = modifier.getLeftTrajectory();
+    rightTrajectory = modifier.getRightTrajectory();
 
-     // TODO In the future maybe do this in initialize so when the Command is rerun it starts over
-    left = new EncoderFollower(modifier.getLeftTrajectory());
-    right= new EncoderFollower(modifier.getRightTrajectory());
+     // TODO In the future maybe do this in initialize so when the Command is rerun it starts over for testing purposes
+    left = new EncoderFollower(leftTrajectory);
+    right= new EncoderFollower(rightTrajectory);
   }
 
 
@@ -80,7 +82,7 @@ public class DriveMotionProfile extends Command {
    * Creates a DriveMotionProfile from a text file
    * @param fileName path to trajectory file inside the output folder in the deploy directory
    */
-  public DriveMotionProfile(String fileName, boolean isReversed) {
+  public DriveMotionProfile(String fileName, boolean isReversed) throws FileNotFoundException {
 
     this.isReversed = isReversed;
 
@@ -103,7 +105,6 @@ public class DriveMotionProfile extends Command {
         extension = fileName.substring(i+1);
     }
 
-
     if (extension.equals(csv)){
       leftTrajectory = Pathfinder.readFromCSV(leftFile);
       rightTrajectory = Pathfinder.readFromCSV(rightFile);
@@ -112,23 +113,22 @@ public class DriveMotionProfile extends Command {
       leftTrajectory = Pathfinder.readFromFile(leftFile);
       rightTrajectory = Pathfinder.readFromFile(rightFile);
     } else {
-      // Set the max velocity to something lower than the actual max velocity, otherwise we get motor outputs >1.0 and <-1.0 which makes us unable to turn properly
-      // For here let's set it to 
-      config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, TIME_STEP, MAX_VELOCITY, MAX_ACCELERATION, MAX_JERK);
-      trajectory = Pathfinder.generate(waypoints, config);
-      // follow old method of splitting one trajectory into left and right if generated with waypoints
-      modifier = new TankModifier(trajectory).modify(RobotConstants.DRIVEBASE_TRACK_WIDTH);
-      left = new EncoderFollower(modifier.getLeftTrajectory());
-      right= new EncoderFollower(modifier.getRightTrajectory());
-      encoderFollowersSet = true;
+      // // Set the max velocity to something lower than the actual max velocity, otherwise we get motor outputs >1.0 and <-1.0 which makes us unable to turn properly
+      // // For here let's set it to 
+      // config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, TIME_STEP, MAX_VELOCITY, MAX_ACCELERATION, MAX_JERK);
+      // Trajectory trajectory = Pathfinder.generate(waypoints, config);
+      // // follow old method of splitting one trajectory into left and right if generated with waypoints
+      // modifier = new TankModifier(trajectory).modify(RobotConstants.WHEEL_BASE);
+      // left = new EncoderFollower(modifier.getLeftTrajectory());
+      // right= new EncoderFollower(modifier.getRightTrajectory());
+      // encoderFollowersSet = true;
+      throw new FileNotFoundException("DriveMotionProfile did not receive a valid filename.");
     }
-    modifier = new TankModifier(trajectory).modify(WHEEL_BASE);
+    // Don't need this if reading in left and right trajectories
+    // modifier = new TankModifier(trajectory).modify(RobotConstants.WHEEL_BASE);
 
-    if (!encoderFollowersSet) { // avoids re setting if trajectory is generated from waypoints
-      left = new EncoderFollower(leftTrajectory);
-      right = new EncoderFollower(rightTrajectory);
-      encoderFollowersSet = true;
-    }
+    left = new EncoderFollower(leftTrajectory);
+    right = new EncoderFollower(rightTrajectory);
 
   }
 
@@ -136,15 +136,17 @@ public class DriveMotionProfile extends Command {
   @Override
   protected void initialize() {
 
-    // TODO make sure angle actually serts to zero (firmware update NavX)
-    // TODO Think through what we want out of angle, maybe go off an initial angle
+    // Zeroes the NavX to avoid errors with pathing direction.
     Robot.sensors.zeroYaw();
-
     // For real matches instantiate this in constructor.
-    left = new EncoderFollower(modifier.getLeftTrajectory());
-    right= new EncoderFollower(modifier.getRightTrajectory());
+    // left = new EncoderFollower(modifier.getLeftTrajectory());
+    // right= new EncoderFollower(modifier.getRightTrajectory());
 
-    double initialLeftEncoder, initialRightEncoder;
+    int initialLeftEncoder, initialRightEncoder;
+    // Encoder Position is the current, cumulative position of your encoder. If you're using an SRX, this will be the
+    // 'getEncPosition' function.
+    // 1024 is the amount of encoder ticks per full revolution
+    // Wheel Diameter is the diameter of your wheels (or pulley for a track system) in meters
     if(isReversed) {
       initialLeftEncoder = -1 * Robot.driveBase.getLeftDIOEncoderPosition();
       initialRightEncoder = -1 * Robot.driveBase.getRightDIOEncoderPosition();
@@ -154,21 +156,11 @@ public class DriveMotionProfile extends Command {
       initialRightEncoder = Robot.driveBase.getRightDIOEncoderPosition();
     }
 
+    left.configureEncoder(initialLeftEncoder, RobotConstants.DIO_TICKS_PER_ROTATION, RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
+    right.configureEncoder(initialRightEncoder, RobotConstants.DIO_TICKS_PER_ROTATION, RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);  
+
     // Set up Robot for Auton Driving
     Robot.driveBase.initAutonDrive();
-
-    // Encoder Position is the current, cumulative position of your encoder. If you're using an SRX, this will be the
-    // 'getEncPosition' function.
-    // 1000 is the amount of encoder ticks per full revolution
-    // Wheel Diameter is the diameter of your wheels (or pulley for a track system) in meters
-
-    if(isReversed){
-      left.configureEncoder(-1 * Robot.driveBase.getLeftDIOEncoderPosition(), RobotConstants.DIO_TICKS_PER_ROTATION, RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
-      right.configureEncoder(-1 * Robot.driveBase.getRightDIOEncoderPosition(), RobotConstants.DIO_TICKS_PER_ROTATION, RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);  
-    } else{
-      left.configureEncoder(Robot.driveBase.getLeftDIOEncoderPosition(), RobotConstants.DIO_TICKS_PER_ROTATION, RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
-      right.configureEncoder(Robot.driveBase.getRightDIOEncoderPosition(), RobotConstants.DIO_TICKS_PER_ROTATION, RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);  
-    }
 
     // The first argument is the proportional gain. Usually this will be quite high
     // The second argument is the integral gain. This is unused for motion profiling
@@ -188,11 +180,6 @@ public class DriveMotionProfile extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-
-    // Example code from Jaci's Motion profiling, calculates distance for PID
-    /*
-    * LEFT ENCODER IS BACKWARDS SO WE MULTIPLY IT'S VALUE BY -1 TO FLIP IT
-    */
 
     int leftEncoder, rightEncoder;
     if(isReversed) {

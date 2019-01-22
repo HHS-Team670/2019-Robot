@@ -14,7 +14,7 @@ public class RobotConstants {
     /** Inches per rotation of the NEO motors on the drivebase */
     public static final double DRIVEBASE_INCHES_PER_ROTATION = 1/DRIVEBASE_GEAR_RATIO * DRIVE_BASE_WHEEL_DIAMETER * Math.PI;
     /** The number of ticks per rotation of a drivebase wheel for the DIO Encoders  */
-    public static final int DIO_TICKS_PER_ROTATION = 4096;
+    public static final int DIO_TICKS_PER_ROTATION = 1024;
 
     // LEDs
     public static final int LED_PORT = 5801;
@@ -28,7 +28,7 @@ public class RobotConstants {
     public static final double PROPORTION = 0.2*KU;
     public static final double INTEGRAL = 0;//0.05*KU/TU;
     public static final double DERIVATIVE = 5*KU*TU/40;
-    public static final double DRIVEBASE_TRACK_WIDTH = 25; //TODO set this value to the actual
+    public static final double WHEEL_BASE = 25; //TODO set this value to the actual one in inches
 
     // Pure Pursuit Constants
     public static final double MIN_LOOKAHEAD = 12.0; //Inches. TODO: set the value; 1 ft for now idk
