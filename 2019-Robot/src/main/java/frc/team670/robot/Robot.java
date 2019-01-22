@@ -7,6 +7,8 @@
 
 package frc.team670.robot;
 
+import java.io.FileNotFoundException;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -159,7 +161,12 @@ public class Robot extends TimedRobot {
     sensors.resetNavX(); // Reset NavX completely, zero the field centric based on how robot faces from start of game.
     fieldCentricPose = new Pose();
     Logger.consoleLog("Auton Started");
-    autonomousCommand = new DriveMotionProfile("/output/DriveRightCurve.pf1.csv", false);
+    try{ 
+      autonomousCommand = new DriveMotionProfile("/output/DriveRightCurve.pf1.csv", false);
+    }
+    catch (FileNotFoundException e) {
+      e.printStackTrace();
+    }
 
     /*
      * String autoSelected = SmartDashboard.getString("Auto Selector",
