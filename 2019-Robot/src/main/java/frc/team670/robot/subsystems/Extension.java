@@ -72,7 +72,7 @@ public class Extension extends Subsystem {
     return extensionMotor.getSensorCollection().getQuadraturePosition();
   }
   
-    /**
+  /**
    * Gets the current Extension length in absolute inches with 0 at no extension.
    */
   public double getLengthInches() {
