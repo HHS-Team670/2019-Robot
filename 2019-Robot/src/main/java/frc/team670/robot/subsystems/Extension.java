@@ -65,17 +65,18 @@ public class Extension extends Subsystem {
     extensionMotor.set(ControlMode.PercentOutput, output);
   }
 
+  /**
+   * Gets the current Extension length in absolute ticks with 0 at no extension.
+   */
   public int getLengthTicks() {
     return extensionMotor.getSensorCollection().getQuadraturePosition();
   }
   
+    /**
+   * Gets the current Extension length in absolute inches with 0 at no extension.
+   */
   public double getLengthInches() {
     return MathUtils.convertExtensionTicksToInches(getLengthTicks());
-  }
-
-  public Extension() {
-    extensionMotor = new TalonSRX(RobotMap.ARM_EXTENSION_MOTOR);
-
   }
 
   /**
@@ -92,13 +93,6 @@ public class Extension extends Subsystem {
    */
   public void setPIDControllerSetpoint(int setpoint) {
     extensionMotor.set(ControlMode.Position, setpoint);
-  }
-
-  /**
-   * Returns the length of the extension in ticks
-   */
-  public int getExtensionLengthInTicks() {
-    return extensionMotor.getSensorCollection().getQuadraturePosition();
   }
 
   @Override

@@ -199,10 +199,5 @@ public class Arm extends Subsystem {
       super(0, 45, 45, new ArmTransition[] { new NeutralToCargoPickup() });
     }
   }
-  
-  @Override
-  public void initDefaultCommand() {
-    
-  }
 
 }
