@@ -5,7 +5,7 @@ import frc.team254.lib.util.control.Lookahead;
 public class RobotConstants {
 
     // Robot Dimensions
-    public static final double ROBOT_LENGTH = 0, ROBOT_WIDTH = 0;
+    public static final double ROBOT_LENGTH = 0, ROBOT_WIDTH = 0, DRIVEBASE_TO_GROUND = 0;
 
     //Drive Base Dimensions TODO set these
     public static final double DRIVEBASE_GEAR_RATIO = 8.45; // 8.45 if low gear, 10.71 if high gear. TODO check which one it is
@@ -63,7 +63,8 @@ public class RobotConstants {
 
     //Arm PID Constants
     public static final int kPIDLoopIdx = 0;
-    public static final int kTimeoutMs = 10;
+    public static final int kTimeoutMs = 0;
+    public static final int ALLOWABLE_PID_ERROR = 0;
 
     public static final int TRIGGER_AMPS = 10; // TODO figure required limited current
 

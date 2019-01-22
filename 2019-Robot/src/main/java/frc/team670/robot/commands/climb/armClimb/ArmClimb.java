@@ -33,7 +33,7 @@ public class ArmClimb extends Command {
 
     Robot.extension.enableExtensionPIDController();
 
-    height = Robot.climber.getFrontTalonPositionInInches() + RobotConstants.ARM_HEIGHT; // TODO get the actual method
+    height = Robot.climber.getFrontTalonPositionInInches() + RobotConstants.ARM_HEIGHT + RobotConstants.DRIVEBASE_TO_GROUND;
   }
 
   // Called repeatedly when this Command is scheduled to run

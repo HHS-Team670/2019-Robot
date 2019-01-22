@@ -8,6 +8,7 @@
 package frc.team670.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -23,7 +24,7 @@ public class Extension extends Subsystem {
   // here. Call these from Commands.
   private TalonSRX extensionMotor;
   private static final int POSITION_SLOT = 0;
-  private double P = 0.0, I = 0.0, D = 0.0, F = 0.0;
+  private final double P = 0.1, I = 0.0, D = 0.0, F = 0.0, RAMP_RATE = 0.15;
 
   public Extension() {
     extensionMotor = new TalonSRX(RobotMap.ARM_EXTENSION_MOTOR);
@@ -32,11 +33,11 @@ public class Extension extends Subsystem {
 
   /**
    * Enables the PID Controller for extension
-   * 
    */
   public void enableExtensionPIDController() {
     SettingUtils.initTalonPID(extensionMotor, POSITION_SLOT, P, I, D, F, -RobotConstants.DEFAULT_EXTENSION_POWER,
-        RobotConstants.DEFAULT_EXTENSION_POWER);
+        RobotConstants.DEFAULT_EXTENSION_POWER, FeedbackDevice.CTRE_MagEncoder_Relative, RAMP_RATE);
+        extensionMotor.selectProfileSlot(POSITION_SLOT, 0);
   }
 
   /**
