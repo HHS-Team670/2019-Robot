@@ -5,49 +5,49 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.commands.arm;
+package frc.team670.robot.commands.arm.movement;
 
 import edu.wpi.first.wpilibj.command.Command;
-import frc.team670.robot.subsystems.Extension;
+import frc.team670.robot.subsystems.Elbow;
 import frc.team670.robot.utils.Logger;
-import frc.team670.robot.utils.functions.MathUtils;;
+import frc.team670.robot.utils.functions.MathUtils;
 
-/*
- * Moves the Extension to an absolute inch value using MotionMagic. Use this as part of an ArmTransition.
+/**
+ * Moves the Elbow to an absolute angle value using MotionMagic. Use this as part of an ArmTransition.
  */
-public class MoveExtension extends Command {
+public class MoveElbow extends Command {
 
-  private static final double DISTANCE_TOLERANCE = 0.1;
+  private Elbow elbow;
+  private double angle;
 
-  private Extension extension;
-  private double distance;
+  private static final double DEGREE_TOLERANCE = 0.5;
+
   private long executeCount;
-  
 
   /**
    * Instantiates Command
-   * @param wrist The Wrist to move. This could be the actual wrist from Robot, or a TestWrist
-   * @param distance The absolute distance to move to [0, farthest extension possible] moving outwards with 0 at no extension.
+   * @param elbow The Elbow to move. This could be the actual elbow from Robot, or a TestElbow
+   * @param angle The absolute angle to move to (180, -180) with 180 being towards the front of the robot (where the intake is).
+   * In reality, this angle will not be in this full range because the elbow will have a limit to how much it can move.
    */
-  public MoveExtension(Extension extension, double distance) {
-    requires(extension);
-    this.distance = distance;
+  public MoveElbow(Elbow elbow, double angle) {
+    requires(elbow);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    extension.initializeMotionmagic();
+    elbow.initializeMotionmagic();
     executeCount = 0;
-    Logger.consoleLog("MoveExtension: distance: %s", distance);
+    Logger.consoleLog("MoveElbow: angle: %s", angle);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    extension.setMotionMagicSetpoint(distance);
+    elbow.setMotionMagicSetpoint(angle);
     if(executeCount % 5 == 0) {
-      Logger.consoleLog("MoveExtension: distance: %s", distance);
+      Logger.consoleLog("MoveElbow: angle: %s", angle);
     }
     executeCount++;
   }
@@ -55,20 +55,20 @@ public class MoveExtension extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return MathUtils.isWithinTolerance(extension.getLengthInches(), distance, DISTANCE_TOLERANCE);
+    return MathUtils.isWithinTolerance(elbow.getAngle(), angle, DEGREE_TOLERANCE);
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Logger.consoleLog("MoveExtension: targetDistance: %s, endingDistance: %s", distance, extension.getLengthInches());
+    Logger.consoleLog("MoveElbow: targetAngle: %s, endingAngle: %s", angle, elbow.getAngle());
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    Logger.consoleLog("MoveExtension Interrupted");
+    Logger.consoleLog("MoveElbow Interrupted");
     end();
   }
 }

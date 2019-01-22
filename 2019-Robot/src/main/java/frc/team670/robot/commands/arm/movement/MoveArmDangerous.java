@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.commands.arm;
+package frc.team670.robot.commands.arm.movement;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.WaitForChildren;
@@ -22,11 +22,11 @@ import frc.team670.robot.subsystems.Wrist;
  * This should not be used to reset the encoders by hitting the limit switches because it requires the encoders to be accurately absolute.
  * @author ctchen, arleenliu
  */
-public class MoveArmPID extends CommandGroup {
+public class MoveArmDangerous extends CommandGroup {
 
   private ArmState targetState;
 
-  public MoveArmPID(ArmState state, Elbow elbow, Wrist wrist, Extension extension) {
+  public MoveArmDangerous(ArmState state, Elbow elbow, Wrist wrist, Extension extension) {
     super();
     requires(Robot.extension);
     requires(Robot.wrist);

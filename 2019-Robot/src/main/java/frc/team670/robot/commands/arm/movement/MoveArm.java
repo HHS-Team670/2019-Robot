@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.commands.arm;
+package frc.team670.robot.commands.arm.movement;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +20,7 @@ import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.sort.AStarSearch;
 
 /**
- * Move the arm using known ArmStates and found path.
+ * Move the arm if it is at a known ArmState by finding a path and using it to travel along ArmTransitions between ArmStates.
  * @author ctchen
  */
 public class MoveArm extends CommandGroup {

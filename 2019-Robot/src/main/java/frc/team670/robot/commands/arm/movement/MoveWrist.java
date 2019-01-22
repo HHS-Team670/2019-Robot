@@ -5,19 +5,19 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.commands.arm;
+package frc.team670.robot.commands.arm.movement;
 
 import edu.wpi.first.wpilibj.command.Command;
-import frc.team670.robot.subsystems.Elbow;
+import frc.team670.robot.subsystems.Wrist;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.functions.MathUtils;
 
 /**
- * Moves the Elbow to an absolute angle value using MotionMagic. Use this as part of an ArmTransition.
+ * Moves the Wrist to an absolute angle using MotionMagic. Use this as part of an ArmTransition.
  */
-public class MoveElbow extends Command {
+public class MoveWrist extends Command {
 
-  private Elbow elbow;
+  private Wrist wrist;
   private double angle;
 
   private static final double DEGREE_TOLERANCE = 0.5;
@@ -26,28 +26,28 @@ public class MoveElbow extends Command {
 
   /**
    * Instantiates Command
-   * @param elbow The Elbow to move. This could be the actual elbow from Robot, or a TestElbow
+   * @param wrist The Wrist to move. This could be the actual wrist from Robot, or a TestWrist
    * @param angle The absolute angle to move to (180, -180) with 180 being towards the front of the robot (where the intake is).
-   * In reality, this angle will not be in this full range because the elbow will have a limit to how much it can move.
+   * In reality, this angle will not be in this full range because the wrist will have a limit to how much it can move.
    */
-  public MoveElbow(Elbow elbow, double angle) {
-    requires(elbow);
+  public MoveWrist(Wrist wrist, double angle) {
+    requires(wrist);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    elbow.initializeMotionmagic();
+    wrist.initializeMotionmagic();
     executeCount = 0;
-    Logger.consoleLog("MoveElbow: angle: %s", angle);
+    Logger.consoleLog("MoveWrist: angle: %s", angle);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    elbow.setMotionMagicSetpoint(angle);
+    wrist.setMotionMagicSetpoint(angle);
     if(executeCount % 5 == 0) {
-      Logger.consoleLog("MoveElbow: angle: %s", angle);
+      Logger.consoleLog("MoveWrist: angle: %s", angle);
     }
     executeCount++;
   }
@@ -55,20 +55,20 @@ public class MoveElbow extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return MathUtils.isWithinTolerance(elbow.getAngle(), angle, DEGREE_TOLERANCE);
+    return MathUtils.isWithinTolerance(wrist.getAngle(), angle, DEGREE_TOLERANCE);
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Logger.consoleLog("MoveElbow: targetAngle: %s, endingAngle: %s", angle, elbow.getAngle());
+    Logger.consoleLog("MoveWrist: targetAngle: %s, endingAngle: %s", angle, wrist.getAngle());
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    Logger.consoleLog("MoveElbow Interrupted");
+    Logger.consoleLog("MoveWrist Interrupted");
     end();
   }
 }
