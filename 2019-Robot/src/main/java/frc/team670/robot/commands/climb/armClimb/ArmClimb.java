@@ -16,7 +16,7 @@ public class ArmClimb extends Command {
                                                  // oriented.
   private double height;
 
-  public static boolean canClimb;
+  private static boolean canClimb;
 
   public ArmClimb() {
     super();
@@ -60,7 +60,7 @@ public class ArmClimb extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return false;
+    return !canClimb;
   }
 
   // Called once after isFinished returns true
@@ -95,4 +95,13 @@ public class ArmClimb extends Command {
     Robot.elbow.disableCurrentLimit();
     Robot.elbow.setOutput(0);
   }
+
+  public static boolean canClimb() {
+    return canClimb;
+  }
+
+  public static void setCanClimb(boolean canClimb) {
+    ArmClimb.canClimb = canClimb;
+  }
+
 }

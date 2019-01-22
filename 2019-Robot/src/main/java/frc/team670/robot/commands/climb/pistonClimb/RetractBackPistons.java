@@ -46,6 +46,6 @@ public class RetractBackPistons extends Command {
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    SettingUtils.releaseController(Robot.climber.getBackController());
+    end();
   }
 }

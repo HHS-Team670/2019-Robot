@@ -10,11 +10,15 @@ package frc.team670.robot.commands.climb;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team670.robot.Robot;
-import frc.team670.robot.commands.arm.ArmClimb;
 import frc.team670.robot.commands.climb.pistonClimb.PistonClimbWithTiltControl;
 import frc.team670.robot.commands.climb.pistonClimb.RetractBackPistons;
 import frc.team670.robot.commands.climb.pistonClimb.RetractFrontPistons;
+import frc.team670.robot.commands.climb.armClimb.ArmClimb;
 
+/**
+ * Allows one Button to cycle through all the necessary stages of climbing:
+ * deploy pistons, drag the robot with the arm, retract the front pistons, and retract the back pistons.
+ */
 public class CycleClimb extends InstantCommand {
   private int setPoint;
   public static ClimbStage cg;
@@ -38,7 +42,7 @@ public class CycleClimb extends InstantCommand {
       break;
     case ARM_CLIMB:
       Scheduler.getInstance().add(new ArmClimb());
-      if (!ArmClimb.canClimb) {
+      if (!ArmClimb.canClimb()) {
         cg = ClimbStage.RETRACT_FRONT_PISTONS;
       }
       break;

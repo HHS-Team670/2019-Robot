@@ -3,8 +3,9 @@ package frc.team670.robot.dataCollection;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team670.robot.constants.RobotMap;
-import frc.team670.robot.dataCollection.NavX.NavX_Pitch_PIDSource;
-import frc.team670.robot.dataCollection.NavX.ZeroableNavX_Yaw_PIDSource;
+import frc.team670.robot.dataCollection.sensors.NavX;
+import frc.team670.robot.dataCollection.sensors.NavX.NavX_Pitch_PIDSource;
+import frc.team670.robot.dataCollection.sensors.NavX.ZeroableNavX_Yaw_PIDSource;
 
 /**
  * Instantiates sensor representation objects and contains methods for accessing the sensor data.

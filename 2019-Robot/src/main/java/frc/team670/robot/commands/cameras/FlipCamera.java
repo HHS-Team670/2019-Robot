@@ -1,4 +1,4 @@
-package frc.team670.robot.commands;
+package frc.team670.robot.commands.cameras;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -16,7 +16,5 @@ public class FlipCamera extends InstantCommand{
     @Override
     protected void initialize(){
         SmartDashboard.putString("cameraSource", "next");
-        // NetworkTable.putValue("/SmartDashboard/cameraSource", "next");
-        // TODO Talk to Kishore about how top set this to flip the camera.
     }
 }

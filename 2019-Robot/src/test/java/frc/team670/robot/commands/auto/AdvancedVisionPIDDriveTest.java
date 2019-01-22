@@ -11,7 +11,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import frc.team670.robot.commands.drive.AdvancedVisionPIDDrive;
+import frc.team670.robot.commands.drive.vision.AdvancedVisionPIDDrive;
 
 /**
  * Add your docs here.

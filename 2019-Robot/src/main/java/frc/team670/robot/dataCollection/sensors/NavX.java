@@ -1,4 +1,4 @@
-package frc.team670.robot.dataCollection;
+package frc.team670.robot.dataCollection.sensors;
 
 import com.kauailabs.navx.AHRSProtocol.AHRSUpdateBase;
 import com.kauailabs.navx.frc.AHRS;

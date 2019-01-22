@@ -5,24 +5,27 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.commands;
+package frc.team670.robot.commands.drive.teleop;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
-import frc.team670.robot.Robot;
+import frc.team670.robot.commands.drive.teleop.XboxRocketLeagueDrive;
+import frc.team670.robot.utils.Logger;
 
 /**
- * Zeros the NavX yaw at its current position while leaving the field centric angle untouched.
+ * Flips the direction of the drive: forward or reversed.
  */
-public class ZeroNavX extends InstantCommand {
+public class FlipDriveDirection extends InstantCommand {
 
-  public ZeroNavX() {
+  public FlipDriveDirection() {
     super();
   }
 
   // Called once when the command executes
   @Override
   protected void initialize() {
-    Robot.sensors.zeroYaw();
+    boolean isReversed = XboxRocketLeagueDrive.isDriveReversed();
+    XboxRocketLeagueDrive.setDriveReversed(!isReversed);
+    Logger.consoleLog("Flipped Drive: %s", (!isReversed));
   }
 
 }
