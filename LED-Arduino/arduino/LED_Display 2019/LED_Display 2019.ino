@@ -69,30 +69,54 @@ void setStripColor(int r,int g, int b)
   }
   strip.show();
 }
-
-void runningAllianceColors() //to be used when the robot is not moving, will flash alliance color
+void setRunningLights() {
+  byte red=255;
+  byte green=255;
+  byte blue=0;
+  int waveDelay=10;
+  
+  int Position=0;
+  
+   for(int j=0; j<strip.numPixels()*2; j++)
+   {
+      Position++; // = 0; //Position + Rate;
+       for(int i=0; i<strip.numPixels(); i++) {
+         // sine wave, 3 offset waves make a rainbow!
+         //float level = sin(i+Position) * 127 + 128;
+         //setPixel(i,level,0,0);
+         //float level = sin(i+Position) * 127 + 128;
+         strip.setPixelColor(i,((sin(i+Position) * 127 + 128)/255)*red,
+                    ((sin(i+Position) * 127 + 128)/255)*green,
+                   ((sin(i+Position) * 127 + 128)/255)*blue);
+       }
+      
+       strip.show();
+       delay(waveDelay);
+   }
+ }
+void setRunningAllianceColors() //to be used when the robot is not moving, will flash alliance color
 {
   if(stateData==stillDrive)
   {
     if(allianceData=blueAlliance)
     {                        
-      RunningLights(0,0,255,100);    
+      setRunningLights();   
     } 
     else if(allianceData == redAlliance)
     {                  
-      RunningLights(255,0,0,100);    
+      setRunningLights();    
     }
   }
 }
 
 
-void solidGreen() //to be used when the robot is moving forward, will display solid green
+void setSolidGreen() //to be used when the robot is moving forward, will display solid green
 {
     setStripColor(0,255,0);
 }
 
 //reverse drive indicated by red
-void solidRed() //to be used when the robot is moving in reverse, will display solid red
+void setSolidRed() //to be used when the robot is moving in reverse, will display solid red
 {
  
     setStripColor(255,0,0);
@@ -100,7 +124,7 @@ void solidRed() //to be used when the robot is moving in reverse, will display s
 }
 
 //solid blue color indicates vision lock
-void solidPurple() //to be used when there is a vision lock, will display solid purple
+void setSolidPurple() //to be used when there is a vision lock, will display solid purple
 {
 
     setStripColor(255,0,255);
@@ -108,7 +132,7 @@ void solidPurple() //to be used when there is a vision lock, will display solid 
 }
 
 //climbing green LEDs effect
-void climbingGreenLights() //to be used when we are climbing, will display climbing green LEDS
+void setClimbingGreenLights() //to be used when we are climbing, will display climbing green LEDS
 {
     for(int i = 0; i <= numberOfPixels; i++)
     {                                 
@@ -124,26 +148,26 @@ void climbingGreenLights() //to be used when we are climbing, will display climb
   
 }
 
-void Strobe(){
-  byte red = 0
+void setStrobe(){
+  byte red = 0;
   byte green = 0;
   byte blue = 255;
 
   int strobeCount=10;
   int flashDelay=20;
   int endPause=0;
-  for(int j = 0; j < StrobeCount; j++) {
+  for(int j = 0; j < strobeCount; j++) {
     setStripColor(red,green,blue);
     strip.show();
-    delay(FlashDelay);
+    delay(flashDelay);
     reset();
     strip.show();
-    delay(FlashDelay);
+    delay(flashDelay);
   }
 }
-void randomStrobe(int StrobeCount, int FlashDelay, int EndPause){
+void setRandomStrobe(){
   
-  int strobeCount= = 10;
+  int strobeCount= 10;
   int flashDelay = 10;
   int endPause = 0;
   for(int j = 0; j < strobeCount; j++) {
@@ -161,7 +185,7 @@ void randomStrobe(int StrobeCount, int FlashDelay, int EndPause){
     delay(flashDelay);
   }
 }
-void bounceBackground(){
+void setBounceBackground(){
 
 byte red=255;
 byte green=0;
@@ -197,14 +221,14 @@ int returnDelay=10;
   
   delay(returnDelay);
 }
-void cylonBounce(){
+void setCylonBounce(){
   byte red=255;
   byte green=0;
-  blue blue=0;
+  byte blue=0;
 
   int eyeSize=3;
   int speedDelay=10;
-  int returnDelay=10:
+  int returnDelay=10;
   for(int i = 0; i < strip2.numPixels()-eyeSize-2; i++) {
     reset();
     strip2.setPixelColor(i, red/10, green/10, blue/10);
@@ -231,36 +255,36 @@ void cylonBounce(){
   
   delay(returnDelay);
 }
-void displayLightShow(){
+void setDisplayLightShow(){
   switch(lightShowData){
     case "0L":
-     runningAllianceColors();
+     setRunningAllianceColors();
      break;
     case "1L":
-      solidGreen();
+      setSolidGreen();
       break;
     case "2L":
-      solidRed();
+      setSolidRed();
       break;
     case "3L":
-      solidPurple();
+      setSolidPurple();
       break;
     case "4L":
-      climbingGreenLights();
+      setClimbingGreenLights();
       break;
     case "5L":
-      Strobe();
+      setStrobe();
       break;
     case "6L":
-      randomStrobe();
+      setRandomStrobe();
     case "7L":
-      bounceBackground();
+      setBounceBackground();
       break;
     case "8L":
-      cylonBounce();
+      setCylonBounce();
       break;
     case "9L":
-      rainbow();
+      setRainbow();
       break;
   
   }
@@ -268,28 +292,8 @@ void displayLightShow(){
 
 //USE
 
-// void runningLights(byte red, byte green, byte blue, int WaveDelay) {
-  
-//   int Position=0;
-  
-//   for(int j=0; j<strip.numPixels()*2; j++)
-//   {
-//       Position++; // = 0; //Position + Rate;
-//       for(int i=0; i<strip.numPixels(); i++) {
-//         // sine wave, 3 offset waves make a rainbow!
-//         //float level = sin(i+Position) * 127 + 128;
-//         //setPixel(i,level,0,0);
-//         //float level = sin(i+Position) * 127 + 128;
-//         strip.setPixelColor(i,((sin(i+Position) * 127 + 128)/255)*red,
-//                    ((sin(i+Position) * 127 + 128)/255)*green,
-//                    ((sin(i+Position) * 127 + 128)/255)*blue);
-//       }
-      
-//       strip.show();
-//       delay(WaveDelay);
-//   }
-// }
-void theaterChaseRainbow() {
+ 
+void setTheaterChaseRainbow() {
   byte *c;
   int speedDelay=10;
   for (int j=0; j < 256; j++) {     // cycle all 256 colors in the wheel
