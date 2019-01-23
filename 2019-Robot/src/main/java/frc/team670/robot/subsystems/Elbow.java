@@ -28,6 +28,8 @@ public class Elbow extends Subsystem {
   private TalonSRX elbowRotationMain;
   private VictorSPX elbowRotationSlave;
   private double elbowAngle;
+  public static final double MAX_ELBOW_BACK = 0; //TODO find what is this number
+  public static final double MAX_ELBOW_FORWARD = 0; //TODO also find this
   private static final double kF = 0, kP = 0, kI = 0, kD = 0; //TODO figure out what these are
   // Also need to add pull gains slots
   private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0;
@@ -111,15 +113,10 @@ public class Elbow extends Subsystem {
     return 0.0; // TODO convert the actual tick value to an angle
   }
 
-  public TalonSRX getElbowTalon(){
-    return elbowRotationMain;
-  }
-
-  public ElbowAngle_PIDSource getElbowAngle_PIDSource(){
+  public ElbowAngle_PIDSource getElbowAngle_PIDSource() {
     return new ElbowAngle_PIDSource();
   }
-
-
+  
   @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
@@ -131,10 +128,32 @@ public class Elbow extends Subsystem {
   }
 
   /**
+   * @return true if the forward limit switch is closed, false if open
+   */
+  public boolean getForwardLimitSwitch() {
+    //drive until switch is closed
+    return elbowRotationMain.getSensorCollection().isFwdLimitSwitchClosed();
+  }
+
+  /**
+   * @return true if the forward limit switch is closed, false if open
+   */
+  public boolean getReverseLimitSwitch() {
+    //drive until switch is closed
+    return elbowRotationMain.getSensorCollection().isRevLimitSwitchClosed();
+  }
+  /**
    * Sets the SensorCollection encoder value to encoderValue (use this to reset the encoder when at a known position)
    */
   public void resetElbow(double encoderValue) {
     elbowRotationMain.getSensorCollection().setQuadraturePosition((int) encoderValue, RobotConstants.ARM_RESET_TIMEOUTMS);
+  }
+
+  /**
+   * @return the current encoder value of the main elbow motor
+   */
+  public double getEncoderValue() {
+    return elbowRotationMain.getSensorCollection().getQuadraturePosition();
   }
 
   /**
