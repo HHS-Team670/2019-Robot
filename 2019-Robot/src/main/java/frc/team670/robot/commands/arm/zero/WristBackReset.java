@@ -10,14 +10,15 @@ package frc.team670.robot.commands.arm.zero;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.subsystems.Wrist;
 
-public class WristForward extends Command {
+/**
+ * Zeroes the Wrist encoder by slowly driving it to its back limit switch and resetting its value.
+ */
+public class WristBackReset extends Command {
   private Wrist wrist;
 
-  public WristForward(Wrist wrist) {
+  public WristBackReset(Wrist wrist) {
     requires(wrist);
     this.wrist = wrist;
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
   }
 
   // Called just before this Command runs the first time
@@ -43,7 +44,7 @@ public class WristForward extends Command {
    */
   @Override
   protected void end() {
-    wrist.resetWrist(Wrist.MAX_WRIST_FORWARD);
+    wrist.resetWrist(Wrist.MAX_WRIST_BACK);
     wrist.setOutput(0);
   }
 
@@ -51,5 +52,6 @@ public class WristForward extends Command {
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    wrist.setOutput(0);
   }
 }

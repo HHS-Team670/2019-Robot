@@ -8,16 +8,17 @@
 package frc.team670.robot.commands.arm.zero;
 
 import edu.wpi.first.wpilibj.command.Command;
-import frc.team670.robot.subsystems.Elbow;
+import frc.team670.robot.subsystems.Extension;
 
-public class ElbowBack extends Command {
-  private Elbow elbow;
+/**
+ * Zeroes the Extension encoder by slowly driving it to its back limit switch and resetting its value.
+ */
+public class ExtensionBackReset extends Command {
+  private Extension extension;
 
-  public ElbowBack(Elbow elbow) {
-    requires(elbow);
-    this.elbow = elbow;
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
+  public ExtensionBackReset(Extension extension) {
+    requires(extension);
+    this.extension = extension;
   }
 
   // Called just before this Command runs the first time
@@ -29,13 +30,13 @@ public class ElbowBack extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-      elbow.setOutput(-0.2);
+      extension.setOutput(-0.2);
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return elbow.getReverseLimitSwitch();
+    return extension.getReverseLimitSwitch();
   }
 
   /**
@@ -43,13 +44,14 @@ public class ElbowBack extends Command {
    */
   @Override
   protected void end() {
-    elbow.resetElbow(Elbow.MAX_ELBOW_BACK);
-    elbow.setOutput(0);
+    extension.resetExtension(Extension.MAX_EXTENSION_BACK);
+    extension.setOutput(0);
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    extension.setOutput(0);
   }
 }

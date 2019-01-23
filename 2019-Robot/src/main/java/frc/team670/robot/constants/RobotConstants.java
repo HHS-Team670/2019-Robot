@@ -77,7 +77,7 @@ public class RobotConstants {
     public static int MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS = 6000; // TODO set this
 
     // Different values/encoder positions to set arm to
-    public static int ARM_RESET_TIMEOUTMS = 30;
+    public static int ARM_RESET_TIMEOUTMS = 0;
     public static double ELBOW_START_POS = 6000;
     public static double ELBOW_FULL_FORWARD_POS = 12000;
     public static double ELBOW_FULL_BACKWARD_POS = -12000;

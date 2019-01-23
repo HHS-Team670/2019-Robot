@@ -7,20 +7,18 @@
 
 package frc.team670.robot.commands.arm.zero;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.subsystems.Extension;
 
-public class ExtensionForward extends Command {
+/**
+ * Zeroes the Extension encoder by slowly driving it to its forward limit switch and resetting its value.
+ */
+public class ExtensionForwardReset extends Command {
   private Extension extension;
 
-  public ExtensionForward(Extension extension) {
+  public ExtensionForwardReset(Extension extension) {
     requires(extension);
     this.extension = extension;
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
   }
 
   // Called just before this Command runs the first time
@@ -32,7 +30,7 @@ public class ExtensionForward extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-      extension.setOutput(-0.2);
+      extension.setOutput(0.2);
   }
 
   // Make this return true when this Command no longer needs to run execute()
@@ -54,5 +52,6 @@ public class ExtensionForward extends Command {
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    extension.setOutput(0);
   }
 }

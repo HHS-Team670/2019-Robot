@@ -7,15 +7,19 @@
 
 package frc.team670.robot.commands.arm.zero;
 
+
 import edu.wpi.first.wpilibj.command.Command;
-import frc.team670.robot.subsystems.Wrist;
+import frc.team670.robot.subsystems.Elbow;
 
-public class WristBack extends Command {
-  private Wrist wrist;
+/**
+ * Zeroes the Elbow encoder by slowly driving it to its front limit switch and resetting its value.
+ */
+public class ElbowForwardReset extends Command {
+  private Elbow elbow;
 
-  public WristBack(Wrist wrist) {
-    requires(wrist);
-    this.wrist = wrist;
+  public ElbowForwardReset(Elbow elbow) {
+    requires(elbow);
+    this.elbow = elbow;
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
   }
@@ -29,13 +33,13 @@ public class WristBack extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-      wrist.setOutput(-0.2);
+      elbow.setOutput(0.2);
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return wrist.getReverseLimitSwitch();
+    return elbow.getReverseLimitSwitch();
   }
 
   /**
@@ -43,13 +47,14 @@ public class WristBack extends Command {
    */
   @Override
   protected void end() {
-    wrist.resetWrist(Wrist.MAX_WRIST_BACK);
-    wrist.setOutput(0);
+    elbow.resetElbow(Elbow.MAX_ELBOW_FORWARD);
+    elbow.setOutput(0);
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    elbow.setOutput(0);
   }
 }

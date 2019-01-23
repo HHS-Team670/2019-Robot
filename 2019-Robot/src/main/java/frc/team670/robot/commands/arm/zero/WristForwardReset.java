@@ -7,20 +7,18 @@
 
 package frc.team670.robot.commands.arm.zero;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-
 import edu.wpi.first.wpilibj.command.Command;
-import frc.team670.robot.subsystems.Extension;
+import frc.team670.robot.subsystems.Wrist;
 
-public class ExtensionBack extends Command {
-  private Extension extension;
+/**
+ * Zeroes the Wrist encoder by slowly driving it to its front limit switch and resetting its value.
+ */
+public class WristForwardReset extends Command {
+  private Wrist wrist;
 
-  public ExtensionBack(Extension extension) {
-    requires(extension);
-    this.extension = extension;
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
+  public WristForwardReset(Wrist wrist) {
+    requires(wrist);
+    this.wrist = wrist;
   }
 
   // Called just before this Command runs the first time
@@ -32,13 +30,13 @@ public class ExtensionBack extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-      extension.setOutput(-0.2);
+      wrist.setOutput(0.2);
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return extension.getReverseLimitSwitch();
+    return wrist.getReverseLimitSwitch();
   }
 
   /**
@@ -46,13 +44,14 @@ public class ExtensionBack extends Command {
    */
   @Override
   protected void end() {
-    extension.resetExtension(Extension.MAX_EXTENSION_BACK);
-    extension.setOutput(0);
+    wrist.resetWrist(Wrist.MAX_WRIST_FORWARD);
+    wrist.setOutput(0);
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    wrist.setOutput(0);
   }
 }
