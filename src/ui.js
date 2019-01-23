@@ -34,12 +34,12 @@ var ui = {
 ]; */
 
 let allLocations = [
-  'left-rocket-1', 'left-rocket-2', 'left-rocket-3',
-  'left-loading', 'left-depot',
-  'left-cargo-1', 'left-cargo-2', 'left-cargo-3', 'left-cargo-4',
-  'right-rocket-1', 'right-rocket-2', 'right-rocket-3',
-  'right-loading', 'right-depot',
-  'right-cargo-1', 'right-cargo-2', 'right-cargo-3', 'right-cargo-4'
+  'RocketLeft.1', 'RocketLeft.2', 'RocketLeft.3',
+  'ExchangeLeft.Hatch', 'BallLeft',
+  'CargoLeft.1', 'CargoLeft.2', 'CargoLeft.3', 'CargoFront.1',
+  'RocketRight.1', 'RocketRight.2', 'RocketRight.3',
+  'ExchangeRight.Hatch', 'BallRight',
+  'CargoRight.1', 'CargoRight.2', 'CargoRight.3', 'CargoFront.2'
 ];
 var endpoints = [];
 
@@ -92,7 +92,7 @@ window.onkeyup = function(event) {
     if (keys.length > 1) {
       var location = getRobotLocation(keys[0]);
       var height;
-      if (location.includes('depot')) height = 'depot';
+      if (location.includes('Ball')) height = 'Ball';
       else {
         height = getHeight(keys[1]);
         if (height == null) keys.pop();
@@ -111,7 +111,7 @@ window.onkeyup = function(event) {
     if (keys.length > 3) {
       var location = getRobotLocation(keys[2]);
       var height;
-      if (location.includes('depot')) height = 'depot';
+      if (location.includes('Ball')) height = 'Ball';
       else {
         height = getHeight(keys[3]);
         if (height == null) keys.pop();
@@ -136,50 +136,50 @@ s t u v
 
 // returns the location on the field corresponding with a given key
 function getRobotLocation(key) {
-  if (key == 'a') return 'left-rocket-1';
-  if (key == 'j') return 'left-rocket-2';
-  if (key == 's') return 'left-rocket-3';
-  if (key == '1') return 'left-loading';
-  if (key == '0') return 'left-depot';
-  if (key == 'b') return 'left-cargo-1';
-  if (key == 'k') return 'left-cargo-2';
-  if (key == 't') return 'left-cargo-3';
-  if (key == '2') return 'left-cargo-4';
-  if (key == 'c') return 'right-cargo-1';
-  if (key == 'l') return 'right-cargo-2';
-  if (key == 'u') return 'right-cargo-3';
-  if (key == '3') return 'right-cargo-4';
-  if (key == 'd') return 'right-rocket-1';
-  if (key == 'm') return 'right-rocket-2';
-  if (key == 'v') return 'right-rocket-3';
-  if (key == '4') return 'right-loading';
-  if (key == 'w') return 'right-depot';
+  if (key == 'a') return 'RocketRight.3';
+  if (key == 'j') return 'RocketRight.2';
+  if (key == 's') return 'RocketRight.1';
+  if (key == '1') return 'ExchangeLeft.Hatch';
+  if (key == '0') return 'BallLeft';
+  if (key == 'b') return 'CargoLeft.3';
+  if (key == 'k') return 'CargoLeft.2';
+  if (key == 't') return 'CargoLeft.1';
+  if (key == '2') return 'CargoFront.1';
+  if (key == 'c') return 'CargoRight.3';
+  if (key == 'l') return 'CargoRight.2';
+  if (key == 'u') return 'CargoRight.1';
+  if (key == '3') return 'CargoFront.2';
+  if (key == 'd') return 'RocketRight.3';
+  if (key == 'm') return 'RocketRight.2';
+  if (key == 'v') return 'RocketRight.1';
+  if (key == '4') return 'ExchangeRight.Hatch';
+  if (key == 'w') return 'BallRight';
   // return null;
 }
 
 // returns the arm height corresponding with a given key
 function getHeight(key) {
-  if (key == 'a') return 'rocket-middle';
-  if (key == 'b') return 'rocket-bottom';
-  if (key == 'j') return 'cargo-cargo';
-  if (key == 'k') return 'cargo-plate';
-  if (key == 's') return 'loading-cargo';
-  if (key == 't') return 'loading-plate';
+  if (key == 'a') return 'RocketMiddle';
+  if (key == 'b') return 'RocketBottom';
+  if (key == 'j') return 'CargoCargo';
+  if (key == 'k') return 'CargoPlate';
+  if (key == 's') return 'ExchangeCargo';
+  if (key == 't') return 'ExchangePlate';
   return null;
 }
 
 // combines location and height to return an endpoint
 function getEndpoint(location, height) {
-  if (location.includes('rocket') && height.includes('rocket')) {
-    return location.replace('rocket', height);
+  if (location.includes('Rocket') && height.includes('Rocket')) {
+    return location.replace('Rocket', height);
   }
-  if (location.includes('cargo') && height.includes('cargo')) {
-    return location.replace('cargo', height);
+  if (location.includes('Cargo') && height.includes('Cargo')) {
+    return location.replace('Cargo', height);
   }
-  if (location.includes('loading') && height.includes('loading')) {
-    return location.replace('loading', height);
+  if (location.includes('Exchange') && height.includes('Exchange')) {
+    return location.replace('Exchange', height);
   }
-  if (location.includes('depot')) {
+  if (location.includes('Ball')) {
     return location;
   }
   // return null;
@@ -205,24 +205,24 @@ function clearHighlight() {
 }
 
 function positionText(text, position) {
-  if (position === 'left-rocket-1') text.style.transform = `translate(15px, 20px)`;
-  if (position === 'left-rocket-2') text.style.transform = `translate(15px, 50px)`;
-  if (position === 'left-rocket-3') text.style.transform = `translate(15px, 80px)`;
-  if (position === 'left-cargo-1') text.style.transform = `translate(120px, 20px)`;
-  if (position === 'left-cargo-2') text.style.transform = `translate(120px, 50px)`;
-  if (position === 'left-cargo-3') text.style.transform = `translate(120px, 80px)`;
-  if (position === 'left-cargo-4') text.style.transform = `translate(130px, 110px)`;
-  if (position === 'left-loading') text.style.transform = `translate(15px, 280px)`;
-  if (position === 'left-depot') text.style.transform = `translate(65px, 280px)`;
-  if (position === 'right-rocket-1') text.style.transform = `translate(275px, 20px)`;
-  if (position === 'right-rocket-2') text.style.transform = `translate(275px, 50px)`;
-  if (position === 'right-rocket-3') text.style.transform = `translate(275px, 80px)`;
-  if (position === 'right-cargo-1') text.style.transform = `translate(170px, 20px)`;
-  if (position === 'right-cargo-2') text.style.transform = `translate(170px, 50px)`;
-  if (position === 'right-cargo-3') text.style.transform = `translate(170px, 80px)`;
-  if (position === 'right-cargo-4') text.style.transform = `translate(160px, 110px)`;
-  if (position === 'right-loading') text.style.transform = `translate(275px, 280px)`;
-  if (position === 'right-depot') text.style.transform = `translate(225px, 280px)`;
+  if (position === 'RocketLeft.3') text.style.transform = `translate(15px, 20px)`;
+  if (position === 'RocketLeft.2') text.style.transform = `translate(15px, 50px)`;
+  if (position === 'RocketLeft.1') text.style.transform = `translate(15px, 80px)`;
+  if (position === 'CargoLeft.3') text.style.transform = `translate(120px, 20px)`;
+  if (position === 'CargoLeft.2') text.style.transform = `translate(120px, 50px)`;
+  if (position === 'CargoLeft.1') text.style.transform = `translate(120px, 80px)`;
+  if (position === 'CargoFront.1') text.style.transform = `translate(130px, 110px)`;
+  if (position === 'ExchangeLeft.Hatch') text.style.transform = `translate(15px, 280px)`;
+  if (position === 'BallLeft') text.style.transform = `translate(65px, 280px)`;
+  if (position === 'RocketRight.3') text.style.transform = `translate(275px, 20px)`;
+  if (position === 'RocketRight.2') text.style.transform = `translate(275px, 50px)`;
+  if (position === 'RocketRight.1') text.style.transform = `translate(275px, 80px)`;
+  if (position === 'CargoRight.3') text.style.transform = `translate(170px, 20px)`;
+  if (position === 'CargoRight.2') text.style.transform = `translate(170px, 50px)`;
+  if (position === 'CargoRight.1') text.style.transform = `translate(170px, 80px)`;
+  if (position === 'CargoFront.2') text.style.transform = `translate(160px, 110px)`;
+  if (position === 'ExchangeRight.Hatch') text.style.transform = `translate(275px, 280px)`;
+  if (position === 'BallRight') text.style.transform = `translate(225px, 280px)`;
 }
 
 function finalize() {
