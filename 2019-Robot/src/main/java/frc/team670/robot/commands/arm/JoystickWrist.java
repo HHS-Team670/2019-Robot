@@ -27,9 +27,7 @@ public class JoystickWrist extends InstantCommand {
   @Override
   protected void initialize() {
     if (FlipJoystickArmControl.state.equals(ArmControlMode.WRIST)) {
-      if (Robot.oi.getOperatorController().getRightStickY() < 0.5) {
-        Robot.extension.setOutput(Robot.oi.getOperatorController().getRightStickY());
-      }
+      Robot.wrist.setOutput(0.5 * Robot.oi.getOperatorController().getRightStickY());
     }
   }
 }

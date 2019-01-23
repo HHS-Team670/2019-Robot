@@ -29,9 +29,7 @@ public class JoystickElbow extends InstantCommand {
   @Override
   protected void initialize() {
     if (FlipJoystickArmControl.state.equals(ArmControlMode.ELBOW)) {
-      if (Robot.oi.getOperatorController().getRightStickY() < 0.5) {
-        Robot.elbow.setOutput(Robot.oi.getOperatorController().getRightStickY());
-      }
+      Robot.elbow.setOutput(0.5 * Robot.oi.getOperatorController().getRightStickY());
     }
   }
 }
