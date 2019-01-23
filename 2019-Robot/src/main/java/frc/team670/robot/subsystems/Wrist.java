@@ -27,6 +27,9 @@ public class Wrist extends Subsystem {
   // Also need to add pull gains slots
   private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0;
 
+  private final int FORWARD_SOFT_LIMIT = 0, REVERSE_SOFT_LIMIT = 0; // TODO figure out the values in rotations
+  private final int CURRENT_LIMIT = 0; // TODO set current limit in Amps
+
   public Wrist() {
     wristRotation = new TalonSRX(RobotMap.ARM_WRIST_ROTATION); 
     wristRotation.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
@@ -35,7 +38,17 @@ public class Wrist extends Subsystem {
 		wristRotation.config_kI(kSlotMotionMagic, kI, kTimeoutMs);
     wristRotation.config_kD(kSlotMotionMagic, kD, kTimeoutMs);
     wristRotation.configMotionCruiseVelocity(RobotConstants.MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
-		wristRotation.configMotionAcceleration(RobotConstants.MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+    wristRotation.configMotionAcceleration(RobotConstants.MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+    
+
+    // These thresholds stop the motor when limit is reached
+    wristRotation.configForwardSoftLimitThreshold(FORWARD_SOFT_LIMIT);
+    wristRotation.configReverseSoftLimitThreshold(REVERSE_SOFT_LIMIT);
+    wristRotation.configContinuousCurrentLimit(CURRENT_LIMIT);
+
+    wristRotation.configForwardSoftLimitEnable(true);
+    wristRotation.configReverseSoftLimitEnable(true);
+    wristRotation.enableCurrentLimit(true);
   }
   
   /**

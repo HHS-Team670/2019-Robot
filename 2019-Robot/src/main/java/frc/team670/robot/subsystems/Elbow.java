@@ -32,6 +32,9 @@ public class Elbow extends Subsystem {
   // Also need to add pull gains slots
   private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0;
 
+  private final int FORWARD_SOFT_LIMIT = 0, REVERSE_SOFT_LIMIT = 0; // TODO figure out the values in encoder rotations
+  private final int CURRENT_LIMIT = 0; // TODO set current limit in Amps
+
   public Elbow() {
     elbowRotationMain = new TalonSRX(RobotMap.ARM_ELBOW_ROTATION_MOTOR_TALON);
     elbowRotationSlave = new VictorSPX(RobotMap.ARM_ELBOW_ROTATION_MOTOR_VICTOR);
@@ -42,7 +45,16 @@ public class Elbow extends Subsystem {
 		elbowRotationMain.config_kI(kSlotMotionMagic, kI, kTimeoutMs);
     elbowRotationMain.config_kD(kSlotMotionMagic, kD, kTimeoutMs);
     elbowRotationMain.configMotionCruiseVelocity(RobotConstants.MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
-		elbowRotationMain.configMotionAcceleration(RobotConstants.MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+    elbowRotationMain.configMotionAcceleration(RobotConstants.MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+
+    // These thresholds stop the motor when limit is reached
+    elbowRotationMain.configForwardSoftLimitThreshold(FORWARD_SOFT_LIMIT);
+    elbowRotationMain.configReverseSoftLimitThreshold(REVERSE_SOFT_LIMIT);
+    elbowRotationMain.configContinuousCurrentLimit(CURRENT_LIMIT);
+
+    elbowRotationMain.configForwardSoftLimitEnable(true);
+    elbowRotationMain.configReverseSoftLimitEnable(true);
+    elbowRotationMain.enableCurrentLimit(true);
   }
 
 /**
