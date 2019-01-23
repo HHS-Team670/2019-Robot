@@ -24,9 +24,14 @@ public class Wrist extends Subsystem {
   // here. Call these from Commands.
   
   private TalonSRX wristRotation;
+  public static final double MAX_WRIST_FORWARD = 0; //TODO find this
+  public static final double MAX_WRIST_BACK = 0; //TODO find this
   private static final double kF = 0, kP = 0, kI = 0, kD = 0; //TODO figure out what these are
   // Also need to add pull gains slots
   private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0;
+
+  private final int FORWARD_SOFT_LIMIT = 0, REVERSE_SOFT_LIMIT = 0; // TODO figure out the values in rotations
+  private final int CONTINUOUS_CURRENT_LIMIT = 10, PEAK_CURRENT_LIMIT = 0; // TODO set current limit in Amps
 
   public Wrist() {
     wristRotation = new TalonSRX(RobotMap.ARM_WRIST_ROTATION); 
@@ -36,7 +41,19 @@ public class Wrist extends Subsystem {
 		wristRotation.config_kI(kSlotMotionMagic, kI, kTimeoutMs);
     wristRotation.config_kD(kSlotMotionMagic, kD, kTimeoutMs);
     wristRotation.configMotionCruiseVelocity(RobotConstants.MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
-		wristRotation.configMotionAcceleration(RobotConstants.MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+    wristRotation.configMotionAcceleration(RobotConstants.MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+    
+
+    // These thresholds stop the motor when limit is reached
+    wristRotation.configForwardSoftLimitThreshold(FORWARD_SOFT_LIMIT);
+    wristRotation.configReverseSoftLimitThreshold(REVERSE_SOFT_LIMIT);
+    wristRotation.configContinuousCurrentLimit(CONTINUOUS_CURRENT_LIMIT);
+
+    // Enable Safety Measures
+    wristRotation.configForwardSoftLimitEnable(true);
+    wristRotation.configReverseSoftLimitEnable(true);
+    wristRotation.enableCurrentLimit(true);
+    wristRotation.configPeakCurrentLimit(PEAK_CURRENT_LIMIT);
   }
   
   /**
@@ -76,11 +93,36 @@ public class Wrist extends Subsystem {
     setDefaultCommand(new JoystickWrist());
   }
 
-   /**
-   * Sets the SensorCollection encoder value to encoderValue (use this to reset the encoder when at a known position)
+  /**
+  * @return true if the forward limit switch is closed, false if open
+  */
+  public boolean getForwardLimitSwitch() {
+    //drive until switch is closed
+    return wristRotation.getSensorCollection().isFwdLimitSwitchClosed();
+  }
+  
+  /**
+   * @return true if the forward limit switch is closed, false if open
    */
+  public boolean getReverseLimitSwitch() {
+    //drive until switch is closed
+    return wristRotation.getSensorCollection().isRevLimitSwitchClosed();
+  }
+  
+
+
+  /**
+  * Sets the SensorCollection encoder value to encoderValue (use this to reset the encoder when at a known position)
+  */
   public void resetWrist(double encoderValue) {
     wristRotation.getSensorCollection().setQuadraturePosition((int) encoderValue, RobotConstants.ARM_RESET_TIMEOUTMS);
+  }
+
+  /**
+   * @return the current encoder value of the wrist motor
+   */
+  public double getEncoderValue() {
+    return wristRotation.getSensorCollection().getQuadraturePosition();
   }
 
   /**

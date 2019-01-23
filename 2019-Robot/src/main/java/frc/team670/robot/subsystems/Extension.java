@@ -26,11 +26,16 @@ public class Extension extends Subsystem {
   // here. Call these from Commands.
   private TalonSRX extensionMotor;
   private double extensionLength;
+  public static final double MAX_EXTENSION_BACK = 0; //TODO find this
+  public static final double MAX_EXTENSION_FORWARD = 0; //TODO find this
   private static final double kF = 0, kP = 0, kI = 0, kD = 0; //TODO figure out what these are
   private static final int POSITION_SLOT = 0;
   private final double P = 0.1, I = 0.0, D = 0.0, F = 0.0, RAMP_RATE = 0.15;
   // Also need to add pull gains slots
   private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0;
+
+  private final int FORWARD_SOFT_LIMIT = 0, REVERSE_SOFT_LIMIT = 0; // TODO figure out the values in rotations
+  private final int CONTINUOUS_CURRENT_LIMIT = 10, PEAK_CURRENT_LIMIT = 0; // TODO set current limit in Amps
 
   public Extension() {
     extensionMotor = new TalonSRX(RobotMap.ARM_EXTENSION_MOTOR);   
@@ -42,6 +47,16 @@ public class Extension extends Subsystem {
     extensionMotor.configMotionCruiseVelocity(RobotConstants.MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
 		extensionMotor.configMotionAcceleration(RobotConstants.MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
  
+    // These thresholds stop the motor when limit is reached
+    extensionMotor.configForwardSoftLimitThreshold(FORWARD_SOFT_LIMIT);
+    extensionMotor.configReverseSoftLimitThreshold(REVERSE_SOFT_LIMIT);
+    extensionMotor.configContinuousCurrentLimit(CONTINUOUS_CURRENT_LIMIT);
+
+    // Enable Safety Measures
+    extensionMotor.configForwardSoftLimitEnable(true);
+    extensionMotor.configReverseSoftLimitEnable(true);
+    extensionMotor.enableCurrentLimit(true);
+    extensionMotor.configPeakCurrentLimit(PEAK_CURRENT_LIMIT);
   }
 
   /**
@@ -104,10 +119,30 @@ public class Extension extends Subsystem {
   }
 
   /**
+   * @return true if forward limit switch closed, false if not
+   */
+  public boolean getForwardLimitSwitch() {
+    //drive until switch is closed
+    return extensionMotor.getSensorCollection().isFwdLimitSwitchClosed();
+  }
+  
+  public boolean getReverseLimitSwitch() {
+    //drive until switch is closed
+    return extensionMotor.getSensorCollection().isRevLimitSwitchClosed();
+  }
+  
+  /**
    * Sets the SensorCollection encoder value to encoderValue (use this to reset the encoder when at a known position)
    */
-  public void resetExtension(int encoderValue) {
-    extensionMotor.getSensorCollection().setQuadraturePosition(encoderValue, RobotConstants.ARM_RESET_TIMEOUTMS);
+  public void resetExtension(double encoderValue) {
+    extensionMotor.getSensorCollection().setQuadraturePosition((int)encoderValue, RobotConstants.ARM_RESET_TIMEOUTMS);
+  }
+
+  /**
+   * @return the current encoder value of the extension motor
+   */
+  public double getEncoderValue() {
+    return extensionMotor.getSensorCollection().getQuadraturePosition();
   }
 
   /**
@@ -123,4 +158,6 @@ public class Extension extends Subsystem {
   public void setMotionMagicSetpoint(double extensionLength) {
     extensionMotor.set(ControlMode.MotionMagic, extensionLength);
   }
+
+
 }
