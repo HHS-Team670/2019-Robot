@@ -35,7 +35,7 @@ public class FlipJoystickArmControl extends InstantCommand {
       state = ArmControlMode.EXTENSION;
     } else if (state == ArmControlMode.EXTENSION) {
       state = ArmControlMode.WRIST;
-    } else if (state == ArmControlMode.WRIST) {
+    } else {
       state = ArmControlMode.DISABLED;
     }
   }

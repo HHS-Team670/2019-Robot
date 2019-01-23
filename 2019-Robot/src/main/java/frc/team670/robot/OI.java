@@ -69,7 +69,7 @@ public class OI {
     flipCameras = new JoystickButton(driverController, XboxButtons.B);
     flipCameras.whenPressed(new FlipCamera());
     flipArmDriverControlState = new JoystickButton(operatorController, XboxButtons.RIGHT_JOYSTICK_BUTTON);
-    flipArmDriverControlState.whenPressed(FlipJoystickArmControl);
+    flipArmDriverControlState.whenPressed(new FlipJoystickArmControl());
     resetNavX = new JoystickButton(driverController, XboxButtons.A);
     resetNavX.whenPressed(new ZeroNavX());
   }

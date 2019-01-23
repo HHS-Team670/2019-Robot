@@ -24,30 +24,30 @@ import frc.team670.robot.subsystems.Arm.ArmState;
  */
 public class TestMoveArm {
 
-    @Test
-    public void testMoveArm(ArrayList<ArmState> states) {
+    // @Test
+    // public void testMoveArm(ArrayList<ArmState> states) {
 
-        MoveArm moveArm;
+    //     MoveArm moveArm;
 
-        for(ArmState startState : states) {
+    //     for(ArmState startState : states) {
 
-            for(ArmState destState : states) {
+    //         for(ArmState destState : states) {
 
-                Arm.setState(startState);
-                moveArm = new MoveArm(destState);
-                moveArm.initialize();
-                for(int i = 0; i < 25; i++) {
-                    Scheduler.getInstance().run();
-                }
+    //             Arm.setState(startState);
+    //             moveArm = new MoveArm(destState);
+    //             moveArm.initialize();
+    //             for(int i = 0; i < 25; i++) {
+    //                 Scheduler.getInstance().run();
+    //             }
 
-                // Point2D.Double actualDestCoord = Arm.getCoordPosition(, wristAngle, elbowAngle);
+    //             // Point2D.Double actualDestCoord = Arm.getCoordPosition(, wristAngle, elbowAngle);
 
-                // assertEquals(destState.getCoordPosition().getX(), Arm.getCoordPosition(extensionLength, wristAngle, elbowAngle), 0.0001);
-            }
+    //             // assertEquals(destState.getCoordPosition().getX(), Arm.getCoordPosition(extensionLength, wristAngle, elbowAngle), 0.0001);
+    //         }
 
-        }
+    //     }
 
-    }
+    // }
 
 
 
