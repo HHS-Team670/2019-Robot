@@ -8,7 +8,7 @@
 package frc.team670.robot.commands.arm;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
-import frc.team670.robot.utils.ArmControlMode;;
+import frc.team670.robot.utils.ArmControlMode;
 
 /**
  * Add your docs here.
