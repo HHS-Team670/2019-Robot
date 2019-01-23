@@ -14,6 +14,7 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.team670.robot.commands.arm.JoystickElbow;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.utils.functions.MathUtils;
@@ -28,9 +29,14 @@ public class Elbow extends Subsystem {
   private TalonSRX elbowRotationMain;
   private VictorSPX elbowRotationSlave;
   private double elbowAngle;
+  public static final double MAX_ELBOW_BACK = 0; //TODO find what is this number
+  public static final double MAX_ELBOW_FORWARD = 0; //TODO also find this
   private static final double kF = 0, kP = 0, kI = 0, kD = 0; //TODO figure out what these are
   // Also need to add pull gains slots
   private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0;
+
+  private final int FORWARD_SOFT_LIMIT = 0, REVERSE_SOFT_LIMIT = 0; // TODO figure out the values in encoder rotations
+  private final int CONTINUOUS_CURRENT_LIMIT = 10, PEAK_CURRENT_LIMIT = 0; // TODO set current limit in Amps
 
   public Elbow() {
     elbowRotationMain = new TalonSRX(RobotMap.ARM_ELBOW_ROTATION_MOTOR_TALON);
@@ -42,7 +48,18 @@ public class Elbow extends Subsystem {
 		elbowRotationMain.config_kI(kSlotMotionMagic, kI, kTimeoutMs);
     elbowRotationMain.config_kD(kSlotMotionMagic, kD, kTimeoutMs);
     elbowRotationMain.configMotionCruiseVelocity(RobotConstants.MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
-		elbowRotationMain.configMotionAcceleration(RobotConstants.MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+    elbowRotationMain.configMotionAcceleration(RobotConstants.MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+
+    // These thresholds stop the motor when limit is reached
+    elbowRotationMain.configForwardSoftLimitThreshold(FORWARD_SOFT_LIMIT);
+    elbowRotationMain.configReverseSoftLimitThreshold(REVERSE_SOFT_LIMIT);
+    elbowRotationMain.configContinuousCurrentLimit(CONTINUOUS_CURRENT_LIMIT);
+
+    // Enable Safety Measures
+    elbowRotationMain.configForwardSoftLimitEnable(true);
+    elbowRotationMain.configReverseSoftLimitEnable(true);
+    elbowRotationMain.enableCurrentLimit(true);
+    elbowRotationMain.configPeakCurrentLimit(PEAK_CURRENT_LIMIT);
   }
 
 /**
@@ -111,19 +128,15 @@ public class Elbow extends Subsystem {
     return 0.0; // TODO convert the actual tick value to an angle
   }
 
-  public TalonSRX getElbowTalon(){
-    return elbowRotationMain;
-  }
-
-  public ElbowAngle_PIDSource getElbowAngle_PIDSource(){
+  public ElbowAngle_PIDSource getElbowAngle_PIDSource() {
     return new ElbowAngle_PIDSource();
   }
-
-
+  
   @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
     // setDefaultCommand(new MySpecialCommand());
+    setDefaultCommand(new JoystickElbow());
   }
 
   public TalonSRX getTalon() {
@@ -132,9 +145,32 @@ public class Elbow extends Subsystem {
 
   /**
    * Sets the SensorCollection encoder value to encoderValue (use this to reset the encoder when at a known position
+   * @return true if the forward limit switch is closed, false if open
+   */
+  public boolean getForwardLimitSwitch() {
+    //drive until switch is closed
+    return elbowRotationMain.getSensorCollection().isFwdLimitSwitchClosed();
+  }
+
+  /**
+   * @return true if the forward limit switch is closed, false if open
+   */
+  public boolean getReverseLimitSwitch() {
+    //drive until switch is closed
+    return elbowRotationMain.getSensorCollection().isRevLimitSwitchClosed();
+  }
+  /**
+   * Sets the SensorCollection encoder value to encoderValue (use this to reset the encoder when at a known position)
    */
   public void resetElbow(double encoderValue) {
     elbowRotationMain.getSensorCollection().setQuadraturePosition((int) encoderValue, RobotConstants.ARM_RESET_TIMEOUTMS);
+  }
+
+  /**
+   * @return the current encoder value of the main elbow motor
+   */
+  public double getEncoderValue() {
+    return elbowRotationMain.getSensorCollection().getQuadraturePosition();
   }
 
   /**
