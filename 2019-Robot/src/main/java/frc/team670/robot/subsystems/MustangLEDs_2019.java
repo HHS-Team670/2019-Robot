@@ -34,14 +34,18 @@ public class MustangLEDs_2019 {
 	final byte[] solidGreen = {'1','L'};
 	final byte[] solidRed = {'2','L'};
 	final byte[] solidPurple = {'3','L'};
-	final byte[] 
+	final byte[] climbingGreenLights = {'4','L'};
+	final byte[] Strobe = {'5','L'};
+	final byte[] randomStrobe = {'6','L'};
+	final byte[] bounceBackground = {'7','L'};
+	final byte[] cylonBounce = {'8','L'};
+	final byte[] rainbow = {'9','L'};
 	
 
 	// variables for data which will be sent over server
 	byte[] stateData = stillDrive;
 	byte[] allianceData = blueAlliance;
-	byte[] lightShowData = 
-	//byte[] lightShowData= 
+	byte[] lightShowData = runningAllianceColors;
 
 	// Socket Init
 	ServerSocket serverSocket = null;
@@ -72,41 +76,90 @@ public class MustangLEDs_2019 {
 
 
 	public void setClimbingData(boolean trigger, int val) { // Updates if we are climbing
+		val = 5;
 		if (trigger == true) {
 			stateData = climbing;
 		}
+		if(val!=0){
+		setLightShow(val);
+		}
 	}
 
-	public void setVisionData(boolean trigger) { // updates if we lock onto a vision target
+	public void setVisionData(boolean trigger, int val) { // updates if we lock onto a vision target
+		val = 4;
 		if (trigger == true) {
 			stateData = visionLock;
 		}
+		if(val!=0){
+			setLightShow(val);
+		}
 	}
 
-	public void setForwardData(boolean trigger) {// updates if we are driving forward
+	public void setForwardData(boolean trigger, int val) {// updates if we are driving forward
+		val = 2;
 		if (trigger = true) {
 			stateData = forwardDrive;
 		}
-
+		if(val!=0){
+			setLightShow(val);
+		}
 	}
 
-	public void setReverseData(boolean trigger) {// updates if we are driving in reverse
+	public void setReverseData(boolean trigger, int val) {// updates if we are driving in reverse
+		val = 3;
 		if (trigger = true) {
 			stateData = reverseDrive;
 		}
+		if(val!=0){
+			setLightShow(val);
+		}
 
 	}
 
-	public void setStillDrive(boolean trigger) {// updates it robot is not moving
+	public void setStillDrive(boolean trigger, int val) {// updates it robot is not moving
+		val = 11;
 		if (trigger = true) {
 			stateData = stillDrive;
 		}
+		if(val!=0){
+			setLightShow(val);
+		}
 	}
-	public void setLightShow(String val){
+	public void setLightShow(int val){
 		switch(val){
-
-				
-
+		case 1: //running alliance colors
+			lightShowData = climbingGreenLights;
+			break;
+		case 2:
+			lightShowData = solidGreen;
+			break;
+		case 3:
+			lightShowData = solidRed;
+			break;
+		case 4:
+			lightShowData = solidPurple;
+			break;
+		case 5:
+			lightShowData = climbingGreenLights;
+			break;
+		case 6:
+			lightShowData = Strobe;
+			break;
+		case 7:
+			lightShowData = randomStrobe;
+			break;
+		case 8:
+			lightShowData = bounceBackground;
+			break;
+		case 9:
+			lightShowData = cylonBounce;
+			break;
+		case 10:
+			lightShowData = rainbow;
+			break;
+		case 11:
+			lightShowData = runningAllianceColors;
+		
 
 		}
 	}
@@ -140,12 +193,13 @@ public class MustangLEDs_2019 {
 					}
 				}
 
-				System.out.println(stateData + "" + allianceData);
+				System.out.println(stateData + "" + allianceData+""+lightShowData);
 
 				// Sends data to the Arduino/Ethernet Shield
 				try {
 					output.write(stateData);
 					output.write(allianceData);
+					output.write(lightShowData);
 					output.flush();
 					output.close();
 				} catch (Exception e) {
