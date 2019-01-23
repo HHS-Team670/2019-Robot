@@ -49,7 +49,7 @@ public class RobotConstants {
 
     // Arm Constants
     public static final double ARM_HEIGHT = 0;
-    public static final double CLAW_RADIUS = 0;
+    public static final double CLAW_LENGTH = 0;
     public static final int FIXED_ARM_LENGTH = 0;
 
     //Elbow constants

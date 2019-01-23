@@ -94,9 +94,9 @@ public class Arm extends Subsystem {
    * 
    * left the variable stuff as parameters for now
    */
-  public Point2D.Double getPosition(double extensionLength, double wristAngle, double elbowAngle) {
-    double x = extensionLength * Math.sin(elbowAngle) + RobotConstants.CLAW_RADIUS * Math.sin(wristAngle);
-    double y = extensionLength * Math.cos(elbowAngle) + RobotConstants.CLAW_RADIUS * Math.cos(wristAngle) + RobotConstants.ARM_HEIGHT;
+  public static Point2D.Double getCoordPosition(double extensionLength, double wristAngle, double elbowAngle) {
+    double x = extensionLength * Math.sin(elbowAngle) + RobotConstants.CLAW_LENGTH * Math.sin(wristAngle);
+    double y = extensionLength * Math.cos(elbowAngle) + RobotConstants.CLAW_LENGTH * Math.cos(wristAngle) + RobotConstants.ARM_HEIGHT;
     return new Point2D.Double(x, y);
   }
  
@@ -145,19 +145,19 @@ public class Arm extends Subsystem {
 
     /**
      * @param extensionLength The absolute Extension length with Extension length in absolute inches with 0 being completely unextended.
-     * @param elbowAngle The absolute Wrist angle with 0 being vertical in the space (180,-180) with 180 being towards the front of the robot.
-     * @param elbowAngle The absolute Elbow angle with 0 being in line with the arm in the space (180,-180) with 180 being towards the front of the robot.
+     * @param elbowAngle The absolute Elbow angle with 0 being vertical in the space (180,-180) with 180 being towards the front of the robot.
+     * @param wristAngle The absolute Wrist angle with 0 being in line with the arm in the space (180,-180) with 180 being towards the front of the robot.
      * @param transitions The ArmTransitions that begin at this ArmState
      */
     public ArmState(double extensionLength, double elbowAngle, double wristAngle, ArmTransition[] transitions) {
       this.extensionLength = extensionLength;
       this.elbowAngle = elbowAngle;
       this.wristAngle = wristAngle;
-      coord = getPosition(extensionLength, wristAngle, elbowAngle);
+      coord = Arm.getCoordPosition(extensionLength, wristAngle, elbowAngle);
       this.transitions = transitions;
     }
 
-    public Point2D.Double getCoord() {
+    public Point2D.Double getCoordPosition() {
       return new Point2D.Double(coord.x, coord.y);
     }
 

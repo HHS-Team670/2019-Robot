@@ -131,7 +131,7 @@ public class Elbow extends Subsystem {
   }
 
   /**
-   * Sets the SensorCollection encoder value to encoderValue (use this to reset the encoder when at a known position)
+   * Sets the SensorCollection encoder value to encoderValue (use this to reset the encoder when at a known position
    */
   public void resetElbow(double encoderValue) {
     elbowRotationMain.getSensorCollection().setQuadraturePosition((int) encoderValue, RobotConstants.ARM_RESET_TIMEOUTMS);

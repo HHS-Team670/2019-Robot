@@ -40,7 +40,7 @@ public class Extension extends Subsystem {
     extensionMotor.config_kD(kSlotMotionMagic, kD, kTimeoutMs);
     extensionMotor.configMotionCruiseVelocity(RobotConstants.MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
 		extensionMotor.configMotionAcceleration(RobotConstants.MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
- 
+
   }
 
   /**

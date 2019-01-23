@@ -54,7 +54,7 @@ public class MoveArm extends CommandGroup {
     for (ArmTransition t : transitions) {
       movements.addSequential(t);
     }
-    movements.start();
+    movements.start(); // This might need to be Scheduler.addCommand(movements);
 
   }
 
