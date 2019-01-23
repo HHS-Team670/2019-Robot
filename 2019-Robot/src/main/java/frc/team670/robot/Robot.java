@@ -89,6 +89,12 @@ public class Robot extends TimedRobot {
     System.out.println("LED Setup Run");
     //leds.socketSetup(RobotConstants.LED_PORT);    
     
+    try{ 
+      autonomousCommand = new DriveMotionProfile("curve-left-1.pf1.csv", false);
+    }
+    catch (FileNotFoundException e) {
+      e.printStackTrace();
+    }
   }
 
   /**
@@ -161,12 +167,12 @@ public class Robot extends TimedRobot {
     sensors.resetNavX(); // Reset NavX completely, zero the field centric based on how robot faces from start of game.
     fieldCentricPose = new Pose();
     Logger.consoleLog("Auton Started");
-    try{ 
-      autonomousCommand = new DriveMotionProfile("/output/DriveRightCurve.pf1.csv", false);
-    }
-    catch (FileNotFoundException e) {
-      e.printStackTrace();
-    }
+    // try{ 
+    //   autonomousCommand = new DriveMotionProfile("/output/2ft-straight.pf1.csv", false);
+    // }
+    // catch (FileNotFoundException e) {
+    //   e.printStackTrace();
+    // }
 
     /*
      * String autoSelected = SmartDashboard.getString("Auto Selector",

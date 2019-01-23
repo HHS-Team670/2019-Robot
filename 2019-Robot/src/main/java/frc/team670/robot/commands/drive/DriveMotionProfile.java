@@ -42,12 +42,12 @@ public class DriveMotionProfile extends Command {
   // Max Velocities in m/s. For generation, we need it to be lower than the actual max velocity, 
   // otherwise we get motor outputs >1.0 and <-1.0 which makes us unable to turn properly.
   private static final String BASE_PATH_NAME = "home/deploy/";
-  private static final double MAX_VELOCITY = 120, MAX_ACCELERATION = 60, MAX_JERK = 60; // Equivalent units in inches
+  private static final double MAX_VELOCITY = 10, MAX_ACCELERATION = 60, MAX_JERK = 60; // Equivalent units in inches
   private static final double TIME_STEP = 0.05;
   private static final double ANGLE_DIVIDE_CONSTANT = 240.0; // Default = 80
 
 
-  private static final double P = 0.5, I = 0, D = 0, KA= 0;
+  private static final double P = 0.33, I = 0, D = 0, KA= 0;
 
   // Values for logging purposes
   private final int EXECUTE_LOG_INTERVAL = 8;
@@ -94,8 +94,8 @@ public class DriveMotionProfile extends Command {
 
     String leftPathname = Filesystem.getDeployDirectory() + "/output/" + fileName.replace(".pf1", ".left.pf1");
     String rightPathname = Filesystem.getDeployDirectory() + "/output/" + fileName.replace(".pf1", ".right.pf1");
-    System.out.println("Left path name: " + leftPathname);
-    System.out.println("Right path name: " + rightPathname);
+    // System.out.println("Left path name: " + leftPathname);
+    // System.out.println("Right path name: " + rightPathname);
     File leftFile = new File(leftPathname);
     File rightFile = new File(rightPathname);
 
@@ -127,8 +127,9 @@ public class DriveMotionProfile extends Command {
     // Don't need this if reading in left and right trajectories
     // modifier = new TankModifier(trajectory).modify(RobotConstants.WHEEL_BASE);
 
-    left = new EncoderFollower(leftTrajectory);
-    right = new EncoderFollower(rightTrajectory);
+    // TODO figure out why these are switched and switch them back
+    left = new EncoderFollower(rightTrajectory);
+    right = new EncoderFollower(leftTrajectory);
 
   }
 
@@ -190,6 +191,8 @@ public class DriveMotionProfile extends Command {
       leftEncoder = Robot.driveBase.getLeftDIOEncoderPosition();
       rightEncoder = Robot.driveBase.getRightDIOEncoderPosition();
     }
+
+    // System.out.println("encoders: " + leftEncoder + ", " + rightEncoder);
   
     // System.out.println("Right Encoder: " + rightEncoder + ", LeftEncoder: " + leftEncoder);
     double l = left.calculate(leftEncoder);
@@ -218,9 +221,9 @@ public class DriveMotionProfile extends Command {
     // Drives the bot based on the input
     Robot.driveBase.tankDrive(leftOutput, rightOutput, false); 
 
-    if(executeCount % 5 == 0) {
-      Logger.consoleLog("Execute: gyroHeading: %s, desiredHeading: %s, angleDifference: %s, angleDivideConstant: %s, turn: %s, leftOuput: %s, rightOutput: %s", gyroHeading, desiredHeading, angleDifference, ANGLE_DIVIDE_CONSTANT, turn, leftOutput , rightOutput) ;
-    }
+    // if(executeCount % 5 == 0) {
+    //   Logger.consoleLog("Execute: gyroHeading: %s, desiredHeading: %s, angleDifference: %s, angleDivideConstant: %s, turn: %s, leftOuput: %s, rightOutput: %s", gyroHeading, desiredHeading, angleDifference, ANGLE_DIVIDE_CONSTANT, turn, leftOutput , rightOutput) ;
+    // }
 
     executeCount++;
   }
