@@ -32,7 +32,7 @@ public class Extension extends Subsystem {
   private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0;
 
   private final int FORWARD_SOFT_LIMIT = 0, REVERSE_SOFT_LIMIT = 0; // TODO figure out the values in rotations
-  private final int CURRENT_LIMIT = 0; // TODO set current limit in Amps
+  private final int CONTINUOUS_CURRENT_LIMIT = 10, PEAK_CURRENT_LIMIT = 0; // TODO set current limit in Amps
 
   public Extension() {
     extensionMotor = new TalonSRX(RobotMap.ARM_EXTENSION_MOTOR);   
@@ -47,11 +47,13 @@ public class Extension extends Subsystem {
     // These thresholds stop the motor when limit is reached
     extensionMotor.configForwardSoftLimitThreshold(FORWARD_SOFT_LIMIT);
     extensionMotor.configReverseSoftLimitThreshold(REVERSE_SOFT_LIMIT);
-    extensionMotor.configContinuousCurrentLimit(CURRENT_LIMIT);
+    extensionMotor.configContinuousCurrentLimit(CONTINUOUS_CURRENT_LIMIT);
 
+    // Enable Safety Measures
     extensionMotor.configForwardSoftLimitEnable(true);
     extensionMotor.configReverseSoftLimitEnable(true);
     extensionMotor.enableCurrentLimit(true);
+    extensionMotor.configPeakCurrentLimit(PEAK_CURRENT_LIMIT);
   }
 
   /**
