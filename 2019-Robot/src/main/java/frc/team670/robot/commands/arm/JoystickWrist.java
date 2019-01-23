@@ -21,14 +21,12 @@ public class JoystickWrist extends InstantCommand {
   public JoystickWrist() {
     super();
     requires(Robot.wrist);
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
   }
 
   // Called once when the command executes
   @Override
   protected void initialize() {
-    if (FlipJoystickArmControl.state == ArmControlMode.WRIST) {
+    if (FlipJoystickArmControl.state.equals(ArmControlMode.WRIST)) {
       if (Robot.oi.getOperatorController().getRightStickY() < 0.5) {
         Robot.extension.setOutput(Robot.oi.getOperatorController().getRightStickY());
       }

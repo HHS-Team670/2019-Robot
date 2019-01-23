@@ -29,11 +29,11 @@ public class FlipJoystickArmControl extends InstantCommand {
   // Called once when the command executes
   @Override
   protected void initialize() {
-    if (state == ArmControlMode.DISABLED) {
+    if (state.equals(ArmControlMode.DISABLED)) {
       state = ArmControlMode.ELBOW;
-    } else if (state == ArmControlMode.ELBOW) {
+    } else if (state.equals(ArmControlMode.ELBOW)) {
       state = ArmControlMode.EXTENSION;
-    } else if (state == ArmControlMode.EXTENSION) {
+    } else if (state.equals(ArmControlMode.EXTENSION)) {
       state = ArmControlMode.WRIST;
     } else {
       state = ArmControlMode.DISABLED;
