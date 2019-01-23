@@ -13,26 +13,6 @@ var ui = {
     }
 };
 
-// naming convention starts from the midfield line and counts towards the alliance station
-/* let allEndpoints = [
-  "left-rocket-middle-1", "left-rocket-middle-2", "left-rocket-middle-3",
-  "left-rocket-bottom-1", "left-rocket-bottom-2", "left-rocket-bottom-3",
-  "right-rocket-middle-1", "right-rocket-middle-2", "right-rocket-middle-3",
-  "right-rocket-bottom-1", "right-rocket-bottom-2", "right-rocket-bottom-3",
-  "left-cargo-ball-1", "left-cargo-plate-1",
-  "left-cargo-ball-2", "left-cargo-plate-2",
-  "left-cargo-ball-3", "left-cargo-plate-3",
-  "left-cargo-ball-4", "left-cargo-plate-4",
-  "right-cargo-ball-1", "right-cargo-plate-1",
-  "right-cargo-ball-2", "right-cargo-plate-2",
-  "right-cargo-ball-3", "right-cargo-plate-3",
-  "right-cargo-ball-4", "right-cargo-plate-4",
-  "left-loading-ball", "left-loading-plate",
-  "right-loading-ball", "right-loading-plate",
-  "left-depot", "right-depot",
-  "hab-level-1", "left-hab-level-2", "right-hab-level-2", "hab-level-3"
-]; */
-
 let allLocations = [
   'RocketLeft.1', 'RocketLeft.2', 'RocketLeft.3',
   'ExchangeLeft.Hatch', 'BallLeft',
@@ -168,23 +148,6 @@ function getHeight(key) {
   return null;
 }
 
-// combines location and height to return an endpoint
-function getEndpoint(location, height) {
-  if (location.includes('Rocket') && height.includes('Rocket')) {
-    return location.replace('Rocket', height);
-  }
-  if (location.includes('Cargo') && height.includes('Cargo')) {
-    return location.replace('Cargo', height);
-  }
-  if (location.includes('Exchange') && height.includes('Exchange')) {
-    return location.replace('Exchange', height);
-  }
-  if (location.includes('Ball')) {
-    return location;
-  }
-  // return null;
-}
-
 function highlight(toHighlight, color) {
   var endpoint = document.getElementById(toHighlight);
   if (color == 'green') endpoint.style.fill = `rgb(0,255,0)`;
@@ -230,24 +193,4 @@ function finalize() {
   NetworkTables.putValue('/SmartDashboard/endpoints', endpoints);
   keys = [];
   clearHighlight();
-
-  // highlight(getMap(keys[0]), 'green');
-  // highlight(getMap(keys[1]), 'red');
-  //
-  // var armStart = 'plate';
-  // if (getMap(keys[0]).includes('cargo')) {
-  //   armStart = 'cargo';
-  // }
-  //
-  // var armEnd = 'bottom';
-  // if (getMap(keys[1]).includes('top')) {
-  //   armEnd = 'top';
-  // } else if (getMap(keys[1]).includes('middle')) {
-  //   armEnd = 'middle';
-  // }
-
-  NetworkTables.putValue('/SmartDashboard/path/robot-start', keys[0]);
-  NetworkTables.putValue('/SmartDashboard/path/robot-end', keys[1]);
-  NetworkTables.putValue('/SmartDashboard/path/arm-start', armStart);
-  NetworkTables.putValue('/SmartDashboard/path/arm-end', armEnd);
 }
