@@ -8,6 +8,7 @@
 package frc.team670.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
@@ -35,13 +36,16 @@ public class Elbow extends Subsystem {
   // Also need to add pull gains slots
   private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0;
 
+  private static final double RAMP_RATE = 0.1;
+
   private final int FORWARD_SOFT_LIMIT = 0, REVERSE_SOFT_LIMIT = 0; // TODO figure out the values in encoder rotations
-  private final int CONTINUOUS_CURRENT_LIMIT = 10, PEAK_CURRENT_LIMIT = 0; // TODO set current limit in Amps
+  private final int CONTINUOUS_CURRENT_LIMIT = 33, PEAK_CURRENT_LIMIT = 0; // TODO set current limit in Amps
 
   public Elbow() {
     elbowRotationMain = new TalonSRX(RobotMap.ARM_ELBOW_ROTATION_MOTOR_TALON);
     elbowRotationSlave = new VictorSPX(RobotMap.ARM_ELBOW_ROTATION_MOTOR_VICTOR);
     elbowRotationSlave.set(ControlMode.Follower, elbowRotationMain.getDeviceID());  
+
     elbowRotationMain.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
 		elbowRotationMain.config_kF(kSlotMotionMagic, kF, kTimeoutMs);
 		elbowRotationMain.config_kP(kSlotMotionMagic, kP, kTimeoutMs);
@@ -49,6 +53,12 @@ public class Elbow extends Subsystem {
     elbowRotationMain.config_kD(kSlotMotionMagic, kD, kTimeoutMs);
     elbowRotationMain.configMotionCruiseVelocity(RobotConstants.MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
     elbowRotationMain.configMotionAcceleration(RobotConstants.MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+
+    elbowRotationMain.setNeutralMode(NeutralMode.Brake);
+    elbowRotationSlave.setNeutralMode(NeutralMode.Brake);
+
+    elbowRotationMain.configClosedloopRamp(RAMP_RATE);
+    elbowRotationMain.configOpenloopRamp(RAMP_RATE);
 
     // These thresholds stop the motor when limit is reached
     elbowRotationMain.configForwardSoftLimitThreshold(FORWARD_SOFT_LIMIT);
@@ -62,7 +72,7 @@ public class Elbow extends Subsystem {
     elbowRotationMain.configPeakCurrentLimit(PEAK_CURRENT_LIMIT);
   }
 
-/**
+  /**
    * Sets the peak current limit for the elbow motor.
    * 
    * @param current Current in amps

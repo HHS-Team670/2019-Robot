@@ -9,6 +9,7 @@ package frc.team670.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -30,7 +31,7 @@ public class Extension extends Subsystem {
   public static final double MAX_EXTENSION_FORWARD = 0; //TODO find this
   private static final double kF = 0, kP = 0, kI = 0, kD = 0; //TODO figure out what these are
   private static final int POSITION_SLOT = 0;
-  private final double P = 0.1, I = 0.0, D = 0.0, F = 0.0, RAMP_RATE = 0.15;
+  private final double P = 0.1, I = 0.0, D = 0.0, F = 0.0, RAMP_RATE = 0.1;
   // Also need to add pull gains slots
   private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0;
 
@@ -51,6 +52,11 @@ public class Extension extends Subsystem {
     extensionMotor.configForwardSoftLimitThreshold(FORWARD_SOFT_LIMIT);
     extensionMotor.configReverseSoftLimitThreshold(REVERSE_SOFT_LIMIT);
     extensionMotor.configContinuousCurrentLimit(CONTINUOUS_CURRENT_LIMIT);
+
+    extensionMotor.setNeutralMode(NeutralMode.Brake);
+
+    extensionMotor.configClosedloopRamp(RAMP_RATE);
+    extensionMotor.configOpenloopRamp(RAMP_RATE);
 
     // Enable Safety Measures
     extensionMotor.configForwardSoftLimitEnable(true);

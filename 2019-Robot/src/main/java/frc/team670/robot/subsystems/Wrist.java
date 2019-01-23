@@ -8,6 +8,7 @@
 package frc.team670.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -27,6 +28,8 @@ public class Wrist extends Subsystem {
   public static final double MAX_WRIST_FORWARD = 0; //TODO find this
   public static final double MAX_WRIST_BACK = 0; //TODO find this
   private static final double kF = 0, kP = 0, kI = 0, kD = 0; //TODO figure out what these are
+  private static final double RAMP_RATE = 0.1;
+
   // Also need to add pull gains slots
   private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0;
 
@@ -54,6 +57,12 @@ public class Wrist extends Subsystem {
     wristRotation.configReverseSoftLimitEnable(true);
     wristRotation.enableCurrentLimit(true);
     wristRotation.configPeakCurrentLimit(PEAK_CURRENT_LIMIT);
+
+    wristRotation.setNeutralMode(NeutralMode.Brake);
+
+    wristRotation.configClosedloopRamp(RAMP_RATE);
+    wristRotation.configOpenloopRamp(RAMP_RATE);
+
   }
   
   /**

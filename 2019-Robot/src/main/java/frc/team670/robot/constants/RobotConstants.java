@@ -51,6 +51,8 @@ public class RobotConstants {
     public static final double ARM_HEIGHT = 0;
     public static final double CLAW_LENGTH = 0;
     public static final int FIXED_ARM_LENGTH = 0;
+    /** Multiplies the power input by this value when oeprator is controlling the arm */
+    public static final double OPERATOR_ARM_CONTROL_SCALAR = 0.5;
 
     //Elbow constants
     public static final int PEAK_AMPS = 0; // check the peak limit and set again
