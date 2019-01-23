@@ -10,13 +10,11 @@ package frc.team670.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
-import edu.wpi.first.wpilibj.CounterBase.EncodingType;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import frc.team670.robot.constants.RobotConstants;
+
+import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotMap;
-import frc.team670.robot.utils.functions.MathUtils;
 import frc.team670.robot.dataCollection.SensorCollection_PIDSource;
 
 /**
@@ -36,6 +34,12 @@ public class Climber extends Subsystem {
   private static final double P = 0.01, I = 0.0, D = 0.0, F = 0.0;
 
   private boolean frontPistonsRetracted, backPistonsRetracted;
+  private int climberEncoderTolerance = 10; //TODO Set this
+ 
+  
+  public static final double LOWERING_PISTON_POWER = 0.05;
+  public static final double MINIMUM_PISTON_POWER = 0.1;
+  public static final double MAXIMUM_PISTON_POWER = 0.75; 
 
   public Climber() {    
     backTalon = new WPI_TalonSRX(RobotMap.BACK_CLIMBER_PISTON_CONTROLLER);
@@ -50,17 +54,35 @@ public class Climber extends Subsystem {
     backPIDController = new PIDController(P, I, D, F, new SensorCollection_PIDSource(frontTalon.getSensorCollection()), backTalon); 
   }
 
+  /**
+   * Drives the pistons down with percent power
+   * 
+   * @param frontPower the desired percent power for the front motors
+   * @param backPower the desired percent power for the front motors
+   */
   public void drivePistons(double frontPower, double backPower) {
     frontTalon.set(ControlMode.PercentOutput, frontPower);
     backTalon.set(ControlMode.PercentOutput, backPower);
   }
 
-  public void setFrontPistonOutputRange(double minRange, double maxRange){
-    frontPIDController.setOutputRange(minRange, maxRange);
+  /**
+   * Sets the output range of the front pistons
+   * 
+   * @param minValue the minimum output for the front PID controller
+   * @param maxValue the maximum output for the front PID controller
+   */
+  public void setFrontPistonOutputRange(double minValue, double maxValue){
+    frontPIDController.setOutputRange(minValue, maxValue);
   }
 
-  public void setBackPistonOutputRange(double minRange, double maxRange){
-    backPIDController.setOutputRange(minRange, maxRange);
+   /**
+   * Sets the output range of the back pistons
+   * 
+   * @param minValue the minimum output for the back PID controller
+   * @param maxValue the maximum output for the back PID controller
+   */
+  public void setBackPistonOutputRange(double minValue, double maxValue){
+    backPIDController.setOutputRange(minValue, maxValue);
   }
 
   /**
@@ -79,30 +101,105 @@ public class Climber extends Subsystem {
     return backPIDController;
   }
 
-  public int getFrontTalonPosition(){
+  /**
+   * Sets a setpoint for the front PID controller
+   * 
+   * @param setpoint the desired setpoint for the front PID controller
+   */
+  public void setFrontPIDControllerSetpoint(int setpoint){
+    setFrontPistonOutputRange(MINIMUM_PISTON_POWER, MAXIMUM_PISTON_POWER);
+    frontPIDController.setSetpoint(setpoint);
+  }
+
+  /**
+   * Sets a setpoint for the back PID controller
+   * 
+   * @param setpoint the desired setpoint for the back PID controller
+   */
+  public void setBackPIDControllerSetpoint(int setpoint){
+    setBackPistonOutputRange(MINIMUM_PISTON_POWER, MAXIMUM_PISTON_POWER);
+    backPIDController.setSetpoint(setpoint);
+  }
+
+  /**
+   * Returns the position of the front pistons in ticks
+   * 
+   * @return The position of the front pistons in ticks
+   */
+  public int getFrontTalonPositionInTicks(){
     return frontTalon.getSensorCollection().getQuadraturePosition();
   }
 
-  public int getBackTalonPosition(){
+  /**
+   * Returns the position of the back pistons in ticks
+   * 
+   * @return The position of the back pistons in ticks
+   */
+  public int getBackTalonPositionInTicks(){
     return backTalon.getSensorCollection().getQuadraturePosition();
   }
 
+  /**
+   * Returns the position of the front pistons in inches
+   * 
+   * @return The position of the front pistons in inches
+   */
+  public double getFrontTalonPositionInInches() {
+    return 0; //TODO set these
+  }
+
+   /**
+   * Returns the position of the back pistons in inches
+   * 
+   * @return The position of the back pistons in inches
+   */
+  public double getBackTalonPositionInInches() {
+    return 0; // TODO set these
+  }
+
+
+  /**
+   * Returns whether or not the command for retracting the front pistons has been called and finished
+   * 
+   * @return Whether or not the command for retracting the front pistons has been called and finished
+   */
   public boolean getFrontPistonsRetracted(){
     return frontPistonsRetracted;
   }
 
+  /**
+   * Returns whether or not the command for retracting the back pistons has been called and finished
+   * 
+   * @return Whether or not the command for retracting the back pistons has been called and finished
+   */
   public boolean getBackPistonsRetracted(){
     return backPistonsRetracted;
   }
 
+  /**
+   * Sets whether or not the command for retracting the front pistons has been called and finished
+   * 
+   * @param setRetracted Whether or not the command for retracting the front pistons has been called and finished
+   */
   public void setFrontPistonsRetracted(boolean setRetracted){
     frontPistonsRetracted = setRetracted;
   }
 
+  /**
+   * Sets whether or not the command for retracting the back pistons has been called and finished
+   * 
+   * @param setRetracted Whether or not the command for retracting the back pistons has been called and finished
+   */
   public void setBackPistonsRetracted(boolean setRetracted){
     backPistonsRetracted = setRetracted;
   }
 
+  /**
+   * Returns true if both front and back controllers are on target and false if not
+   */
+  public boolean getFrontAndBackControllerOnTarget(){
+    return (frontPIDController.onTarget() && backPIDController.onTarget());
+  }
 
   /**
    * Enables the PIDControllers to get them running
@@ -110,25 +207,53 @@ public class Climber extends Subsystem {
    * @param setPoint the desired end goal of the piston climb
    */
   public void enableClimberPIDControllers(int setPoint){
-    frontPIDController.setOutputRange(RobotConstants.MINIMUM_PISTON_POWER, RobotConstants.MAXIMUM_PISTON_POWER);
-    frontPIDController.setAbsoluteTolerance(RobotConstants.CLIMBER_ENCODER_TOLERANCE);
+    frontPIDController.setOutputRange(MINIMUM_PISTON_POWER, MAXIMUM_PISTON_POWER);
+    frontPIDController.setAbsoluteTolerance(climberEncoderTolerance);
     frontPIDController.setContinuous(false);
     frontPIDController.setSetpoint(setPoint);
     frontPIDController.enable();
 
-    backPIDController.setOutputRange(RobotConstants.MINIMUM_PISTON_POWER, RobotConstants.MAXIMUM_PISTON_POWER);
-    backPIDController.setAbsoluteTolerance(RobotConstants.CLIMBER_ENCODER_TOLERANCE);
+    backPIDController.setOutputRange(MINIMUM_PISTON_POWER, MAXIMUM_PISTON_POWER);
+    backPIDController.setAbsoluteTolerance(climberEncoderTolerance);
     backPIDController.setContinuous(false);
     backPIDController.setSetpoint(setPoint);
     backPIDController.enable();
   }
 
-  public double getFrontTalonPositionTicks() {
-    return frontTalon.getSensorCollection().getQuadraturePosition();
-  }
 
-  public double getFrontTalonPositionInInches() {
-    return 0; // TODO set these
+  /**
+   * Method to set output ranges of piston controllers in response to an input of tilt adjustment
+   * 
+   * @param goingUp True if robot is climbing up and false if coming down
+   * @param tiltTolerance The tolerance past which the robot is considered too unbalanced in either direction
+   * @param tiltAdjustment The amount of adjustment desired for the robot
+   */
+  public void handleTilt(boolean goingUp, double tiltTolerance, double tiltAdjustment){
+    if (goingUp) {
+      // If tipped down (front is down)
+      if (Robot.sensors.getPitchDouble() < -tiltTolerance) {
+        setFrontPistonOutputRange(MINIMUM_PISTON_POWER, MAXIMUM_PISTON_POWER + tiltAdjustment);
+        setBackPistonOutputRange(MINIMUM_PISTON_POWER, MAXIMUM_PISTON_POWER - tiltAdjustment);
+
+        // If tipped up (front is up)
+      } else if (Robot.sensors.getPitchDouble() > tiltTolerance) {
+        setFrontPistonOutputRange(MINIMUM_PISTON_POWER, MAXIMUM_PISTON_POWER - tiltAdjustment);
+        setBackPistonOutputRange(MINIMUM_PISTON_POWER, MAXIMUM_PISTON_POWER + tiltAdjustment);
+      }
+    }
+
+    // For going down
+    else {
+      // If tipped down (front is down)
+      if (Robot.sensors.getPitchDouble() < -tiltTolerance) {
+        setFrontPistonOutputRange(LOWERING_PISTON_POWER + tiltAdjustment,MINIMUM_PISTON_POWER);
+        setBackPistonOutputRange(LOWERING_PISTON_POWER - tiltAdjustment, MINIMUM_PISTON_POWER);
+        // If tipped up (front is up)
+      } else if (Robot.sensors.getPitchDouble() > tiltTolerance) {
+        setFrontPistonOutputRange(LOWERING_PISTON_POWER - tiltAdjustment, MINIMUM_PISTON_POWER);
+        setBackPistonOutputRange(LOWERING_PISTON_POWER + tiltAdjustment, MINIMUM_PISTON_POWER);
+      }
+    }
   }
 
   @Override

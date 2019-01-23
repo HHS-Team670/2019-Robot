@@ -8,9 +8,9 @@
 package frc.team670.robot.commands.climb.pistonClimb;
 
 import edu.wpi.first.wpilibj.command.Command;
-import frc.team670.robot.Robot;
-import frc.team670.robot.constants.RobotConstants;
 
+import frc.team670.robot.Robot;
+import frc.team670.robot.subsystems.Climber;
 
 public class LinearPistonClimb extends Command {
 
@@ -49,7 +49,7 @@ public class LinearPistonClimb extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Robot.climber.drivePistons(RobotConstants.MINIMUM_PISTON_POWER, RobotConstants.MINIMUM_PISTON_POWER);
+    Robot.climber.drivePistons(Climber.MINIMUM_PISTON_POWER, Climber.MINIMUM_PISTON_POWER);
   }
 
   // Called when another command which requires one or more of the same

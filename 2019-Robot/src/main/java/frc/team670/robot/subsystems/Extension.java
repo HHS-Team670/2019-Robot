@@ -11,7 +11,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
-import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.utils.functions.SettingUtils;
 
@@ -22,12 +21,16 @@ public class Extension extends Subsystem {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
   private TalonSRX extensionMotor;
-  private static final int POSITION_SLOT = 0;
+
   private double P = 0.0, I = 0.0, D = 0.0, F = 0.0;
+
+  public static final int EXTENSION_ENCODER_OUT = 0;
+
+  private static final int POSITION_SLOT = 0;
+  private static final double EXTENSION_POWER = 0.75;
 
   public Extension() {
     extensionMotor = new TalonSRX(RobotMap.ARM_EXTENSION_MOTOR);
-
   }
 
   /**
@@ -35,8 +38,7 @@ public class Extension extends Subsystem {
    * 
    */
   public void enableExtensionPIDController() {
-    SettingUtils.initTalonPID(extensionMotor, POSITION_SLOT, P, I, D, F, -RobotConstants.DEFAULT_EXTENSION_POWER,
-        RobotConstants.DEFAULT_EXTENSION_POWER);
+    SettingUtils.initTalonPID(extensionMotor, POSITION_SLOT, P, I, D, F, -EXTENSION_POWER, EXTENSION_POWER);
   }
 
   /**

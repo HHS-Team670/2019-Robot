@@ -8,10 +8,11 @@
 package frc.team670.robot.commands.climb.pistonClimb;
 
 import edu.wpi.first.wpilibj.command.Command;
+
 import frc.team670.robot.Robot;
-import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.utils.functions.SettingUtils;
 import frc.team670.robot.utils.Logger;
+import frc.team670.robot.constants.RobotConstants;
 
 public class RetractBackPistons extends Command {
   private int loggingIterationCounter;
@@ -23,16 +24,16 @@ public class RetractBackPistons extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    Robot.climber.getBackController().setSetpoint(RobotConstants.PISTON_ENCODER_FLAT);
+    Robot.climber.setBackPIDControllerSetpoint(RobotConstants.PISTON_ENCODER_FLAT);
 
-    Logger.consoleLog("startBackPistonPosition:%s", Robot.climber.getBackTalonPosition());
+    Logger.consoleLog("startBackPistonPosition:%s", Robot.climber.getBackTalonPositionInTicks());
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
     if (loggingIterationCounter % 7 == 0)
-      Logger.consoleLog("CurrentBackPistonPosition:%s", Robot.climber.getBackTalonPosition());
+      Logger.consoleLog("CurrentBackPistonPosition:%s", Robot.climber.getBackTalonPositionInTicks());
 
       loggingIterationCounter++;
   }
@@ -48,7 +49,7 @@ public class RetractBackPistons extends Command {
   protected void end() {
     SettingUtils.releaseController(Robot.climber.getBackController());
     Robot.climber.setBackPistonsRetracted(false);
-    Logger.consoleLog("EndBackPistonPosition:%s", Robot.climber.getBackTalonPosition());
+    Logger.consoleLog("EndBackPistonPosition:%s", Robot.climber.getBackTalonPositionInTicks());
   }
 
   // Called when another command which requires one or more of the same
