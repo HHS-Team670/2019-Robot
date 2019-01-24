@@ -39,7 +39,6 @@ public class Elbow extends Subsystem {
   private static final double RAMP_RATE = 0.1;
 
   private final int FORWARD_SOFT_LIMIT = 0, REVERSE_SOFT_LIMIT = 0; // TODO figure out the values in encoder rotations
-  private final int CONTINUOUS_CURRENT_LIMIT = 33, PEAK_CURRENT_LIMIT = 0; // TODO set current limit in Amps
   private static final int CURRENT_CONTROL_SLOT = 0; // TODO Set this
   private final int CLIMBING_CONTINUOUS_CURRENT_LIMIT = 35, NORMAL_CONTINUOUS_CURRENT_LIMIT = 33, PEAK_CURRENT_LIMIT = 0; // TODO set current limit in Amps
 
@@ -67,7 +66,7 @@ public class Elbow extends Subsystem {
     // These thresholds stop the motor when limit is reached
     elbowRotationMain.configForwardSoftLimitThreshold(FORWARD_SOFT_LIMIT);
     elbowRotationMain.configReverseSoftLimitThreshold(REVERSE_SOFT_LIMIT);
-    elbowRotationMain.configContinuousCurrentLimit(CONTINUOUS_CURRENT_LIMIT);
+    elbowRotationMain.configContinuousCurrentLimit(NORMAL_CONTINUOUS_CURRENT_LIMIT);
 
     // Enable Safety Measures
     elbowRotationMain.configForwardSoftLimitEnable(true);

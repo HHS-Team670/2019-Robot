@@ -131,8 +131,8 @@ public class MathUtils {
         return (ticks / RobotConstants.WRIST_TICKS_PER_ROTATION) * 360;
     }
 
-    public static double convertExtensionInchesToTicks(double inches) {
-        return RobotConstants.EXTENSION_TICKS_PER_INCH / inches;
+    public static int convertExtensionInchesToTicks(double inches) {
+        return (int)(RobotConstants.EXTENSION_TICKS_PER_INCH / inches);
     }
 
     public static double convertExtensionTicksToInches(double ticks) {

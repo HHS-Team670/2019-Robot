@@ -89,11 +89,9 @@ public class Arm extends Subsystem {
   }
 
   /**
-   * Returns the arm's point in forward facing plane relative to (0,0) at the base of the arm.
-   * 
-   * left the variable stuff as parameters for now
+   * Returns the arm's point in forward facing plane relative to (0,0) at the base of the arm. 
    */
-  public Point2D.Double getPosition(double extensionLength, double wristAngle, double elbowAngle) {
+  public static Point2D.Double getCoordPosition(double extensionLength, double wristAngle, double elbowAngle) {
     double x = extensionLength * Math.sin(elbowAngle) + RobotConstants.CLAW_RADIUS_IN_INCHES * Math.sin(wristAngle);
     double y = extensionLength * Math.cos(elbowAngle) + RobotConstants.CLAW_RADIUS_IN_INCHES * Math.cos(wristAngle) + RobotConstants.ARM_HEIGHT_IN_INCHES;
     return new Point2D.Double(x, y);

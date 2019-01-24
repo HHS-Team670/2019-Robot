@@ -141,11 +141,6 @@ public class Extension extends Subsystem {
     return extensionMotor.getSensorCollection().isFwdLimitSwitchClosed();
   }
   
-  public boolean getReverseLimitSwitch() {
-    //drive until switch is closed
-    return extensionMotor.getSensorCollection().isRevLimitSwitchClosed();
-  }
-  
   /**
    * Sets the SensorCollection encoder value to encoderValue (use this to reset the encoder when at a known position)
    */

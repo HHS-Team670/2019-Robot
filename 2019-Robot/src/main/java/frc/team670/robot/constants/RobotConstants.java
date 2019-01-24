@@ -97,7 +97,4 @@ public class RobotConstants {
     public static final int PISTON_ENCODER_FLAT = 0; // TODO set these
     public static final int PISTON_ENCODER_LEVEL_TWO = 0;
     public static final int PISTON_ENCODER_LEVEL_THREE = 0;
-
-    // PID Constants
-    public static final int kTimeoutMs = 0;
 }
