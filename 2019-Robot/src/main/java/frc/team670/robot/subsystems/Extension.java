@@ -24,12 +24,18 @@ public class Extension extends Subsystem {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
   private TalonSRX extensionMotor;
-  private double extensionLength;
+
   private static final double kF = 0, kP = 0, kI = 0, kD = 0; //TODO figure out what these are
   private static final int POSITION_SLOT = 0;
   private final double P = 0.1, I = 0.0, D = 0.0, F = 0.0, RAMP_RATE = 0.15;
   // Also need to add pull gains slots
   private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0;
+
+  public static final int EXTENSION_ENCODER_OUT = 0;
+
+  private final int NORMAL_CONTINUOUS_CURRENT_LIMIT = 33, PEAK_CURRENT_LIMIT = 0; // TODO set current limit in Amps
+
+  private static final double EXTENSION_POWER = 0.75;
 
   public Extension() {
     extensionMotor = new TalonSRX(RobotMap.ARM_EXTENSION_MOTOR);   
@@ -48,9 +54,9 @@ public class Extension extends Subsystem {
    * @param current Current in amps
    */
   public void setCurrentLimit(int current) {
-    extensionMotor.configPeakCurrentLimit(RobotConstants.PEAK_AMPS, RobotConstants.TIMEOUT_MS); // Peak Limit at 0
-    extensionMotor.configPeakCurrentDuration(RobotConstants.PEAK_TIME_MS, RobotConstants.TIMEOUT_MS); // Duration at over peak set to 0
-    extensionMotor.configContinuousCurrentLimit(current, RobotConstants.TIMEOUT_MS);
+    extensionMotor.configPeakCurrentLimit(PEAK_CURRENT_LIMIT); // Peak Limit at 0
+    extensionMotor.configPeakCurrentDuration(0); // Duration at over peak set to 0
+    extensionMotor.configContinuousCurrentLimit(current);
   }
 
   public void enableCurrentLimit() {
@@ -83,8 +89,8 @@ public class Extension extends Subsystem {
    * Enables the PID Controller for extension
    */
   public void enableExtensionPIDController() {
-    SettingUtils.initTalonPID(extensionMotor, POSITION_SLOT, P, I, D, F, -RobotConstants.DEFAULT_EXTENSION_POWER,
-        RobotConstants.DEFAULT_EXTENSION_POWER, FeedbackDevice.CTRE_MagEncoder_Relative, RAMP_RATE);
+    SettingUtils.initTalonPID(extensionMotor, POSITION_SLOT, P, I, D, F, -EXTENSION_POWER,
+        EXTENSION_POWER, FeedbackDevice.CTRE_MagEncoder_Relative, RAMP_RATE);
         extensionMotor.selectProfileSlot(POSITION_SLOT, 0);
   }
 
@@ -99,6 +105,11 @@ public class Extension extends Subsystem {
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
     // setDefaultCommand(new MySpecialCommand());
+  }
+
+  public boolean getReverseLimitSwitch() {
+    //drive until switch is closed
+    return extensionMotor.getSensorCollection().isRevLimitSwitchClosed();
   }
 
   /**

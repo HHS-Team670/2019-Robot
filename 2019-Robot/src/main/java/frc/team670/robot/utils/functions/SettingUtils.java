@@ -43,7 +43,7 @@ public class SettingUtils {
    */
   public static void initTalonPID(TalonSRX talon, int slot, double P, double I, double D, double F,
       double minOutput, double maxOutput, FeedbackDevice feedbackDevice, double secondsFromNeutralToFull) {
-    talon.configSelectedFeedbackSensor(feedbackDevice, RobotConstants.kPIDLoopIdx,
+    talon.configSelectedFeedbackSensor(feedbackDevice, 0,
         RobotConstants.kTimeoutMs);
         talon.setSensorPhase(true);
 
@@ -57,7 +57,7 @@ public class SettingUtils {
      * set the allowable closed-loop error, Closed-Loop output will be neutral
      * within this range. See Table in Section 17.2.1 for native units per rotation.
      */
-    talon.configAllowableClosedloopError(slot, RobotConstants.ALLOWABLE_PID_ERROR, RobotConstants.kTimeoutMs); /* always servo */
+    // talon.configAllowableClosedloopError(slot, RobotConstants.ALLOWABLE_PID_ERROR, RobotConstants.kTimeoutMs); /* always servo */
     /* set closed loop gains in slot0 */
     talon.config_kF(slot, F, RobotConstants.kTimeoutMs);
     talon.config_kP(slot, P, RobotConstants.kTimeoutMs);

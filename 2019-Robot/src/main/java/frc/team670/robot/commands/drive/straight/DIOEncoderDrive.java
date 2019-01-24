@@ -22,8 +22,10 @@ public class DIOEncoderDrive extends Command {
     requires(Robot.driveBase);
     ticksToTravel = MathUtils.convertInchesToDriveBaseTicks(inchesToTravel);
 
-    leftPIDController = new PIDController(P, I, D, FF, Robot.driveBase.getLeftDIOEncoder(), Robot.driveBase.getLeftControllers().get(0));
-    rightPIDController = new PIDController(P, I, D, FF, Robot.driveBase.getRightDIOEncoder(), Robot.driveBase.getRightControllers().get(0));
+    leftPIDController = new PIDController(P, I, D, FF, Robot.driveBase.getLeftDIOEncoder(),
+        Robot.driveBase.getLeftControllers().get(0));
+    rightPIDController = new PIDController(P, I, D, FF, Robot.driveBase.getRightDIOEncoder(),
+        Robot.driveBase.getRightControllers().get(0));
   }
 
   // Called just before this Command runs the first time
@@ -39,7 +41,7 @@ public class DIOEncoderDrive extends Command {
     rightPIDController.setSetpoint(ticksToTravel);
 
     Logger.consoleLog("leftStartingPosition:%s rightStartingPosition:%s ", Robot.driveBase.getLeftDIOEncoderPosition(),
-     Robot.driveBase.getRightDIOEncoderPosition());
+        Robot.driveBase.getRightDIOEncoderPosition());
 
     leftPIDController.enable();
     rightPIDController.enable();
@@ -48,10 +50,10 @@ public class DIOEncoderDrive extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Robot.driveBase.tankDrive(leftPIDController.get(), rightPIDController.get(), false);    
+    Robot.driveBase.tankDrive(leftPIDController.get(), rightPIDController.get(), false);
 
     Logger.consoleLog("leftCurrentPosition:%s rightCurrentPosition:%s ", Robot.driveBase.getLeftDIOEncoderPosition(),
-     Robot.driveBase.getRightDIOEncoderPosition());
+        Robot.driveBase.getRightDIOEncoderPosition());
   }
 
   // Make this return true when this Command no longer needs to run execute()
@@ -66,7 +68,7 @@ public class DIOEncoderDrive extends Command {
     Robot.driveBase.stop();
 
     Logger.consoleLog("leftEndingPosition:%s rightEndingPosition:%s ", Robot.driveBase.getLeftDIOEncoderPosition(),
-    Robot.driveBase.getRightDIOEncoderPosition());
+        Robot.driveBase.getRightDIOEncoderPosition());
   }
 
   // Called when another command which requires one or more of the same
