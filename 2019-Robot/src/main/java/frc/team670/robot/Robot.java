@@ -122,7 +122,7 @@ public class Robot extends TimedRobot {
       SmartDashboard.putNumber("NavX Yaw", sensors.getYawDouble());
 
     periodCount ++;
-    leds.setClimbingData(true);//we climb
+    //leds.setClimbingData(true);//we climb
 
     // System.out.println("Voltage: "+(irSensor.getVoltage()));
     fieldCentricPose.update(); // Update our field centric Pose to the new robot position. Commented out to avoid null-pointers until sensors hooked up.
