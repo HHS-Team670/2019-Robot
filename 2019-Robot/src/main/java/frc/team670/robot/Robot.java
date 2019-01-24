@@ -58,6 +58,7 @@ public class Robot extends TimedRobot {
 
   Command autonomousCommand;
   SendableChooser<Command> auton_chooser = new SendableChooser<>();
+  public static SendableChooser<Boolean> pid_chooser = new SendableChooser<>();
 
   public Robot() {
 
@@ -88,9 +89,19 @@ public class Robot extends TimedRobot {
     leds.socketSetup(5801);
     System.out.println("LED Setup Run");
     //leds.socketSetup(RobotConstants.LED_PORT);    
+
+    // Setup to receive PID values from smart dashboard
+    pid_chooser.setDefaultOption("false", false);
+    pid_chooser.addOption("true", true);
+    SmartDashboard.putData("PID Inputs from Dashboard?", pid_chooser);
+    SmartDashboard.putNumber("P", 0);
+    SmartDashboard.putNumber("I", 0);
+    SmartDashboard.putNumber("D", 0);
+    SmartDashboard.putNumber("KA", 0);
+
     
     try{ 
-      autonomousCommand = new DriveMotionProfile("curve-left-1.pf1.csv", false);
+      autonomousCommand = new DriveMotionProfile("S-shape-1.pf1.csv", false);
     }
     catch (FileNotFoundException e) {
       e.printStackTrace();

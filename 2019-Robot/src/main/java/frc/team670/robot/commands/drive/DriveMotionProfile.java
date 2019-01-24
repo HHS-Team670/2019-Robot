@@ -15,6 +15,7 @@ import java.io.FileNotFoundException;
 
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.utils.Logger;
@@ -47,7 +48,7 @@ public class DriveMotionProfile extends Command {
   private static final double ANGLE_DIVIDE_CONSTANT = 240.0; // Default = 80
 
 
-  private static final double P = 0.33, I = 0, D = 0, KA= 0;
+  private static double P = 0.33, I = 0, D = 0, KA= 0;
 
   // Values for logging purposes
   private final int EXECUTE_LOG_INTERVAL = 8;
@@ -163,6 +164,13 @@ public class DriveMotionProfile extends Command {
     // Set up Robot for Auton Driving
     Robot.driveBase.initAutonDrive();
 
+    if (Robot.pid_chooser.getSelected().equals(true)) {
+      P = SmartDashboard.getNumber("P", P);
+      I = SmartDashboard.getNumber("I", I);
+      D = SmartDashboard.getNumber("D", D);
+      KA = SmartDashboard.getNumber("KA", KA);
+    }
+    SmartDashboard.putNumberArray("PID Values: ", new double[] {P, I, D, KA});
     // The first argument is the proportional gain. Usually this will be quite high
     // The second argument is the integral gain. This is unused for motion profiling
     // The third argument is the derivative gain. Tweak this if you are unhappy with the tracking of the trajectory
