@@ -47,7 +47,7 @@ public class RetractFrontPistons extends Command {
   @Override
   protected void end() {
     SettingUtils.releaseController(Robot.climber.getFrontController());
-    Robot.climber.setFrontPistonsRetracted(false);
+    Robot.climber.setFrontPistonsRetracted(true);
     Logger.consoleLog("EndFrontPistonPosition:%s", Robot.climber.getFrontTalonPositionInTicks());
   }
 

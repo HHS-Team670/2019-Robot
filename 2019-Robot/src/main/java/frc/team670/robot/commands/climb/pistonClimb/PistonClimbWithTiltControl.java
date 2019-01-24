@@ -23,13 +23,13 @@ public class PistonClimbWithTiltControl extends Command {
 
   private double tiltControllerLowerOutput = -0.2, tiltControllerUpperOutput = 0.2;
   private double tiltTolerance = 0; // TODO set this
-  private double P = 0.0, I = 0.0, D = 0.0, F = 0.0;
+  private double P = 0.1, I = 0.0, D = 0.0, F = 0.0; // TODO set these
   private PIDController tiltController;
   private boolean goingUp;
   private int loggingIterationCounter, setPoint;
 
   /**
-   * @param setPoint the desired end goal of the climber (Level 2 or Level 3)
+   * @param setPoint the desired end goal of the climber (Flat, Level 2 or Level 3)
    */
   public PistonClimbWithTiltControl(int setPoint) {
     requires(Robot.climber);
@@ -40,10 +40,6 @@ public class PistonClimbWithTiltControl extends Command {
   // Called just before this Command runs the first time
   protected void initialize() {
     Robot.climber.enableClimberPIDControllers(setPoint);
-
-    if (!Robot.climber.getBackPistonsRetracted() || !Robot.climber.getFrontPistonsRetracted())
-      super.cancel();
-
     tiltController.setSetpoint(0);
     tiltController.setAbsoluteTolerance(tiltTolerance);
     tiltController.setOutputRange(tiltControllerLowerOutput, tiltControllerUpperOutput);

@@ -18,7 +18,7 @@ import frc.team670.robot.utils.functions.MathUtils;
 
 /**
  * Command to run the "dragging forward motion" of the arm to get it onto the
- * platform
+ * platform. Assumes the arm is already in the "ReadyToClimb" ArmState
  * 
  */
 public class ArmClimb extends Command {
@@ -28,6 +28,9 @@ public class ArmClimb extends Command {
 
   public static final int CLIMB_CURRENT = 10; // TODO figure required limited current
 
+  /**
+   * Prepares the ArmClimb method allowing the arm to drag the robot forward.
+   */
   public ArmClimb() {
     super();
     requires(Robot.arm);
@@ -37,7 +40,7 @@ public class ArmClimb extends Command {
 
   // Called just before this Command runs the first time
   @Override
-  protected void initialize() {
+  protected void initialize() { // TODO add if condition to check that Arm is in the ReadyToClimb ArmState
     // Set arm to ready to climb state
     // telescope out
 
@@ -57,6 +60,7 @@ public class ArmClimb extends Command {
 
     int deltaSetPointInTicks = MathUtils.convertExtensionInchesToTicks(deltaSetPointInInches);
 
+    // TODO make EXTENSION_ENCODER_OUT the actual extension value of Extension at the ReadyToClimb ArmState
     Robot.extension.setPIDControllerSetpoint(Extension.EXTENSION_ENCODER_OUT - deltaSetPointInTicks); // Changes the
                                                                                                     // setpoint
     if (loggingIterationCounter % 7 == 0)
@@ -78,7 +82,7 @@ public class ArmClimb extends Command {
       return true;
     }
 
-    return false;
+    return Robot.extension.getReverseLimitSwitch();
   }
 
   // Called once after isFinished returns true

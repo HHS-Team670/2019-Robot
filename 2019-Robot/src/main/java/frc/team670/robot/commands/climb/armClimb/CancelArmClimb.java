@@ -17,8 +17,9 @@ public class CancelArmClimb extends InstantCommand {
 
   public CancelArmClimb() {
     super();
-    requires(Robot.arm);
     requires(Robot.elbow);
+    requires(Robot.extension);
+    requires(Robot.wrist);
   }
 
   // Called once when the command executes

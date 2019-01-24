@@ -48,7 +48,7 @@ public class RetractBackPistons extends Command {
   @Override
   protected void end() {
     SettingUtils.releaseController(Robot.climber.getBackController());
-    Robot.climber.setBackPistonsRetracted(false);
+    Robot.climber.setBackPistonsRetracted(true);
     Logger.consoleLog("EndBackPistonPosition:%s", Robot.climber.getBackTalonPositionInTicks());
   }
 

@@ -21,8 +21,12 @@ import frc.team670.robot.commands.climb.armClimb.ArmClimb;
  */
 public class CycleClimb extends InstantCommand {
   private int setPoint;
-  public static ClimbStage cg;
+  private ClimbStage cg;
 
+  /**
+   * @param setPoint The setpoint in encoder ticks corresponding to the height you want to climb to.
+   * RobotConstants: PISTON_ENCODER_FLAT, PISTON_ENCODER_LEVEL_TWO, PISTON_ENCODER_LEVEL_THREEE
+   */
   public CycleClimb(int setPoint) {
     requires(Robot.climber);
     requires(Robot.arm);
@@ -30,6 +34,7 @@ public class CycleClimb extends InstantCommand {
     requires(Robot.wrist);
 
     this.setPoint = setPoint;
+    cg = ClimbStage.DEPLOY_PISTONS;
   }
 
   // Called just before this Command runs the first time
@@ -46,9 +51,11 @@ public class CycleClimb extends InstantCommand {
       cg = ClimbStage.ARM_CLIMB;
       break;
     case ARM_CLIMB:
-      Scheduler.getInstance().add(new ArmClimb());
-      if (!ArmClimb.getUserWishesToStillClimb()) {
-        cg = ClimbStage.RETRACT_FRONT_PISTONS;
+      if(Robot.climber.getFrontAndBackControllerOnTarget()) {
+          Scheduler.getInstance().add(new ArmClimb());
+        if (!ArmClimb.getUserWishesToStillClimb()) {
+          cg = ClimbStage.RETRACT_FRONT_PISTONS;
+        }
       }
       break;
     case RETRACT_FRONT_PISTONS:

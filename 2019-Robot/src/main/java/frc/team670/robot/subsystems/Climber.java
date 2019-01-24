@@ -37,7 +37,7 @@ public class Climber extends Subsystem {
   private int climberEncoderTolerance = 10; //TODO Set this
  
   
-  public static final double LOWERING_PISTON_POWER = 0.05;
+  public static final double LOWERING_PISTON_POWER = 0.05; // TODO set these
   public static final double MINIMUM_PISTON_POWER = 0.1;
   public static final double MAXIMUM_PISTON_POWER = 0.75; 
 
