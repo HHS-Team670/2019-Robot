@@ -5,22 +5,26 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.subsystems;
+package frc.team670.robot.commands.claw;
 
-import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.command.InstantCommand;
 
 /**
- * Represents the claw mechanism of the robot.
- * @author shaylandias
+ * Add your docs here.
  */
-public class Claw extends Subsystem {
-
-  /*
-   *  Define the Compressor and Solenoids in here.
+public class OpenClaw extends InstantCommand {
+  /**
+   * Add your docs here.
    */
-
-  @Override
-  public void initDefaultCommand() {
-    
+  public OpenClaw() {
+    super();
+    // Use requires() here to declare subsystem dependencies
+    // eg. requires(chassis);
   }
+
+  // Called once when the command executes
+  @Override
+  protected void initialize() {
+  }
+
 }
