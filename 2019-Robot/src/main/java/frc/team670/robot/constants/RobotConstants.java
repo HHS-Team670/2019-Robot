@@ -52,16 +52,36 @@ public class RobotConstants {
             MAX_LOOKAHEAD_SPEED);
 
     // Arm Constants
+    /** Multiplies the power input by this value when oeprator is controlling the arm */
     public static final double ARM_HEIGHT_IN_INCHES = 0;
     public static final double CLAW_RADIUS_IN_INCHES = 0;
     public static final int FIXED_ARM_LENGTH_IN_INCHES = 0;
+    public static final double OPERATOR_ARM_CONTROL_SCALAR = 0.5;
 
+    //Elbow constants
+    public static final int PEAK_AMPS = 0; // check the peak limit and set again
+    public static final int TIMEOUT_MS = 0; //  
+    public static final int PEAK_TIME_MS = 0; //  Duration after current exceed peak current to trigger current limit
+
+    // Climbing Current Limits
+    public static final int CLIMB_CURRENT_LIMIT = 10; // TODO figure required limited current
+    public static final int NORMAL_CURRENT_LIMIT = 0; // TODO figure out normal current
+
+    //Extension constants
+    public static final int EXTENSION_ENCODER_OUT = 0;
+    public static final double DEFAULT_EXTENSION_POWER = 0; 
+    public static final double INCHES_TO_TRAVEL_ONTO_PLATFORM = 4;
+
+    //Arm PID Constants
+    public static final int kPIDLoopIdx = 0;
+    public static final int kTimeoutMs = 0;
+    public static final int ALLOWABLE_PID_ERROR = 0;
 
     public static int MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 15000; // TODO set this
     public static int MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS = 6000; // TODO set this
 
     // Different values/encoder positions to set arm to
-    public static int ARM_RESET_TIMEOUTMS = 30;
+    public static int ARM_RESET_TIMEOUTMS = 0;
     public static double ELBOW_START_POS = 6000;
     public static double ELBOW_FULL_FORWARD_POS = 12000;
     public static double ELBOW_FULL_BACKWARD_POS = -12000;
@@ -77,7 +97,4 @@ public class RobotConstants {
     public static final int PISTON_ENCODER_FLAT = 0; // TODO set these
     public static final int PISTON_ENCODER_LEVEL_TWO = 0;
     public static final int PISTON_ENCODER_LEVEL_THREE = 0;
-
-    // PID Constants
-    public static final int kTimeoutMs = 0;
 }

@@ -47,7 +47,7 @@ public abstract class ArmTransition extends CommandGroup implements Edge {
    * Returns the sum of the number of inches that the arm must move to travel the path.
    */
   public int getCost() {
-    Point2D.Double sourceCoord = source.getCoord(), destCoord = dest.getCoord();
+    Point2D.Double sourceCoord = source.getCoordPosition(), destCoord = dest.getCoordPosition();
     return (int)(MathUtils.findDistance(sourceCoord.x, sourceCoord.y, destCoord.x, destCoord.y));
   }
 

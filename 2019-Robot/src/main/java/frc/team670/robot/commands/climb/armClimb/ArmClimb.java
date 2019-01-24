@@ -77,7 +77,7 @@ public class ArmClimb extends Command {
       return true;
 
     // If arm pulls in too much and no longer makes contact with surface
-    if (Robot.extension.getExtensionLengthInTicks() < (Math.cos(Robot.elbow.getElbowAngle() / heightInInches))) {
+    if (Robot.extension.getLengthTicks() < (Math.cos(Robot.elbow.getElbowAngle() / heightInInches))) {
       return true;
     }
 
