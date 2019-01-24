@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.commands.arm;
+package frc.team670.robot.commands.arm.joystick;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team670.robot.Robot;

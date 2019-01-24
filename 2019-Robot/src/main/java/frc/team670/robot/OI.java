@@ -9,13 +9,13 @@ package frc.team670.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import frc.team670.robot.commands.arm.joystick.FlipJoystickArmControl;
 import frc.team670.robot.commands.cameras.FlipCamera;
 import frc.team670.robot.commands.drive.teleop.FlipDriveDirection;
 import frc.team670.robot.commands.sensors.ZeroNavX;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.utils.MustangController;
 import frc.team670.robot.utils.MustangController.XboxButtons;
-import frc.team670.robot.commands.arm.FlipJoystickArmControl;
 
 /**
  * This class is the glue that binds the controls on the physical operator

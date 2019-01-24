@@ -5,39 +5,30 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.commands.arm;
+package frc.team670.robot.commands.arm.joystick;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
+import frc.team670.robot.Robot;
+import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.utils.ArmControlMode;
 
 /**
  * Add your docs here.
  */
-public class FlipJoystickArmControl extends InstantCommand {
+public class JoystickWrist extends InstantCommand {
   /**
    * Add your docs here.
    */
-  public static ArmControlMode state;
-
-  public FlipJoystickArmControl() {
+  public JoystickWrist() {
     super();
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
-    state = ArmControlMode.DISABLED;
+    requires(Robot.wrist);
   }
 
   // Called once when the command executes
   @Override
   protected void initialize() {
-    if (state.equals(ArmControlMode.DISABLED)) {
-      state = ArmControlMode.ELBOW;
-    } else if (state.equals(ArmControlMode.ELBOW)) {
-      state = ArmControlMode.EXTENSION;
-    } else if (state.equals(ArmControlMode.EXTENSION)) {
-      state = ArmControlMode.WRIST;
-    } else {
-      state = ArmControlMode.DISABLED;
+    if (FlipJoystickArmControl.state.equals(ArmControlMode.WRIST)) {
+      Robot.wrist.setOutput(RobotConstants.OPERATOR_ARM_CONTROL_SCALAR * Robot.oi.getOperatorController().getRightStickY());
     }
   }
-
 }

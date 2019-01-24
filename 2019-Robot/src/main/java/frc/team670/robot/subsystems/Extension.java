@@ -13,7 +13,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
-import frc.team670.robot.commands.arm.JoystickExtension;
+import frc.team670.robot.commands.arm.joystick.JoystickExtension;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.utils.functions.MathUtils;
