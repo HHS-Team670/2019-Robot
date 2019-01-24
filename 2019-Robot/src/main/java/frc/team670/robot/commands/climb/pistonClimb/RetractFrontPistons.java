@@ -8,11 +8,14 @@
 package frc.team670.robot.commands.climb.pistonClimb;
 
 import edu.wpi.first.wpilibj.command.Command;
+
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.utils.functions.SettingUtils;
+import frc.team670.robot.utils.Logger;
 
 public class RetractFrontPistons extends Command {
+  private int loggingIterationCounter;
 
   public RetractFrontPistons() {
     requires(Robot.climber);
@@ -21,12 +24,17 @@ public class RetractFrontPistons extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    Robot.climber.getFrontController().setSetpoint(RobotConstants.PISTON_ENCODER_FLAT);
+    Robot.climber.setFrontPIDControllerSetpoint(RobotConstants.PISTON_ENCODER_FLAT);
+    Logger.consoleLog("startFrontPistonPosition:%s", Robot.climber.getFrontTalonPositionInTicks());
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    if (loggingIterationCounter % 7 == 0)
+      Logger.consoleLog("CurrentFrontPistonPosition:%s", Robot.climber.getFrontTalonPositionInTicks());
+
+      loggingIterationCounter++;
   }
 
   // Make this return true when this Command no longer needs to run execute()
@@ -39,7 +47,8 @@ public class RetractFrontPistons extends Command {
   @Override
   protected void end() {
     SettingUtils.releaseController(Robot.climber.getFrontController());
-    Robot.climber.setFrontPistonsRetracted(false);
+    Robot.climber.setFrontPistonsRetracted(true);
+    Logger.consoleLog("EndFrontPistonPosition:%s", Robot.climber.getFrontTalonPositionInTicks());
   }
 
   // Called when another command which requires one or more of the same
@@ -47,5 +56,6 @@ public class RetractFrontPistons extends Command {
   @Override
   protected void interrupted() {
     SettingUtils.releaseController(Robot.climber.getFrontController());
+    Logger.consoleLog("RetractFrontPiston interrupted");
   }
 }

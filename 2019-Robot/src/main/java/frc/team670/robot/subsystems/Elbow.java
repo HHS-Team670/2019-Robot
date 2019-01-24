@@ -12,12 +12,12 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
-import edu.wpi.first.wpilibj.PIDSource;
-import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team670.robot.commands.arm.JoystickElbow;
 import frc.team670.robot.constants.RobotConstants;
+
 import frc.team670.robot.constants.RobotMap;
+import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.utils.functions.MathUtils;
 
 /**
@@ -40,6 +40,10 @@ public class Elbow extends Subsystem {
 
   private final int FORWARD_SOFT_LIMIT = 0, REVERSE_SOFT_LIMIT = 0; // TODO figure out the values in encoder rotations
   private final int CONTINUOUS_CURRENT_LIMIT = 33, PEAK_CURRENT_LIMIT = 0; // TODO set current limit in Amps
+  private static final int CURRENT_CONTROL_SLOT = 0; // TODO Set this
+  private final int CLIMBING_CONTINUOUS_CURRENT_LIMIT = 35, NORMAL_CONTINUOUS_CURRENT_LIMIT = 33, PEAK_CURRENT_LIMIT = 0; // TODO set current limit in Amps
+
+  private double currentP = 0.2, currentI = 0.0, currentD = 0.0, currentF = 0.0; // TODO Check these constants
 
   public Elbow() {
     elbowRotationMain = new TalonSRX(RobotMap.ARM_ELBOW_ROTATION_MOTOR_TALON);
@@ -73,41 +77,34 @@ public class Elbow extends Subsystem {
   }
 
   /**
-   * Sets the peak current limit for the elbow motor.
-   * 
-   * @param current Current in amps
-   */
-  public void setCurrentLimit(int current) {
-    elbowRotationMain.configPeakCurrentLimit(RobotConstants.PEAK_AMPS, RobotConstants.TIMEOUT_MS); // Peak Limit at 0
-    elbowRotationMain.configPeakCurrentDuration(RobotConstants.PEAK_TIME_MS, RobotConstants.TIMEOUT_MS); // Duration at
-                                                                                                         // over peak
-                                                                                                         // set to 0
-    elbowRotationMain.configContinuousCurrentLimit(current, RobotConstants.TIMEOUT_MS);
-  }
-
-  /**
-   * Enables the current limit for the elbow motor
-   */
-  public void enableCurrentLimit() {
-    elbowRotationMain.enableCurrentLimit(true);
-  }
-
-
-  /**
-   * Disables the current limit for the elbow motor
-   */
-  public void disableCurrentLimit() {
-    elbowRotationMain.enableCurrentLimit(false);
-  }
-
-
-  /**
-   * Sets the output for the elbow motor
-   * 
+   * Sets the output for the elbow motor 
    * @param output the desired output
    */
   public void setOutput(double output) {
     elbowRotationMain.set(ControlMode.PercentOutput, output);
+  }
+
+  /**
+   * Returns the output current
+   * 
+   * @return the output current of the elbow motor
+   */
+  public double getOutputCurrent() {
+    return elbowRotationMain.getOutputCurrent();
+  }
+
+  /**
+   * Sets the current limit for when the robot begins to climb
+   */
+  public void setClimbingCurrentLimit() {
+    elbowRotationMain.configContinuousCurrentLimit(CLIMBING_CONTINUOUS_CURRENT_LIMIT);
+  }
+
+  /**
+   * Resets the currnet limit to its normal value
+   */
+  public void setNormalCurrentLimit() {
+    elbowRotationMain.configContinuousCurrentLimit(NORMAL_CONTINUOUS_CURRENT_LIMIT);
   }
   
   /**
@@ -126,22 +123,50 @@ public class Elbow extends Subsystem {
   }
 
   /**
-   * Returns the output current
+   * Returns the angle of the elbow with the arm as a zero
    * 
-   * @return the output current of the elbow motor
+   * @return the angle of the elbow with the arm as a zero
    */
-  public double getOutputCurrent() {
-    return elbowRotationMain.getOutputCurrent();
-  }
-
   public double getElbowAngle() {
     return 0.0; // TODO convert the actual tick value to an angle
   }
 
-  public ElbowAngle_PIDSource getElbowAngle_PIDSource() {
-    return new ElbowAngle_PIDSource();
+  /**
+   * Returns the main talon to control the elbow
+   * 
+   * @return the main talon to control the elbow
+   */
+  public TalonSRX getElbowTalon() {
+    return elbowRotationMain;
   }
-  
+
+  /**
+   * Should create a closed loop for the current to hold the elbow down
+   */
+  public void setCurrentClosedLoopToHoldElbowDown() {
+    /* Factory default hardware to prevent unexpected behaviour */
+    elbowRotationMain.configFactoryDefault();
+
+    /* Config the peak and nominal outputs ([-1, 1] represents [-100, 100]%) */
+    elbowRotationMain.configNominalOutputForward(0, RobotConstants.kTimeoutMs);
+    elbowRotationMain.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
+    elbowRotationMain.configPeakOutputForward(1, RobotConstants.kTimeoutMs);
+    elbowRotationMain.configPeakOutputReverse(-1, RobotConstants.kTimeoutMs);
+
+    /**
+     * Config the allowable closed-loop error, Closed-Loop output will be neutral
+     * within this range. See Table here for units to use:
+     * https://github.com/CrossTheRoadElec/Phoenix-Documentation#what-are-the-units-of-my-sensor
+     */
+    elbowRotationMain.configAllowableClosedloopError(0,CURRENT_CONTROL_SLOT, RobotConstants.kTimeoutMs);
+
+    /* Config closed loop gains for Primary closed loop (Current) */
+    elbowRotationMain.config_kP(CURRENT_CONTROL_SLOT, currentP, RobotConstants.kTimeoutMs);
+    elbowRotationMain.config_kI(CURRENT_CONTROL_SLOT, currentI, RobotConstants.kTimeoutMs);
+    elbowRotationMain.config_kD(CURRENT_CONTROL_SLOT, currentD, RobotConstants.kTimeoutMs);
+    elbowRotationMain.config_kF(CURRENT_CONTROL_SLOT, currentF, RobotConstants.kTimeoutMs);
+  }
+
   @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
@@ -190,26 +215,4 @@ public class Elbow extends Subsystem {
     elbowRotationMain.set(ControlMode.MotionMagic, MathUtils.convertElbowDegreesToTicks(elbowAngle));
   }
 
-public class ElbowAngle_PIDSource implements PIDSource {
-  private PIDSourceType type;
-
-  public ElbowAngle_PIDSource(){
-    type = PIDSourceType.kDisplacement;
-  } 
-
-  @Override
-  public PIDSourceType getPIDSourceType() {
-    return type;
-  }
-
-  @Override
-  public double pidGet() {
-    return getElbowAngle();
-  }
-
-  @Override
-  public void setPIDSourceType(PIDSourceType pidSource) {
-    this.type = pidSource;
-  }
-  }
 }
