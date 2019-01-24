@@ -121,7 +121,7 @@ public class Robot extends TimedRobot {
     // }
       SmartDashboard.putNumber("NavX Yaw", sensors.getYawDouble());
 
-    periodCount ++;
+    periodCount++;
     leds.setClimbingData(true);//we climb
 
     // System.out.println("Voltage: "+(irSensor.getVoltage()));

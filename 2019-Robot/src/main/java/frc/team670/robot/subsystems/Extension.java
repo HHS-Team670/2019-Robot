@@ -8,10 +8,12 @@
 package frc.team670.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team670.robot.constants.RobotMap;
+import frc.team670.robot.utils.functions.MathUtils;
 import frc.team670.robot.utils.functions.SettingUtils;
 
 /**
@@ -22,7 +24,12 @@ public class Extension extends Subsystem {
   // here. Call these from Commands.
   private TalonSRX extensionMotor;
 
-  private double P = 0.0, I = 0.0, D = 0.0, F = 0.0;
+  private double extensionLength;
+  private static final double kF = 0, kP = 0, kI = 0, kD = 0; //TODO figure out what these are
+  private static final int POSITION_SLOT = 0;
+  private final double P = 0.1, I = 0.0, D = 0.0, F = 0.0, RAMP_RATE = 0.15;
+  // Also need to add pull gains slots
+  private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0;
 
   public static final int EXTENSION_ENCODER_OUT = 0;
 
@@ -30,15 +37,60 @@ public class Extension extends Subsystem {
   private static final double EXTENSION_POWER = 0.75;
 
   public Extension() {
-    extensionMotor = new TalonSRX(RobotMap.ARM_EXTENSION_MOTOR);
+    extensionMotor = new TalonSRX(RobotMap.ARM_EXTENSION_MOTOR);   
+    extensionMotor.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
+		extensionMotor.config_kF(kSlotMotionMagic, kF, kTimeoutMs);
+		extensionMotor.config_kP(kSlotMotionMagic, kP, kTimeoutMs);
+		extensionMotor.config_kI(kSlotMotionMagic, kI, kTimeoutMs);
+    extensionMotor.config_kD(kSlotMotionMagic, kD, kTimeoutMs);
+    extensionMotor.configMotionCruiseVelocity(RobotConstants.MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+		extensionMotor.configMotionAcceleration(RobotConstants.MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+ 
+  }
+
+  /**
+   * Sets the peak current limit for the elbow motor.
+   * @param current Current in amps
+   */
+  public void setCurrentLimit(int current) {
+    extensionMotor.configPeakCurrentLimit(RobotConstants.PEAK_AMPS, RobotConstants.TIMEOUT_MS); // Peak Limit at 0
+    extensionMotor.configPeakCurrentDuration(RobotConstants.PEAK_TIME_MS, RobotConstants.TIMEOUT_MS); // Duration at over peak set to 0
+    extensionMotor.configContinuousCurrentLimit(current, RobotConstants.TIMEOUT_MS);
+  }
+
+  public void enableCurrentLimit() {
+    extensionMotor.enableCurrentLimit(true);
+  }
+
+  public void disableCurrentLimit() {
+    extensionMotor.enableCurrentLimit(false);
+  }
+
+  public void setOutput(double output){
+    extensionMotor.set(ControlMode.PercentOutput, output);
+  }
+
+  /**
+   * Gets the current Extension length in absolute ticks with 0 at no extension.
+   */
+  public int getLengthTicks() {
+    return extensionMotor.getSensorCollection().getQuadraturePosition();
+  }
+  
+  /**
+   * Gets the current Extension length in absolute inches with 0 at no extension.
+   */
+  public double getLengthInches() {
+    return MathUtils.convertExtensionTicksToInches(getLengthTicks());
   }
 
   /**
    * Enables the PID Controller for extension
-   * 
    */
   public void enableExtensionPIDController() {
-    SettingUtils.initTalonPID(extensionMotor, POSITION_SLOT, P, I, D, F, -EXTENSION_POWER, EXTENSION_POWER);
+    SettingUtils.initTalonPID(extensionMotor, POSITION_SLOT, P, I, D, F, -EXTENSION_POWER,
+        EXTENSION_POWER, FeedbackDevice.CTRE_MagEncoder_Relative, RAMP_RATE);
+        extensionMotor.selectProfileSlot(POSITION_SLOT, 0);
   }
 
   /**
@@ -46,13 +98,6 @@ public class Extension extends Subsystem {
    */
   public void setPIDControllerSetpoint(int setpoint) {
     extensionMotor.set(ControlMode.Position, setpoint);
-  }
-
-  /**
-   * Returns the length of the extension in ticks
-   */
-  public int getExtensionLengthInTicks() {
-    return extensionMotor.getSensorCollection().getQuadraturePosition();
   }
 
   @Override
@@ -66,4 +111,24 @@ public class Extension extends Subsystem {
     return extensionMotor.getSensorCollection().isRevLimitSwitchClosed();
   }
 
+  /**
+   * Sets the SensorCollection encoder value to encoderValue (use this to reset the encoder when at a known position)
+   */
+  public void resetExtension(int encoderValue) {
+    extensionMotor.getSensorCollection().setQuadraturePosition(encoderValue, RobotConstants.ARM_RESET_TIMEOUTMS);
+  }
+
+  /**
+   * Selects the PID Slot dedicated to MotionMagic to give it the correct PID Values
+   */
+  public void initializeMotionmagic() {
+    extensionMotor.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
+  }
+
+  /**
+   * Setup for movement and Motion Magic
+   */
+  public void setMotionMagicSetpoint(double extensionLength) {
+    extensionMotor.set(ControlMode.MotionMagic, extensionLength);
+  }
 }

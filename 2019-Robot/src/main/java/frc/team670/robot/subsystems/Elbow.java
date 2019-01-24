@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.constants.RobotConstants;
+import frc.team670.robot.utils.functions.MathUtils;
 
 /**
  * Controls motors for elbow movement
@@ -25,6 +26,10 @@ public class Elbow extends Subsystem {
 
   private TalonSRX elbowRotationMain;
   private VictorSPX elbowRotationSlave;
+  private double elbowAngle;
+  private static final double kF = 0, kP = 0, kI = 0, kD = 0; //TODO figure out what these are
+  // Also need to add pull gains slots
+  private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0;
 
   private static final int CURRENT_CONTROL_SLOT = 0; // TODO Set this
   private final int CLIMBING_CONTINUOUS_CURRENT_LIMIT = 35, NORMAL_CONTINUOUS_CURRENT_LIMIT = 33, PEAK_CURRENT_LIMIT = 0; // TODO set current limit in Amps
@@ -34,7 +39,14 @@ public class Elbow extends Subsystem {
   public Elbow() {
     elbowRotationMain = new TalonSRX(RobotMap.ARM_ELBOW_ROTATION_MOTOR_TALON);
     elbowRotationSlave = new VictorSPX(RobotMap.ARM_ELBOW_ROTATION_MOTOR_VICTOR);
-    elbowRotationSlave.set(ControlMode.Follower, elbowRotationMain.getDeviceID());
+    elbowRotationSlave.set(ControlMode.Follower, elbowRotationMain.getDeviceID());  
+    elbowRotationMain.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
+		elbowRotationMain.config_kF(kSlotMotionMagic, kF, kTimeoutMs);
+		elbowRotationMain.config_kP(kSlotMotionMagic, kP, kTimeoutMs);
+		elbowRotationMain.config_kI(kSlotMotionMagic, kI, kTimeoutMs);
+    elbowRotationMain.config_kD(kSlotMotionMagic, kD, kTimeoutMs);
+    elbowRotationMain.configMotionCruiseVelocity(RobotConstants.MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+		elbowRotationMain.configMotionAcceleration(RobotConstants.MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
   }
 
   /**
@@ -67,6 +79,21 @@ public class Elbow extends Subsystem {
    */
   public void setNormalCurrentLimit() {
     elbowRotationMain.configContinuousCurrentLimit(NORMAL_CONTINUOUS_CURRENT_LIMIT);
+  }
+  
+  /**
+   * Selects the PID Slot dedicated to MotionMagic to give it the correct PID Values
+   */
+  public void initializeMotionmagic() {
+    elbowRotationMain.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
+  }
+
+  public int getPositionTicks() {
+    return elbowRotationMain.getSensorCollection().getQuadraturePosition();
+  }
+  
+  public double getAngle() {
+    return MathUtils.convertElbowTicksToDegrees(getPositionTicks());
   }
 
   /**
@@ -119,4 +146,23 @@ public class Elbow extends Subsystem {
     // Set the default command for a subsystem here.
     // setDefaultCommand(new MySpecialCommand());
   }
+
+  public TalonSRX getTalon() {
+    return this.elbowRotationMain;
+  }
+
+  /**
+   * Sets the SensorCollection encoder value to encoderValue (use this to reset the encoder when at a known position)
+   */
+  public void resetElbow(double encoderValue) {
+    elbowRotationMain.getSensorCollection().setQuadraturePosition((int) encoderValue, RobotConstants.ARM_RESET_TIMEOUTMS);
+  }
+
+  /**
+   * Setup for movement and Motion Magic
+   */
+  public void setMotionMagicSetpoint(double elbowAngle) {
+    elbowRotationMain.set(ControlMode.MotionMagic, MathUtils.convertElbowDegreesToTicks(elbowAngle));
+  }
+
 }

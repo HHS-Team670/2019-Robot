@@ -20,6 +20,11 @@ public class RobotConstants {
      */
     public static final int DIO_TICKS_PER_ROTATION = 4096;
 
+    // TODO figure out real values for each constants for arm
+    public static double EXTENSION_TICKS_PER_INCH = 2000; //Subject to change, measure real value
+    public static double ELBOW_TICKS_PER_ROTATION = 2000; //Subject to change, check sources
+    public static double WRIST_TICKS_PER_ROTATION = 2000; //Subject to change, check sources
+
     // LEDs
     public static final int LED_PORT = 5801;
 
@@ -50,6 +55,23 @@ public class RobotConstants {
     public static final double ARM_HEIGHT_IN_INCHES = 0;
     public static final double CLAW_RADIUS_IN_INCHES = 0;
     public static final int FIXED_ARM_LENGTH_IN_INCHES = 0;
+
+
+    public static int MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 15000; // TODO set this
+    public static int MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS = 6000; // TODO set this
+
+    // Different values/encoder positions to set arm to
+    public static int ARM_RESET_TIMEOUTMS = 30;
+    public static double ELBOW_START_POS = 6000;
+    public static double ELBOW_FULL_FORWARD_POS = 12000;
+    public static double ELBOW_FULL_BACKWARD_POS = -12000;
+
+    public static double WRIST_START_POS = 6000;
+    public static double WRIST_FULL_FORWARD_POS = 12000;
+    public static double WRIST_FULL_BACKWARD_POS = -12000;
+
+    public static double EXTENSION_IN_POS = 0;
+    public static double EXTENSION_OUT_POS = 12000;
 
     // Climber Constants
     public static final int PISTON_ENCODER_FLAT = 0; // TODO set these

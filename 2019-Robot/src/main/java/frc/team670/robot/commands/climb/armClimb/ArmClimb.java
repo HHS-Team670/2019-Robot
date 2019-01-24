@@ -67,7 +67,6 @@ public class ArmClimb extends Command {
       Logger.consoleLog("heightOfRobot%s angleOfElbow%s extensionSetpoint%s ", heightInInches, Robot.elbow.getElbowAngle(), Extension.EXTENSION_ENCODER_OUT - deltaSetPointInTicks);
 
     loggingIterationCounter++;
-
   }
 
   // Make this return true when this Command no longer needs to run execute()

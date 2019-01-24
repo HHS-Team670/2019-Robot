@@ -17,7 +17,7 @@ import java.util.TreeSet;
  */
 public class AStarSearch {
     /**
-     * Runs the search function
+     * Runs the search function, returning a List ordered in the Edges to take from one start Node to destination
      * 
      * @param start       The node that the user wishes to start from
      * @param destination The target node that the user wishes to reach
