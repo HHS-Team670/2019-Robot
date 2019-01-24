@@ -22,32 +22,29 @@ import frc.team670.robot.subsystems.Arm.ArmState;
  * Tests the MoveArm Command by running through all ArmStates and ensuring they pathfind to the proper position by testing
  * their end positions compared to the position of the destination State.
  */
-public class TestMoveArm {
+public class MoveArmTest {
 
-    // @Test
-    // public void testMoveArm(ArrayList<ArmState> states) {
+    @Test
+    public void testMoveArm(ArrayList<ArmState> states) {
 
-    //     MoveArm moveArm;
+        MoveArm moveArm;
 
-    //     for(ArmState startState : states) {
+        for(ArmState startState : states) {
 
-    //         for(ArmState destState : states) {
+            for(ArmState destState : states) {
 
-    //             Arm.setState(startState);
-    //             moveArm = new MoveArm(destState);
-    //             moveArm.initialize();
-    //             for(int i = 0; i < 25; i++) {
-    //                 Scheduler.getInstance().run();
-    //             }
+                Arm.setState(startState);
+                moveArm = new MoveArm(destState);
+                moveArm.initialize();
 
-    //             // Point2D.Double actualDestCoord = Arm.getCoordPosition(, wristAngle, elbowAngle);
+                // Point2D.Double actualDestCoord = Arm.getCoordPosition(, wristAngle, elbowAngle);
 
-    //             // assertEquals(destState.getCoordPosition().getX(), Arm.getCoordPosition(extensionLength, wristAngle, elbowAngle), 0.0001);
-    //         }
+                // assertEquals(destState.getCoordPosition().getX(), Arm.getCoordPosition(extensionLength, wristAngle, elbowAngle), 0.0001);
+            }
 
-    //     }
+        }
 
-    // }
+    }
 
 
 

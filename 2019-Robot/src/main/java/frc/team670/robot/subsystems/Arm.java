@@ -21,7 +21,6 @@ import frc.team670.robot.utils.sort.Node;
  * Stores possible arm states. Does arm-related math
  * Represents the arm mechanism on the robot. Link to a model of the arm:
  * https://a360.co/2TLH2NO
- * TODO: we won't be using legalstates, we can get rid of them
  * @author shaylandias, ctchen, rghosh670
  */
 public class Arm extends Subsystem {
@@ -29,6 +28,9 @@ public class Arm extends Subsystem {
   // All of the states
   private static HashMap<LegalState, ArmState> states = new HashMap<LegalState, ArmState>();
   private static ArmState currentState;
+
+  /** Value meant only for unit testing. Do not use this anywhere else! */
+  public static double unitTestExtensionDist, unitTestElbowAngle, unitTestWristAngle;
 
 
   public Arm() {
