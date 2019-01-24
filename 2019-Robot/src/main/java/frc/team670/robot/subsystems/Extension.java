@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.utils.functions.MathUtils;
 import frc.team670.robot.utils.functions.SettingUtils;
@@ -24,7 +25,6 @@ public class Extension extends Subsystem {
   // here. Call these from Commands.
   private TalonSRX extensionMotor;
 
-  private double extensionLength;
   private static final double kF = 0, kP = 0, kI = 0, kD = 0; //TODO figure out what these are
   private static final int POSITION_SLOT = 0;
   private final double P = 0.1, I = 0.0, D = 0.0, F = 0.0, RAMP_RATE = 0.15;
@@ -33,7 +33,8 @@ public class Extension extends Subsystem {
 
   public static final int EXTENSION_ENCODER_OUT = 0;
 
-  private static final int POSITION_SLOT = 0;
+  private final int NORMAL_CONTINUOUS_CURRENT_LIMIT = 33, PEAK_CURRENT_LIMIT = 0; // TODO set current limit in Amps
+
   private static final double EXTENSION_POWER = 0.75;
 
   public Extension() {
@@ -53,9 +54,9 @@ public class Extension extends Subsystem {
    * @param current Current in amps
    */
   public void setCurrentLimit(int current) {
-    extensionMotor.configPeakCurrentLimit(RobotConstants.PEAK_AMPS, RobotConstants.TIMEOUT_MS); // Peak Limit at 0
-    extensionMotor.configPeakCurrentDuration(RobotConstants.PEAK_TIME_MS, RobotConstants.TIMEOUT_MS); // Duration at over peak set to 0
-    extensionMotor.configContinuousCurrentLimit(current, RobotConstants.TIMEOUT_MS);
+    extensionMotor.configPeakCurrentLimit(PEAK_CURRENT_LIMIT); // Peak Limit at 0
+    extensionMotor.configPeakCurrentDuration(0); // Duration at over peak set to 0
+    extensionMotor.configContinuousCurrentLimit(current);
   }
 
   public void enableCurrentLimit() {

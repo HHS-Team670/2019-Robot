@@ -38,15 +38,6 @@ public class Wrist extends Subsystem {
 		wristRotation.configMotionAcceleration(RobotConstants.MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
   }
   
-  /**
-   * Sets the peak current limit for wrist rotation motor.
-   * @param current Current in amps
-   */
-  public void setCurrentLimit(int current) {
-    wristRotation.configPeakCurrentLimit(RobotConstants.PEAK_AMPS, RobotConstants.TIMEOUT_MS); // Peak Limit at 0
-    wristRotation.configPeakCurrentDuration(RobotConstants.PEAK_TIME_MS, RobotConstants.TIMEOUT_MS); // Duration at over peak set to 0
-    wristRotation.configContinuousCurrentLimit(current, RobotConstants.TIMEOUT_MS);
-  }
 
   public void enableCurrentLimit() {
     wristRotation.enableCurrentLimit(true);
