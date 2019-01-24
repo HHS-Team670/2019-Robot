@@ -27,7 +27,9 @@ public class Elbow extends Subsystem {
   private VictorSPX elbowRotationSlave;
 
   private static final int CURRENT_CONTROL_SLOT = 0; // TODO Set this
-  private double currentP = 0.0, currentI = 0.0, currentD = 0.0, currentF = 0.0; // TODO Set this
+  private final int CLIMBING_CONTINUOUS_CURRENT_LIMIT = 35, NORMAL_CONTINUOUS_CURRENT_LIMIT = 33, PEAK_CURRENT_LIMIT = 0; // TODO set current limit in Amps
+
+  private double currentP = 0.2, currentI = 0.0, currentD = 0.0, currentF = 0.0; // TODO Check these constants
 
   public Elbow() {
     elbowRotationMain = new TalonSRX(RobotMap.ARM_ELBOW_ROTATION_MOTOR_TALON);
@@ -51,6 +53,20 @@ public class Elbow extends Subsystem {
    */
   public double getOutputCurrent() {
     return elbowRotationMain.getOutputCurrent();
+  }
+
+  /**
+   * Sets the current limit for when the robot begins to climb
+   */
+  public void setClimbingCurrentLimit() {
+    elbowRotationMain.configContinuousCurrentLimit(CLIMBING_CONTINUOUS_CURRENT_LIMIT);
+  }
+
+  /**
+   * Resets the currnet limit to its normal value
+   */
+  public void setNormalCurrentLimit() {
+    elbowRotationMain.configContinuousCurrentLimit(NORMAL_CONTINUOUS_CURRENT_LIMIT);
   }
 
   /**

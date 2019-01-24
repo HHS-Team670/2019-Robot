@@ -102,7 +102,9 @@ public class ArmClimb extends Command {
    * 
    */
   private void holdElbowDownWithCurrentLimit(int currentLimit) {
-    Robot.elbow.getElbowTalon().set(ControlMode.Current, CLIMB_CURRENT);
+    Robot.elbow.setClimbingCurrentLimit();
+    //Climb current defaults to negative because of the way arm is flipped during climbing
+    Robot.elbow.getElbowTalon().set(ControlMode.Current, -CLIMB_CURRENT);
   }
 
   /**
@@ -111,6 +113,7 @@ public class ArmClimb extends Command {
    */
   private void releaseElbow() {
     Robot.elbow.setOutput(0);
+    Robot.elbow.setNormalCurrentLimit();
   }
 
   /**
