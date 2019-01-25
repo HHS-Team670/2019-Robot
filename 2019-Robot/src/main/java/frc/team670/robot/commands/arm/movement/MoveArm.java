@@ -27,10 +27,14 @@ public class MoveArm extends CommandGroup {
   private CommandGroup movements;
   private ArmState destination;
   private Map<ArmState, List<ArmTransition>> searched = new HashMap<ArmState, List<ArmTransition>>();
+  private Arm arm;
 
-  public MoveArm(ArmState destination) {
+  public MoveArm(ArmState destination, Arm arm) {
     this.destination = destination;
-    requires(Robot.arm);
+    this.arm = arm;
+    requires(arm.getElbow());
+    requires(arm.getWrist());
+    requires(arm.getExtension());
   }
 
   /** 

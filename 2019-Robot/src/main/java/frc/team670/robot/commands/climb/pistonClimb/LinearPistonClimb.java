@@ -10,14 +10,18 @@ package frc.team670.robot.commands.climb.pistonClimb;
 import edu.wpi.first.wpilibj.command.Command;
 
 import frc.team670.robot.Robot;
+import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.Climber;
 
 public class LinearPistonClimb extends Command {
 
-  public LinearPistonClimb() {
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
-    requires(Robot.climber);
+  private Climber climber;
+  private MustangSensors sensors;
+
+  public LinearPistonClimb(Climber climber, MustangSensors sensors) {
+    this.climber = climber;
+    this.sensors = sensors;
+    requires(climber);
   }
 
   // Called just before this Command runs the first time
@@ -31,25 +35,25 @@ public class LinearPistonClimb extends Command {
   protected void execute() {
     double frontPower = 0.5;
     double backPower = 0.5;
-    if (Robot.sensors.getPitchDouble() > 5) { // i'm assuming this means tilted backwards
+    if (sensors.getPitchDouble() > 5) { // i'm assuming this means tilted backwards
       frontPower -= 0.1;
     }
-    if (Robot.sensors.getPitchDouble() < 5) { // assuming this means tilted forwards
+    if (sensors.getPitchDouble() < 5) { // assuming this means tilted forwards
       backPower -= 0.1;
     }
-    Robot.climber.drivePistons(frontPower, backPower);
+    climber.drivePistons(frontPower, backPower);
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return Robot.climber.getBackPistonsRetracted() && Robot.climber.getBackController().onTarget();
+    return climber.getBackPistonsRetracted() && climber.getBackController().onTarget();
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Robot.climber.drivePistons(Climber.MINIMUM_PISTON_POWER, Climber.MINIMUM_PISTON_POWER);
+    climber.drivePistons(Climber.MINIMUM_PISTON_POWER, Climber.MINIMUM_PISTON_POWER);
   }
 
   // Called when another command which requires one or more of the same

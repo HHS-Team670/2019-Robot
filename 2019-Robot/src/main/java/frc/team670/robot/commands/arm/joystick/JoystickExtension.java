@@ -11,27 +11,26 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.utils.ArmControlMode;
+import frc.team670.robot.subsystems.Extension;
 
 /**
  * Add your docs here.
  */
 public class JoystickExtension extends InstantCommand {
-  /**
-   * Add your docs here.
-   */
+  
+  private Extension extension;
 
-  public JoystickExtension() {
+  public JoystickExtension(Extension extension) {
     super();
-    requires(Robot.extension);
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
+    this.extension = extension;
+    requires(extension);
   }
 
   // Called once when the command executes
   @Override
   protected void initialize() {
     if (FlipJoystickArmControl.state.equals(ArmControlMode.EXTENSION)) {
-      Robot.extension.setOutput(RobotConstants.OPERATOR_ARM_CONTROL_SCALAR * Robot.oi.getOperatorController().getRightStickY());
+      extension.setOutput(RobotConstants.OPERATOR_ARM_CONTROL_SCALAR * Robot.oi.getOperatorController().getRightStickY());
     }
   }
 }

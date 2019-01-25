@@ -10,25 +10,27 @@ package frc.team670.robot.commands.arm.joystick;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
+import frc.team670.robot.subsystems.Wrist;
 import frc.team670.robot.utils.ArmControlMode;
 
 /**
  * Add your docs here.
  */
 public class JoystickWrist extends InstantCommand {
-  /**
-   * Add your docs here.
-   */
-  public JoystickWrist() {
+  
+  private Wrist wrist;
+
+  public JoystickWrist(Wrist wrist) {
     super();
-    requires(Robot.wrist);
+    this.wrist = wrist;
+    requires(wrist);
   }
 
   // Called once when the command executes
   @Override
   protected void initialize() {
     if (FlipJoystickArmControl.state.equals(ArmControlMode.WRIST)) {
-      Robot.wrist.setOutput(RobotConstants.OPERATOR_ARM_CONTROL_SCALAR * Robot.oi.getOperatorController().getRightStickY());
+      wrist.setOutput(RobotConstants.OPERATOR_ARM_CONTROL_SCALAR * Robot.oi.getOperatorController().getRightStickY());
     }
   }
 }

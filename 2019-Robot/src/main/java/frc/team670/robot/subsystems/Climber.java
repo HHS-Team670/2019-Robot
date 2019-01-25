@@ -12,9 +12,8 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.Subsystem;
-
-import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotMap;
+import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.dataCollection.SensorCollection_PIDSource;
 
 /**
@@ -41,12 +40,16 @@ public class Climber extends Subsystem {
   public static final double MINIMUM_PISTON_POWER = 0.1;
   public static final double MAXIMUM_PISTON_POWER = 0.75; 
 
-  public Climber() {    
+  private MustangSensors sensors;
+
+  public Climber(MustangSensors sensors) {    
     backTalon = new WPI_TalonSRX(RobotMap.BACK_CLIMBER_PISTON_CONTROLLER);
     frontTalon = new WPI_TalonSRX(RobotMap.FRONT_CLIMBER_PISTON_CONTROLLER);
 
     frontPistonsRetracted = true;
     backPistonsRetracted = true;
+
+    this.sensors = sensors;
 
     // TODO figure out if these motors need to be inverted.
 
@@ -231,12 +234,12 @@ public class Climber extends Subsystem {
   public void handleTilt(boolean goingUp, double tiltTolerance, double tiltAdjustment){
     if (goingUp) {
       // If tipped down (front is down)
-      if (Robot.sensors.getPitchDouble() < -tiltTolerance) {
+      if (sensors.getPitchDouble() < -tiltTolerance) {
         setFrontPistonOutputRange(MINIMUM_PISTON_POWER, MAXIMUM_PISTON_POWER + tiltAdjustment);
         setBackPistonOutputRange(MINIMUM_PISTON_POWER, MAXIMUM_PISTON_POWER - tiltAdjustment);
 
         // If tipped up (front is up)
-      } else if (Robot.sensors.getPitchDouble() > tiltTolerance) {
+      } else if (sensors.getPitchDouble() > tiltTolerance) {
         setFrontPistonOutputRange(MINIMUM_PISTON_POWER, MAXIMUM_PISTON_POWER - tiltAdjustment);
         setBackPistonOutputRange(MINIMUM_PISTON_POWER, MAXIMUM_PISTON_POWER + tiltAdjustment);
       }
@@ -245,11 +248,11 @@ public class Climber extends Subsystem {
     // For going down
     else {
       // If tipped down (front is down)
-      if (Robot.sensors.getPitchDouble() < -tiltTolerance) {
+      if (sensors.getPitchDouble() < -tiltTolerance) {
         setFrontPistonOutputRange(LOWERING_PISTON_POWER + tiltAdjustment,MINIMUM_PISTON_POWER);
         setBackPistonOutputRange(LOWERING_PISTON_POWER - tiltAdjustment, MINIMUM_PISTON_POWER);
         // If tipped up (front is up)
-      } else if (Robot.sensors.getPitchDouble() > tiltTolerance) {
+      } else if (sensors.getPitchDouble() > tiltTolerance) {
         setFrontPistonOutputRange(LOWERING_PISTON_POWER - tiltAdjustment, MINIMUM_PISTON_POWER);
         setBackPistonOutputRange(LOWERING_PISTON_POWER + tiltAdjustment, MINIMUM_PISTON_POWER);
       }

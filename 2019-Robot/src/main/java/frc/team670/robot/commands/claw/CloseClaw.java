@@ -8,11 +8,15 @@
 package frc.team670.robot.commands.claw;
 
 import edu.wpi.first.wpilibj.command.Command;
+import frc.team670.robot.subsystems.Claw;
 
 public class CloseClaw extends Command {
-  public CloseClaw() {
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
+
+  private Claw claw;
+
+  public CloseClaw(Claw claw) {
+    this.claw = claw;
+    requires(claw);
   }
 
   // Called just before this Command runs the first time

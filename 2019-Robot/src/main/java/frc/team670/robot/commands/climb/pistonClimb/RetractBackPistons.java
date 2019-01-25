@@ -8,32 +8,34 @@
 package frc.team670.robot.commands.climb.pistonClimb;
 
 import edu.wpi.first.wpilibj.command.Command;
-
 import frc.team670.robot.Robot;
-import frc.team670.robot.utils.functions.SettingUtils;
-import frc.team670.robot.utils.Logger;
 import frc.team670.robot.constants.RobotConstants;
+import frc.team670.robot.subsystems.Climber;
+import frc.team670.robot.utils.Logger;
+import frc.team670.robot.utils.functions.SettingUtils;
 
 public class RetractBackPistons extends Command {
   private int loggingIterationCounter;
+  private Climber climber;
 
-  public RetractBackPistons() {
-    requires(Robot.climber);
+  public RetractBackPistons(Climber climber) {
+    this.climber = climber;
+    requires(climber);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    Robot.climber.setBackPIDControllerSetpoint(RobotConstants.PISTON_ENCODER_FLAT);
+    climber.setBackPIDControllerSetpoint(RobotConstants.PISTON_ENCODER_FLAT);
 
-    Logger.consoleLog("startBackPistonPosition:%s", Robot.climber.getBackTalonPositionInTicks());
+    Logger.consoleLog("startBackPistonPosition:%s", climber.getBackTalonPositionInTicks());
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
     if (loggingIterationCounter % 7 == 0)
-      Logger.consoleLog("CurrentBackPistonPosition:%s", Robot.climber.getBackTalonPositionInTicks());
+      Logger.consoleLog("CurrentBackPistonPosition:%s", climber.getBackTalonPositionInTicks());
 
       loggingIterationCounter++;
   }
@@ -41,15 +43,15 @@ public class RetractBackPistons extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return Robot.climber.getBackController().onTarget();
+    return climber.getBackController().onTarget();
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    SettingUtils.releaseController(Robot.climber.getBackController());
-    Robot.climber.setBackPistonsRetracted(true);
-    Logger.consoleLog("EndBackPistonPosition:%s", Robot.climber.getBackTalonPositionInTicks());
+    SettingUtils.releaseController(climber.getBackController());
+    climber.setBackPistonsRetracted(true);
+    Logger.consoleLog("EndBackPistonPosition:%s", climber.getBackTalonPositionInTicks());
   }
 
   // Called when another command which requires one or more of the same

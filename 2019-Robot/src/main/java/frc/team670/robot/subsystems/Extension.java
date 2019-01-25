@@ -125,7 +125,7 @@ public class Extension extends Subsystem {
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
     // setDefaultCommand(new MySpecialCommand());
-    setDefaultCommand(new JoystickExtension());
+    setDefaultCommand(new JoystickExtension(this));
   }
 
   public boolean getReverseLimitSwitch() {

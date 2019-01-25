@@ -9,7 +9,7 @@ package frc.team670.robot.commands.arm.movement;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.WaitForChildren;
-import frc.team670.robot.Robot;
+import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
 import frc.team670.robot.subsystems.Elbow;
 import frc.team670.robot.subsystems.Extension;
@@ -26,11 +26,18 @@ public class MoveArmDangerous extends CommandGroup {
 
   private ArmState targetState;
 
-  public MoveArmDangerous(ArmState state, Elbow elbow, Wrist wrist, Extension extension) {
+  private Elbow elbow;
+  private Wrist wrist;
+  private Extension extension;
+
+  public MoveArmDangerous(ArmState state, Arm arm) {
     super();
-    requires(Robot.extension);
-    requires(Robot.wrist);
-    requires(Robot.elbow);
+    elbow = arm.getElbow();
+    wrist = arm.getWrist();
+    extension = arm.getExtension();
+    requires(extension);
+    requires(wrist);
+    requires(elbow);
 
     addParallel(new MoveExtension(extension, targetState.getExtensionLength()));
     addParallel(new MoveWrist(wrist, targetState.getWristAngle()));

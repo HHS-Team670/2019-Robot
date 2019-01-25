@@ -8,18 +8,19 @@
 package frc.team670.robot.commands.claw;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
+import frc.team670.robot.subsystems.Claw;
 
 /**
  * Add your docs here.
  */
 public class OpenClaw extends InstantCommand {
-  /**
-   * Add your docs here.
-   */
-  public OpenClaw() {
+  
+  private Claw claw;
+
+  public OpenClaw(Claw claw) {
     super();
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
+    this.claw = claw;
+    requires(claw);
   }
 
   // Called once when the command executes

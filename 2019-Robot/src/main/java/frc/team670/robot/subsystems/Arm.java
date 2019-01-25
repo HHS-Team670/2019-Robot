@@ -10,7 +10,6 @@ package frc.team670.robot.subsystems;
 import java.awt.geom.Point2D;
 import java.util.HashMap;
 
-import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team670.robot.commands.arm.armTransitions.ArmTransition;
 import frc.team670.robot.commands.arm.armTransitions.NeutralToLowerHatch;
 import frc.team670.robot.constants.RobotConstants;
@@ -22,7 +21,7 @@ import frc.team670.robot.utils.sort.Node;
  * https://a360.co/2TLH2NO
  * @author shaylandias, ctchen, rghosh670
  */
-public class Arm extends Subsystem {
+public class Arm  {
 
   // All of the states
   private static HashMap<LegalState, ArmState> states;
@@ -121,11 +120,6 @@ public class Arm extends Subsystem {
     double x = extensionLength * Math.sin(elbowAngle) + RobotConstants.CLAW_RADIUS_IN_INCHES * Math.sin(wristAngle);
     double y = extensionLength * Math.cos(elbowAngle) + RobotConstants.CLAW_RADIUS_IN_INCHES * Math.cos(wristAngle) + RobotConstants.ARM_HEIGHT_IN_INCHES;
     return new Point2D.Double(x, y);
-  }
- 
-  @Override
-  public void initDefaultCommand() {
-    
   }
 
   /**
