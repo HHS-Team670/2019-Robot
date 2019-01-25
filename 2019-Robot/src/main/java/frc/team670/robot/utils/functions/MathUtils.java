@@ -8,6 +8,7 @@
 package frc.team670.robot.utils.functions;
 
 import frc.team670.robot.constants.RobotConstants;
+import jaci.pathfinder.Pathfinder;
 
 /**
  * Provides useful math-related functions.
@@ -116,11 +117,11 @@ public class MathUtils {
     }
 
     public static double convertElbowDegreesToTicks(double degrees) {
-        return (degrees / 360) * RobotConstants.ELBOW_TICKS_PER_ROTATION;
+        return (degrees / 360) * RobotConstants.ELBOW_TICKS_PER_MOTOR_ROTATION;
     }
 
     public static double convertElbowTicksToDegrees(double ticks) {
-        return (ticks / RobotConstants.ELBOW_TICKS_PER_ROTATION) * 360;
+        return (ticks / RobotConstants.ELBOW_TICKS_PER_MOTOR_ROTATION) * 360;
     }
 
     public static double convertWristDegreesToTicks(double degrees) {
@@ -128,15 +129,15 @@ public class MathUtils {
     }
 
     public static double convertWristTicksToDegrees(double ticks) {
-        return (ticks / RobotConstants.WRIST_TICKS_PER_ROTATION) * 360;
+        return -1 * Pathfinder.boundHalfDegrees((ticks / RobotConstants.WRIST_TICKS_PER_ROTATION) * 360); // Multiplied by -1 to flip from (-180,180) to (180,-180)
     }
 
-    public static int convertExtensionInchesToTicks(double inches) {
-        return (int)(RobotConstants.EXTENSION_TICKS_PER_INCH / inches);
+    public static int convertExtensionInchesToTicks(double inches) { // TODO Dimensional Analysis on this cuz this is wrong!
+        return (int)(RobotConstants.EXTENSION_TICKS_PER_MOTOR_ROTATION / inches);
     }
 
     public static double convertExtensionTicksToInches(double ticks) {
-        return ticks / RobotConstants.EXTENSION_TICKS_PER_INCH;
+        return ticks / RobotConstants.EXTENSION_TICKS_PER_MOTOR_ROTATION;
     }
 
     /**
