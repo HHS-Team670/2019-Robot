@@ -137,7 +137,7 @@ public class MathUtils {
     }
 
     public static double convertExtensionTicksToInches(double ticks) {
-        return ticks / RobotConstants.EXTENSION_TICKS_PER_MOTOR_ROTATION;
+        return ticks / RobotConstants.EXTENSION_TICKS_PER_MOTOR_ROTATION / RobotConstants.EXTENSION_MOTOR_ROTATIONS_PER_INCH;
     }
 
     /**
