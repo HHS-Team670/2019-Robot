@@ -38,7 +38,7 @@ public class Extension extends Subsystem {
   private final int FORWARD_SOFT_LIMIT = 0, REVERSE_SOFT_LIMIT = 0; // TODO figure out the values in rotations
   public static final int EXTENSION_ENCODER_OUT = 0;
 
-  private final int CONTINUOUS_CURRENT_LIMIT = 33, PEAK_CURRENT_LIMIT = 0; // TODO set current limit in Amps
+  private final int CONTINUOUS_CURRENT_LIMIT = 20, PEAK_CURRENT_LIMIT = 0; // TODO set current limit in Amps
 
   private static final double EXTENSION_POWER = 0.75;
 

@@ -12,47 +12,57 @@ import java.util.HashMap;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team670.robot.commands.arm.armTransitions.ArmTransition;
-import frc.team670.robot.commands.arm.armTransitions.NeutralToCargoPickup;
+import frc.team670.robot.commands.arm.armTransitions.NeutralToLowerHatch;
 import frc.team670.robot.constants.RobotConstants;
-
 import frc.team670.robot.utils.sort.Node;
 
 /**
  * Stores possible arm states. Does arm-related math
  * Represents the arm mechanism on the robot. Link to a model of the arm:
  * https://a360.co/2TLH2NO
- * TODO: we won't be using legalstates, we can get rid of them
  * @author shaylandias, ctchen, rghosh670
  */
 public class Arm extends Subsystem {
 
   // All of the states
-  private static HashMap<LegalState, ArmState> states = new HashMap<LegalState, ArmState>();
+  private static HashMap<LegalState, ArmState> states;
   private static ArmState currentState;
 
+  /** Value meant only for unit testing. Do not use this anywhere else! */
+  public static double unitTestExtensionDist, unitTestElbowAngle, unitTestWristAngle;
 
-  public Arm() {
+  private Elbow elbow;
+  private Wrist wrist;
+  private Extension extension;
+
+
+  public Arm(Elbow elbow, Wrist wrist, Extension extension) {
+
+    this.elbow = elbow;
+    this.wrist = wrist;
+    this.extension = extension;
+
     // State Setup
-    currentState = new Neutral(); //Default state
+    currentState = new Neutral(this); //Default state
     states = new HashMap<LegalState, ArmState>();
-    states.put(LegalState.NEUTRAL, new Neutral());
-    states.put(LegalState.START_BALL, new Neutral()); // This obviously needs to be changed
-    states.put(LegalState.START_HATCH, new Neutral());
-    states.put(LegalState.START_EMPTY, new Neutral()); 
-    states.put(LegalState.IN_BALLGROUNDF, new Neutral()); 
-    states.put(LegalState.IN_BALLSTATIONF, new Neutral());
-    states.put(LegalState.IN_BALLSTATIONB, new Neutral());
-    states.put(LegalState.IN_HATCHFSTATION, new Neutral()); 
-    states.put(LegalState.IN_HATCHBSTATION, new Neutral()); 
-    states.put(LegalState.IN_HATCHGROUNDB, new Neutral());//OOF
-    states.put(LegalState.PLACE_BALLCARGOF, new Neutral());
-    states.put(LegalState.PLACE_BALLCARGOB, new Neutral()); 
-    states.put(LegalState.PLACE_HATCHCARGOF, new Neutral());
-    states.put(LegalState.PLACE_HATCHCARGOB, new Neutral());
-    states.put(LegalState.PLACE_HATCHROCKETLOWF, new Neutral()); 
-    states.put(LegalState.PLACE_HATCHROCKETLOWB, new Neutral()); 
-    states.put(LegalState.PLACE_HATCHROCKETMEDF, new Neutral());
-    states.put(LegalState.PLACE_HATCHROCKETMEDB, new Neutral());
+    states.put(LegalState.NEUTRAL, new Neutral(this));
+    states.put(LegalState.START_BALL, new Neutral(this)); // This obviously needs to be changed
+    states.put(LegalState.START_HATCH, new Neutral(this));
+    states.put(LegalState.START_EMPTY, new Neutral(this)); 
+    states.put(LegalState.IN_BALLGROUNDF, new Neutral(this)); 
+    states.put(LegalState.IN_BALLSTATIONF, new Neutral(this));
+    states.put(LegalState.IN_BALLSTATIONB, new Neutral(this));
+    states.put(LegalState.IN_HATCHFSTATION, new Neutral(this)); 
+    states.put(LegalState.IN_HATCHBSTATION, new Neutral(this)); 
+    states.put(LegalState.IN_HATCHGROUNDB, new Neutral(this));//OOF
+    states.put(LegalState.PLACE_BALLCARGOF, new Neutral(this));
+    states.put(LegalState.PLACE_BALLCARGOB, new Neutral(this)); 
+    states.put(LegalState.PLACE_HATCHCARGOF, new Neutral(this));
+    states.put(LegalState.PLACE_HATCHCARGOB, new Neutral(this));
+    states.put(LegalState.PLACE_HATCHROCKETLOWF, new Neutral(this)); 
+    states.put(LegalState.PLACE_HATCHROCKETLOWB, new Neutral(this)); 
+    states.put(LegalState.PLACE_HATCHROCKETMEDF, new Neutral(this));
+    states.put(LegalState.PLACE_HATCHROCKETMEDB, new Neutral(this));
     /*
      *
     NEUTRAL(0), START_BALL(1), START_HATCH(2), START_EMPTY(3), IN_BALLGROUNDF(4), IN_BALLSTATIONF(5),
@@ -64,6 +74,22 @@ public class Arm extends Subsystem {
     IN_BALLGROUNDB(25);
      */
 
+  }
+
+  public Elbow getElbow() {
+    return elbow;
+  }
+
+  public Wrist getWrist() {
+    return wrist;
+  }
+
+  public Extension getExtension() {
+    return extension;
+  }
+
+  public static HashMap<LegalState, ArmState> getStates() {
+    return states;
   }
 
   /**
@@ -192,8 +218,8 @@ public class Arm extends Subsystem {
   }
 
   private class Neutral extends ArmState {
-    public Neutral() {
-      super(0, 45, 45, new ArmTransition[] { new NeutralToCargoPickup() });
+    public Neutral(Arm arm) {
+      super(0, 45, 45, new ArmTransition[] { new NeutralToLowerHatch(arm) });
     }
   }
 

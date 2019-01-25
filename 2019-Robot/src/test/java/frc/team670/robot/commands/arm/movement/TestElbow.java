@@ -14,17 +14,29 @@ import frc.team670.robot.subsystems.Elbow;
  */
 public class TestElbow extends Elbow {
 
+
     private double angle;
 
-    public TestElbow(double angle) {
-        this.angle = angle;
+    public TestElbow() {
+
     }
 
+    /**
+     * Doesn't actually set MotionMagicSetpoint, instead moves the angle to that point.
+     */
+    @Override
+    public void setMotionMagicSetpoint(double wristAngle) {
+        angle = wristAngle;
+    }
+
+    @Override
+    public void initializeMotionmagic() {
+        
+    }
+
+    @Override
     public double getAngle() {
         return angle;
     }
 
-    public void setAngle(double angle) {
-        this.angle = angle;
-    }
 }

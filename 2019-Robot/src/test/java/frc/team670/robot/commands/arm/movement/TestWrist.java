@@ -16,16 +16,8 @@ public class TestWrist extends Wrist{
 
     private double angle;
 
-    public TestWrist(double angle) {
-        this.angle = angle;
-    }
+    public TestWrist() {
 
-    public double getAngle() {
-        return angle;
-    }
-
-    public void setAngle(double angle) {
-        this.angle = angle;
     }
 
     /**
@@ -33,7 +25,17 @@ public class TestWrist extends Wrist{
      */
     @Override
     public void setMotionMagicSetpoint(double wristAngle) {
-        setAngle(wristAngle);
+        angle = wristAngle;
+    }
+
+    @Override
+    public void initializeMotionmagic() {
+        
+    }
+
+    @Override
+    public double getAngle() {
+        return angle;
     }
 
 }

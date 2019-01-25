@@ -14,18 +14,25 @@ import frc.team670.robot.subsystems.Extension;
  */
 public class TestExtension extends Extension {
 
-    private double distance;
+    double extensionLength;
 
-    public TestExtension(double targetDistance) {
-        this.distance = targetDistance;
+    public TestExtension() {
+
     }
 
-    public double getDistance() {
-        return distance;
+    @Override
+    public double getLengthInches() {
+        return extensionLength;
     }
 
-    public void setDistance(double distance) {
-        this.distance = distance;
+    @Override
+    public void setMotionMagicSetpoint(double extensionLength) {
+        this.extensionLength = extensionLength;
+    }
+
+    @Override
+    public void initializeMotionmagic() {
+
     }
 
 }

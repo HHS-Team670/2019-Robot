@@ -7,13 +7,21 @@
 
 package frc.team670.robot.commands.arm.armTransitions;
 
+import frc.team670.robot.commands.arm.movement.MoveElbow;
+import frc.team670.robot.commands.arm.movement.MoveExtension;
+import frc.team670.robot.commands.arm.movement.MoveWrist;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.LegalState;
 
-public class NeutralToCargoPickup extends ArmTransition {
+public class NeutralToLowerHatch extends ArmTransition {
   
-  public NeutralToCargoPickup() {
-    super(Arm.getArmState(LegalState.NEUTRAL), Arm.getArmState(LegalState.NEUTRAL));
+  public NeutralToLowerHatch(Arm arm) {
+    super(Arm.getArmState(LegalState.NEUTRAL), Arm.getArmState(LegalState.NEUTRAL), arm);
+
+    addParallel(new MoveExtension(arm.getExtension(), 50));
+    addParallel(new MoveWrist(arm.getWrist(), 33));
+    addSequential(new MoveElbow(arm.getElbow(), 6));
+
 
     /*
      * Enter your addSequential() and addParallel() commands here.

@@ -10,7 +10,11 @@ package frc.team670.robot.commands.arm.armTransitions;
 import java.awt.geom.Point2D;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
+import frc.team670.robot.subsystems.Elbow;
+import frc.team670.robot.subsystems.Extension;
+import frc.team670.robot.subsystems.Wrist;
 import frc.team670.robot.utils.functions.MathUtils;
 import frc.team670.robot.utils.sort.Edge;
 
@@ -22,7 +26,11 @@ public abstract class ArmTransition extends CommandGroup implements Edge {
 
   private ArmState source, dest;
 
-  protected ArmTransition(ArmState source, ArmState dest) {
+  protected Elbow elbow;
+  protected Wrist wrist;
+  protected Extension extension;
+
+  protected ArmTransition(ArmState source, ArmState dest, Arm arm) {
     this.source = source;
     this.dest = dest;
   }
