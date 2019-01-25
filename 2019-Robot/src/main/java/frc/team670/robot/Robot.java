@@ -20,11 +20,11 @@ import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Claw;
 import frc.team670.robot.subsystems.Climber;
 import frc.team670.robot.subsystems.DriveBase;
-import frc.team670.robot.subsystems.Elbow;
-import frc.team670.robot.subsystems.Extension;
 import frc.team670.robot.subsystems.Intake;
 import frc.team670.robot.subsystems.MustangLEDs_2019;
-import frc.team670.robot.subsystems.Wrist;
+import frc.team670.robot.subsystems.elbow.Elbow;
+import frc.team670.robot.subsystems.wrist.Wrist;
+import frc.team670.robot.subsystems.extension.Extension;
 import frc.team670.robot.utils.Logger;
 
 /**

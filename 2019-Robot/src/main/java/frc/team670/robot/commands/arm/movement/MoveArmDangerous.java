@@ -11,9 +11,9 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.WaitForChildren;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
-import frc.team670.robot.subsystems.Elbow;
-import frc.team670.robot.subsystems.Extension;
-import frc.team670.robot.subsystems.Wrist;
+import frc.team670.robot.subsystems.elbow.Elbow;
+import frc.team670.robot.subsystems.wrist.Wrist;
+import frc.team670.robot.subsystems.extension.Extension;
 
 /**
  * Uses MotionMagic to move the Arm directly to a known ArmState. BE VERY CAREFUL WITH THIS. It does not take into account

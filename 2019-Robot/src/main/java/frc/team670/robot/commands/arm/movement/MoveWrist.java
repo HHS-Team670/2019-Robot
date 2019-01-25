@@ -8,7 +8,7 @@
 package frc.team670.robot.commands.arm.movement;
 
 import edu.wpi.first.wpilibj.command.Command;
-import frc.team670.robot.subsystems.Wrist;
+import frc.team670.robot.subsystems.wrist.BaseWrist;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.functions.MathUtils;
 
@@ -17,7 +17,7 @@ import frc.team670.robot.utils.functions.MathUtils;
  */
 public class MoveWrist extends Command {
 
-  private Wrist wrist;
+  private BaseWrist wrist;
   private double angle;
 
   private static final double DEGREE_TOLERANCE = 0.5;
@@ -30,7 +30,7 @@ public class MoveWrist extends Command {
    * @param angle The absolute angle to move to (180, -180) with 180 being towards the front of the robot (where the intake is).
    * In reality, this angle will not be in this full range because the wrist will have a limit to how much it can move.
    */
-  public MoveWrist(Wrist wrist, double angle) {
+  public MoveWrist(BaseWrist wrist, double angle) {
     requires(wrist);
   }
 

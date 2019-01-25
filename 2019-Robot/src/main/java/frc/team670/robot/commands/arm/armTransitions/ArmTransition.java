@@ -12,9 +12,9 @@ import java.awt.geom.Point2D;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
-import frc.team670.robot.subsystems.Elbow;
-import frc.team670.robot.subsystems.Extension;
-import frc.team670.robot.subsystems.Wrist;
+import frc.team670.robot.subsystems.elbow.Elbow;
+import frc.team670.robot.subsystems.wrist.Wrist;
+import frc.team670.robot.subsystems.extension.Extension;
 import frc.team670.robot.utils.functions.MathUtils;
 import frc.team670.robot.utils.sort.Edge;
 

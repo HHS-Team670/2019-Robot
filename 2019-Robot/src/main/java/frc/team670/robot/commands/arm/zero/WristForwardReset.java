@@ -8,7 +8,7 @@
 package frc.team670.robot.commands.arm.zero;
 
 import edu.wpi.first.wpilibj.command.Command;
-import frc.team670.robot.subsystems.Wrist;
+import frc.team670.robot.subsystems.wrist.Wrist;
 
 /**
  * Zeroes the Wrist encoder by slowly driving it to its front limit switch and resetting its value.

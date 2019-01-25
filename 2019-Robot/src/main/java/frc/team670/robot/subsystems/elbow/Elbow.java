@@ -5,14 +5,13 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.subsystems;
+package frc.team670.robot.subsystems.elbow;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
-import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team670.robot.commands.arm.joystick.JoystickElbow;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
@@ -21,7 +20,7 @@ import frc.team670.robot.utils.functions.MathUtils;
 /**
  * Controls motors for elbow movement
  */
-public class Elbow extends Subsystem {
+public class Elbow extends BaseElbow {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
 

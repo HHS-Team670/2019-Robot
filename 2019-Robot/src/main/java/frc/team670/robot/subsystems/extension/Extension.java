@@ -5,14 +5,13 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.subsystems;
+package frc.team670.robot.subsystems.extension;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team670.robot.commands.arm.joystick.JoystickExtension;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
@@ -22,7 +21,7 @@ import frc.team670.robot.utils.functions.SettingUtils;
 /**
  * Controls motors for motion of extension
  */
-public class Extension extends Subsystem {
+public class Extension extends BaseExtension {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
   private TalonSRX extensionMotor;

@@ -5,13 +5,12 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.subsystems;
+package frc.team670.robot.subsystems.wrist;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team670.robot.commands.arm.joystick.JoystickWrist;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
@@ -20,7 +19,7 @@ import frc.team670.robot.utils.functions.MathUtils;
 /**
  * Controls wrist motors
  */
-public class Wrist extends Subsystem {
+public class Wrist extends BaseWrist {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
   

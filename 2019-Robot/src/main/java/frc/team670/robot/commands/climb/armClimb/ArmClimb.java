@@ -13,8 +13,8 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.subsystems.Arm;
-import frc.team670.robot.subsystems.Elbow;
-import frc.team670.robot.subsystems.Extension;
+import frc.team670.robot.subsystems.elbow.Elbow;
+import frc.team670.robot.subsystems.extension.Extension;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.functions.MathUtils;
 

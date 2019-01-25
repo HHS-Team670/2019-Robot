@@ -8,7 +8,7 @@
 package frc.team670.robot.commands.arm.zero;
 
 import edu.wpi.first.wpilibj.command.Command;
-import frc.team670.robot.subsystems.Extension;
+import frc.team670.robot.subsystems.extension.Extension;
 
 /**
  * Zeroes the Extension encoder by slowly driving it to its back limit switch and resetting its value.

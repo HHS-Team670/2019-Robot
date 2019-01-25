@@ -7,12 +7,12 @@
 
 package frc.team670.robot.commands.arm.movement;
 
-import frc.team670.robot.subsystems.Elbow;
+import frc.team670.robot.subsystems.elbow.BaseElbow;
 
 /**
  * Add your docs here.
  */
-public class TestElbow extends Elbow {
+public class TestElbow extends BaseElbow {
 
 
     private double angle;
@@ -25,8 +25,8 @@ public class TestElbow extends Elbow {
      * Doesn't actually set MotionMagicSetpoint, instead moves the angle to that point.
      */
     @Override
-    public void setMotionMagicSetpoint(double wristAngle) {
-        angle = wristAngle;
+    public void setMotionMagicSetpoint(double elbowAngle) {
+        angle = elbowAngle;
     }
 
     @Override

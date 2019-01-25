@@ -7,12 +7,12 @@
 
 package frc.team670.robot.commands.arm.movement;
 
-import frc.team670.robot.subsystems.Extension;
+import frc.team670.robot.subsystems.extension.BaseExtension;;
 
 /**
  * Add your docs here.
  */
-public class TestExtension extends Extension {
+public class TestExtension extends BaseExtension {
 
     double extensionLength;
 

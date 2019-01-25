@@ -9,7 +9,7 @@ package frc.team670.robot.commands.arm.zero;
 
 
 import edu.wpi.first.wpilibj.command.Command;
-import frc.team670.robot.subsystems.Elbow;
+import frc.team670.robot.subsystems.elbow.Elbow;
 
 /**
  * Zeroes the Elbow encoder by slowly driving it to its front limit switch and resetting its value.
