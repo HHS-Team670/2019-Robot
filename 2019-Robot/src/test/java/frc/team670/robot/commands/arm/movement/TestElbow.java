@@ -14,17 +14,8 @@ import frc.team670.robot.subsystems.Elbow;
  */
 public class TestElbow extends Elbow {
 
-    private double angle;
 
-    public TestElbow(double angle) {
-        this.angle = angle;
-    }
-
-    public double getAngle() {
-        return angle;
-    }
-
-    public void setAngle(double angle) {
-        this.angle = angle;
+    public TestElbow() {
+        
     }
 }

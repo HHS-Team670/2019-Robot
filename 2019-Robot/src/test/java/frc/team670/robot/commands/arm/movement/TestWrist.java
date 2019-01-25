@@ -14,18 +14,8 @@ import frc.team670.robot.subsystems.Wrist;
  */
 public class TestWrist extends Wrist{
 
-    private double angle;
+    public TestWrist() {
 
-    public TestWrist(double angle) {
-        this.angle = angle;
-    }
-
-    public double getAngle() {
-        return angle;
-    }
-
-    public void setAngle(double angle) {
-        this.angle = angle;
     }
 
     /**
@@ -33,7 +23,7 @@ public class TestWrist extends Wrist{
      */
     @Override
     public void setMotionMagicSetpoint(double wristAngle) {
-        setAngle(wristAngle);
+
     }
 
 }
