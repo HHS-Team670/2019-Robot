@@ -68,54 +68,46 @@ public class Extension extends BaseExtension {
     extensionMotor.configPeakCurrentLimit(PEAK_CURRENT_LIMIT);
   }
 
-  /**
-   * Sets the peak current limit for the elbow motor.
-   * @param current Current in amps
-   */
+  @Override
   public void setCurrentLimit(int current) {
     extensionMotor.configPeakCurrentLimit(PEAK_CURRENT_LIMIT); // Peak Limit at 0
     extensionMotor.configPeakCurrentDuration(0); // Duration at over peak set to 0
     extensionMotor.configContinuousCurrentLimit(current);
   }
 
+  @Override
   public void enableCurrentLimit() {
     extensionMotor.enableCurrentLimit(true);
   }
 
+  @Override
   public void disableCurrentLimit() {
     extensionMotor.enableCurrentLimit(false);
   }
 
+  @Override
   public void setOutput(double output){
     extensionMotor.set(ControlMode.PercentOutput, output);
   }
 
-  /**
-   * Gets the current Extension length in absolute ticks with 0 at no extension.
-   */
+  @Override
   public int getLengthTicks() {
     return extensionMotor.getSensorCollection().getQuadraturePosition();
   }
   
-  /**
-   * Gets the current Extension length in absolute inches with 0 at no extension.
-   */
+  @Override
   public double getLengthInches() {
     return MathUtils.convertExtensionTicksToInches(getLengthTicks());
   }
 
-  /**
-   * Enables the PID Controller for extension
-   */
+  @Override
   public void enableExtensionPIDController() {
     SettingUtils.initTalonPID(extensionMotor, POSITION_SLOT, P, I, D, F, -EXTENSION_POWER,
         EXTENSION_POWER, FeedbackDevice.CTRE_MagEncoder_Relative, RAMP_RATE);
         extensionMotor.selectProfileSlot(POSITION_SLOT, 0);
   }
 
-  /**
-   * Modifies the setpoint for the PID Controller
-   */
+  @Override
   public void setPIDControllerSetpoint(int setpoint) {
     extensionMotor.set(ControlMode.Position, setpoint);
   }
@@ -127,46 +119,31 @@ public class Extension extends BaseExtension {
     setDefaultCommand(new JoystickExtension(this));
   }
 
-  public boolean getReverseLimitSwitch() {
+  @Override
+  public boolean isReverseLimitPressed() {
     //drive until switch is closed
     return extensionMotor.getSensorCollection().isRevLimitSwitchClosed();
   }
 
-  /**
-   * @return true if forward limit switch closed, false if not
-   */
-  public boolean getForwardLimitSwitch() {
+  @Override
+  public boolean isForwardLimitPressed() {
     //drive until switch is closed
     return extensionMotor.getSensorCollection().isFwdLimitSwitchClosed();
   }
   
-  /**
-   * Sets the SensorCollection encoder value to encoderValue (use this to reset the encoder when at a known position)
-   */
-  public void resetExtension(double encoderValue) {
+  @Override
+  public void zero(double encoderValue) {
     extensionMotor.getSensorCollection().setQuadraturePosition((int)encoderValue, RobotConstants.ARM_RESET_TIMEOUTMS);
   }
 
-  /**
-   * @return the current encoder value of the extension motor
-   */
-  public double getEncoderValue() {
-    return extensionMotor.getSensorCollection().getQuadraturePosition();
-  }
-
-  /**
-   * Selects the PID Slot dedicated to MotionMagic to give it the correct PID Values
-   */
+  @Override
   public void initializeMotionmagic() {
     extensionMotor.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
   }
 
-  /**
-   * Setup for movement and Motion Magic
-   */
+  @Override
   public void setMotionMagicSetpoint(double extensionLength) {
     extensionMotor.set(ControlMode.MotionMagic, extensionLength);
   }
-
 
 }

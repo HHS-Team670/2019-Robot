@@ -11,9 +11,9 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.WaitForChildren;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
-import frc.team670.robot.subsystems.elbow.Elbow;
-import frc.team670.robot.subsystems.wrist.Wrist;
-import frc.team670.robot.subsystems.extension.Extension;
+import frc.team670.robot.subsystems.elbow.BaseElbow;
+import frc.team670.robot.subsystems.extension.BaseExtension;
+import frc.team670.robot.subsystems.wrist.BaseWrist;
 
 /**
  * Uses MotionMagic to move the Arm directly to a known ArmState. BE VERY CAREFUL WITH THIS. It does not take into account
@@ -26,9 +26,9 @@ public class MoveArmDangerous extends CommandGroup {
 
   private ArmState targetState;
 
-  private Elbow elbow;
-  private Wrist wrist;
-  private Extension extension;
+  private BaseElbow elbow;
+  private BaseWrist wrist;
+  private BaseExtension extension;
 
   public MoveArmDangerous(ArmState state, Arm arm) {
     super();

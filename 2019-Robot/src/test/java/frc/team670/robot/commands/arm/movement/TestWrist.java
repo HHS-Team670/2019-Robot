@@ -38,4 +38,37 @@ public class TestWrist extends BaseWrist{
         return angle;
     }
 
+    @Override
+    public void enableCurrentLimit() {
+    }
+
+    @Override
+    public void disableCurrentLimit() {
+    }
+
+    @Override
+    public void setOutput(double output){
+    }
+
+    @Override
+    public int getPositionTicks() {
+        return 0;
+    }
+
+    @Override
+    public boolean isForwardLimitPressed() {
+        //drive until switch is closed
+        return false;
+    }
+    
+    @Override
+    public boolean isReverseLimitPressed() {
+        //drive until switch is closed
+        return false;
+    }
+    
+    @Override
+    public void zero(double encoderValue) {
+    }
+
 }

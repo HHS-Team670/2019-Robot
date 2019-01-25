@@ -39,4 +39,54 @@ public class TestElbow extends BaseElbow {
         return angle;
     }
 
+    @Override
+    public void setOutput(double output) {
+        
+    }
+
+    @Override
+    public double getOutputCurrent() {
+        return 0;
+    }
+
+    @Override
+    public void setClimbingCurrentLimit() {
+
+    }
+
+    @Override
+    public void setNormalCurrentLimit() {
+
+    }
+
+    @Override
+    public int getPositionTicks() {
+        return 0;
+    }
+
+    @Override
+    public boolean isForwardLimitPressed() {
+        return false;
+    }
+
+    @Override
+    public boolean isReverseLmitPressed() {
+        return false;
+    }
+    
+    @Override
+    public void zero(double encoderValue) {
+
+    }
+
+    @Override
+    public double getEncoderValue() {
+        return 0;
+    }
+
+    @Override
+    public void setCurrentControl(int current) {
+    }
+
+
 }

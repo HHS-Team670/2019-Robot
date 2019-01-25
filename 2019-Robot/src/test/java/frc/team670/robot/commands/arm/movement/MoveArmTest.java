@@ -29,11 +29,10 @@ public class MoveArmTest {
     @Test
     public void testMoveArm() {
 
-        Arm.instantiateStates();
         TestElbow elbow = new TestElbow();
         TestWrist wrist = new TestWrist();
         TestExtension extension = new TestExtension();
-        // Arm arm = new Arm(elbow, wrist, extension);
+        Arm arm = new Arm(elbow, wrist, extension);
 
         HashMap<LegalState, ArmState> armStates = Arm.getStates();
 
@@ -58,6 +57,10 @@ public class MoveArmTest {
                 while(!transition.isCompleted()) {
                     Scheduler.getInstance().run();
                 }
+
+                System.out.println(finalElbowAngle);
+                System.out.println(finalWristAngle);
+                System.out.println(finalExtensionLength);
                 
                 assertEquals(finalElbowAngle, elbow.getAngle(), 0.00001);
                 assertEquals(finalWristAngle, wrist.getAngle(), 0.00001);
@@ -68,9 +71,6 @@ public class MoveArmTest {
             }
 
         }
-
     }
-
-
 
 }

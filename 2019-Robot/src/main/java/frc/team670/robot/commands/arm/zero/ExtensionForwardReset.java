@@ -36,7 +36,7 @@ public class ExtensionForwardReset extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return extension.getReverseLimitSwitch();
+    return extension.isReverseLimitPressed();
   }
 
   /**
@@ -44,7 +44,7 @@ public class ExtensionForwardReset extends Command {
    */
   @Override
   protected void end() {
-    extension.resetExtension(Extension.MAX_EXTENSION_FORWARD);
+    extension.zero(Extension.MAX_EXTENSION_FORWARD);
     extension.setOutput(0);
   }
 

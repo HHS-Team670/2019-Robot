@@ -39,7 +39,7 @@ public class ElbowForwardReset extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return elbow.getReverseLimitSwitch();
+    return elbow.isReverseLmitPressed();
   }
 
   /**
@@ -47,7 +47,7 @@ public class ElbowForwardReset extends Command {
    */
   @Override
   protected void end() {
-    elbow.resetElbow(Elbow.MAX_ELBOW_FORWARD);
+    elbow.zero(Elbow.MAX_ELBOW_FORWARD);
     elbow.setOutput(0);
   }
 

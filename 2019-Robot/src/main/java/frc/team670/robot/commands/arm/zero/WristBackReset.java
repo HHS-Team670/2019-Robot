@@ -36,7 +36,7 @@ public class WristBackReset extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return wrist.getReverseLimitSwitch();
+    return wrist.isReverseLimitPressed();
   }
 
   /**
@@ -44,7 +44,7 @@ public class WristBackReset extends Command {
    */
   @Override
   protected void end() {
-    wrist.resetWrist(Wrist.MAX_WRIST_BACK);
+    wrist.zero(Wrist.MAX_WRIST_BACK);
     wrist.setOutput(0);
   }
 

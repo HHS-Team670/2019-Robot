@@ -35,4 +35,47 @@ public class TestExtension extends BaseExtension {
 
     }
 
+    @Override
+    public void setCurrentLimit(int current) {
+    }
+  
+    @Override
+    public void enableCurrentLimit() {
+    }
+  
+    @Override
+    public void disableCurrentLimit() {
+    }
+  
+    @Override
+    public void setOutput(double output){
+    }
+  
+    @Override
+    public int getLengthTicks() {
+      return 0;
+    }
+  
+    @Override
+    public void enableExtensionPIDController() {
+    }
+  
+    @Override
+    public void setPIDControllerSetpoint(int setpoint) {
+    }
+  
+    @Override
+    public boolean isReverseLimitPressed() {
+      return false;
+    }
+  
+    @Override
+    public boolean isForwardLimitPressed() {
+      return false;
+    }
+    
+    @Override
+    public void zero(double encoderValue) {
+    }
+
 }
