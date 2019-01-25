@@ -180,7 +180,7 @@ public class DriveMotionProfile extends Command {
     left.configurePIDVA(P, I, D, (1 / MAX_VELOCITY), KA);
     right.configurePIDVA(P, I, D, (1 / MAX_VELOCITY), KA);
 
-    Logger.consoleLog("Initialized DriveMotionProfile: InitialLeftEncoder: %s, InitialRightEncoder: %s, InitialAngle: %s", initialLeftEncoder, initialRightEncoder, Robot.sensors.getYawDouble());
+    // Logger.consoleLog("Initialized DriveMotionProfile: InitialLeftEncoder: %s, InitialRightEncoder: %s, InitialAngle: %s", initialLeftEncoder, initialRightEncoder, Robot.sensors.getYawDouble());
 
     executeCount = 0;
    
@@ -205,7 +205,7 @@ public class DriveMotionProfile extends Command {
     // System.out.println("Right Encoder: " + rightEncoder + ", LeftEncoder: " + leftEncoder);
     double l = left.calculate(leftEncoder);
     double r = right.calculate(rightEncoder);
-    
+
     // Calculates the angle offset for PID
     // It tracks the wrong angle (mirrors the correct one)
     double gyroHeading;
@@ -225,6 +225,9 @@ public class DriveMotionProfile extends Command {
     
     double leftOutput = l + turn;
     double rightOutput = r - turn;
+
+    Logger.consoleLog("outputs: " + leftOutput + ", " + rightOutput);
+    Logger.consoleLog("heading: " + gyroHeading + " desired: " + desiredHeading);
 
     // Drives the bot based on the input
     Robot.driveBase.tankDrive(leftOutput, rightOutput, false); 
