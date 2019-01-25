@@ -15,9 +15,7 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team670.robot.commands.arm.JoystickElbow;
 import frc.team670.robot.constants.RobotConstants;
-
 import frc.team670.robot.constants.RobotMap;
-import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.utils.functions.MathUtils;
 
 /**

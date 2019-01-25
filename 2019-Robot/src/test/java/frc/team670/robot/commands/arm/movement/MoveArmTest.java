@@ -9,8 +9,8 @@ package frc.team670.robot.commands.arm.movement;
 
 import static org.junit.Assert.assertEquals;
 
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.junit.Test;
 
@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team670.robot.commands.arm.armTransitions.ArmTransition;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
+import frc.team670.robot.subsystems.Arm.LegalState;
 
 /**
  * Tests the MoveArm Command by running through all ArmStates and ensuring they pathfind to the proper position by testing
@@ -26,20 +27,26 @@ import frc.team670.robot.subsystems.Arm.ArmState;
 public class MoveArmTest {
 
     @Test
-    public void testMoveArm(ArrayList<ArmState> states) {
+    public void testMoveArm() {
 
-        MoveArm moveArm;
+        TestElbow elbow = new TestElbow();
+        TestWrist wrist = new TestWrist();
+        TestExtension extension = new TestExtension();
+        Arm arm = new Arm(elbow, wrist, extension);
+
+        HashMap<LegalState, ArmState> armStates = Arm.getStates();
+
+        ArrayList<ArmState> states = new ArrayList<ArmState>(armStates.values());
 
         for(ArmState startState : states) {
 
             ArmTransition[] transitions = startState.getEdges();
 
             for(ArmTransition transition : transitions) {                
-                TestElbow elbow = new TestElbow();
-                TestWrist wrist = new TestWrist();
-                TestExtension extension = new TestExtension();
+                elbow = new TestElbow();
+                wrist = new TestWrist();
+                extension = new TestExtension();
 
-                Arm arm = new Arm(elbow, wrist, extension);
 
                 ArmState dest = transition.getDest();
                 double finalElbowAngle = dest.getElbowAngle();
@@ -54,20 +61,10 @@ public class MoveArmTest {
                 assertEquals(finalElbowAngle, elbow.getAngle(), 0.00001);
                 assertEquals(finalWristAngle, wrist.getAngle(), 0.00001);
                 assertEquals(finalExtensionLength, extension.getLengthInches(), 0.00001);
+                assertEquals(dest.getCoordPosition(), Arm.getCoordPosition(elbow.getAngle(), wrist.getAngle(), extension.getLengthInches()));
+                assertEquals(dest, Arm.getCurrentState());
 
             }
-
-
-            // for(ArmState destState : states) {
-
-            //     Arm.setState(startState);
-            //     moveArm = new MoveArm(destState);
-            //     moveArm.initialize();
-
-            //     // Point2D.Double actualDestCoord = Arm.getCoordPosition(, wristAngle, elbowAngle);
-
-            //     // assertEquals(destState.getCoordPosition().getX(), Arm.getCoordPosition(extensionLength, wristAngle, elbowAngle), 0.0001);
-            // }
 
         }
 

@@ -44,10 +44,10 @@ public class Robot extends TimedRobot {
 
   private long savedTime=0;
 
-  public static Arm arm = new Arm();
   public static Elbow elbow = new Elbow();
   public static Wrist wrist = new Wrist();
   public static Extension extension = new Extension();
+  public static Arm arm = new Arm(elbow, wrist, extension);
   public static Intake intake = new Intake();
   public static Claw claw = new Claw();
   public static Climber climber = new Climber();

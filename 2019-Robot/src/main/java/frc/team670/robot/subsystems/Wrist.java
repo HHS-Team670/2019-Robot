@@ -34,7 +34,7 @@ public class Wrist extends Subsystem {
   private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0;
 
   private final int FORWARD_SOFT_LIMIT = 0, REVERSE_SOFT_LIMIT = 0; // TODO figure out the values in rotations
-  private final int CONTINUOUS_CURRENT_LIMIT = 10, PEAK_CURRENT_LIMIT = 0; // TODO set current limit in Amps
+  private final int CONTINUOUS_CURRENT_LIMIT = 20, PEAK_CURRENT_LIMIT = 0; // TODO set current limit in Amps
 
   public Wrist() {
     wristRotation = new TalonSRX(RobotMap.ARM_WRIST_ROTATION); 

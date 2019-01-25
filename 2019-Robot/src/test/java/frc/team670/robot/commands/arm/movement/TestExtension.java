@@ -20,14 +20,19 @@ public class TestExtension extends Extension {
 
     }
 
-  @Override
-  public double getLengthInches() {
-      return extensionLength;
-  }
+    @Override
+    public double getLengthInches() {
+        return extensionLength;
+    }
 
     @Override
     public void setMotionMagicSetpoint(double extensionLength) {
         this.extensionLength = extensionLength;
+    }
+
+    @Override
+    public void initializeMotionmagic() {
+
     }
 
 }

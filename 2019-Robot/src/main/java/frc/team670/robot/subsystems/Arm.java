@@ -25,7 +25,7 @@ import frc.team670.robot.utils.sort.Node;
 public class Arm extends Subsystem {
 
   // All of the states
-  private static HashMap<LegalState, ArmState> states = new HashMap<LegalState, ArmState>();
+  private static HashMap<LegalState, ArmState> states;
   private static ArmState currentState;
 
   /** Value meant only for unit testing. Do not use this anywhere else! */
@@ -86,6 +86,10 @@ public class Arm extends Subsystem {
 
   public Extension getExtension() {
     return extension;
+  }
+
+  public static HashMap<LegalState, ArmState> getStates() {
+    return states;
   }
 
   /**
