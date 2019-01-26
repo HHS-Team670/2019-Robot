@@ -2,8 +2,11 @@ package frc.team670.robot.commands.drive;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.Robot;
+import frc.team670.robot.constants.RobotConstants;
+import frc.team670.robot.utils.Logger;
+import frc.team670.robot.utils.functions.MathUtils;
+
 
 /**
  * Pivots the robot in a circle ten times then outputs 
@@ -25,25 +28,25 @@ public class MeasureTrackwidth extends Command {
     initialRightEncoder = Robot.driveBase.getRightDIOEncoderPosition();
     initialAngle = Robot.sensors.getYawDouble();
     goalAngle = initialAngle + totalAngleToDrive;
-    System.out.println("Initial Angle: " + initialAngle);
-    System.out.println("Initial Left Encoder: " + initialLeftEncoder);
-    System.out.println("Initial Right Encoder: " + initialRightEncoder);
-    System.out.println("Goal Angle: " + goalAngle);
+    Logger.consoleLog("Initial Angle: " + initialAngle);
+    Logger.consoleLog("Initial Left Encoder: " + initialLeftEncoder);
+    Logger.consoleLog("Initial Right Encoder: " + initialRightEncoder);
+    Logger.consoleLog("Goal Angle: " + goalAngle);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    // Robot.driveBase.tankDrive(-0.6, 0.6);
-    Robot.driveBase.curvatureDrive(0.2, -0.5, true);
-    SmartDashboard.putString("Current Angle", Robot.sensors.getYawDouble() + "");
-    SmartDashboard.putString("Goal Angle", goalAngle + "");
+    Robot.driveBase.tankDrive(-0.3, 0.3);
+    SmartDashboard.putNumber("current angle: ", Robot.sensors.getAngle());
+    Logger.consoleLog("Current Angle: " + Robot.sensors.getAngle() + "");
+    Logger.consoleLog("Goal Angle: " + goalAngle + "");
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return Robot.sensors.getYawDouble() < goalAngle;
+    return Robot.sensors.getAngle() < goalAngle;
   }
 
   // Called once after isFinished returns true
@@ -54,27 +57,27 @@ public class MeasureTrackwidth extends Command {
     double leftDistance = Robot.driveBase.getLeftDIOEncoderPosition() - initialLeftEncoder;
     double rightDistance = Robot.driveBase.getRightDIOEncoderPosition() - initialRightEncoder;
 
-    System.out.println("Spun the Robot 10 times, or 3600 degrees with " + overShoot + " degrees of overshoot");
-    System.out.println("Left Side Distance Driven (Ticks): " + leftDistance);
-    System.out.println("Left Side Distance Driven (Inches): " + (leftDistance / RobotConstants.DIO_TICKS_PER_INCH));
-    System.out.println("Right Side Distance Driven (Ticks): " + rightDistance);
-    System.out.println("Right Side Distance Driven (Inches): " + (rightDistance / RobotConstants.DIO_TICKS_PER_INCH));
+    Logger.consoleLog("Spun the Robot 10 times, or 3600 degrees with " + overShoot + " degrees of overshoot");
+    Logger.consoleLog("Left Side Distance Driven (Ticks): " + leftDistance);
+    Logger.consoleLog("Left Side Distance Driven (Inches): " + MathUtils.convertDriveBaseTicksToInches(leftDistance));
+    Logger.consoleLog("Right Side Distance Driven (Ticks): " + rightDistance);
+    Logger.consoleLog("Right Side Distance Driven (Inches): " + MathUtils.convertDriveBaseTicksToInches(rightDistance));
     
-    double leftRadiusInches = (leftDistance / RobotConstants.DIO_TICKS_PER_INCH) / (10 * 2 * Math.PI);
-    double rightRadiusInches = (rightDistance / RobotConstants.DIO_TICKS_PER_INCH) / (10 * 2 * Math.PI);
+    double leftRadiusInches = MathUtils.convertDriveBaseTicksToInches(leftDistance) / (10 * 2 * Math.PI);
+    double rightRadiusInches = MathUtils.convertDriveBaseTicksToInches(rightDistance) / (10 * 2 * Math.PI);
 
-    double leftDiameter = leftRadiusInches * 2;
-    double rightDiameter = rightRadiusInches * 2;
+    double leftDiameter = Math.abs(leftRadiusInches * 2);
+    double rightDiameter = Math.abs(rightRadiusInches * 2);
 
-    System.out.println("Left Diameter Calculation (inches): " + leftDiameter);
-    System.out.println("Right Diameter Calculation (inches): " + rightDiameter);
-    System.out.println("Average Diameter (inches): " + ((leftDiameter + rightDiameter)/2));
+    Logger.consoleLog("Left Diameter Calculation (inches): " + leftDiameter);
+    Logger.consoleLog("Right Diameter Calculation (inches): " + rightDiameter);
+    Logger.consoleLog("Average Diameter (inches): " + ((leftDiameter + rightDiameter)/2));
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    System.out.println("Interrupted Measure Wheelbase");
+    Logger.consoleLog("Interrupted Measure Wheelbase");
   }
 }

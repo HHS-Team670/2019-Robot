@@ -81,4 +81,5 @@ public class NavX {
     public double getRawAccelX() {
         return mAHRS.getRawAccelX();
     }
+
 }

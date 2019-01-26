@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.drive.DriveMotionProfile;
+import frc.team670.robot.commands.drive.MeasureTrackwidth;
 import frc.team670.robot.dataCollection.MustangPi;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.dataCollection.Pose;
@@ -101,13 +102,13 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("KA", 0);
 
     
-    try{ 
-      autonomousCommand = new DriveMotionProfile("S-shape-2.pf1.csv", false);
-    }
-    catch (FileNotFoundException e) {
-      e.printStackTrace();
-    }
-    // autonomousCommand = new TimeDrive(10, -0.5);
+    // try{ 
+    //   autonomousCommand = new DriveMotionProfile("S-shape-2.pf1.csv", false);
+    // }
+    // catch (FileNotFoundException e) {
+    //   e.printStackTrace();
+    // }
+    autonomousCommand = new MeasureTrackwidth();
   }
 
   /**

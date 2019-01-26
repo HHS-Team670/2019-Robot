@@ -16,7 +16,7 @@ public class RobotConstants {
     /** The number of ticks per rotation of a drivebase wheel for the DIO Encoders  */
     public static final int DIO_TICKS_PER_ROTATION = 1024;
     /** The number of ticks per inch of wheel travel */
-    public static final int DIO_TICKS_PER_INCH = (int) (DIO_TICKS_PER_ROTATION / DRIVEBASE_INCHES_PER_ROTATION);
+    public static final int DIO_TICKS_PER_INCH = (int) (DIO_TICKS_PER_ROTATION / (Math.PI * DRIVE_BASE_WHEEL_DIAMETER));
 
     // LEDs
     public static final int LED_PORT = 5801;
@@ -30,7 +30,7 @@ public class RobotConstants {
     public static final double PROPORTION = 0.2*KU;
     public static final double INTEGRAL = 0;//0.05*KU/TU;
     public static final double DERIVATIVE = 5*KU*TU/40;
-    public static final double WHEEL_BASE = 25; //TODO set this value to the actual one in inches
+    public static final double WHEEL_BASE = 25.662; //measured 1/26/19
 
     // Pure Pursuit Constants
     public static final double MIN_LOOKAHEAD = 12.0; //Inches. TODO: set the value; 1 ft for now idk
