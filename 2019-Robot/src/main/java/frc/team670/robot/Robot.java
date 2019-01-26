@@ -101,8 +101,7 @@ public class Robot extends TimedRobot {
 
     
     try{ 
-      autonomousCommand = new DriveMotionProfile("10ft-straight.pf1.csv", false);
-      
+      autonomousCommand = new DriveMotionProfile("S-shape-2.pf1.csv", false);
     }
     catch (FileNotFoundException e) {
       e.printStackTrace();

@@ -15,7 +15,6 @@ import java.io.FileNotFoundException;
 
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.utils.Logger;
@@ -43,7 +42,7 @@ public class DriveMotionProfile extends Command {
   // Max Velocities in m/s. For generation, we need it to be lower than the actual max velocity, 
   // otherwise we get motor outputs >1.0 and <-1.0 which makes us unable to turn properly.
   private static final String BASE_PATH_NAME = "home/deploy/";
-  private static final double MAX_VELOCITY = 80, MAX_ACCELERATION = 10, MAX_JERK = 60; // Equivalent units in inches
+  private static final double MAX_VELOCITY = 90, MAX_ACCELERATION = 20, MAX_JERK = 60; // Equivalent units in inches
   private static final double TIME_STEP = 0.05;
   private static final double ANGLE_DIVIDE_CONSTANT = 240.0; // Default = 80
 
@@ -129,9 +128,13 @@ public class DriveMotionProfile extends Command {
     // modifier = new TankModifier(trajectory).modify(RobotConstants.WHEEL_BASE);
 
     // TODO figure out why these are switched and switch them back
-    left = new EncoderFollower(rightTrajectory);
-    right = new EncoderFollower(leftTrajectory);
-
+    if (isReversed) {
+      left = new EncoderFollower(leftTrajectory);
+      right = new EncoderFollower(rightTrajectory);
+    } else {
+      left = new EncoderFollower(rightTrajectory);
+      right = new EncoderFollower(leftTrajectory);
+    }
   }
 
   // Called just before this Command runs the first time
@@ -229,8 +232,13 @@ public class DriveMotionProfile extends Command {
     // TODO MAKE THE -1 HERE MATCH uP WITH THE DIRECTION THE ROBOT SHOULD TURN
     double turn = 0;//0.8 * (-1.0/ANGLE_DIVIDE_CONSTANT) * angleDifference;
     
+    
     double leftOutput = l + turn;
     double rightOutput = r - turn;
+    if (isReversed) {
+      leftOutput *= -1;
+      rightOutput *= -1;
+    }
 
     Logger.consoleLog("encoders: " + leftEncoder + ", " + rightEncoder + " outputs: " + leftOutput + ", " + rightOutput);
     // Logger.consoleLog("outputs: " + leftOutput + ", " + rightOutput);
