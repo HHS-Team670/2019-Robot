@@ -31,6 +31,8 @@ public class MoveArmDangerous extends CommandGroup {
   private BaseWrist wrist;
   private BaseExtension extension;
 
+  private ArmState dest;
+
   public MoveArmDangerous(ArmState state, Arm arm) {
     super();
     elbow = arm.getElbow();
@@ -40,11 +42,18 @@ public class MoveArmDangerous extends CommandGroup {
     requires(wrist);
     requires(elbow);
 
+    dest = state;
+
     addParallel(new MoveExtension(extension, targetState.getExtensionLength()));
     addParallel(new MoveWrist(wrist, targetState.getWristAngle()));
     addSequential(new MoveElbow(elbow, targetState.getElbowAngle()));
     addSequential(new WaitForChildren());
     Logger.consoleLog();
+  }
+
+  @Override
+  protected void end() {
+    Arm.setState(dest);
   }
 
 }

@@ -60,7 +60,7 @@ public class Arm  {
     // states.put(LegalState.PLACE_BALLCARGOB, new Neutral(this)); 
     // states.put(LegalState.PLACE_HATCHCARGOF, new Neutral(this));
     // states.put(LegalState.PLACE_HATCHCARGOB, new Neutral(this));
-    // states.put(LegalState.PLACE_HATCHROCKETLOWF, new Neutral(this)); 
+    states.put(LegalState.PLACE_HATCHROCKETLOWF, new LowHatchPlace(this)); 
     // states.put(LegalState.PLACE_HATCHROCKETLOWB, new Neutral(this)); 
     // states.put(LegalState.PLACE_HATCHROCKETMEDF, new Neutral(this));
     // states.put(LegalState.PLACE_HATCHROCKETMEDB, new Neutral(this));
@@ -217,6 +217,12 @@ public class Arm  {
   private class Neutral extends ArmState {
     private Neutral(Arm arm) {
       super(30, 40, 6, new ArmTransition[] { new NeutralToLowerHatch(arm) });
+    }
+  }
+
+  private class LowHatchPlace extends ArmState {
+    private LowHatchPlace(Arm arm) {
+      super(30, 40, 6, new ArmTransition[] { });
     }
   }
 

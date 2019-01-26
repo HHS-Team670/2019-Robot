@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import frc.team670.robot.commands.arm.SetArmState;
 import frc.team670.robot.commands.arm.armTransitions.ArmTransition;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
@@ -22,30 +23,23 @@ import frc.team670.robot.utils.sort.AStarSearch;
  * Move the arm if it is at a known ArmState by finding a path and using it to travel along ArmTransitions between ArmStates.
  * @author ctchen
  */
-public class MoveArm extends CommandGroup {
-  private CommandGroup movements;
-  private ArmState destination;
-  private Map<ArmState, List<ArmTransition>> searched = new HashMap<ArmState, List<ArmTransition>>();
-  private Arm arm;
+public class ArmPathGenerator {
+  // private static Map<ArmState, List<ArmTransition>> searched = new HashMap<ArmState, List<ArmTransition>>();
 
-  public MoveArm(ArmState destination, Arm arm) {
-    this.destination = destination;
-    this.arm = arm;
-    requires(arm.getElbow());
-    requires(arm.getWrist());
-    requires(arm.getExtension());
+  private ArmPathGenerator() {
+
   }
 
   /** 
    * Looks for an existing path. If none exists, search for the path to move to.
    * Called just before this Command runs the first time
    * */
-  @Override
-  protected void initialize() {
+  public static CommandGroup getPath(ArmState destination, Arm arm) {
     ArmState currentState = Arm.getCurrentState();
     Logger.consoleLog("currentState: %s", currentState.getClass().getName());
-    movements = new CommandGroup();
-    List<ArmTransition> transitions = searched.get(currentState);
+    CommandGroup movements = new CommandGroup();
+    // List<ArmTransition> transitions = searched.get(currentState);
+    List<ArmTransition> transitions = null;
     if (transitions == null) {
       try {
         transitions = (List<ArmTransition>)(List<?>)(AStarSearch.search(currentState, destination));
@@ -53,19 +47,22 @@ public class MoveArm extends CommandGroup {
         Logger.logException(e);
         Logger.consoleLog("You really messed up.");
       }
-      searched.put(currentState, transitions); //Stores current path in instance variable
+      // searched.put(currentState, transitions); //Stores current path in instance variable
     }
     for (ArmTransition t : transitions) {
       movements.addSequential(t);
     }
-    movements.start(); // This might need to be Scheduler.addCommand(movements);
+
+    movements.addSequential(new SetArmState(destination));
+
     Logger.consoleLog();
+    return movements;
   }
 
-  // Called once after isFinished returns true
-  @Override
-  protected void end() {
-    Arm.setState(destination);
-  }
+  // // Called once after isFinished returns true
+  // @Override
+  // protected void end() {
+  //   Arm.setState(destination);
+  // }
 
 }
