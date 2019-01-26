@@ -54,7 +54,10 @@ public class MustangController extends Joystick {
 
     // helps you get varoius axis and buttons on the XBox controller
     public double getLeftStickX() {
-        return super.getRawAxis(XboxButtons.LEFT_STICK_X);
+        double value = super.getRawAxis(XboxButtons.LEFT_STICK_X);
+        // with deadband - value to exceed is 0.06299
+        if (value > 0.063 || value < 0) return super.getRawAxis(XboxButtons.LEFT_STICK_X);
+        else return 0;
     }
 
     public double getLeftStickY() {
