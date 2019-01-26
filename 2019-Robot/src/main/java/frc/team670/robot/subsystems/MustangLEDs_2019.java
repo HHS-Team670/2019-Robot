@@ -79,6 +79,7 @@ public class MustangLEDs_2019 {
 		val = 5;
 		if (trigger == true) {
 			stateData = climbing;
+			lightShowData=climbingGreenLights;
 		}
 		if(val!=0){
 		setLightShow(val);
@@ -89,6 +90,7 @@ public class MustangLEDs_2019 {
 		val = 4;
 		if (trigger == true) {
 			stateData = visionLock;
+			lightShowData = solidPurple;
 		}
 		if(val!=0){
 			setLightShow(val);
@@ -99,6 +101,7 @@ public class MustangLEDs_2019 {
 		val = 2;
 		if (trigger = true) {
 			stateData = forwardDrive;
+			lightShowData = solidGreen;
 		}
 		if(val!=0){
 			setLightShow(val);
@@ -109,6 +112,7 @@ public class MustangLEDs_2019 {
 		val = 3;
 		if (trigger = true) {
 			stateData = reverseDrive;
+			lightShowData = solidRed;
 		}
 		if(val!=0){
 			setLightShow(val);
@@ -120,6 +124,7 @@ public class MustangLEDs_2019 {
 		val = 11;
 		if (trigger = true) {
 			stateData = stillDrive;
+			lightShowData = runningAllianceColors;
 		}
 		if(val!=0){
 			setLightShow(val);

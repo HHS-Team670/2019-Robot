@@ -372,6 +372,7 @@ void setup()
 
 void loop()
 {                                                   //Ran indefinitly after setup()
+  
   parseData();
  strip2.setBrightness(100); 
 if(stateData==stillDrive){
