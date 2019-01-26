@@ -43,12 +43,12 @@ public class DriveMotionProfile extends Command {
   // Max Velocities in m/s. For generation, we need it to be lower than the actual max velocity, 
   // otherwise we get motor outputs >1.0 and <-1.0 which makes us unable to turn properly.
   private static final String BASE_PATH_NAME = "home/deploy/";
-  private static final double MAX_VELOCITY = 10, MAX_ACCELERATION = 60, MAX_JERK = 60; // Equivalent units in inches
+  private static final double MAX_VELOCITY = 80, MAX_ACCELERATION = 10, MAX_JERK = 60; // Equivalent units in inches
   private static final double TIME_STEP = 0.05;
   private static final double ANGLE_DIVIDE_CONSTANT = 240.0; // Default = 80
 
 
-  private static double P = 0.33, I = 0, D = 0, KA= 0;
+  private static double P = 0.01, I = 0, D = 0.001, KA= 0;
 
   // Values for logging purposes
   private final int EXECUTE_LOG_INTERVAL = 8;
@@ -95,8 +95,8 @@ public class DriveMotionProfile extends Command {
 
     String leftPathname = Filesystem.getDeployDirectory() + "/output/" + fileName.replace(".pf1", ".left.pf1");
     String rightPathname = Filesystem.getDeployDirectory() + "/output/" + fileName.replace(".pf1", ".right.pf1");
-    // System.out.println("Left path name: " + leftPathname);
-    // System.out.println("Right path name: " + rightPathname);
+    Logger.consoleLog("Left path name: " + leftPathname);
+    Logger.consoleLog("Right path name: " + rightPathname);
     File leftFile = new File(leftPathname);
     File rightFile = new File(rightPathname);
 
@@ -158,27 +158,33 @@ public class DriveMotionProfile extends Command {
       initialRightEncoder = Robot.driveBase.getRightDIOEncoderPosition();
     }
 
+    Logger.consoleLog("isReversed: " + isReversed);
+    Logger.consoleLog("initial encoders: " + initialLeftEncoder + ", " + initialRightEncoder);
+
     left.configureEncoder(initialLeftEncoder, RobotConstants.DIO_TICKS_PER_ROTATION, RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
     right.configureEncoder(initialRightEncoder, RobotConstants.DIO_TICKS_PER_ROTATION, RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);  
 
     // Set up Robot for Auton Driving
     Robot.driveBase.initAutonDrive();
 
-    if (Robot.pid_chooser.getSelected().equals(true)) {
-      P = SmartDashboard.getNumber("P", P);
-      I = SmartDashboard.getNumber("I", I);
-      D = SmartDashboard.getNumber("D", D);
-      KA = SmartDashboard.getNumber("KA", KA);
-    }
-    SmartDashboard.putNumberArray("PID Values: ", new double[] {P, I, D, KA});
+    // if (Robot.pid_chooser.getSelected().equals(true)) {
+    //   P = SmartDashboard.getNumber("P", P);
+    //   I = SmartDashboard.getNumber("I", I);
+    //   D = SmartDashboard.getNumber("D", D);
+    //   KA = SmartDashboard.getNumber("KA", KA);
+    // }
+    // SmartDashboard.putNumberArray("PID Values: ", new double[] {P, I, D, KA});
+
+    Logger.consoleLog("PID values: " + P + ", " + I + ", " + D + ", " + (1.0/MAX_VELOCITY) + ", " + KA);
+
     // The first argument is the proportional gain. Usually this will be quite high
     // The second argument is the integral gain. This is unused for motion profiling
     // The third argument is the derivative gain. Tweak this if you are unhappy with the tracking of the trajectory
     // The fourth argument is the velocity ratio. This is 1 over the maximum velocity you provided in the 
     //      trajectory configuration (it translates m/s to a -1 to 1 scale that your motors can read)
     // The fifth argument is your acceleration gain. Tweak this if you want to get to a higher or lower speed quicker
-    left.configurePIDVA(P, I, D, (1 / MAX_VELOCITY), KA);
-    right.configurePIDVA(P, I, D, (1 / MAX_VELOCITY), KA);
+    left.configurePIDVA(P, I, D, (1.0 / MAX_VELOCITY), KA);
+    right.configurePIDVA(P, I, D, (1.0 / MAX_VELOCITY), KA);
 
     // Logger.consoleLog("Initialized DriveMotionProfile: InitialLeftEncoder: %s, InitialRightEncoder: %s, InitialAngle: %s", initialLeftEncoder, initialRightEncoder, Robot.sensors.getYawDouble());
 
@@ -221,13 +227,14 @@ public class DriveMotionProfile extends Command {
     
     // Making this constant higher helps prevent the robot from overturning (overturning also will make it not drive far enough in the correct direction)
     // TODO MAKE THE -1 HERE MATCH uP WITH THE DIRECTION THE ROBOT SHOULD TURN
-    double turn = 0.8 * (-1.0/ANGLE_DIVIDE_CONSTANT) * angleDifference;
+    double turn = 0;//0.8 * (-1.0/ANGLE_DIVIDE_CONSTANT) * angleDifference;
     
     double leftOutput = l + turn;
     double rightOutput = r - turn;
 
-    Logger.consoleLog("outputs: " + leftOutput + ", " + rightOutput);
-    Logger.consoleLog("heading: " + gyroHeading + " desired: " + desiredHeading);
+    Logger.consoleLog("encoders: " + leftEncoder + ", " + rightEncoder + " outputs: " + leftOutput + ", " + rightOutput);
+    // Logger.consoleLog("outputs: " + leftOutput + ", " + rightOutput);
+    // Logger.consoleLog("heading: " + gyroHeading + " desired: " + desiredHeading);
 
     // Drives the bot based on the input
     Robot.driveBase.tankDrive(leftOutput, rightOutput, false); 
