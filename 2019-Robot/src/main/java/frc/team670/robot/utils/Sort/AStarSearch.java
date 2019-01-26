@@ -28,6 +28,9 @@ public class AStarSearch {
      * Returns empty if destination and start are same node
      */
     public static List<Edge> search(Node start, Node destination) {
+        
+        System.out.println("StartNode: " + start.getClass().getName() + ", DestNode: " + destination.getClass().getName());
+        
         if (start.equals(destination)) {
             return new ArrayList<Edge>();
         }
@@ -71,34 +74,37 @@ public class AStarSearch {
                 end = true;
             }
 
-            openList.remove(current);
-            closedList.add(current);
+            if(!end) {
+                openList.remove(current);
+                closedList.add(current);
 
-            for (Edge e : current.getEdges()) {
-                Node child = e.getDest();
+                for (Edge e : current.getEdges()) {
+                    Node child = e.getDest();
+                    System.out.println("Edge: " + e.getClass().getName() + ", DestinationNode: " + child.getClass().getName());
 
-                if (closedList.contains(child)) {
-                    continue;
+                    if (closedList.contains(child)) {
+                        continue;
+                    }
+
+                    int tempG = gValues.get(current) + e.getCost();
+                    int tempF = tempG + child.getHeuristicDistance(destination);
+
+                    if (!openList.contains(child) || fValues.get(child) == null) {
+                        fValues.put(child, tempF);
+                        openList.add(child);
+                    } else if (gValues.get(child) == null || tempG >= gValues.get(child)) {
+                        continue;
+                    }
+                    cameFrom.put(child, e);
+                    gValues.put(child, tempG);
                 }
-
-                int tempG = gValues.get(current) + e.getCost();
-                int tempF = tempG + child.getHeuristicDistance(destination);
-
-                if (!openList.contains(child) || fValues.get(child) == null) {
-                    fValues.put(child, tempF);
-                    openList.add(child);
-                } else if (gValues.get(child) == null || tempG >= gValues.get(child)) {
-                    continue;
-                }
-                cameFrom.put(child, e);
-                gValues.put(child, tempG);
             }
 
         }
 
-        // if (openList.isEmpty()) { //either start or end is island
-        //     throw new IllegalArgumentException("Invalid input, check for island");
-        // }
+        if (openList.isEmpty()) { //either start or end is island
+            throw new IllegalArgumentException("Invalid input, check for island");
+        }
         return getPath(start, destination, cameFrom);
     }
     

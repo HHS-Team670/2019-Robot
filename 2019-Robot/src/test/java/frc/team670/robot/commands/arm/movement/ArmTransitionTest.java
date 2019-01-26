@@ -29,41 +29,41 @@ public class ArmTransitionTest {
     @Test
     public void testArmTransitions() {
 
-        // TestElbow elbow = new TestElbow();
-        // TestWrist wrist = new TestWrist();
-        // TestExtension extension = new TestExtension();
-        // Arm arm = new Arm(elbow, wrist, extension);
+        TestElbow elbow = new TestElbow();
+        TestWrist wrist = new TestWrist();
+        TestExtension extension = new TestExtension();
+        Arm arm = new Arm(elbow, wrist, extension);
 
-        // HashMap<LegalState, ArmState> armStates = Arm.getStates();
+        HashMap<LegalState, ArmState> armStates = Arm.getStates();
 
-        // ArrayList<ArmState> states = new ArrayList<ArmState>(armStates.values());
+        ArrayList<ArmState> states = new ArrayList<ArmState>(armStates.values());
 
-        // for(ArmState startState : states) {
+        for(ArmState startState : states) {
 
-        //     ArmTransition[] transitions = startState.getEdges();
+            ArmTransition[] transitions = startState.getEdges();
 
-        //     for(ArmTransition transition : transitions) {                
-        //         ArmState dest = transition.getDest();
-        //         double finalElbowAngle = dest.getElbowAngle();
-        //         double finalWristAngle = dest.getWristAngle();
-        //         double finalExtensionLength = dest.getExtensionLength();
+            for(ArmTransition transition : transitions) {                
+                ArmState dest = transition.getDest();
+                double finalElbowAngle = dest.getElbowAngle();
+                double finalWristAngle = dest.getWristAngle();
+                double finalExtensionLength = dest.getExtensionLength();
 
 
-        //         Scheduler.getInstance().add(transition);  
-        //         transition.setRunWhenDisabled(true); // Must be true or it won't run       
-        //         transition.start();   
-        //         while(!transition.isCompleted()) {
-        //             Scheduler.getInstance().run();
-        //         }
+                Scheduler.getInstance().add(transition);  
+                transition.setRunWhenDisabled(true); // Must be true or it won't run       
+                transition.start();   
+                while(!transition.isCompleted()) {
+                    Scheduler.getInstance().run();
+                }
                 
-        //         assertEquals(finalElbowAngle, elbow.getAngle(), 0.00001);
-        //         assertEquals(finalWristAngle, wrist.getAngle(), 0.00001);
-        //         assertEquals(finalExtensionLength, extension.getLengthInches(), 0.00001);
-        //         assertEquals(dest.getCoordPosition(), Arm.getCoordPosition(elbow.getAngle(), wrist.getAngle(), extension.getLengthInches()));
-        //         assertEquals(dest, Arm.getCurrentState());
-        //     }
+                assertEquals(finalElbowAngle, elbow.getAngle(), 0.00001);
+                assertEquals(finalWristAngle, wrist.getAngle(), 0.00001);
+                assertEquals(finalExtensionLength, extension.getLengthInches(), 0.00001);
+                assertEquals(dest.getCoordPosition(), Arm.getCoordPosition(elbow.getAngle(), wrist.getAngle(), extension.getLengthInches()));
+                assertEquals(dest, Arm.getCurrentState());
+            }
 
-        // }
+        }
     }
 
 }

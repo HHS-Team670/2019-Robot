@@ -47,7 +47,8 @@ public class ArmPathGenerator {
       Logger.consoleLog("You really messed up.");
       return movements;
     } catch (IllegalArgumentException e) {
-      Logger.logException(e);
+      // Logger.logException(e);
+      Logger.consoleLog("IllegalArgumentException");
       return movements;
     // searched.put(currentState, transitions); //Stores current path in instance variable
     }

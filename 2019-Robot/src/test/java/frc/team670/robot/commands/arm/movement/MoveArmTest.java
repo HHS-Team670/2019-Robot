@@ -44,6 +44,18 @@ public class MoveArmTest {
         
         assertEquals(dest.getCoordPosition(), Arm.getCoordPosition(elbow.getAngle(), wrist.getAngle(), extension.getLengthInches()));
 
+        Arm.setState(Arm.getArmState(LegalState.PLACE_HATCHROCKETLOWF));
+        dest = Arm.getArmState(LegalState.NEUTRAL);
+        moveArm = ArmPathGenerator.getPath(dest, arm);
+        
+        Scheduler.getInstance().add(moveArm);  
+        moveArm.setRunWhenDisabled(true); // Must be true or it won't run       
+        moveArm.start();   
+        while(!moveArm.isCompleted()) {
+            Scheduler.getInstance().run();
+        }
+        assertEquals(dest.getCoordPosition(), Arm.getCoordPosition(elbow.getAngle(), wrist.getAngle(), extension.getLengthInches()));
+
     }
 
 }
