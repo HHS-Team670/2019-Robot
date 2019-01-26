@@ -10,6 +10,7 @@ package frc.team670.robot.commands.arm.zero;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.subsystems.elbow.Elbow;
+import frc.team670.robot.utils.Logger;
 
 /**
  * Zeroes the Elbow encoder by slowly driving it to its front limit switch and resetting its value.
@@ -20,14 +21,12 @@ public class ElbowForwardReset extends Command {
   public ElbowForwardReset(Elbow elbow) {
     requires(elbow);
     this.elbow = elbow;
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-
+    Logger.consoleLog();
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -49,6 +48,7 @@ public class ElbowForwardReset extends Command {
   protected void end() {
     elbow.zero(Elbow.MAX_ELBOW_FORWARD);
     elbow.setOutput(0);
+    Logger.consoleLog();
   }
 
   // Called when another command which requires one or more of the same
@@ -56,5 +56,6 @@ public class ElbowForwardReset extends Command {
   @Override
   protected void interrupted() {
     elbow.setOutput(0);
+    Logger.consoleLog();
   }
 }

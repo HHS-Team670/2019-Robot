@@ -40,7 +40,7 @@ public class MoveExtension extends Command {
   protected void initialize() {
     extension.initializeMotionmagic();
     executeCount = 0;
-    Logger.consoleLog("MoveExtension: distance: %s", distance);
+    Logger.consoleLog("distance: %s", distance);
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -48,7 +48,7 @@ public class MoveExtension extends Command {
   protected void execute() {
     extension.setMotionMagicSetpoint(distance);
     if(executeCount % 5 == 0) {
-      Logger.consoleLog("MoveExtension: distance: %s", distance);
+      Logger.consoleLog("distance: %s", distance);
     }
     executeCount++;
   }
@@ -62,14 +62,14 @@ public class MoveExtension extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Logger.consoleLog("MoveExtension: targetDistance: %s, endingDistance: %s", distance, extension.getLengthInches());
+    Logger.consoleLog("targetDistance: %s, endingDistance: %s", distance, extension.getLengthInches());
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    Logger.consoleLog("MoveExtension Interrupted");
+    Logger.consoleLog();
     end();
   }
 }

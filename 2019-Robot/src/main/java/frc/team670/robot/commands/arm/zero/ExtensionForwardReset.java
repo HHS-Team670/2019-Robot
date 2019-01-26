@@ -9,6 +9,7 @@ package frc.team670.robot.commands.arm.zero;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.subsystems.extension.Extension;
+import frc.team670.robot.utils.Logger;
 
 /**
  * Zeroes the Extension encoder by slowly driving it to its forward limit switch and resetting its value.
@@ -24,7 +25,7 @@ public class ExtensionForwardReset extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-
+    Logger.consoleLog();
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -46,6 +47,7 @@ public class ExtensionForwardReset extends Command {
   protected void end() {
     extension.zero(Extension.MAX_EXTENSION_FORWARD);
     extension.setOutput(0);
+    Logger.consoleLog();
   }
 
   // Called when another command which requires one or more of the same
@@ -53,5 +55,6 @@ public class ExtensionForwardReset extends Command {
   @Override
   protected void interrupted() {
     extension.setOutput(0);
+    Logger.consoleLog();
   }
 }

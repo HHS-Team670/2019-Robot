@@ -43,6 +43,7 @@ public class MoveArm extends CommandGroup {
   @Override
   protected void initialize() {
     ArmState currentState = Arm.getCurrentState();
+    Logger.consoleLog("currentState: %s", currentState.getClass().getName());
     movements = new CommandGroup();
     List<ArmTransition> transitions = searched.get(currentState);
     if (transitions == null) {

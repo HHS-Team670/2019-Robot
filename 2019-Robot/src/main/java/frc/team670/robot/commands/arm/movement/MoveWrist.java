@@ -41,7 +41,7 @@ public class MoveWrist extends Command {
   protected void initialize() {
     wrist.initializeMotionmagic();
     executeCount = 0;
-    Logger.consoleLog("MoveWrist: angle: %s", angle);
+    Logger.consoleLog("angle: %s", angle);
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -49,7 +49,7 @@ public class MoveWrist extends Command {
   protected void execute() {
     wrist.setMotionMagicSetpoint(angle);
     if(executeCount % 5 == 0) {
-      Logger.consoleLog("MoveWrist: angle: %s", angle);
+      Logger.consoleLog("angle: %s", angle);
     }
     executeCount++;
   }
@@ -63,14 +63,14 @@ public class MoveWrist extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Logger.consoleLog("MoveWrist: targetAngle: %s, endingAngle: %s", angle, wrist.getAngle());
+    Logger.consoleLog("targetAngle: %s, endingAngle: %s", angle, wrist.getAngle());
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    Logger.consoleLog("MoveWrist Interrupted");
+    Logger.consoleLog();
     end();
   }
 }

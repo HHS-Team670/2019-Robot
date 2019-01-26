@@ -14,6 +14,11 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
  * Represents the claw mechanism of the robot.
+ *  Release Ball: hard open, push
+ * Pick Up Ball: soft close
+ * Pick Up Hatch: hard open
+ * Release Hatch: hard close
+ * Opening Normally: soft open
  * @author shaylandias
  */
 public class Claw extends Subsystem {
@@ -21,36 +26,36 @@ public class Claw extends Subsystem {
   private static double PULSE_DURATION = 0.4; // In seconds
 
   private Compressor compressor;
-  private Solenoid hard, soft, push;
-  private boolean open;
+  private Solenoid openClose, hardSoft, push;
 
   public Claw() {
-
     compressor = new Compressor(RobotMap.PC_MODULE);
     compressor.setClosedLoopControl(true);
 
-    open = false;
-    hard = new Solenoid(RobotMap.HARD_GRIP_SOLENOID);
-    soft = new Solenoid(RobotMap.SOFT_GRIP_SOLENOID);
+    openClose = new Solenoid(RobotMap.HARD_GRIP_SOLENOID);
+    hardSoft = new Solenoid(RobotMap.SOFT_GRIP_SOLENOID);
     push = new Solenoid(RobotMap.CLAW_PUSH_SOLENOID);
     push.setPulseDuration(PULSE_DURATION);
   }
 
   /**
-   * Toggles the claw grip based on closed and soft
-   * @param closed True if claw should be closed, false if claw should be open
-   * @param soft True if claw should use soft grip, false if claw should use hard grip. If closed is false, this will not affect anything.
+   * Toggles the claw grip based on closed and soft.
    */
-  public void toggleGrip(boolean closed, boolean soft) {
-    if(soft) {
-      hard.set(false);
-      this.soft.set(open);
-    }
-    else {
-      this.soft.set(open);
-      this.hard.set(open);
-    }
+  public void toggleGrip() {
+    updateClaw(!openClose.get(), true);
+  }
 
+  public void closeClaw(boolean isSoft) {
+    updateClaw(true, isSoft);
+  }
+
+  public void openClaw(boolean isSoft) {
+    updateClaw(false, isSoft);
+  }
+
+  private void updateClaw(boolean isClosed, boolean isSoft) {
+    openClose.set(isClosed);
+    hardSoft.set(isSoft);
   }
 
   public void push() {
