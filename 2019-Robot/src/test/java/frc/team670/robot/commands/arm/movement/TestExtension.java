@@ -29,12 +29,7 @@ public class TestExtension extends BaseExtension {
     public void setMotionMagicSetpoint(double extensionLength) {
         this.extensionLength = extensionLength;
     }
-
-    @Override
-    public void initializeMotionmagic() {
-
-    }
-
+    
     @Override
     public void setCurrentLimit(int current) {
     }

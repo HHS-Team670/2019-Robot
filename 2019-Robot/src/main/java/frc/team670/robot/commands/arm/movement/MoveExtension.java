@@ -38,7 +38,6 @@ public class MoveExtension extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    extension.initializeMotionmagic();
     extension.setMotionMagicSetpoint(distance);
     executeCount = 0;
     Logger.consoleLog("distance: %s", distance);

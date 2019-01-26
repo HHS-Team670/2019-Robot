@@ -39,7 +39,6 @@ public class MoveElbow extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    elbow.initializeMotionmagic();
     elbow.setMotionMagicSetpoint(angle);
     executeCount = 0;
     Logger.consoleLog("angle: %s", angle);

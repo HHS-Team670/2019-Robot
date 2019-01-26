@@ -94,11 +94,6 @@ public class Elbow extends BaseElbow {
   public void setNormalCurrentLimit() {
     elbowRotationMain.configContinuousCurrentLimit(NORMAL_CONTINUOUS_CURRENT_LIMIT);
   }
-  
-  @Override
-  public void initializeMotionmagic() {
-    elbowRotationMain.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
-  }
 
   @Override
   public int getPositionTicks() {
@@ -139,6 +134,7 @@ public class Elbow extends BaseElbow {
 
   @Override
   public void setMotionMagicSetpoint(double elbowAngle) {
+    elbowRotationMain.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
     elbowRotationMain.set(ControlMode.MotionMagic, MathUtils.convertElbowDegreesToTicks(elbowAngle));
   }
 

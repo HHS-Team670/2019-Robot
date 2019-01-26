@@ -39,7 +39,6 @@ public class MoveWrist extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    wrist.initializeMotionmagic();
     wrist.setMotionMagicSetpoint(angle);
     executeCount = 0;
     Logger.consoleLog("angle: %s", angle);
