@@ -32,6 +32,7 @@ public class MoveElbow extends Command {
    */
   public MoveElbow(BaseElbow elbow, double angle) {
     requires(elbow);
+    this.angle = angle;
   }
 
   // Called just before this Command runs the first time

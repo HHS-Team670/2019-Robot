@@ -32,6 +32,7 @@ public class MoveWrist extends Command {
    */
   public MoveWrist(BaseWrist wrist, double angle) {
     requires(wrist);
+    this.angle = angle;
   }
 
   // Called just before this Command runs the first time

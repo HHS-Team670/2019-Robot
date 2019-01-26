@@ -62,6 +62,9 @@ public class Wrist extends BaseWrist {
     wristRotation.configClosedloopRamp(RAMP_RATE);
     wristRotation.configOpenloopRamp(RAMP_RATE);
 
+    // Sets the Quadrature Position based on the pulse width to work as an absolute encoder
+    wristRotation.getSensorCollection().setQuadraturePosition(wristRotation.getSensorCollection().getPulseWidthPosition() * 4, 0); // Times 4 since Quadrature is out of 4096 while Pulse Width is 1024
+
   }
   
   @Override

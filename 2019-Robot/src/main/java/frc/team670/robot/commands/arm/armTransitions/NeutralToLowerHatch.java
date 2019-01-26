@@ -16,7 +16,7 @@ import frc.team670.robot.subsystems.Arm.LegalState;
 public class NeutralToLowerHatch extends ArmTransition {
   
   public NeutralToLowerHatch(Arm arm) {
-    super(Arm.getArmState(LegalState.NEUTRAL), Arm.getArmState(LegalState.NEUTRAL), arm);
+    super(LegalState.NEUTRAL, LegalState.NEUTRAL, arm);
 
     addParallel(new MoveExtension(arm.getExtension(), 50));
     addParallel(new MoveWrist(arm.getWrist(), 33));

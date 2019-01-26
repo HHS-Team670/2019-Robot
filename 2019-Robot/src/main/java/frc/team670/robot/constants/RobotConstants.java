@@ -20,7 +20,7 @@ public class RobotConstants {
      */
     public static final int DIO_TICKS_PER_ROTATION = 4096;
 
-    // TODO figure out real values for each constants for arm
+    // TODO Set all of these!!!!
     public static double EXTENSION_TICKS_PER_MOTOR_ROTATION = 1024; //Subject to change, measure real value
     public static double EXTENSION_MOTOR_ROTATIONS_PER_INCH = 0.168748; //Subject to change, measure real value
     /** Elbow will have an absolute Mag Encoder */

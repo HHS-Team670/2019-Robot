@@ -12,9 +12,10 @@ import java.awt.geom.Point2D;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
+import frc.team670.robot.subsystems.Arm.LegalState;
 import frc.team670.robot.subsystems.elbow.Elbow;
-import frc.team670.robot.subsystems.wrist.Wrist;
 import frc.team670.robot.subsystems.extension.Extension;
+import frc.team670.robot.subsystems.wrist.Wrist;
 import frc.team670.robot.utils.functions.MathUtils;
 import frc.team670.robot.utils.sort.Edge;
 
@@ -24,13 +25,13 @@ import frc.team670.robot.utils.sort.Edge;
    */
 public abstract class ArmTransition extends CommandGroup implements Edge {
 
-  private ArmState source, dest;
+  private LegalState source, dest;
 
   protected Elbow elbow;
   protected Wrist wrist;
   protected Extension extension;
 
-  protected ArmTransition(ArmState source, ArmState dest, Arm arm) {
+  protected ArmTransition(LegalState source, LegalState dest, Arm arm) {
     this.source = source;
     this.dest = dest;
   }
@@ -40,7 +41,7 @@ public abstract class ArmTransition extends CommandGroup implements Edge {
    */
   @Override
   public ArmState getSource() {
-    return source;
+    return Arm.getArmState(source);
   }
 
   /**
@@ -48,14 +49,14 @@ public abstract class ArmTransition extends CommandGroup implements Edge {
    */
   @Override
   public ArmState getDest() {
-    return dest;
+    return Arm.getArmState(dest);
   }
 
   /**
    * Returns the sum of the number of inches that the arm must move to travel the path.
    */
   public int getCost() {
-    Point2D.Double sourceCoord = source.getCoordPosition(), destCoord = dest.getCoordPosition();
+    Point2D.Double sourceCoord = getSource().getCoordPosition(), destCoord = getDest().getCoordPosition();
     return (int)(MathUtils.findDistance(sourceCoord.x, sourceCoord.y, destCoord.x, destCoord.y));
   }
 

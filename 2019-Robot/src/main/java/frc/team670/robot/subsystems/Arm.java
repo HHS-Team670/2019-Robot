@@ -169,7 +169,7 @@ public class Arm  {
      * @param wristAngle The absolute Wrist angle with 0 being in line with the arm in the space (180,-180) with 180 being towards the front of the robot.
      * @param transitions The ArmTransitions that begin at this ArmState
      */
-    public ArmState(double extensionLength, double elbowAngle, double wristAngle, ArmTransition[] transitions) {
+    protected ArmState(double extensionLength, double elbowAngle, double wristAngle, ArmTransition[] transitions) {
       this.extensionLength = extensionLength;
       this.elbowAngle = elbowAngle;
       this.wristAngle = wristAngle;
@@ -215,7 +215,7 @@ public class Arm  {
   }
 
   private class Neutral extends ArmState {
-    public Neutral(Arm arm) {
+    private Neutral(Arm arm) {
       super(0, 45, 45, new ArmTransition[] { new NeutralToLowerHatch(arm) });
     }
   }
