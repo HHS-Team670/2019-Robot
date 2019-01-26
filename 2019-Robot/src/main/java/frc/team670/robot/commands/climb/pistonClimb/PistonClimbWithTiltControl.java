@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.Command;
 
 import frc.team670.robot.Robot;
+import frc.team670.robot.subsystems.Climber;
 import frc.team670.robot.dataCollection.NullPIDOutput;
 import frc.team670.robot.utils.functions.SettingUtils;
 import frc.team670.robot.utils.Logger;
@@ -28,17 +29,23 @@ public class PistonClimbWithTiltControl extends Command {
   private boolean goingUp;
   private int loggingIterationCounter, setPoint;
 
+  private Climber climber;
+
   /**
    * @param setPoint the desired end goal of the climber (Flat, Level 2 or Level 3)
+   * @param climber the climber upon which this command will be called on
    */
-  public PistonClimbWithTiltControl(int setPoint) {
+  public PistonClimbWithTiltControl(int setPoint, Climber climber) {
     requires(Robot.climber);
     tiltController = new PIDController(P, I, D, F, Robot.sensors.getNavXPitchPIDSource(), new NullPIDOutput());
     this.setPoint = setPoint;
+    this.climber = climber;
   }
 
   // Called just before this Command runs the first time
   protected void initialize() {
+    
+    // Scheduler.getInstance().add(new MoveArm()) TODO: move arm so it's  at neutral state on the climb up
     Robot.climber.enableClimberPIDControllers(setPoint);
     tiltController.setSetpoint(0);
     tiltController.setAbsoluteTolerance(tiltTolerance);
@@ -66,7 +73,7 @@ public class PistonClimbWithTiltControl extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return Robot.climber.getFrontAndBackControllerOnTarget();
+    return climber.getFrontControllerOnTarget() && climber.getBackControllerOnTarget();
   }
 
   // Called once after isFinished returns true

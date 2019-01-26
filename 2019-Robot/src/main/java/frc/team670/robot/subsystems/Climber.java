@@ -33,6 +33,8 @@ public class Climber extends Subsystem {
   private static final double P = 0.01, I = 0.0, D = 0.0, F = 0.0;
 
   private boolean frontPistonsRetracted, backPistonsRetracted;
+  private boolean frontPistonRetractionInProgress, backPistonRetractionInProgress;
+
   private int climberEncoderTolerance = 10; //TODO Set this
  
   
@@ -48,6 +50,9 @@ public class Climber extends Subsystem {
 
     frontPistonsRetracted = true;
     backPistonsRetracted = true;
+
+    frontPistonRetractionInProgress = false;
+    backPistonRetractionInProgress = false;
 
     this.sensors = sensors;
 
@@ -86,22 +91,6 @@ public class Climber extends Subsystem {
    */
   public void setBackPistonOutputRange(double minValue, double maxValue){
     backPIDController.setOutputRange(minValue, maxValue);
-  }
-
-  /**
-   * Returns the front PIDController
-   * @return the PID controller that controls the front pistons
-   */
-  public PIDController getFrontController() {
-    return frontPIDController;
-  }
-
-  /**
-   * Returns the back PIDController
-   * @return the PID controller that controls the back pistons
-   */
-  public PIDController getBackController() {
-    return backPIDController;
   }
 
   /**
@@ -197,11 +186,55 @@ public class Climber extends Subsystem {
     backPistonsRetracted = setRetracted;
   }
 
-  /**
-   * Returns true if both front and back controllers are on target and false if not
+    /**
+   * Returns whether or not the command for retracting the front pistons has been called and is in progress
+   * 
+   * @return Whether or not the command for retracting the front pistons has been called and is in progress
    */
-  public boolean getFrontAndBackControllerOnTarget(){
-    return (frontPIDController.onTarget() && backPIDController.onTarget());
+  public boolean getFrontPistonsRetractionInProgress(){
+    return frontPistonRetractionInProgress;
+  }
+
+  /**
+   * Returns whether or not the command for retracting the back pistons has been called and is in progress
+   * 
+   * @return Whether or not the command for retracting the back pistons has been called and is in progress
+   */
+  public boolean getBackPistonsRetractionInProgress(){
+    return backPistonRetractionInProgress;
+  }
+
+  /**
+   * Sets whether or not the command for retracting the front pistons has been called and is in progress
+   * 
+   * @param setRetractionInProgress Whether or not the command for retracting the front pistons has been called and is in progress
+   */
+  public void setFrontPistonsRetractionInProgress(boolean setRetractionInProgress){
+    frontPistonRetractionInProgress = setRetractionInProgress;
+  }
+
+  /**
+   * Sets whether or not the command for retracting the back pistons has been called and is in progress
+   * 
+   * @param setRetractionInProgress Whether or not the command for retracting the back pistons has been called and is in progress
+   */
+  public void setBackPistonsRetractionInProgress(boolean setRetractionInProgress){
+    backPistonRetractionInProgress = setRetractionInProgress;
+  }
+
+
+  /**
+   * Returns true if the front controller is on target and false if not
+   */
+  public boolean getFrontControllerOnTarget(){
+    return frontPIDController.onTarget();
+  }
+
+  /**
+   * Returns true if the back controller is on target and false if not
+   */
+  public boolean getBackControllerOnTarget(){
+    return backPIDController.onTarget();
   }
 
   /**
