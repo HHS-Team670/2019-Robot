@@ -59,7 +59,7 @@ public class MoveArm extends CommandGroup {
       movements.addSequential(t);
     }
     movements.start(); // This might need to be Scheduler.addCommand(movements);
-
+    Logger.consoleLog();
   }
 
   // Called once after isFinished returns true
