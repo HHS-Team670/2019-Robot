@@ -7,25 +7,31 @@
 
 package frc.team670.robot.commands.claw;
 
-import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team670.robot.subsystems.Claw;
+import edu.wpi.first.wpilibj.command.InstantCommand;
 
 /**
- * Add your docs here.
+ * Switches the claw between an opened/closed state with a hard/soft grip
  */
-public class OpenClaw extends InstantCommand {
-  
-  private Claw claw;
+public class ToggleClawOpen extends InstantCommand {
 
-  public OpenClaw(Claw claw) {
-    super();
+  private Claw claw;
+  private boolean soft;
+
+  /**
+   * @param claw The Claw object
+   * @param soft True if the claw should use soft grip,
+   */
+  public ToggleClawOpen(Claw claw, boolean soft) {
     this.claw = claw;
+    this.soft = soft;
     requires(claw);
   }
 
-  // Called once when the command executes
+  // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+
   }
 
 }

@@ -71,7 +71,7 @@ public class Elbow extends BaseElbow {
     elbowRotationMain.enableCurrentLimit(true);
     elbowRotationMain.configPeakCurrentLimit(PEAK_CURRENT_LIMIT);
 
-    // Sets the Quadrature Position based on the pulse width to work as an absolute encoder
+    // Sets the Quadrature Position based on the pulse width to work as an absolute encoder 
     elbowRotationMain.getSensorCollection().setQuadraturePosition(elbowRotationMain.getSensorCollection().getPulseWidthPosition() * 4, 0); // Times 4 since Quadrature is out of 4096 while Pulse Width is 1024
   }
 

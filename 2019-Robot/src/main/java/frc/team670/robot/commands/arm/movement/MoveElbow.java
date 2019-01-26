@@ -38,6 +38,7 @@ public class MoveElbow extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    System.out.println("Initialized MoveElbow");
     elbow.initializeMotionmagic();
     executeCount = 0;
     Logger.consoleLog("MoveElbow: angle: %s", angle);
@@ -46,6 +47,7 @@ public class MoveElbow extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    System.out.println("Moved Elbow");
     elbow.setMotionMagicSetpoint(angle);
     if(executeCount % 5 == 0) {
       Logger.consoleLog("MoveElbow: angle: %s", angle);
@@ -62,6 +64,7 @@ public class MoveElbow extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    System.out.println("MoveElbow Ended");
     Logger.consoleLog("MoveElbow: targetAngle: %s, endingAngle: %s", angle, elbow.getAngle());
   }
 

@@ -18,9 +18,10 @@ public class NeutralToLowerHatch extends ArmTransition {
   public NeutralToLowerHatch(Arm arm) {
     super(LegalState.NEUTRAL, LegalState.NEUTRAL, arm);
 
-    addParallel(new MoveExtension(arm.getExtension(), 50));
-    addParallel(new MoveWrist(arm.getWrist(), 33));
-    addSequential(new MoveElbow(arm.getElbow(), 6));
+    addSequential(new MoveElbow(arm.getElbow(), 30));
+    addParallel(new MoveWrist(arm.getWrist(), 40));
+    addParallel(new MoveExtension(arm.getExtension(), 6));
+
 
 
     /*

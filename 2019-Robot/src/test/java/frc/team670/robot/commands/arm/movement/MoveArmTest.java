@@ -43,24 +43,22 @@ public class MoveArmTest {
             ArmTransition[] transitions = startState.getEdges();
 
             for(ArmTransition transition : transitions) {                
-                elbow = new TestElbow();
-                wrist = new TestWrist();
-                extension = new TestExtension();
-
-
                 ArmState dest = transition.getDest();
                 double finalElbowAngle = dest.getElbowAngle();
                 double finalWristAngle = dest.getWristAngle();
                 double finalExtensionLength = dest.getExtensionLength();
 
-                Scheduler.getInstance().add(transition);
-                while(!transition.isCompleted()) {
+                Scheduler.getInstance().add(transition);                
+                for(int i = 0; i < 100; i++) {
                     Scheduler.getInstance().run();
                 }
 
                 System.out.println(finalElbowAngle);
                 System.out.println(finalWristAngle);
                 System.out.println(finalExtensionLength);
+                System.out.println(elbow.getAngle());
+                System.out.println(wrist.getAngle());
+                System.out.println(extension.getLengthInches());
                 
                 assertEquals(finalElbowAngle, elbow.getAngle(), 0.00001);
                 assertEquals(finalWristAngle, wrist.getAngle(), 0.00001);

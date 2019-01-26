@@ -64,7 +64,7 @@ public class Arm  {
     // states.put(LegalState.PLACE_HATCHROCKETLOWB, new Neutral(this)); 
     // states.put(LegalState.PLACE_HATCHROCKETMEDF, new Neutral(this));
     // states.put(LegalState.PLACE_HATCHROCKETMEDB, new Neutral(this));
-    currentState = new Neutral(this); //Default state
+    currentState = getArmState(LegalState.NEUTRAL); //Default state
     /*
      *
     NEUTRAL(0), START_BALL(1), START_HATCH(2), START_EMPTY(3), IN_BALLGROUNDF(4), IN_BALLSTATIONF(5),
@@ -169,7 +169,7 @@ public class Arm  {
      * @param wristAngle The absolute Wrist angle with 0 being in line with the arm in the space (180,-180) with 180 being towards the front of the robot.
      * @param transitions The ArmTransitions that begin at this ArmState
      */
-    protected ArmState(double extensionLength, double elbowAngle, double wristAngle, ArmTransition[] transitions) {
+    protected ArmState(double elbowAngle, double wristAngle, double extensionLength, ArmTransition[] transitions) {
       this.extensionLength = extensionLength;
       this.elbowAngle = elbowAngle;
       this.wristAngle = wristAngle;
@@ -216,7 +216,7 @@ public class Arm  {
 
   private class Neutral extends ArmState {
     private Neutral(Arm arm) {
-      super(0, 45, 45, new ArmTransition[] { new NeutralToLowerHatch(arm) });
+      super(30, 40, 6, new ArmTransition[] { new NeutralToLowerHatch(arm) });
     }
   }
 
