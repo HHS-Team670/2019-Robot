@@ -255,45 +255,33 @@ void setCylonBounce(){
   
   delay(returnDelay);
 }
-void setDisplayLightShow(){
-  switch(lightShowData){
-    case "0L":
-     setRunningAllianceColors();
-     break;
-    case "1L":
+void displayLightShow(){
+    if(lightShowData=="0L"){
+      setRunningAllianceColors();
+    }else if(lightShowData=="1L"){
       setSolidGreen();
-      break;
-    case "2L":
+    }else if(lightShowData=="2L"){
       setSolidRed();
-      break;
-    case "3L":
+    }else if(lightShowData=="3L"){
       setSolidPurple();
-      break;
-    case "4L":
+    }else if(lightShowData=="4L"){
       setClimbingGreenLights();
-      break;
-    case "5L":
+    }else if(lightShowData=="5L"){
       setStrobe();
-      break;
-    case "6L":
+    }else if(lightShowData=="6L"){
       setRandomStrobe();
-    case "7L":
+    }else if(lightShowData=="7L"){
       setBounceBackground();
-      break;
-    case "8L":
+    }else if(lightShowData=="8L"){
       setCylonBounce();
-      break;
-    case "9L":
+    }else if(lightShowData=="9L"){
       setRainbow();
-      break;
+    }
   
-  }
 }
 
-//USE
-
  
-void setTheaterChaseRainbow() {
+void setRainbow() {
   byte *c;
   int speedDelay=10;
   for (int j=0; j < 256; j++) {     // cycle all 256 colors in the wheel
@@ -304,7 +292,7 @@ void setTheaterChaseRainbow() {
         }
         strip2.show();
        
-        delay(SpeedDelay);
+        delay(speedDelay);
        
         for (int i=0; i < strip2.numPixels(); i=i+3) {
           strip2.setPixelColor(i+q, 0,0,0);        //turn every third pixel off
@@ -385,11 +373,11 @@ void setup()
 void loop()
 {                                                   //Ran indefinitly after setup()
   parseData();
-
+ strip2.setBrightness(100); 
 if(stateData==stillDrive){
-  displayLightShow()
+  displayLightShow();
 } else if(stateData==forwardDrive){
-  displayLightShow()
+  displayLightShow();
 } else if(stateData==reverseDrive){
   displayLightShow();
 } else if(stateData==visionLock){
@@ -399,7 +387,7 @@ if(stateData==stillDrive){
 }
 
   //Below here is code to control the LED's from the data obtained above
-  strip2.setBrightness(100); 
+ 
     
   resetConnectionTimer();
 }
