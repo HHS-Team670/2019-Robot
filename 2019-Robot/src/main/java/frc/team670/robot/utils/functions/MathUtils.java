@@ -117,11 +117,11 @@ public class MathUtils {
     }
 
     public static double convertElbowDegreesToTicks(double degrees) {
-        return (degrees / 360) * RobotConstants.ELBOW_TICKS_PER_MOTOR_ROTATION;
+        return (degrees / 360) * RobotConstants.ELBOW_TICKS_PER_ROTATION;
     }
 
     public static double convertElbowTicksToDegrees(double ticks) {
-        return (ticks / RobotConstants.ELBOW_TICKS_PER_MOTOR_ROTATION) * 360;
+        return (ticks / RobotConstants.ELBOW_TICKS_PER_ROTATION) * 360;
     }
 
     public static double convertWristDegreesToTicks(double degrees) {
