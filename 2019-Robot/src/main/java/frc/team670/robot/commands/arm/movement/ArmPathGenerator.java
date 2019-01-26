@@ -36,26 +36,28 @@ public class ArmPathGenerator {
    * */
   public static CommandGroup getPath(ArmState destination, Arm arm) {
     ArmState currentState = Arm.getCurrentState();
-    Logger.consoleLog("currentState: %s", currentState.getClass().getName());
+    Logger.consoleLog("currentState: %s, destinationState: %s", currentState.getClass().getName(), destination.getClass().getName());
     CommandGroup movements = new CommandGroup();
     // List<ArmTransition> transitions = searched.get(currentState);
     List<ArmTransition> transitions = null;
-    if (transitions == null) {
-      try {
-        transitions = (List<ArmTransition>)(List<?>)(AStarSearch.search(currentState, destination));
-      } catch(ClassCastException e) {
-        Logger.logException(e);
-        Logger.consoleLog("You really messed up.");
-      }
-      // searched.put(currentState, transitions); //Stores current path in instance variable
+    try {
+      transitions = (List<ArmTransition>)(List<?>)(AStarSearch.search(currentState, destination));
+    } catch(ClassCastException e) {
+      Logger.logException(e);
+      Logger.consoleLog("You really messed up.");
+      return movements;
+    } catch (IllegalArgumentException e) {
+      Logger.logException(e);
+      return movements;
+    // searched.put(currentState, transitions); //Stores current path in instance variable
     }
     for (ArmTransition t : transitions) {
+      Logger.consoleLog("TransitionName: %s", t.getClass().getName());
       movements.addSequential(t);
     }
 
     movements.addSequential(new SetArmState(destination));
 
-    Logger.consoleLog();
     return movements;
   }
 

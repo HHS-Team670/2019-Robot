@@ -13,20 +13,17 @@ import frc.team670.robot.commands.arm.movement.MoveWrist;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.LegalState;
 
-public class NeutralToLowerHatch extends ArmTransition {
-  
-  public NeutralToLowerHatch(Arm arm) {
-    super(LegalState.NEUTRAL, LegalState.PLACE_HATCHROCKETLOWF, arm);
+public class LowerHatchToNeutral extends ArmTransition {
+  /**
+   * Add your docs here.
+   */
+  public LowerHatchToNeutral(Arm arm) {
 
-    addSequential(new MoveElbow(arm.getElbow(), 30));
-    addParallel(new MoveWrist(arm.getWrist(), 40));
-    addParallel(new MoveExtension(arm.getExtension(), 6));
+    super(LegalState.PLACE_HATCHROCKETLOWF, LegalState.NEUTRAL, arm);
 
-
-    /*
-     * Enter your addSequential() and addParallel() commands here.
-     */
+    addSequential(new MoveElbow(arm.getElbow(), 0));
+    addParallel(new MoveWrist(arm.getWrist(), 0));
+    addParallel(new MoveExtension(arm.getExtension(), 0));
 
   }
-
 }

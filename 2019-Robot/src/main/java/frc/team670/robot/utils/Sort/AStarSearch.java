@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import frc.team670.robot.utils.Logger;
+
 /**
  * Implementation of an A* search algorithm
  * https://www.geeksforgeeks.org/a-search-algorithm/
@@ -22,7 +24,7 @@ public class AStarSearch {
      * @param start       The node that the user wishes to start from
      * @param destination The target node that the user wishes to reach
      * @return A path of nodes that the search algorithm has found. 
-     * Exception
+     * @exception IllegalArgumentException throws if the Node you are starting from has no open paths from it
      * Returns empty if destination and start are same node
      */
     public static List<Edge> search(Node start, Node destination) {
@@ -94,9 +96,9 @@ public class AStarSearch {
 
         }
 
-        if (openList.isEmpty()) { //either start or end is island
-            throw new IllegalArgumentException("Invalid input, check for island");
-        }
+        // if (openList.isEmpty()) { //either start or end is island
+        //     throw new IllegalArgumentException("Invalid input, check for island");
+        // }
         return getPath(start, destination, cameFrom);
     }
     

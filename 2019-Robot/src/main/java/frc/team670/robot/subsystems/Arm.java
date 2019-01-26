@@ -11,6 +11,7 @@ import java.awt.geom.Point2D;
 import java.util.HashMap;
 
 import frc.team670.robot.commands.arm.armTransitions.ArmTransition;
+import frc.team670.robot.commands.arm.armTransitions.LowerHatchToNeutral;
 import frc.team670.robot.commands.arm.armTransitions.NeutralToLowerHatch;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.subsystems.elbow.BaseElbow;
@@ -216,13 +217,13 @@ public class Arm  {
 
   private class Neutral extends ArmState {
     private Neutral(Arm arm) {
-      super(30, 40, 6, new ArmTransition[] { new NeutralToLowerHatch(arm) });
+      super(0, 0, 0, new ArmTransition[] { new NeutralToLowerHatch(arm) });
     }
   }
 
   private class LowHatchPlace extends ArmState {
     private LowHatchPlace(Arm arm) {
-      super(30, 40, 6, new ArmTransition[] { });
+      super(30, 40, 6, new ArmTransition[] { new LowerHatchToNeutral(arm) });
     }
   }
 

@@ -60,6 +60,11 @@ public abstract class ArmTransition extends CommandGroup implements Edge {
     return (int)(MathUtils.findDistance(sourceCoord.x, sourceCoord.y, destCoord.x, destCoord.y));
   }
 
+  @Override
+  protected void end() {
+    Arm.setState(getDest());
+  }
+
 }
 
 

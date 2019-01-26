@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
 import frc.team670.robot.subsystems.Arm.LegalState;
+import frc.team670.robot.utils.Logger;
 
 /**
  * Add your docs here.
@@ -29,6 +30,7 @@ public class MoveArmTest {
         TestWrist wrist = new TestWrist();
         TestExtension extension = new TestExtension();
         Arm arm = new Arm(elbow, wrist, extension);
+        Arm.setState(Arm.getArmState(LegalState.NEUTRAL));
         ArmState dest = Arm.getArmState(LegalState.PLACE_HATCHROCKETLOWF);
 
         CommandGroup moveArm = ArmPathGenerator.getPath(dest, arm);
