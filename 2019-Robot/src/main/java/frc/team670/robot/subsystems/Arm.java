@@ -12,15 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import frc.team670.robot.commands.arm.armTransitions.ArmTransition;
-import frc.team670.robot.commands.arm.armTransitions.IntakeBallIntakeForwardToNeutral;
-import frc.team670.robot.commands.arm.armTransitions.NeutralToIntakeBallIntakeForward;
 import frc.team670.robot.commands.arm.armTransitions.CommonTransition;
-import frc.team670.robot.commands.arm.armTransitions.LowerHatchToNeutral;
-import frc.team670.robot.commands.arm.armTransitions.NeutralToLowerHatch;
-import frc.team670.robot.commands.arm.armTransitions.NeutralToReadyToClimb;
-import frc.team670.robot.commands.arm.armTransitions.NeutralToStow;
-import frc.team670.robot.commands.arm.armTransitions.ReadyToClimbToNeutral;
-import frc.team670.robot.commands.arm.armTransitions.StowToNeutral;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.subsystems.elbow.BaseElbow;
 import frc.team670.robot.subsystems.extension.BaseExtension;
@@ -55,8 +47,8 @@ public class Arm {
     // State Setup
     states = new HashMap<LegalState, ArmState>();
     states.put(LegalState.NEUTRAL, new Neutral(this));
-    states.put(LegalState.INTAKE_BALL_INTAKE_FORWARD, new IntakeBallIntakeForward(this));
-    states.put(LegalState.READY_TO_CLIMB, new ReadyToClimb(this));
+    // states.put(LegalState.INTAKE_BALL_INTAKE_FORWARD, new IntakeBallIntakeForward(this));
+    // states.put(LegalState.READY_TO_CLIMB, new ReadyToClimb(this));
     // states.put(LegalState.START_BALL, new Neutral(this)); // This obviously needs
     // to be changed
     // states.put(LegalState.START_HATCH, new Neutral(this));
@@ -71,7 +63,7 @@ public class Arm {
     // states.put(LegalState.PLACE_BALLCARGOB, new Neutral(this));
     // states.put(LegalState.PLACE_HATCHCARGOF, new Neutral(this));
     // states.put(LegalState.PLACE_HATCHCARGOB, new Neutral(this));
-    states.put(LegalState.PLACE_HATCHROCKETLOWF, new LowHatchPlace(this)); 
+    states.put(LegalState.PLACE_HATCH_ROCKET_LOW_FORWARD, new LowHatchPlace(this)); 
     // states.put(LegalState.PLACE_HATCHROCKETLOWB, new Neutral(this)); 
     // states.put(LegalState.PLACE_HATCHROCKETMEDF, new Neutral(this));
     // states.put(LegalState.PLACE_HATCHROCKETMEDB, new Neutral(this));
@@ -165,6 +157,7 @@ public class Arm {
     PLACE_HATCH_ROCKET_MIDDLE_FORWARD(17), PLACE_HATCH_ROCKET_MIDDLE_BACK(18), PLACE_BALL_ROCKET_LOW_FORWARD(19),
     PLACE_BALL_ROCKET_LOW_BACK(20), PLACE_BALL_ROCKET_MIDDLE_FORWARD(21), PLACE_BALL_ROCKET_MIDDLE_BACK(22),
     READY_TO_CLIMB(23), STOW(24), DEFENSE(25), INTAKE_BALL_GROUND_BACK(26);
+    // STOW means that the intake is in and the arm is on top of the intake. Probably the same configuration as DEFENSE
 
     private final int ID;
 
@@ -259,22 +252,14 @@ public class Arm {
 
   private class Neutral extends ArmState {
     private Neutral(Arm arm) {
-      super(0, 0, 0, new ArmTransition[] { new CommonTransition(LegalState.NEUTRAL, LegalState.PLACE_HATCHROCKETLOWF, arm) });
+      super(0, 0, 0, new ArmTransition[] { new CommonTransition(LegalState.NEUTRAL, LegalState.PLACE_HATCH_ROCKET_LOW_FORWARD, arm) });
     }
   }
 
   private class LowHatchPlace extends ArmState {
     private LowHatchPlace(Arm arm) {
-      super(30, 40, 6, new ArmTransition[] { new CommonTransition(LegalState.PLACE_HATCHROCKETLOWF, LegalState.NEUTRAL, arm)});
+      super(30, 40, 6, new ArmTransition[] { new CommonTransition(LegalState.PLACE_HATCH_ROCKET_LOW_FORWARD, LegalState.NEUTRAL, arm)});
     }
   }
-
-  private class Stow extends ArmState {
-    public Stow(Arm arm){ // TODO set this
-      super(0, -45, 0, new ArmTransition[] { new StowToNeutral(arm) });
-    }
-  }
-
-
 
 }

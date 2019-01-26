@@ -55,15 +55,13 @@ public class ArmClimb extends Command {
 
   // Called just before this Command runs the first time
   @Override
-  protected void initialize() { 
-    //Moves arm up to ready to climb state
-    Scheduler.getInstance().add(new MoveArm(Arm.getArmState(LegalState.READY_TO_CLIMB), arm));
+  protected void initialize() {
 
     extension.enableExtensionPIDController();
 
     heightInInches = climber.getFrontTalonPositionInInches() + RobotConstants.ARM_HEIGHT_IN_INCHES + RobotConstants.DRIVEBASE_TO_GROUND; // TODO get the actual method
 
-    Logger.consoleLog("startHeightOfRobot%s startAngleOfElbow%s ", heightInInches, elbow.getAngle());
+    Logger.consoleLog("startHeightOfRobot%s, startAngleOfElbow%s ", heightInInches, elbow.getAngle());
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -79,7 +77,7 @@ public class ArmClimb extends Command {
     extension.setPIDControllerSetpoint(Extension.EXTENSION_ENCODER_OUT - deltaSetPointInTicks); // Changes the
                                                                                                     // setpoint
     if (loggingIterationCounter % 7 == 0)
-      Logger.consoleLog("heightOfRobot%s angleOfElbow%s extensionSetpoint%s ", heightInInches, elbow.getAngle(), Extension.EXTENSION_ENCODER_OUT - deltaSetPointInTicks);
+      Logger.consoleLog("heightOfRobot%s, angleOfElbow%s, extensionSetpoint%s ", heightInInches, elbow.getAngle(), Extension.EXTENSION_ENCODER_OUT - deltaSetPointInTicks);
 
     loggingIterationCounter++;
   }
@@ -104,15 +102,15 @@ public class ArmClimb extends Command {
   protected void end() {
     releaseElbow();
     Scheduler.getInstance().add(new MoveArm(Arm.getArmState(LegalState.STOW), arm));
-    Logger.consoleLog("endHeightOfRobot%s endAngleOfElbow%s ", heightInInches, elbow.getAngle());
+    Logger.consoleLog("endHeightOfRobot%s, endAngleOfElbow%s ", heightInInches, elbow.getAngle());
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    Logger.consoleLog();
     end();
-    Logger.consoleLog("ArmClimb interrupted");
   }
 
   /**

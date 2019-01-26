@@ -35,10 +35,8 @@ public class RetractBackPistons extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    if (loggingIterationCounter % 7 == 0)
-      Logger.consoleLog("CurrentBackPistonPosition:%s", climber.getBackTalonPositionInTicks());
-
-      loggingIterationCounter++;
+    Logger.consoleLog("CurrentBackPistonPosition:%s", climber.getBackTalonPositionInTicks());
+    loggingIterationCounter++;
   }
 
   // Make this return true when this Command no longer needs to run execute()
@@ -54,7 +52,7 @@ public class RetractBackPistons extends Command {
 
     //Retraction is no longer in progress, so the pistons have been retracted all the way
     climber.setBackPistonsRetractionInProgress(false);
-    Logger.consoleLog("EndBackPistonPosition:%s", climber.getBackTalonPositionInTicks());
+    Logger.consoleLog("BackPistonPosition:%s", climber.getBackTalonPositionInTicks());
   }
 
   // Called when another command which requires one or more of the same
@@ -62,6 +60,6 @@ public class RetractBackPistons extends Command {
   @Override
   protected void interrupted() {
     end();
-    Logger.consoleLog("RetractBackPiston interrupted");
+    Logger.consoleLog();
   }
 }

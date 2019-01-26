@@ -20,7 +20,7 @@ import frc.team670.robot.utils.Logger;
 public class JoystickPistonClimb extends Command {
   private Climber climber;
   private MustangController controller;
-  private int tolerance = 500 + RobotConstants.PISTON_ENCODER_FLAT;
+  private int tolerance = 500;
   private int loggingIterationCounter;
 
   /**
@@ -75,8 +75,7 @@ public class JoystickPistonClimb extends Command {
 
     climber.drivePistons(frontPower, backPower);
 
-    if (loggingIterationCounter % 7 == 0)
-      Logger.consoleLog("currentBackPistonPosition:%s currentFrontPistonPosition:%s", climber.getBackTalonPositionInTicks(), climber.getFrontTalonPositionInTicks());
+    Logger.consoleLog("currentBackPistonPosition:%s currentFrontPistonPosition:%s", climber.getBackTalonPositionInTicks(), climber.getFrontTalonPositionInTicks());
 
     loggingIterationCounter++;
   }
@@ -91,15 +90,15 @@ public class JoystickPistonClimb extends Command {
   @Override
   protected void end() {
     climber.drivePistons(0, 0);
-    Logger.consoleLog("endBackPistonPosition:%s endFrontPistonPosition:%s ", climber.getBackTalonPositionInTicks(), climber.getFrontTalonPositionInTicks());
+    climber.enableClimberPIDControllers(climber.getFrontTalonPositionInTicks());
+    Logger.consoleLog("endBackPistonPosition:%s, endFrontPistonPosition:%s ", climber.getBackTalonPositionInTicks(), climber.getFrontTalonPositionInTicks());
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    climber.drivePistons(0, 0);
-
-    Logger.consoleLog("JoystickPistonClimb interrupted");
+    Logger.consoleLog();
+    end();
   }
 }

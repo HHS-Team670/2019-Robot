@@ -64,8 +64,7 @@ public class PistonClimbWithTiltControl extends Command {
       Robot.climber.handleTilt(goingUp, tiltTolerance, tiltController.get());
     }
 
-    if (loggingIterationCounter % 7 == 0)
-      Logger.consoleLog("currentBackPistonPosition:%s currentFrontPistonPosition:%s tiltControlScalar:%s", Robot.climber.getBackTalonPositionInTicks(), Robot.climber.getFrontTalonPositionInTicks(), tiltController.get());
+    Logger.consoleLog("currentBackPistonPosition:%s currentFrontPistonPosition:%s tiltControlScalar:%s", Robot.climber.getBackTalonPositionInTicks(), Robot.climber.getFrontTalonPositionInTicks(), tiltController.get());
 
     loggingIterationCounter++;
   }
@@ -88,6 +87,6 @@ public class PistonClimbWithTiltControl extends Command {
   @Override
   protected void interrupted() {
     end();
-    Logger.consoleLog("PistonClimbWithTiltControl interrupted");
+    Logger.consoleLog();
   }
 }

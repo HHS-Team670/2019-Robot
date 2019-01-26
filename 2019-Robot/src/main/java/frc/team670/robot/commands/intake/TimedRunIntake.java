@@ -5,63 +5,67 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.commands.climb.pistonClimb;
+package frc.team670.robot.commands.intake;
 
 import edu.wpi.first.wpilibj.command.Command;
-
 import frc.team670.robot.Robot;
-import frc.team670.robot.subsystems.Climber;
+import frc.team670.robot.dataCollection.MustangSensors;
+import frc.team670.robot.subsystems.Intake;
 import frc.team670.robot.utils.Logger;
 
+public class TimedRunIntake extends Command {
 
-/**
- * Command to move the front pistons to a given setpoint
- */
-public class MoveFrontPistonsToSetpoint extends Command {
-  private int loggingIterationCounter;
-  private int setpoint;
-  private Climber climber;
+  private Intake intake;
+  private MustangSensors sensors;
+
+  private static final double RUNNING_POWER = 1.0; // TODO figure out if we want to run full speed
+  private long time;
+  private int millisecondsToRun;
+
 
   /**
    * 
-   * @param setpoint The desired setpoint in ticks
-   * @param climber The climber upon which this command will be used
+   * @param millisecondsToRun the time for the intake to run in milliseconds
    */
-  public MoveFrontPistonsToSetpoint(int setpoint, Climber climber) {
-    this.setpoint = setpoint;
-    this.climber = climber;
+  public TimedRunIntake(int millisecondsToRun, Intake intake, MustangSensors sensors) {
+    requires(Robot.intake);
+    this.intake = intake;
+    this.sensors = sensors;
+    this.millisecondsToRun = millisecondsToRun;
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    Logger.consoleLog("startFrontPistonPosition:%s", Robot.climber.getFrontTalonPositionInTicks());
-    climber.setFrontPIDControllerSetpoint(setpoint);
+    Logger.consoleLog("Running Intake");
+    time = System.currentTimeMillis();
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Logger.consoleLog("CurrentFrontPistonPosition:%s", climber.getFrontTalonPositionInTicks());
-    loggingIterationCounter++;
+    intake.runIntake(RUNNING_POWER);
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return climber.getFrontControllerOnTarget();
+    //If milliseconds has passed since the IR sensor was first tripped or if the cargo is already in the claw
+    return (System.currentTimeMillis() - time > millisecondsToRun);
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Logger.consoleLog("EndFrontPistonPosition:%s", climber.getFrontTalonPositionInTicks());
+    intake.runIntake(0);
+    Logger.consoleLog("RunIntake ended");
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    Logger.consoleLog("RetractFrontPiston interrupted");
+    intake.runIntake(0);
+    Logger.consoleLog("RunIntake interrupted");
   }
 }
