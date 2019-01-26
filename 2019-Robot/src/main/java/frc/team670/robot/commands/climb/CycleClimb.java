@@ -22,7 +22,8 @@ import frc.team670.robot.subsystems.wrist.BaseWrist;
 
 /**
  * Allows one Button to cycle through all the necessary stages of climbing:
- * deploy pistons, drag the robot with the arm, retract the front pistons, and retract the back pistons.
+ * deploy pistons, drag the robot with the arm, retract the front pistons, and
+ * retract the back pistons.
  */
 public class CycleClimb extends InstantCommand {
   private int setPoint;
@@ -34,8 +35,9 @@ public class CycleClimb extends InstantCommand {
   private Climber climber;
 
   /**
-   * @param setPoint The setpoint in encoder ticks corresponding to the height you want to climb to.
-   * RobotConstants: PISTON_ENCODER_FLAT, PISTON_ENCODER_LEVEL_TWO, PISTON_ENCODER_LEVEL_THREEE
+   * @param setPoint The setpoint in encoder ticks corresponding to the height you
+   *                 want to climb to. RobotConstants: PISTON_ENCODER_FLAT,
+   *                 PISTON_ENCODER_LEVEL_TWO, PISTON_ENCODER_LEVEL_THREEE
    */
   public CycleClimb(Arm arm, Climber climber, int setPoint) {
     requires(Robot.climber);
@@ -63,19 +65,18 @@ public class CycleClimb extends InstantCommand {
   protected void initialize() {
     switch (cg) {
     case DEPLOY_PISTONS:
-      Scheduler.getInstance().add(new PistonClimbWithTiltControl(setPoint));
+      Scheduler.getInstance().add(new PistonClimbWithTiltControl(setPoint, climber));
       cg = ClimbStage.ARM_CLIMB;
       break;
     case ARM_CLIMB:
-      if(Robot.climber.getFrontAndBackControllerOnTarget()) {
+      if(climber.getFrontControllerOnTarget() && climber.getBackControllerOnTarget())
           Scheduler.getInstance().add(new ArmClimb(arm));
         if (!ArmClimb.getUserWishesToStillClimb()) {
           cg = ClimbStage.RETRACT_FRONT_PISTONS;
         }
-      }
       break;
     case RETRACT_FRONT_PISTONS:
-      Scheduler.getInstance().add(new RetractFrontPistons());
+      Scheduler.getInstance().add(new RetractFrontPistons(climber));
       if (Robot.climber.getFrontPistonsRetracted()) {
         cg = ClimbStage.RETRACT_BACK_PISTONS;
       }
@@ -85,19 +86,19 @@ public class CycleClimb extends InstantCommand {
       cg = ClimbStage.DEPLOY_PISTONS;
       break;
     default:
-      Scheduler.getInstance().add(new PistonClimbWithTiltControl(setPoint));
+      Scheduler.getInstance().add(new PistonClimbWithTiltControl(setPoint, climber));
       cg = ClimbStage.DEPLOY_PISTONS;
       break;
     }
-  }
+}
 
-
-  /**
-   * An enum to represent the different stages of climbing that the command can call
-   * 
-   */
-  public enum ClimbStage {
-    DEPLOY_PISTONS, ARM_CLIMB, RETRACT_FRONT_PISTONS, RETRACT_BACK_PISTONS;
-  }
+/**
+ * An enum to represent the different stages of climbing that the command can
+ * call
+ * 
+ */
+public enum ClimbStage {
+  DEPLOY_PISTONS, ARM_CLIMB, RETRACT_FRONT_PISTONS, RETRACT_BACK_PISTONS;
+}
 
 }
