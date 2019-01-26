@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.Subsystem;
+
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.dataCollection.SensorCollection_PIDSource;
@@ -38,8 +39,7 @@ public class Climber extends Subsystem {
   private int climberEncoderTolerance = 10; //TODO Set this
  
   
-  public static final double LOWERING_PISTON_POWER = 0.05; // TODO set these
-  public static final double MINIMUM_PISTON_POWER = 0.1;
+  public static final double MINIMUM_PISTON_POWER = -0.2; //Todo set this
   public static final double MAXIMUM_PISTON_POWER = 0.75; 
 
   private MustangSensors sensors;
@@ -282,12 +282,12 @@ public class Climber extends Subsystem {
     else {
       // If tipped down (front is down)
       if (sensors.getPitchDouble() < -tiltTolerance) {
-        setFrontPistonOutputRange(LOWERING_PISTON_POWER + tiltAdjustment,MINIMUM_PISTON_POWER);
-        setBackPistonOutputRange(LOWERING_PISTON_POWER - tiltAdjustment, MINIMUM_PISTON_POWER);
+        setFrontPistonOutputRange(MINIMUM_PISTON_POWER + tiltAdjustment,MINIMUM_PISTON_POWER);
+        setBackPistonOutputRange(MINIMUM_PISTON_POWER - tiltAdjustment, MINIMUM_PISTON_POWER);
         // If tipped up (front is up)
       } else if (sensors.getPitchDouble() > tiltTolerance) {
-        setFrontPistonOutputRange(LOWERING_PISTON_POWER - tiltAdjustment, MINIMUM_PISTON_POWER);
-        setBackPistonOutputRange(LOWERING_PISTON_POWER + tiltAdjustment, MINIMUM_PISTON_POWER);
+        setFrontPistonOutputRange(MINIMUM_PISTON_POWER - tiltAdjustment, MINIMUM_PISTON_POWER);
+        setBackPistonOutputRange(MINIMUM_PISTON_POWER + tiltAdjustment, MINIMUM_PISTON_POWER);
       }
     }
   }
