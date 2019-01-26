@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
  * Represents the claw mechanism of the robot.
- *  Release Ball: hard open, push
+ * Release Ball: hard open, push
  * Pick Up Ball: soft close
  * Pick Up Hatch: hard open
  * Release Hatch: hard close

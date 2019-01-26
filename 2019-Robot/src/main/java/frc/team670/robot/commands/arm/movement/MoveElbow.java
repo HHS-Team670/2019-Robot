@@ -40,6 +40,7 @@ public class MoveElbow extends Command {
   @Override
   protected void initialize() {
     elbow.initializeMotionmagic();
+    elbow.setMotionMagicSetpoint(angle);
     executeCount = 0;
     Logger.consoleLog("angle: %s", angle);
   }
@@ -47,7 +48,6 @@ public class MoveElbow extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    elbow.setMotionMagicSetpoint(angle);
     if(executeCount % 5 == 0) {
       Logger.consoleLog("angle: %s", angle);
     }

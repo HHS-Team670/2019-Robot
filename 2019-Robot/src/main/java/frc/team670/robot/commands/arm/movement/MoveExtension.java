@@ -39,6 +39,7 @@ public class MoveExtension extends Command {
   @Override
   protected void initialize() {
     extension.initializeMotionmagic();
+    extension.setMotionMagicSetpoint(distance);
     executeCount = 0;
     Logger.consoleLog("distance: %s", distance);
   }
@@ -46,7 +47,6 @@ public class MoveExtension extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    extension.setMotionMagicSetpoint(distance);
     if(executeCount % 5 == 0) {
       Logger.consoleLog("distance: %s", distance);
     }
