@@ -53,7 +53,8 @@ public class RobotMap {
   
   // Sensors
   public final static Port NAVX_PORT = SerialPort.Port.kUSB;
-  public final static int INTAKE_IR_DIO_PORT = 0; //TODO set this
+  public final static int INTAKE_IR_DIO_PORT = 0; // TODO set this
+  public final static int CLAW_IR_DIO_PORT = 0; // TODO set this
 
   // Joysticks
   public static final int DRIVER_CONTROLLER_PORT = 0;
@@ -62,5 +63,6 @@ public class RobotMap {
   //Intake
   public static final int INTAKE_BASE_VICTOR = 0; // TODO Set these
   public static final int INTAKE_ROLLER_VICTOR = 0;
+
 
 }

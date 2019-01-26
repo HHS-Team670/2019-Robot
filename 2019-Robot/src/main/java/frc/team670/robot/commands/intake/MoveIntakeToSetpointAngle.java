@@ -8,64 +8,63 @@
 package frc.team670.robot.commands.intake;
 
 import edu.wpi.first.wpilibj.command.Command;
-import frc.team670.robot.Robot;
-import frc.team670.robot.dataCollection.MustangSensors;
+
 import frc.team670.robot.subsystems.Intake;
 import frc.team670.robot.utils.Logger;
+import frc.team670.robot.utils.functions.MathUtils;
 
-public class RunIntake extends Command {
+/**
+ * Command to move the intake to a certain angle
+ * 
+ */
+public class MoveIntakeToSetpointAngle extends Command {
 
   private Intake intake;
-  private MustangSensors sensors;
+  private int loggingIterationCounter, setpointInDegrees;
+  private int toleranceInDegrees = 5;
 
-  private static final double RUNNING_POWER = 1.0; // TODO figure out if we want to run full speed
-  private boolean hasBeenTriggered;
-  private long time;
-
-
-  public RunIntake(Intake intake, MustangSensors sensors) {
-    requires(Robot.intake);
+  /**
+   * @param setpoint angle in degrees that the intake is moving to
+   * @param intake the intake upon which command will be called upon
+   */
+  public MoveIntakeToSetpointAngle(int setpointInDegrees, Intake intake) {
+    requires(intake);
     this.intake = intake;
-    this.sensors = sensors;
+    this.setpointInDegrees = setpointInDegrees;
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    Logger.consoleLog("Running Intake");
+    intake.setMotionMagicSetpoint(setpointInDegrees);
+    Logger.consoleLog("startIntakeAngle:%s", intake.getIntakeAngleInDegrees());
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    intake.runIntake(RUNNING_POWER);
+    if (loggingIterationCounter % 7 == 0)
+    Logger.consoleLog("currentIntakeAngle:%s", intake.getIntakeAngleInDegrees());
 
-    //If the IR sensor has been tripped and it is for the first time
-    if (sensors.getIntakeIROutput() && !hasBeenTriggered) {
-      hasBeenTriggered = true;
-      time = System.currentTimeMillis();
-    }
+    loggingIterationCounter++;
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    //If 0.5 seconds has passed since the IR sensor was first tripped or if the cargo is already in the claw
-    return (System.currentTimeMillis() - time > 500 || sensors.getClawIROutput());
+    return (MathUtils.isWithinTolerance(intake.getIntakeAngleInDegrees(), intake.getMotionMagicSetpoint(), toleranceInDegrees));
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    intake.runIntake(0);
-    Logger.consoleLog("RunIntake ended");
+    Logger.consoleLog("endIntakeAngle:%s", intake.getIntakeAngleInDegrees());
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    intake.runIntake(0);
-    Logger.consoleLog("RunIntake interrupted");
+    Logger.consoleLog("MoveIntakeToSetpointAngle interrupted");
   }
 }

@@ -70,7 +70,7 @@ public class CycleClimb extends InstantCommand {
       break;
     case ARM_CLIMB:
       if(climber.getFrontControllerOnTarget() && climber.getBackControllerOnTarget())
-          Scheduler.getInstance().add(new ArmClimb(arm));
+          Scheduler.getInstance().add(new ArmClimb(arm, climber));
         if (!ArmClimb.getUserWishesToStillClimb()) {
           cg = ClimbStage.RETRACT_FRONT_PISTONS;
         }

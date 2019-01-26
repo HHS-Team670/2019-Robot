@@ -17,6 +17,7 @@ public class MustangSensors extends Subsystem {
   // NavX
   private NavX navXMicro = null;
   private DigitalInput intakeIRSensor;
+  private DigitalInput clawIRSensor;
   public static final double NAVX_ERROR_CODE = -40001;
 
 
@@ -29,6 +30,7 @@ public class MustangSensors extends Subsystem {
     }
     
     intakeIRSensor = new DigitalInput(RobotMap.INTAKE_IR_DIO_PORT);
+    clawIRSensor = new DigitalInput(RobotMap.CLAW_IR_DIO_PORT);
   }
 
   @Override
@@ -133,5 +135,15 @@ public class MustangSensors extends Subsystem {
   public boolean getIntakeIROutput(){
     return intakeIRSensor.get();
   }
+
+
+  /**
+   * Returns true if object is within threshold and false if not
+   */
+  public boolean getClawIROutput(){
+    return clawIRSensor.get();
+  }
+
+
 
 }

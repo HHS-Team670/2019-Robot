@@ -91,7 +91,7 @@ public class Intake extends Subsystem {
   /**
    * Returns the tick value of the base motor
    */
-  public int getBaseVictorPositionInTicks(){
+  public int getIntakePositionInTicks(){
     return baseVictorEncoder.get();
   }
 

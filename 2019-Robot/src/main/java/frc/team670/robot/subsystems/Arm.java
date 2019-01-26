@@ -11,7 +11,11 @@ import java.awt.geom.Point2D;
 import java.util.HashMap;
 
 import frc.team670.robot.commands.arm.armTransitions.ArmTransition;
+import frc.team670.robot.commands.arm.armTransitions.IntakeBallIntakeForwardToNeutral;
+import frc.team670.robot.commands.arm.armTransitions.NeutralToIntakeBallIntakeForward;
 import frc.team670.robot.commands.arm.armTransitions.NeutralToLowerHatch;
+import frc.team670.robot.commands.arm.armTransitions.NeutralToReadyToClimb;
+import frc.team670.robot.commands.arm.armTransitions.ReadyToClimbToNeutral;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.subsystems.elbow.BaseElbow;
 import frc.team670.robot.subsystems.extension.BaseExtension;
@@ -19,12 +23,12 @@ import frc.team670.robot.subsystems.wrist.BaseWrist;
 import frc.team670.robot.utils.sort.Node;
 
 /**
- * Stores possible arm states. Does arm-related math
- * Represents the arm mechanism on the robot. Link to a model of the arm:
- * https://a360.co/2TLH2NO
+ * Stores possible arm states. Does arm-related math Represents the arm
+ * mechanism on the robot. Link to a model of the arm: https://a360.co/2TLH2NO
+ * 
  * @author shaylandias, ctchen, rghosh670
  */
-public class Arm  {
+public class Arm {
 
   // All of the states
   private static HashMap<LegalState, ArmState> states;
@@ -37,7 +41,6 @@ public class Arm  {
   private BaseWrist wrist;
   private BaseExtension extension;
 
-
   public Arm(BaseElbow elbow, BaseWrist wrist, BaseExtension extension) {
 
     this.elbow = elbow;
@@ -47,33 +50,38 @@ public class Arm  {
     // State Setup
     states = new HashMap<LegalState, ArmState>();
     states.put(LegalState.NEUTRAL, new Neutral(this));
-    // states.put(LegalState.START_BALL, new Neutral(this)); // This obviously needs to be changed
+    states.put(LegalState.INTAKE_BALL_INTAKE_FORWARD, new IntakeBallIntakeForward(this));
+    states.put(LegalState.READY_TO_CLIMB, new ReadyToClimb(this));
+    // states.put(LegalState.START_BALL, new Neutral(this)); // This obviously needs
+    // to be changed
     // states.put(LegalState.START_HATCH, new Neutral(this));
-    // states.put(LegalState.START_EMPTY, new Neutral(this)); 
-    // states.put(LegalState.IN_BALLGROUNDF, new Neutral(this)); 
+    // states.put(LegalState.START_EMPTY, new Neutral(this));
+    // states.put(LegalState.IN_BALLGROUNDF, new Neutral(this));
     // states.put(LegalState.IN_BALLSTATIONF, new Neutral(this));
     // states.put(LegalState.IN_BALLSTATIONB, new Neutral(this));
-    // states.put(LegalState.IN_HATCHFSTATION, new Neutral(this)); 
-    // states.put(LegalState.IN_HATCHBSTATION, new Neutral(this)); 
+    // states.put(LegalState.IN_HATCHFSTATION, new Neutral(this));
+    // states.put(LegalState.IN_HATCHBSTATION, new Neutral(this));
     // states.put(LegalState.IN_HATCHGROUNDB, new Neutral(this));//OOF
     // states.put(LegalState.PLACE_BALLCARGOF, new Neutral(this));
-    // states.put(LegalState.PLACE_BALLCARGOB, new Neutral(this)); 
+    // states.put(LegalState.PLACE_BALLCARGOB, new Neutral(this));
     // states.put(LegalState.PLACE_HATCHCARGOF, new Neutral(this));
     // states.put(LegalState.PLACE_HATCHCARGOB, new Neutral(this));
-    // states.put(LegalState.PLACE_HATCHROCKETLOWF, new Neutral(this)); 
-    // states.put(LegalState.PLACE_HATCHROCKETLOWB, new Neutral(this)); 
+    // states.put(LegalState.PLACE_HATCHROCKETLOWF, new Neutral(this));
+    // states.put(LegalState.PLACE_HATCHROCKETLOWB, new Neutral(this));
     // states.put(LegalState.PLACE_HATCHROCKETMEDF, new Neutral(this));
     // states.put(LegalState.PLACE_HATCHROCKETMEDB, new Neutral(this));
-    currentState = new Neutral(this); //Default state
+    currentState = new Neutral(this); // Default state
     /*
      *
-    NEUTRAL(0), START_BALL(1), START_HATCH(2), START_EMPTY(3), IN_BALLGROUNDF(4), IN_BALLSTATIONF(5),
-    IN_BALLSTATIONB(6), IN_HATCHFSTATION(7), IN_HATCHBSTATION(8), IN_HATCHGROUNDB(9),
-    PLACE_BALLCARGOF(10), PLACE_BALLCARGOB(11), PLACE_HATCHCARGOF(12), PLACE_HATCHCARGOB(13),
-    PLACE_HATCHROCKETLOWF(14), PLACE_HATCHROCKETLOWB(15), PLACE_HATCHROCKETMEDF(16), 
-    PLACE_HATCHROCKETMEDB(17), PLACE_BALLROCKETLOWF(18), PLACE_BALLROCKETLOWB(19), 
-    PLACE_BALLROCKETMEDF(20), PLACE_BALLROCKETMEDB(21), CLIMB_START(22), STOW(23), DEFENSE(24),
-    IN_BALLGROUNDB(25);
+     * NEUTRAL(0), START_BALL(1), START_HATCH(2), START_EMPTY(3), IN_BALLGROUNDF(4),
+     * IN_BALLSTATIONF(5), IN_BALLSTATIONB(6), IN_HATCHFSTATION(7),
+     * IN_HATCHBSTATION(8), IN_HATCHGROUNDB(9), PLACE_BALLCARGOF(10),
+     * PLACE_BALLCARGOB(11), PLACE_HATCHCARGOF(12), PLACE_HATCHCARGOB(13),
+     * PLACE_HATCHROCKETLOWF(14), PLACE_HATCHROCKETLOWB(15),
+     * PLACE_HATCHROCKETMEDF(16), PLACE_HATCHROCKETMEDB(17),
+     * PLACE_BALLROCKETLOWF(18), PLACE_BALLROCKETLOWB(19), PLACE_BALLROCKETMEDF(20),
+     * PLACE_BALLROCKETMEDB(21), CLIMB_START(22), STOW(23), DEFENSE(24),
+     * IN_BALLGROUNDB(25);
      */
 
   }
@@ -104,57 +112,63 @@ public class Arm  {
   /**
    * Gets the State that the arm most recently was located at.
    */
-  public static ArmState getCurrentState(){
+  public static ArmState getCurrentState() {
     return currentState;
   }
 
   /**
-   * Gets the ArmState object that corresponds to the LegalState
-   * Ex. If you want the Neutral ArmState, use 'getArmState(LegalState.NEUTRAL)''
+   * Gets the ArmState object that corresponds to the LegalState Ex. If you want
+   * the Neutral ArmState, use 'getArmState(LegalState.NEUTRAL)''
    */
   public static ArmState getArmState(LegalState state) {
     return states.get(state);
   }
 
   /**
-   * Returns the arm's point in forward facing plane relative to (0,0) at the base of the arm. 
+   * Returns the arm's point in forward facing plane relative to (0,0) at the base
+   * of the arm.
    */
   public static Point2D.Double getCoordPosition(double extensionLength, double wristAngle, double elbowAngle) {
     double x = extensionLength * Math.sin(elbowAngle) + RobotConstants.CLAW_RADIUS_IN_INCHES * Math.sin(wristAngle);
-    double y = extensionLength * Math.cos(elbowAngle) + RobotConstants.CLAW_RADIUS_IN_INCHES * Math.cos(wristAngle) + RobotConstants.ARM_HEIGHT_IN_INCHES;
+    double y = extensionLength * Math.cos(elbowAngle) + RobotConstants.CLAW_RADIUS_IN_INCHES * Math.cos(wristAngle)
+        + RobotConstants.ARM_HEIGHT_IN_INCHES;
     return new Point2D.Double(x, y);
   }
 
   /**
-   * Represents the different possible states of the Arm
-   * //B for back, F for front
+   * Represents the different possible states of the Arm //B for back, F for front
    */
   public enum LegalState {
-    NEUTRAL(0), START_BALL(1), START_HATCH(2), START_EMPTY(3), IN_BALLGROUNDF(4), IN_BALLSTATIONF(5),
-    IN_BALLSTATIONB(6), IN_HATCHFSTATION(7), IN_HATCHBSTATION(8), IN_HATCHGROUNDB(9),
-    PLACE_BALLCARGOF(10), PLACE_BALLCARGOB(11), PLACE_HATCHCARGOF(12), PLACE_HATCHCARGOB(13),
-    PLACE_HATCHROCKETLOWF(14), PLACE_HATCHROCKETLOWB(15), PLACE_HATCHROCKETMEDF(16), 
-    PLACE_HATCHROCKETMEDB(17), PLACE_BALLROCKETLOWF(18), PLACE_BALLROCKETLOWB(19), 
-    PLACE_BALLROCKETMEDF(20), PLACE_BALLROCKETMEDB(21), CLIMB_START(22), STOW(23), DEFENSE(24),
-    IN_BALLGROUNDB(25);
-    
+    // ACTION_GAMEPIECE_LOCATION(PLACE AT OR INTAKE FROM)_FORWARD/BACK
+    NEUTRAL(0), START_BALL(1), START_HATCH(2), START_EMPTY(3), INTAKE_BALL_GROUND_FORWARD(4),
+    INTAKE_BALL_INTAKE_FORWARD(5), INTAKE_BALL_LOADINGSTATION_FORWARD(6), INTAKE_BALL_LOADINGSTATION_BACK(7),
+    INTAKE_HATCH_LOADINGSTATION_FORWARD(8), INTAKE_HATCH_LOADINGSTATION_BACK(9), INTAKE_HATCH_GROUND_BACK(10),
+    PLACE_BALL_CARGOSHIP_FORWARD(11), PLACE_BALL_CARGOSHIP_BACK(12), PLACE_HATCH_CARGOSHIP_F(13),
+    PLACE_HATCH_CARGOSHIP_BACK(14), PLACE_HATCH_ROCKET_LOW_FORWARD(15), PLACE_HATCH_ROCKET_LOW_BACK(16),
+    PLACE_HATCH_ROCKET_MIDDLE_FORWARD(17), PLACE_HATCH_ROCKET_MIDDLE_BACK(18), PLACE_BALL_ROCKET_LOW_FORWARD(19),
+    PLACE_BALL_ROCKET_LOW_BACK(20), PLACE_BALL_ROCKET_MIDDLE_FORWARD(21), PLACE_BALL_ROCKET_MIDDLE_BACK(22),
+    READY_TO_CLIMB(23), STOW(24), DEFENSE(25), INTAKE_BALL_GROUND_BACK(26);
+
     private final int ID;
 
     LegalState(int id) {
-        ID = id;
+      ID = id;
     }
 
     /**
-     * Gets the ID of the state. This is meant to be ordered so if the state doesn't have a direct transition to a state, it transitions
-     * to the state it can with the closest ID to that which should be physically closer to the desired state, and thus likely to have
-     * a transition to it.
+     * Gets the ID of the state. This is meant to be ordered so if the state doesn't
+     * have a direct transition to a state, it transitions to the state it can with
+     * the closest ID to that which should be physically closer to the desired
+     * state, and thus likely to have a transition to it.
      */
     public int getId() {
-        return ID;
+      return ID;
     }
   };
+
   /**
-   * Represents a potential state for the arm including a wrist angle, elbow angle, and extension.
+   * Represents a potential state for the arm including a wrist angle, elbow
+   * angle, and extension.
    */
   public class ArmState implements Node {
     private double elbowAngle, wristAngle;
@@ -164,10 +178,15 @@ public class Arm  {
     private ArmTransition[] transitions;
 
     /**
-     * @param extensionLength The absolute Extension length with Extension length in absolute inches with 0 being completely unextended.
-     * @param elbowAngle The absolute Elbow angle with 0 being vertical in the space (180,-180) with 180 being towards the front of the robot.
-     * @param wristAngle The absolute Wrist angle with 0 being in line with the arm in the space (180,-180) with 180 being towards the front of the robot.
-     * @param transitions The ArmTransitions that begin at this ArmState
+     * @param extensionLength The absolute Extension length with Extension length in
+     *                        absolute inches with 0 being completely unextended.
+     * @param elbowAngle      The absolute Elbow angle with 0 being vertical in the
+     *                        space (180,-180) with 180 being towards the front of
+     *                        the robot.
+     * @param wristAngle      The absolute Wrist angle with 0 being in line with the
+     *                        arm in the space (180,-180) with 180 being towards the
+     *                        front of the robot.
+     * @param transitions     The ArmTransitions that begin at this ArmState
      */
     public ArmState(double extensionLength, double elbowAngle, double wristAngle, ArmTransition[] transitions) {
       this.extensionLength = extensionLength;
@@ -208,16 +227,31 @@ public class Arm  {
     }
 
     @Override
-    public int getHeuristicDistance(Node other){
-      ArmState state2 = (ArmState)other;
-      return (int)(Math.sqrt((this.coord.getX()-state2.coord.getX())*(this.coord.getX()-state2.coord.getX())+(this.coord.getY()-state2.coord.getY())*(this.coord.getY()-state2.coord.getY())));
+    public int getHeuristicDistance(Node other) {
+      ArmState state2 = (ArmState) other;
+      return (int) (Math.sqrt((this.coord.getX() - state2.coord.getX()) * (this.coord.getX() - state2.coord.getX())
+          + (this.coord.getY() - state2.coord.getY()) * (this.coord.getY() - state2.coord.getY())));
     }
   }
 
   private class Neutral extends ArmState {
     public Neutral(Arm arm) {
-      super(0, 45, 45, new ArmTransition[] { new NeutralToLowerHatch(arm) });
+      super(0, 45, 45, new ArmTransition[] { new NeutralToLowerHatch(arm), new NeutralToIntakeBallIntakeForward(arm), new NeutralToReadyToClimb(arm) });
     }
   }
+
+  private class IntakeBallIntakeForward extends ArmState {
+    public IntakeBallIntakeForward(Arm arm) { // TODO set this
+      super(0, -45, 0, new ArmTransition[] { new IntakeBallIntakeForwardToNeutral(arm) });
+    }
+  }
+
+  private class ReadyToClimb extends ArmState {
+    public ReadyToClimb(Arm arm){ // TODO set this
+      super(0, -45, 0, new ArmTransition[] { new ReadyToClimbToNeutral(arm) });
+    }
+  }
+
+
 
 }

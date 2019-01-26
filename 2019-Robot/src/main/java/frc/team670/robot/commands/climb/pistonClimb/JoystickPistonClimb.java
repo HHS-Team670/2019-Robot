@@ -13,7 +13,6 @@ import frc.team670.robot.subsystems.Climber;
 import frc.team670.robot.utils.MustangController;
 import frc.team670.robot.utils.Logger;
 
-
 /**
  * Runs the piston climb with a percent output based on input from the joystick
  * 
@@ -25,7 +24,7 @@ public class JoystickPistonClimb extends Command {
   private int loggingIterationCounter;
 
   /**
-   * @param climber the climber being used
+   * @param climber    the climber being used
    * @param controller the operator controller being used
    */
   public JoystickPistonClimb(Climber climber, MustangController controller) {
@@ -42,25 +41,37 @@ public class JoystickPistonClimb extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    double frontPower = controller.getLeftStickY() * Climber.MAXIMUM_PISTON_POWER;
-    double backPower = controller.getRightStickY() * Climber.MINIMUM_PISTON_POWER;
+    double frontPower = controller.getLeftStickY();
+    frontPower *= (frontPower > 0) ? Climber.MAXIMUM_PISTON_POWER : -1 * Climber.MINIMUM_PISTON_POWER; //Multiplied by -1 because constant is negative and so is stick input
+    double backPower = controller.getRightStickY();
+    backPower *= (backPower > 0) ? Climber.MAXIMUM_PISTON_POWER : -1 * Climber.MINIMUM_PISTON_POWER; //Multiplied by -1 because constant is negative and so is stick input
 
-    if(climber.getFrontTalonPositionInTicks() <= RobotConstants.PISTON_ENCODER_FLAT + tolerance){
-      frontPower *= 0.5;
+    // Front pistons are approaching flat position so either the entire robot is
+    // almost back down or the front pistons are almost retracted. If the original
+    // input is already at -0.05 (arbitrary value)
+    // or lower magnitude, there's no need to limit it even further
+    if (frontPower < -0.05 && climber.getFrontTalonPositionInTicks() <= RobotConstants.PISTON_ENCODER_FLAT + tolerance) {
+      frontPower = Math.min(-0.05, (frontPower * (Math.abs(climber.getFrontTalonPositionInTicks() - (RobotConstants.PISTON_ENCODER_FLAT + tolerance)) / tolerance)));
+    }
+    // Front pistons are approaching fully deployed position. If the original input
+    // is already at 0.1 (arbitrary value)
+    // or lower magnitude, there's no need to limit it even further
+    if (frontPower > 0.1 && climber.getFrontTalonPositionInTicks() >= RobotConstants.PISTON_ENCODER_LEVEL_THREE - tolerance) {
+      frontPower *= Math.max(0.1, (frontPower * (RobotConstants.PISTON_ENCODER_LEVEL_THREE - climber.getFrontTalonPositionInTicks()) / tolerance));
     }
 
-    if(climber.getBackTalonPositionInTicks() <= RobotConstants.PISTON_ENCODER_FLAT + tolerance){
-      backPower *= 0.5;
+    // Back pistons are approaching flat position so either the entire robot is
+    // almost back down or the back pistons are almost retracted
+    if (backPower < -0.05 && climber.getBackTalonPositionInTicks() <= RobotConstants.PISTON_ENCODER_FLAT + tolerance) {
+      backPower = Math.min(-0.05, (backPower * (Math.abs(climber.getFrontTalonPositionInTicks() - (RobotConstants.PISTON_ENCODER_FLAT + tolerance)) / tolerance)));
     }
 
-    if(climber.getFrontTalonPositionInTicks() >= RobotConstants.PISTON_ENCODER_LEVEL_THREE - tolerance){
-      frontPower *= 0.5;
+    // Back pistons are approaching fully deployed position. If the original input
+    // is already at 0.1 (arbitrary value)
+    // or lower magnitude, there's no need to limit it even further
+    if (backPower > 0.1 && climber.getBackTalonPositionInTicks() >= RobotConstants.PISTON_ENCODER_LEVEL_THREE - tolerance) {
+      backPower *= Math.max(0.1, (backPower * (RobotConstants.PISTON_ENCODER_LEVEL_THREE - climber.getFrontTalonPositionInTicks()) / tolerance));
     }
-
-    if(climber.getBackTalonPositionInTicks() >= RobotConstants.PISTON_ENCODER_LEVEL_THREE - tolerance){
-      backPower *= 0.5;
-    }
-
 
     climber.drivePistons(frontPower, backPower);
 

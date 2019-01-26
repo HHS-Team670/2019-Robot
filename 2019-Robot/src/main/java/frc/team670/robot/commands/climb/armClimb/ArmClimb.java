@@ -8,9 +8,13 @@
 package frc.team670.robot.commands.climb.armClimb;
 
 import edu.wpi.first.wpilibj.command.Command;
-import frc.team670.robot.Robot;
+import edu.wpi.first.wpilibj.command.Scheduler;
+
+import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.subsystems.Arm;
+import frc.team670.robot.subsystems.Arm.LegalState;
+import frc.team670.robot.subsystems.Climber;
 import frc.team670.robot.subsystems.elbow.BaseElbow;
 import frc.team670.robot.subsystems.extension.BaseExtension;
 import frc.team670.robot.subsystems.extension.Extension;
@@ -30,29 +34,34 @@ public class ArmClimb extends Command {
   private BaseExtension extension;
   private BaseElbow elbow;
 
+  private Climber climber;
+  private Arm arm;
+
   public static final int CLIMB_CURRENT = 10; // TODO figure required limited current
 
   /**
    * Prepares the ArmClimb method allowing the arm to drag the robot forward.
    */
-  public ArmClimb(Arm arm) {
+  public ArmClimb(Arm arm, Climber climber) {
     super();
     extension = arm.getExtension();
     elbow = arm.getElbow();
     requires(elbow);
     requires(extension);
     userWishesToStillClimb = true;
+    this.arm = arm;
+    this.climber = climber;
   }
 
   // Called just before this Command runs the first time
   @Override
-  protected void initialize() { // TODO add if condition to check that Arm is in the ReadyToClimb ArmState
-    // Set arm to ready to climb state
-    // telescope out
+  protected void initialize() { 
+    //Moves arm up to ready to climb state
+    Scheduler.getInstance().add(new MoveArm(Arm.getArmState(LegalState.READY_TO_CLIMB), arm));
 
     extension.enableExtensionPIDController();
 
-    heightInInches = Robot.climber.getFrontTalonPositionInInches() + RobotConstants.ARM_HEIGHT_IN_INCHES + RobotConstants.DRIVEBASE_TO_GROUND; // TODO get the actual method
+    heightInInches = climber.getFrontTalonPositionInInches() + RobotConstants.ARM_HEIGHT_IN_INCHES + RobotConstants.DRIVEBASE_TO_GROUND; // TODO get the actual method
 
     Logger.consoleLog("startHeightOfRobot%s startAngleOfElbow%s ", heightInInches, elbow.getAngle());
   }

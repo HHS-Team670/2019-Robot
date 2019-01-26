@@ -11,14 +11,18 @@ import edu.wpi.first.wpilibj.command.Command;
 
 import frc.team670.robot.subsystems.Intake;
 import frc.team670.robot.utils.Logger;
+import frc.team670.robot.utils.functions.MathUtils;
 
-public class MoveIntake extends Command {
+/**
+ * Command to toggle the intake up or down
+ */
+public class ToggleIntakeUpDown extends Command {
 
   private Intake intake;
   private int loggingIterationCounter;
   private int toleranceInDegrees = 5;
 
-  public MoveIntake(Intake intake) {
+  public ToggleIntakeUpDown(Intake intake) {
     requires(intake);
     this.intake = intake;
   }
@@ -28,7 +32,7 @@ public class MoveIntake extends Command {
   protected void initialize() {
     // If the intake is closer to the up postion, we assume that we want to move it
     // down
-    if (Math.abs(intake.getBaseVictorPositionInTicks() - Intake.INTAKE_ANGLE_UP) < Math.abs(intake.getBaseVictorPositionInTicks() - Intake.INTAKE_ANGLE_DOWN)) {
+    if (Math.abs(intake.getIntakePositionInTicks() - Intake.INTAKE_ANGLE_UP) < Math.abs(intake.getIntakePositionInTicks() - Intake.INTAKE_ANGLE_DOWN)) {
       intake.setMotionMagicSetpoint(Intake.INTAKE_ANGLE_DOWN);
     } else {
       // If intake is instead closer to the down postion, we assume that we want to
@@ -36,14 +40,14 @@ public class MoveIntake extends Command {
       intake.setMotionMagicSetpoint(Intake.INTAKE_ANGLE_UP);
     }
 
-    Logger.consoleLog("startIntakePosition:%s", intake.getBaseVictorPositionInTicks());
+    Logger.consoleLog("startIntakeAngle:%s", intake.getIntakeAngleInDegrees());
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
     if (loggingIterationCounter % 7 == 0)
-      Logger.consoleLog("currentIntakePosition:%s", intake.getBaseVictorPositionInTicks());
+      Logger.consoleLog("currentIntakeAngle:%s", intake.getIntakeAngleInDegrees());
 
     loggingIterationCounter++;
   }
@@ -51,19 +55,19 @@ public class MoveIntake extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return (Math.abs(intake.getIntakeAngleInDegrees() - intake.getMotionMagicSetpoint()) < toleranceInDegrees);
+    return (MathUtils.isWithinTolerance(intake.getIntakeAngleInDegrees(), intake.getMotionMagicSetpoint(), toleranceInDegrees));
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Logger.consoleLog("endIntakePosition:%s", intake.getBaseVictorPositionInTicks());
+    Logger.consoleLog("endIntakeAngle:%s", intake.getIntakeAngleInDegrees());
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    Logger.consoleLog("MoveIntake interrupted");
+    Logger.consoleLog("ToggleIntakeUpDown interrupted");
   }
 }
