@@ -103,6 +103,7 @@ public class ArmClimb extends Command {
   @Override
   protected void end() {
     releaseElbow();
+    Scheduler.getInstance().add(new MoveArm(Arm.getArmState(LegalState.STOW), arm));
     Logger.consoleLog("endHeightOfRobot%s endAngleOfElbow%s ", heightInInches, elbow.getAngle());
   }
 

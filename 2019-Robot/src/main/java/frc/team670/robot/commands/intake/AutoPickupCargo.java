@@ -25,7 +25,7 @@ public class AutoPickupCargo extends CommandGroup {
   public AutoPickupCargo(Arm arm, Intake intake, Claw claw, MustangSensors sensors) {
     addSequential(new MoveArm(Arm.getArmState(LegalState.INTAKE_BALL_INTAKE_FORWARD), arm));
     addParallel(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_DOWN, intake));
-    //runIntake will go until the IR in the claw gets tripped or 0.5 seconds after the Intake sensor gets tripped
+    //runIntake will go until the IR in the claw gets tripped or 0.5 seconds after the Intake sensor has been tripped
     addSequential(new RunIntake(intake, sensors));
     addSequential(new PickupBall(claw));
     addSequential(new MoveArm(Arm.getArmState(LegalState.NEUTRAL), arm));

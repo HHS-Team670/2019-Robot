@@ -15,7 +15,9 @@ import frc.team670.robot.commands.arm.armTransitions.IntakeBallIntakeForwardToNe
 import frc.team670.robot.commands.arm.armTransitions.NeutralToIntakeBallIntakeForward;
 import frc.team670.robot.commands.arm.armTransitions.NeutralToLowerHatch;
 import frc.team670.robot.commands.arm.armTransitions.NeutralToReadyToClimb;
+import frc.team670.robot.commands.arm.armTransitions.NeutralToStow;
 import frc.team670.robot.commands.arm.armTransitions.ReadyToClimbToNeutral;
+import frc.team670.robot.commands.arm.armTransitions.StowToNeutral;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.subsystems.elbow.BaseElbow;
 import frc.team670.robot.subsystems.extension.BaseExtension;
@@ -236,7 +238,10 @@ public class Arm {
 
   private class Neutral extends ArmState {
     public Neutral(Arm arm) {
-      super(0, 45, 45, new ArmTransition[] { new NeutralToLowerHatch(arm), new NeutralToIntakeBallIntakeForward(arm), new NeutralToReadyToClimb(arm) });
+      super(0, 45, 45, new ArmTransition[] { 
+        new NeutralToLowerHatch(arm), new NeutralToIntakeBallIntakeForward(arm), new NeutralToReadyToClimb(arm),
+        new NeutralToStow(arm)
+      });
     }
   }
 
@@ -249,6 +254,12 @@ public class Arm {
   private class ReadyToClimb extends ArmState {
     public ReadyToClimb(Arm arm){ // TODO set this
       super(0, -45, 0, new ArmTransition[] { new ReadyToClimbToNeutral(arm) });
+    }
+  }
+
+  private class Stow extends ArmState {
+    public Stow(Arm arm){ // TODO set this
+      super(0, -45, 0, new ArmTransition[] { new StowToNeutral(arm) });
     }
   }
 
