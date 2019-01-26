@@ -8,9 +8,9 @@
 package frc.team670.robot.commands.arm.movement;
 
 import edu.wpi.first.wpilibj.command.Command;
-import frc.team670.robot.subsystems.Extension;
+import frc.team670.robot.subsystems.extension.BaseExtension;
 import frc.team670.robot.utils.Logger;
-import frc.team670.robot.utils.functions.MathUtils;;
+import frc.team670.robot.utils.functions.MathUtils;
 
 /*
  * Moves the Extension to an absolute inch value using MotionMagic. Use this as part of an ArmTransition.
@@ -19,7 +19,7 @@ public class MoveExtension extends Command {
 
   private static final double DISTANCE_TOLERANCE = 0.1;
 
-  private Extension extension;
+  private BaseExtension extension;
   private double distance;
   private long executeCount;
   
@@ -29,7 +29,7 @@ public class MoveExtension extends Command {
    * @param wrist The Wrist to move. This could be the actual wrist from Robot, or a TestWrist
    * @param distance The absolute distance to move to [0, farthest extension possible] moving outwards with 0 at no extension.
    */
-  public MoveExtension(Extension extension, double distance) {
+  public MoveExtension(BaseExtension extension, double distance) {
     requires(extension);
     this.distance = distance;
   }

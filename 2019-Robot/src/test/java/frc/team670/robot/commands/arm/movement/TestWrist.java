@@ -7,12 +7,12 @@
 
 package frc.team670.robot.commands.arm.movement;
 
-import frc.team670.robot.subsystems.Wrist;
+import frc.team670.robot.subsystems.wrist.BaseWrist;
 
 /**
  * Add your docs here.
  */
-public class TestWrist extends Wrist{
+public class TestWrist extends BaseWrist{
 
     private double angle;
 
@@ -36,6 +36,39 @@ public class TestWrist extends Wrist{
     @Override
     public double getAngle() {
         return angle;
+    }
+
+    @Override
+    public void enableCurrentLimit() {
+    }
+
+    @Override
+    public void disableCurrentLimit() {
+    }
+
+    @Override
+    public void setOutput(double output){
+    }
+
+    @Override
+    public int getPositionTicks() {
+        return 0;
+    }
+
+    @Override
+    public boolean isForwardLimitPressed() {
+        //drive until switch is closed
+        return false;
+    }
+    
+    @Override
+    public boolean isReverseLimitPressed() {
+        //drive until switch is closed
+        return false;
+    }
+    
+    @Override
+    public void zero(double encoderValue) {
     }
 
 }

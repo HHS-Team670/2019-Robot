@@ -7,14 +7,13 @@
 
 package frc.team670.robot.commands.climb.armClimb;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.subsystems.Arm;
-import frc.team670.robot.subsystems.Elbow;
-import frc.team670.robot.subsystems.Extension;
+import frc.team670.robot.subsystems.elbow.BaseElbow;
+import frc.team670.robot.subsystems.extension.BaseExtension;
+import frc.team670.robot.subsystems.extension.Extension;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.functions.MathUtils;
 
@@ -28,8 +27,8 @@ public class ArmClimb extends Command {
   private static boolean userWishesToStillClimb;
   private int loggingIterationCounter;
 
-  private Extension extension;
-  private Elbow elbow;
+  private BaseExtension extension;
+  private BaseElbow elbow;
 
   public static final int CLIMB_CURRENT = 10; // TODO figure required limited current
 
@@ -55,7 +54,7 @@ public class ArmClimb extends Command {
 
     heightInInches = Robot.climber.getFrontTalonPositionInInches() + RobotConstants.ARM_HEIGHT_IN_INCHES + RobotConstants.DRIVEBASE_TO_GROUND; // TODO get the actual method
 
-    Logger.consoleLog("startHeightOfRobot%s startAngleOfElbow%s ", heightInInches, elbow.getElbowAngle());
+    Logger.consoleLog("startHeightOfRobot%s startAngleOfElbow%s ", heightInInches, elbow.getAngle());
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -63,7 +62,7 @@ public class ArmClimb extends Command {
   protected void execute() {
     holdElbowDownWithCurrentLimit(CLIMB_CURRENT); // Brings arm down
 
-    double deltaSetPointInInches = (heightInInches/(Math.cos(Math.toDegrees(elbow.getElbowAngle())))) - RobotConstants.FIXED_ARM_LENGTH_IN_INCHES;
+    double deltaSetPointInInches = (heightInInches/(Math.cos(Math.toDegrees(elbow.getAngle())))) - RobotConstants.FIXED_ARM_LENGTH_IN_INCHES;
 
     int deltaSetPointInTicks = MathUtils.convertExtensionInchesToTicks(deltaSetPointInInches);
 
@@ -71,7 +70,7 @@ public class ArmClimb extends Command {
     extension.setPIDControllerSetpoint(Extension.EXTENSION_ENCODER_OUT - deltaSetPointInTicks); // Changes the
                                                                                                     // setpoint
     if (loggingIterationCounter % 7 == 0)
-      Logger.consoleLog("heightOfRobot%s angleOfElbow%s extensionSetpoint%s ", heightInInches, elbow.getElbowAngle(), Extension.EXTENSION_ENCODER_OUT - deltaSetPointInTicks);
+      Logger.consoleLog("heightOfRobot%s angleOfElbow%s extensionSetpoint%s ", heightInInches, elbow.getAngle(), Extension.EXTENSION_ENCODER_OUT - deltaSetPointInTicks);
 
     loggingIterationCounter++;
   }
@@ -84,18 +83,18 @@ public class ArmClimb extends Command {
       return true;
 
     // If arm pulls in too much and no longer makes contact with surface
-    if (extension.getLengthTicks() < (Math.cos(elbow.getElbowAngle() / heightInInches))) {
+    if (extension.getLengthTicks() < (Math.cos(elbow.getAngle() / heightInInches))) {
       return true;
     }
 
-    return extension.getReverseLimitSwitch();
+    return extension.isReverseLimitPressed();
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
     releaseElbow();
-    Logger.consoleLog("endHeightOfRobot%s endAngleOfElbow%s ", heightInInches, elbow.getElbowAngle());
+    Logger.consoleLog("endHeightOfRobot%s endAngleOfElbow%s ", heightInInches, elbow.getAngle());
   }
 
   // Called when another command which requires one or more of the same
@@ -114,7 +113,7 @@ public class ArmClimb extends Command {
   private void holdElbowDownWithCurrentLimit(int currentLimit) {
     elbow.setClimbingCurrentLimit();
     //Climb current defaults to negative because of the way arm is flipped during climbing
-    elbow.getElbowTalon().set(ControlMode.Current, -CLIMB_CURRENT);
+    elbow.setCurrentControl(-CLIMB_CURRENT);
   }
 
   /**

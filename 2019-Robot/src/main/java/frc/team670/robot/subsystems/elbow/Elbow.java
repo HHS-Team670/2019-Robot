@@ -5,14 +5,13 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.subsystems;
+package frc.team670.robot.subsystems.elbow;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
-import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team670.robot.commands.arm.joystick.JoystickElbow;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
@@ -21,7 +20,7 @@ import frc.team670.robot.utils.functions.MathUtils;
 /**
  * Controls motors for elbow movement
  */
-public class Elbow extends Subsystem {
+public class Elbow extends BaseElbow {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
 
@@ -73,95 +72,39 @@ public class Elbow extends Subsystem {
     elbowRotationMain.configPeakCurrentLimit(PEAK_CURRENT_LIMIT);
   }
 
-  /**
-   * Sets the output for the elbow motor 
-   * @param output the desired output
-   */
+  @Override
   public void setOutput(double output) {
     elbowRotationMain.set(ControlMode.PercentOutput, output);
   }
 
-  /**
-   * Returns the output current
-   * 
-   * @return the output current of the elbow motor
-   */
+  @Override
   public double getOutputCurrent() {
     return elbowRotationMain.getOutputCurrent();
   }
 
-  /**
-   * Sets the current limit for when the robot begins to climb
-   */
+  @Override
   public void setClimbingCurrentLimit() {
     elbowRotationMain.configContinuousCurrentLimit(CLIMBING_CONTINUOUS_CURRENT_LIMIT);
   }
 
-  /**
-   * Resets the currnet limit to its normal value
-   */
+  @Override
   public void setNormalCurrentLimit() {
     elbowRotationMain.configContinuousCurrentLimit(NORMAL_CONTINUOUS_CURRENT_LIMIT);
   }
   
-  /**
-   * Selects the PID Slot dedicated to MotionMagic to give it the correct PID Values
-   */
+  @Override
   public void initializeMotionmagic() {
     elbowRotationMain.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
   }
 
+  @Override
   public int getPositionTicks() {
     return elbowRotationMain.getSensorCollection().getQuadraturePosition();
   }
   
+  @Override
   public double getAngle() {
     return MathUtils.convertElbowTicksToDegrees(getPositionTicks());
-  }
-
-  /**
-   * Returns the angle of the elbow with the arm as a zero
-   * 
-   * @return the angle of the elbow with the arm as a zero
-   */
-  public double getElbowAngle() {
-    return 0.0; // TODO convert the actual tick value to an angle
-  }
-
-  /**
-   * Returns the main talon to control the elbow
-   * 
-   * @return the main talon to control the elbow
-   */
-  public TalonSRX getElbowTalon() {
-    return elbowRotationMain;
-  }
-
-  /**
-   * Should create a closed loop for the current to hold the elbow down
-   */
-  public void setCurrentClosedLoopToHoldElbowDown() {
-    /* Factory default hardware to prevent unexpected behaviour */
-    elbowRotationMain.configFactoryDefault();
-
-    /* Config the peak and nominal outputs ([-1, 1] represents [-100, 100]%) */
-    elbowRotationMain.configNominalOutputForward(0, RobotConstants.kTimeoutMs);
-    elbowRotationMain.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
-    elbowRotationMain.configPeakOutputForward(1, RobotConstants.kTimeoutMs);
-    elbowRotationMain.configPeakOutputReverse(-1, RobotConstants.kTimeoutMs);
-
-    /**
-     * Config the allowable closed-loop error, Closed-Loop output will be neutral
-     * within this range. See Table here for units to use:
-     * https://github.com/CrossTheRoadElec/Phoenix-Documentation#what-are-the-units-of-my-sensor
-     */
-    elbowRotationMain.configAllowableClosedloopError(0,CURRENT_CONTROL_SLOT, RobotConstants.kTimeoutMs);
-
-    /* Config closed loop gains for Primary closed loop (Current) */
-    elbowRotationMain.config_kP(CURRENT_CONTROL_SLOT, currentP, RobotConstants.kTimeoutMs);
-    elbowRotationMain.config_kI(CURRENT_CONTROL_SLOT, currentI, RobotConstants.kTimeoutMs);
-    elbowRotationMain.config_kD(CURRENT_CONTROL_SLOT, currentD, RobotConstants.kTimeoutMs);
-    elbowRotationMain.config_kF(CURRENT_CONTROL_SLOT, currentF, RobotConstants.kTimeoutMs);
   }
 
   @Override
@@ -169,45 +112,63 @@ public class Elbow extends Subsystem {
     setDefaultCommand(new JoystickElbow(this));
   }
 
-  public TalonSRX getTalon() {
-    return this.elbowRotationMain;
-  }
-
-  /**
-   * Sets the SensorCollection encoder value to encoderValue (use this to reset the encoder when at a known position
-   * @return true if the forward limit switch is closed, false if open
-   */
-  public boolean getForwardLimitSwitch() {
+  @Override
+  public boolean isForwardLimitPressed() {
     //drive until switch is closed
     return elbowRotationMain.getSensorCollection().isFwdLimitSwitchClosed();
   }
 
-  /**
-   * @return true if the forward limit switch is closed, false if open
-   */
-  public boolean getReverseLimitSwitch() {
+  @Override
+  public boolean isReverseLmitPressed() {
     //drive until switch is closed
     return elbowRotationMain.getSensorCollection().isRevLimitSwitchClosed();
   }
-  /**
-   * Sets the SensorCollection encoder value to encoderValue (use this to reset the encoder when at a known position)
-   */
-  public void resetElbow(double encoderValue) {
+  
+  @Override
+  public void zero(double encoderValue) {
     elbowRotationMain.getSensorCollection().setQuadraturePosition((int) encoderValue, RobotConstants.ARM_RESET_TIMEOUTMS);
   }
 
-  /**
-   * @return the current encoder value of the main elbow motor
-   */
+  @Override
   public double getEncoderValue() {
     return elbowRotationMain.getSensorCollection().getQuadraturePosition();
   }
 
-  /**
-   * Setup for movement and Motion Magic
-   */
+  @Override
   public void setMotionMagicSetpoint(double elbowAngle) {
     elbowRotationMain.set(ControlMode.MotionMagic, MathUtils.convertElbowDegreesToTicks(elbowAngle));
   }
+
+  @Override
+  public void setCurrentControl(int current) {
+    elbowRotationMain.set(ControlMode.Current, current);
+  }
+
+ // /**
+  //  * Should create a closed loop for the current to hold the elbow down
+  //  */
+  // public void setCurrentClosedLoopToHoldElbowDown() {
+  //   /* Factory default hardware to prevent unexpected behaviour */
+  //   elbowRotationMain.configFactoryDefault();
+
+  //   /* Config the peak and nominal outputs ([-1, 1] represents [-100, 100]%) */
+  //   elbowRotationMain.configNominalOutputForward(0, RobotConstants.kTimeoutMs);
+  //   elbowRotationMain.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
+  //   elbowRotationMain.configPeakOutputForward(1, RobotConstants.kTimeoutMs);
+  //   elbowRotationMain.configPeakOutputReverse(-1, RobotConstants.kTimeoutMs);
+
+  //   /**
+  //    * Config the allowable closed-loop error, Closed-Loop output will be neutral
+  //    * within this range. See Table here for units to use:
+  //    * https://github.com/CrossTheRoadElec/Phoenix-Documentation#what-are-the-units-of-my-sensor
+  //    */
+  //   elbowRotationMain.configAllowableClosedloopError(0,CURRENT_CONTROL_SLOT, RobotConstants.kTimeoutMs);
+
+  //   /* Config closed loop gains for Primary closed loop (Current) */
+  //   elbowRotationMain.config_kP(CURRENT_CONTROL_SLOT, currentP, RobotConstants.kTimeoutMs);
+  //   elbowRotationMain.config_kI(CURRENT_CONTROL_SLOT, currentI, RobotConstants.kTimeoutMs);
+  //   elbowRotationMain.config_kD(CURRENT_CONTROL_SLOT, currentD, RobotConstants.kTimeoutMs);
+  //   elbowRotationMain.config_kF(CURRENT_CONTROL_SLOT, currentF, RobotConstants.kTimeoutMs);
+  // }
 
 }

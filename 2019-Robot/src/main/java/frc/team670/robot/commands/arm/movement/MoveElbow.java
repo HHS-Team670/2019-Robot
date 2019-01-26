@@ -8,7 +8,7 @@
 package frc.team670.robot.commands.arm.movement;
 
 import edu.wpi.first.wpilibj.command.Command;
-import frc.team670.robot.subsystems.Elbow;
+import frc.team670.robot.subsystems.elbow.BaseElbow;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.functions.MathUtils;
 
@@ -17,7 +17,7 @@ import frc.team670.robot.utils.functions.MathUtils;
  */
 public class MoveElbow extends Command {
 
-  private Elbow elbow;
+  private BaseElbow elbow;
   private double angle;
 
   private static final double DEGREE_TOLERANCE = 0.5;
@@ -30,7 +30,7 @@ public class MoveElbow extends Command {
    * @param angle The absolute angle to move to (180, -180) with 180 being towards the front of the robot (where the intake is).
    * In reality, this angle will not be in this full range because the elbow will have a limit to how much it can move.
    */
-  public MoveElbow(Elbow elbow, double angle) {
+  public MoveElbow(BaseElbow elbow, double angle) {
     requires(elbow);
   }
 

@@ -5,13 +5,12 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.subsystems;
+package frc.team670.robot.subsystems.wrist;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team670.robot.commands.arm.joystick.JoystickWrist;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
@@ -20,7 +19,7 @@ import frc.team670.robot.utils.functions.MathUtils;
 /**
  * Controls wrist motors
  */
-public class Wrist extends Subsystem {
+public class Wrist extends BaseWrist {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
   
@@ -65,23 +64,27 @@ public class Wrist extends Subsystem {
 
   }
   
-
+  @Override
   public void enableCurrentLimit() {
     wristRotation.enableCurrentLimit(true);
   }
 
+  @Override
   public void disableCurrentLimit() {
     wristRotation.enableCurrentLimit(false);
   }
 
+  @Override
   public void setOutput(double output){
     wristRotation.set(ControlMode.PercentOutput, output);
   }
 
+  @Override
   public int getPositionTicks() {
     return wristRotation.getSensorCollection().getQuadraturePosition();
   }
   
+  @Override
   public double getAngle() {
     return MathUtils.convertWristTicksToDegrees(getPositionTicks());
   }
@@ -91,48 +94,29 @@ public class Wrist extends Subsystem {
     setDefaultCommand(new JoystickWrist(this));
   }
 
-  /**
-  * @return true if the forward limit switch is closed, false if open
-  */
-  public boolean getForwardLimitSwitch() {
+  @Override
+  public boolean isForwardLimitPressed() {
     //drive until switch is closed
     return wristRotation.getSensorCollection().isFwdLimitSwitchClosed();
   }
   
-  /**
-   * @return true if the forward limit switch is closed, false if open
-   */
-  public boolean getReverseLimitSwitch() {
+  @Override
+  public boolean isReverseLimitPressed() {
     //drive until switch is closed
     return wristRotation.getSensorCollection().isRevLimitSwitchClosed();
   }
   
-
-
-  /**
-  * Sets the SensorCollection encoder value to encoderValue (use this to reset the encoder when at a known position)
-  */
-  public void resetWrist(double encoderValue) {
+  @Override
+  public void zero(double encoderValue) {
     wristRotation.getSensorCollection().setQuadraturePosition((int) encoderValue, RobotConstants.ARM_RESET_TIMEOUTMS);
   }
 
-  /**
-   * @return the current encoder value of the wrist motor
-   */
-  public double getEncoderValue() {
-    return wristRotation.getSensorCollection().getQuadraturePosition();
-  }
-
-  /**
-   * Selects the PID Slot dedicated to MotionMagic to give it the correct PID Values
-   */
+  @Override
   public void initializeMotionmagic() {
     wristRotation.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
   }
 
-  /**
-   * Setup for movement and Motion Magic
-   */
+  @Override
   public void setMotionMagicSetpoint(double wristAngle) {  
     wristRotation.set(ControlMode.MotionMagic, MathUtils.convertWristDegreesToTicks(wristAngle));
   }

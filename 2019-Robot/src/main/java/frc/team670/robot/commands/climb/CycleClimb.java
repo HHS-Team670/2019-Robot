@@ -16,9 +16,9 @@ import frc.team670.robot.commands.climb.pistonClimb.RetractBackPistons;
 import frc.team670.robot.commands.climb.pistonClimb.RetractFrontPistons;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Climber;
-import frc.team670.robot.subsystems.Elbow;
-import frc.team670.robot.subsystems.Extension;
-import frc.team670.robot.subsystems.Wrist;
+import frc.team670.robot.subsystems.elbow.BaseElbow;
+import frc.team670.robot.subsystems.extension.BaseExtension;
+import frc.team670.robot.subsystems.wrist.BaseWrist;
 
 /**
  * Allows one Button to cycle through all the necessary stages of climbing:
@@ -28,9 +28,9 @@ public class CycleClimb extends InstantCommand {
   private int setPoint;
   private ClimbStage cg;
   private Arm arm;
-  private Elbow elbow;
-  private Wrist wrist;
-  private Extension extension;
+  private BaseElbow elbow;
+  private BaseWrist wrist;
+  private BaseExtension extension;
   private Climber climber;
 
   /**

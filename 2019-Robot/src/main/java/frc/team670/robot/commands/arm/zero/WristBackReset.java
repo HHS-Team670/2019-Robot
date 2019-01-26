@@ -8,7 +8,7 @@
 package frc.team670.robot.commands.arm.zero;
 
 import edu.wpi.first.wpilibj.command.Command;
-import frc.team670.robot.subsystems.Wrist;
+import frc.team670.robot.subsystems.wrist.Wrist;
 
 /**
  * Zeroes the Wrist encoder by slowly driving it to its back limit switch and resetting its value.
@@ -36,7 +36,7 @@ public class WristBackReset extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return wrist.getReverseLimitSwitch();
+    return wrist.isReverseLimitPressed();
   }
 
   /**
@@ -44,7 +44,7 @@ public class WristBackReset extends Command {
    */
   @Override
   protected void end() {
-    wrist.resetWrist(Wrist.MAX_WRIST_BACK);
+    wrist.zero(Wrist.MAX_WRIST_BACK);
     wrist.setOutput(0);
   }
 

@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.utils.ArmControlMode;
-import frc.team670.robot.subsystems.Extension;
+import frc.team670.robot.subsystems.extension.Extension;
 
 /**
  * Add your docs here.

@@ -13,6 +13,9 @@ import java.util.HashMap;
 import frc.team670.robot.commands.arm.armTransitions.ArmTransition;
 import frc.team670.robot.commands.arm.armTransitions.NeutralToLowerHatch;
 import frc.team670.robot.constants.RobotConstants;
+import frc.team670.robot.subsystems.elbow.BaseElbow;
+import frc.team670.robot.subsystems.extension.BaseExtension;
+import frc.team670.robot.subsystems.wrist.BaseWrist;
 import frc.team670.robot.utils.sort.Node;
 
 /**
@@ -30,38 +33,38 @@ public class Arm  {
   /** Value meant only for unit testing. Do not use this anywhere else! */
   public static double unitTestExtensionDist, unitTestElbowAngle, unitTestWristAngle;
 
-  private Elbow elbow;
-  private Wrist wrist;
-  private Extension extension;
+  private BaseElbow elbow;
+  private BaseWrist wrist;
+  private BaseExtension extension;
 
 
-  public Arm(Elbow elbow, Wrist wrist, Extension extension) {
+  public Arm(BaseElbow elbow, BaseWrist wrist, BaseExtension extension) {
 
     this.elbow = elbow;
     this.wrist = wrist;
     this.extension = extension;
 
     // State Setup
-    currentState = new Neutral(this); //Default state
     states = new HashMap<LegalState, ArmState>();
     states.put(LegalState.NEUTRAL, new Neutral(this));
-    states.put(LegalState.START_BALL, new Neutral(this)); // This obviously needs to be changed
-    states.put(LegalState.START_HATCH, new Neutral(this));
-    states.put(LegalState.START_EMPTY, new Neutral(this)); 
-    states.put(LegalState.IN_BALLGROUNDF, new Neutral(this)); 
-    states.put(LegalState.IN_BALLSTATIONF, new Neutral(this));
-    states.put(LegalState.IN_BALLSTATIONB, new Neutral(this));
-    states.put(LegalState.IN_HATCHFSTATION, new Neutral(this)); 
-    states.put(LegalState.IN_HATCHBSTATION, new Neutral(this)); 
-    states.put(LegalState.IN_HATCHGROUNDB, new Neutral(this));//OOF
-    states.put(LegalState.PLACE_BALLCARGOF, new Neutral(this));
-    states.put(LegalState.PLACE_BALLCARGOB, new Neutral(this)); 
-    states.put(LegalState.PLACE_HATCHCARGOF, new Neutral(this));
-    states.put(LegalState.PLACE_HATCHCARGOB, new Neutral(this));
-    states.put(LegalState.PLACE_HATCHROCKETLOWF, new Neutral(this)); 
-    states.put(LegalState.PLACE_HATCHROCKETLOWB, new Neutral(this)); 
-    states.put(LegalState.PLACE_HATCHROCKETMEDF, new Neutral(this));
-    states.put(LegalState.PLACE_HATCHROCKETMEDB, new Neutral(this));
+    // states.put(LegalState.START_BALL, new Neutral(this)); // This obviously needs to be changed
+    // states.put(LegalState.START_HATCH, new Neutral(this));
+    // states.put(LegalState.START_EMPTY, new Neutral(this)); 
+    // states.put(LegalState.IN_BALLGROUNDF, new Neutral(this)); 
+    // states.put(LegalState.IN_BALLSTATIONF, new Neutral(this));
+    // states.put(LegalState.IN_BALLSTATIONB, new Neutral(this));
+    // states.put(LegalState.IN_HATCHFSTATION, new Neutral(this)); 
+    // states.put(LegalState.IN_HATCHBSTATION, new Neutral(this)); 
+    // states.put(LegalState.IN_HATCHGROUNDB, new Neutral(this));//OOF
+    // states.put(LegalState.PLACE_BALLCARGOF, new Neutral(this));
+    // states.put(LegalState.PLACE_BALLCARGOB, new Neutral(this)); 
+    // states.put(LegalState.PLACE_HATCHCARGOF, new Neutral(this));
+    // states.put(LegalState.PLACE_HATCHCARGOB, new Neutral(this));
+    // states.put(LegalState.PLACE_HATCHROCKETLOWF, new Neutral(this)); 
+    // states.put(LegalState.PLACE_HATCHROCKETLOWB, new Neutral(this)); 
+    // states.put(LegalState.PLACE_HATCHROCKETMEDF, new Neutral(this));
+    // states.put(LegalState.PLACE_HATCHROCKETMEDB, new Neutral(this));
+    currentState = new Neutral(this); //Default state
     /*
      *
     NEUTRAL(0), START_BALL(1), START_HATCH(2), START_EMPTY(3), IN_BALLGROUNDF(4), IN_BALLSTATIONF(5),
@@ -75,15 +78,15 @@ public class Arm  {
 
   }
 
-  public Elbow getElbow() {
+  public BaseElbow getElbow() {
     return elbow;
   }
 
-  public Wrist getWrist() {
+  public BaseWrist getWrist() {
     return wrist;
   }
 
-  public Extension getExtension() {
+  public BaseExtension getExtension() {
     return extension;
   }
 
