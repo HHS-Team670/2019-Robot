@@ -8,9 +8,11 @@
 package frc.team670.robot.subsystems;
 
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import frc.team670.robot.commands.arm.armTransitions.ArmTransition;
+import frc.team670.robot.commands.arm.armTransitions.CommonTransition;
 import frc.team670.robot.commands.arm.armTransitions.LowerHatchToNeutral;
 import frc.team670.robot.commands.arm.armTransitions.NeutralToLowerHatch;
 import frc.team670.robot.constants.RobotConstants;
@@ -66,6 +68,11 @@ public class Arm  {
     // states.put(LegalState.PLACE_HATCHROCKETMEDF, new Neutral(this));
     // states.put(LegalState.PLACE_HATCHROCKETMEDB, new Neutral(this));
     currentState = getArmState(LegalState.NEUTRAL); //Default state
+
+    for(ArmState state : getStatesArrayList()) { // Initialize all the transitions
+      state.initTransitions();
+    }
+
     /*
      *
     NEUTRAL(0), START_BALL(1), START_HATCH(2), START_EMPTY(3), IN_BALLGROUNDF(4), IN_BALLSTATIONF(5),
@@ -93,6 +100,10 @@ public class Arm  {
 
   public static HashMap<LegalState, ArmState> getStates() {
     return states;
+  }
+
+  public static ArrayList<ArmState> getStatesArrayList() {
+    return new ArrayList<ArmState>(states.values());
   }
 
   /**
@@ -206,6 +217,12 @@ public class Arm  {
       return wristAngle;
     }
 
+    public void initTransitions() {
+      for (ArmTransition transition : transitions) {
+        transition.initTransition();
+      }
+    }
+
     @Override
     public ArmTransition[] getEdges() {
       return transitions;
@@ -220,13 +237,13 @@ public class Arm  {
 
   private class Neutral extends ArmState {
     private Neutral(Arm arm) {
-      super(0, 0, 0, new ArmTransition[] { new NeutralToLowerHatch(arm) });
+      super(0, 0, 0, new ArmTransition[] { new CommonTransition(LegalState.NEUTRAL, LegalState.PLACE_HATCHROCKETLOWF, arm) });
     }
   }
 
   private class LowHatchPlace extends ArmState {
     private LowHatchPlace(Arm arm) {
-      super(30, 40, 6, new ArmTransition[] { new LowerHatchToNeutral(arm) });
+      super(30, 40, 6, new ArmTransition[] { new CommonTransition(LegalState.PLACE_HATCHROCKETLOWF, LegalState.NEUTRAL, arm)});
     }
   }
 

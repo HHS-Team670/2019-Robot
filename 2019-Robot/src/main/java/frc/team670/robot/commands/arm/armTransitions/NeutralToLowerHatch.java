@@ -7,26 +7,32 @@
 
 package frc.team670.robot.commands.arm.armTransitions;
 
+import edu.wpi.first.wpilibj.command.WaitForChildren;
 import frc.team670.robot.commands.arm.movement.MoveElbow;
 import frc.team670.robot.commands.arm.movement.MoveExtension;
 import frc.team670.robot.commands.arm.movement.MoveWrist;
 import frc.team670.robot.subsystems.Arm;
+import frc.team670.robot.subsystems.Arm.ArmState;
 import frc.team670.robot.subsystems.Arm.LegalState;
 
+/**
+ * Example for a specified transition where you would need to take certain steps to optimize it.
+ */
 public class NeutralToLowerHatch extends ArmTransition {
   
   public NeutralToLowerHatch(Arm arm) {
     super(LegalState.NEUTRAL, LegalState.PLACE_HATCHROCKETLOWF, arm);
 
-    addSequential(new MoveElbow(arm.getElbow(), 30));
-    addParallel(new MoveWrist(arm.getWrist(), 40));
-    addParallel(new MoveExtension(arm.getExtension(), 6));
+  }
 
-
-    /*
-     * Enter your addSequential() and addParallel() commands here.
-     */
-
+  @Override
+  public void initTransition() {
+    ArmState dest = getDest();
+    // You would have more Move Commands here to follow a specific path, then end at the destination
+    addParallel(new MoveWrist(wrist, dest.getWristAngle()));
+    addParallel(new MoveExtension(extension, dest.getExtensionLength()));
+    addSequential(new MoveElbow(elbow, dest.getElbowAngle()));
+    addSequential(new WaitForChildren());
   }
 
 }

@@ -15,21 +15,27 @@ import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
 import frc.team670.robot.subsystems.Arm.LegalState;
 
-public class LowerHatchToNeutral extends ArmTransition {
+/**
+ * A common transition that can be used to move the arm straight to any position. Use this if you are not concerned about
+ * the arm hitting anything on its path between the start and destination ArmStates
+ */
+public class CommonTransition extends ArmTransition {
   /**
-   * Add your docs here.
+   * @param start The start ArmState (the ArmState that holds this transitions)
+   * @param destination The ending ArmState (where this transition should go to)
+   * @param arm The Arm. Should be the static instance of Arm held in Robot
    */
-  public LowerHatchToNeutral(Arm arm) {
-    super(LegalState.PLACE_HATCHROCKETLOWF, LegalState.NEUTRAL, arm);
+  public CommonTransition(LegalState start, LegalState destination, Arm arm) {
+    super(start, destination, arm);
   }
 
   @Override
   public void initTransition() {
     ArmState dest = getDest();
-    // You would have more Move Commands here to follow a specific path, then end at the destination
     addParallel(new MoveWrist(wrist, dest.getWristAngle()));
     addParallel(new MoveExtension(extension, dest.getExtensionLength()));
     addSequential(new MoveElbow(elbow, dest.getElbowAngle()));
     addSequential(new WaitForChildren());
   }
+
 }

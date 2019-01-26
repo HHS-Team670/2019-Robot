@@ -57,8 +57,6 @@ public class ArmPathGenerator {
       movements.addSequential(t);
     }
 
-    movements.addSequential(new SetArmState(destination));
-
     return movements;
   }
 
