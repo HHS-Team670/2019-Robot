@@ -7,14 +7,17 @@
 
 package frc.team670.robot.commands.climb;
 
+import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team670.robot.Robot;
+import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.commands.climb.armClimb.ArmClimb;
 import frc.team670.robot.commands.climb.pistonClimb.PistonClimbWithTiltControl;
 import frc.team670.robot.commands.climb.pistonClimb.RetractBackPistons;
 import frc.team670.robot.commands.climb.pistonClimb.RetractFrontPistons;
 import frc.team670.robot.subsystems.Arm;
+import frc.team670.robot.subsystems.Arm.LegalState;
 import frc.team670.robot.subsystems.Climber;
 import frc.team670.robot.subsystems.elbow.BaseElbow;
 import frc.team670.robot.subsystems.extension.BaseExtension;
@@ -22,7 +25,8 @@ import frc.team670.robot.subsystems.wrist.BaseWrist;
 
 /**
  * Allows one Button to cycle through all the necessary stages of climbing:
- * deploy pistons, drag the robot with the arm, retract the front pistons, and retract the back pistons.
+ * deploy pistons, drag the robot with the arm, retract the front pistons, and
+ * retract the back pistons.
  */
 public class CycleClimb extends InstantCommand {
   private int setPoint;
@@ -34,8 +38,9 @@ public class CycleClimb extends InstantCommand {
   private Climber climber;
 
   /**
-   * @param setPoint The setpoint in encoder ticks corresponding to the height you want to climb to.
-   * RobotConstants: PISTON_ENCODER_FLAT, PISTON_ENCODER_LEVEL_TWO, PISTON_ENCODER_LEVEL_THREEE
+   * @param setPoint The setpoint in encoder ticks corresponding to the height you
+   *                 want to climb to. RobotConstants: PISTON_ENCODER_FLAT,
+   *                 PISTON_ENCODER_LEVEL_TWO, PISTON_ENCODER_LEVEL_THREEE
    */
   public CycleClimb(Arm arm, Climber climber, int setPoint) {
     requires(Robot.climber);
@@ -62,42 +67,44 @@ public class CycleClimb extends InstantCommand {
   @Override
   protected void initialize() {
     switch (cg) {
-    case DEPLOY_PISTONS:
-      Scheduler.getInstance().add(new PistonClimbWithTiltControl(setPoint));
-      cg = ClimbStage.ARM_CLIMB;
-      break;
-    case ARM_CLIMB:
-      if(Robot.climber.getFrontAndBackControllerOnTarget()) {
-          Scheduler.getInstance().add(new ArmClimb(arm));
+      case DEPLOY_PISTONS:
+        Scheduler.getInstance().add(new PistonClimbWithTiltControl(setPoint, climber));
+        cg = ClimbStage.ARM_CLIMB;
+        break;
+      case ARM_CLIMB:
+        if(climber.getFrontControllerOnTarget() && climber.getBackControllerOnTarget()) {
+            CommandGroup initiateArmClimb = new CommandGroup();
+            initiateArmClimb.addSequential(new MoveArm(Arm.getArmState(LegalState.READY_TO_CLIMB), arm));
+            initiateArmClimb.addSequential(new ArmClimb(arm, climber));
+            Scheduler.getInstance().add(initiateArmClimb);
+        }
         if (!ArmClimb.getUserWishesToStillClimb()) {
           cg = ClimbStage.RETRACT_FRONT_PISTONS;
         }
+        break;
+      case RETRACT_FRONT_PISTONS:
+        Scheduler.getInstance().add(new RetractFrontPistons(climber));
+        if (Robot.climber.getFrontPistonsRetracted()) {
+          cg = ClimbStage.RETRACT_BACK_PISTONS;
+        }
+        break;
+      case RETRACT_BACK_PISTONS:
+        Scheduler.getInstance().add(new RetractBackPistons(climber));
+        cg = ClimbStage.DEPLOY_PISTONS;
+        break;
+      default:
+        Scheduler.getInstance().add(new PistonClimbWithTiltControl(setPoint, climber));
+        cg = ClimbStage.DEPLOY_PISTONS;
+        break;
       }
-      break;
-    case RETRACT_FRONT_PISTONS:
-      Scheduler.getInstance().add(new RetractFrontPistons());
-      if (Robot.climber.getFrontPistonsRetracted()) {
-        cg = ClimbStage.RETRACT_BACK_PISTONS;
-      }
-      break;
-    case RETRACT_BACK_PISTONS:
-      Scheduler.getInstance().add(new RetractBackPistons(climber));
-      cg = ClimbStage.DEPLOY_PISTONS;
-      break;
-    default:
-      Scheduler.getInstance().add(new PistonClimbWithTiltControl(setPoint));
-      cg = ClimbStage.DEPLOY_PISTONS;
-      break;
     }
-  }
-
 
   /**
-   * An enum to represent the different stages of climbing that the command can call
+   * An enum to represent the different stages of climbing that the command can
+   * call
    * 
    */
   public enum ClimbStage {
     DEPLOY_PISTONS, ARM_CLIMB, RETRACT_FRONT_PISTONS, RETRACT_BACK_PISTONS;
   }
-
 }

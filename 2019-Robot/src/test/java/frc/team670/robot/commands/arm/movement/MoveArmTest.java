@@ -31,7 +31,7 @@ public class MoveArmTest {
         TestExtension extension = new TestExtension();
         Arm arm = new Arm(elbow, wrist, extension);
         Arm.setState(Arm.getArmState(LegalState.NEUTRAL));
-        ArmState dest = Arm.getArmState(LegalState.PLACE_HATCHROCKETLOWF);
+        ArmState dest = Arm.getArmState(LegalState.PLACE_HATCH_ROCKET_LOW_FORWARD);
 
         CommandGroup moveArm = ArmPathGenerator.getPath(dest, arm);
 
@@ -44,7 +44,7 @@ public class MoveArmTest {
         
         assertEquals(dest.getCoordPosition(), Arm.getCoordPosition(elbow.getAngle(), wrist.getAngle(), extension.getLengthInches()));
 
-        Arm.setState(Arm.getArmState(LegalState.PLACE_HATCHROCKETLOWF));
+        Arm.setState(Arm.getArmState(LegalState.PLACE_HATCH_ROCKET_LOW_FORWARD));
         dest = Arm.getArmState(LegalState.NEUTRAL);
         moveArm = ArmPathGenerator.getPath(dest, arm);
         
