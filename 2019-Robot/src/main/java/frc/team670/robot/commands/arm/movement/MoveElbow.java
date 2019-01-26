@@ -31,6 +31,7 @@ public class MoveElbow extends Command {
    * In reality, this angle will not be in this full range because the elbow will have a limit to how much it can move.
    */
   public MoveElbow(BaseElbow elbow, double angle) {
+    this.elbow = elbow;
     requires(elbow);
     this.angle = angle;
   }

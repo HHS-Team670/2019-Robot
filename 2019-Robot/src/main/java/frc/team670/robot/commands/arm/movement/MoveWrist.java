@@ -31,6 +31,7 @@ public class MoveWrist extends Command {
    * In reality, this angle will not be in this full range because the wrist will have a limit to how much it can move.
    */
   public MoveWrist(BaseWrist wrist, double angle) {
+    this.wrist = wrist;
     requires(wrist);
     this.angle = angle;
   }

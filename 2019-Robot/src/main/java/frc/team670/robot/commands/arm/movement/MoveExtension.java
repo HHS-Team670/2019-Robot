@@ -30,6 +30,7 @@ public class MoveExtension extends Command {
    * @param distance The absolute distance to move to [0, farthest extension possible] moving outwards with 0 at no extension.
    */
   public MoveExtension(BaseExtension extension, double distance) {
+    this.extension = extension;
     requires(extension);
     this.distance = distance;
   }

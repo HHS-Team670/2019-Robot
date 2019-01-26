@@ -119,7 +119,7 @@ public class Arm  {
   /**
    * Returns the arm's point in forward facing plane relative to (0,0) at the base of the arm. 
    */
-  public static Point2D.Double getCoordPosition(double extensionLength, double wristAngle, double elbowAngle) {
+  public static Point2D.Double getCoordPosition(double elbowAngle, double wristAngle, double extensionLength) {
     double x = extensionLength * Math.sin(elbowAngle) + RobotConstants.CLAW_RADIUS_IN_INCHES * Math.sin(wristAngle);
     double y = extensionLength * Math.cos(elbowAngle) + RobotConstants.CLAW_RADIUS_IN_INCHES * Math.cos(wristAngle) + RobotConstants.ARM_HEIGHT_IN_INCHES;
     return new Point2D.Double(x, y);
@@ -173,7 +173,7 @@ public class Arm  {
       this.extensionLength = extensionLength;
       this.elbowAngle = elbowAngle;
       this.wristAngle = wristAngle;
-      coord = Arm.getCoordPosition(extensionLength, wristAngle, elbowAngle);
+      coord = Arm.getCoordPosition(elbowAngle, wristAngle, extensionLength);
       this.transitions = transitions;
     }
 
