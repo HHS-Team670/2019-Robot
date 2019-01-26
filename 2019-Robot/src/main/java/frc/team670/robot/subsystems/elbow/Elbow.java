@@ -70,6 +70,9 @@ public class Elbow extends BaseElbow {
     elbowRotationMain.configReverseSoftLimitEnable(true);
     elbowRotationMain.enableCurrentLimit(true);
     elbowRotationMain.configPeakCurrentLimit(PEAK_CURRENT_LIMIT);
+
+    // Sets the Quadrature Position based on the pulse width to work as an absolute encoder 
+    elbowRotationMain.getSensorCollection().setQuadraturePosition(elbowRotationMain.getSensorCollection().getPulseWidthPosition() * 4, 0); // Times 4 since Quadrature is out of 4096 while Pulse Width is 1024
   }
 
   @Override
@@ -90,11 +93,6 @@ public class Elbow extends BaseElbow {
   @Override
   public void setNormalCurrentLimit() {
     elbowRotationMain.configContinuousCurrentLimit(NORMAL_CONTINUOUS_CURRENT_LIMIT);
-  }
-  
-  @Override
-  public void initializeMotionmagic() {
-    elbowRotationMain.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
   }
 
   @Override
@@ -136,6 +134,7 @@ public class Elbow extends BaseElbow {
 
   @Override
   public void setMotionMagicSetpoint(double elbowAngle) {
+    elbowRotationMain.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
     elbowRotationMain.set(ControlMode.MotionMagic, MathUtils.convertElbowDegreesToTicks(elbowAngle));
   }
 

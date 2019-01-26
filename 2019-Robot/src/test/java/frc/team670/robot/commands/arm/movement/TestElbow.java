@@ -30,11 +30,6 @@ public class TestElbow extends BaseElbow {
     }
 
     @Override
-    public void initializeMotionmagic() {
-        
-    }
-
-    @Override
     public double getAngle() {
         return angle;
     }

@@ -5,7 +5,7 @@ import frc.team254.lib.util.control.Lookahead;
 public class RobotConstants {
 
     // Robot Dimensions
-    public static final double ROBOT_LENGTH = 0, ROBOT_WIDTH = 0, DRIVEBASE_TO_GROUND = 0;
+    public static final double ROBOT_LENGTH = 32, ROBOT_WIDTH = 27.5, DRIVEBASE_TO_GROUND = 0;
 
     // Drive Base Dimensions TODO set these
     public static final double DRIVEBASE_GEAR_RATIO = 8.45; // 8.45 if low gear, 10.71 if high gear. TODO check which
@@ -20,7 +20,7 @@ public class RobotConstants {
      */
     public static final int DIO_TICKS_PER_ROTATION = 4096;
 
-    // TODO figure out real values for each constants for arm
+    // TODO Set all of these!!!!
     public static double EXTENSION_TICKS_PER_MOTOR_ROTATION = 1024; //Subject to change, measure real value
     public static double EXTENSION_MOTOR_ROTATIONS_PER_INCH = 0.168748; //Subject to change, measure real value
     /** Elbow will have an absolute Mag Encoder */

@@ -14,6 +14,7 @@ import frc.team670.robot.subsystems.Arm.ArmState;
 import frc.team670.robot.subsystems.elbow.BaseElbow;
 import frc.team670.robot.subsystems.extension.BaseExtension;
 import frc.team670.robot.subsystems.wrist.BaseWrist;
+import frc.team670.robot.utils.Logger;
 
 /**
  * Uses MotionMagic to move the Arm directly to a known ArmState. BE VERY CAREFUL WITH THIS. It does not take into account
@@ -30,6 +31,8 @@ public class MoveArmDangerous extends CommandGroup {
   private BaseWrist wrist;
   private BaseExtension extension;
 
+  private ArmState dest;
+
   public MoveArmDangerous(ArmState state, Arm arm) {
     super();
     elbow = arm.getElbow();
@@ -39,10 +42,18 @@ public class MoveArmDangerous extends CommandGroup {
     requires(wrist);
     requires(elbow);
 
+    dest = state;
+
     addParallel(new MoveExtension(extension, targetState.getExtensionLength()));
     addParallel(new MoveWrist(wrist, targetState.getWristAngle()));
     addSequential(new MoveElbow(elbow, targetState.getElbowAngle()));
     addSequential(new WaitForChildren());
+    Logger.consoleLog();
+  }
+
+  @Override
+  protected void end() {
+    Arm.setState(dest);
   }
 
 }

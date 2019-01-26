@@ -31,23 +31,24 @@ public class MoveElbow extends Command {
    * In reality, this angle will not be in this full range because the elbow will have a limit to how much it can move.
    */
   public MoveElbow(BaseElbow elbow, double angle) {
+    this.elbow = elbow;
     requires(elbow);
+    this.angle = angle;
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    elbow.initializeMotionmagic();
+    elbow.setMotionMagicSetpoint(angle);
     executeCount = 0;
-    Logger.consoleLog("MoveElbow: angle: %s", angle);
+    Logger.consoleLog("angle: %s", angle);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    elbow.setMotionMagicSetpoint(angle);
     if(executeCount % 5 == 0) {
-      Logger.consoleLog("MoveElbow: angle: %s", angle);
+      Logger.consoleLog("angle: %s", angle);
     }
     executeCount++;
   }
@@ -61,14 +62,14 @@ public class MoveElbow extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Logger.consoleLog("MoveElbow: targetAngle: %s, endingAngle: %s", angle, elbow.getAngle());
+    Logger.consoleLog("targetAngle: %s, endingAngle: %s", angle, elbow.getAngle());
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    Logger.consoleLog("MoveElbow Interrupted");
+    Logger.consoleLog();
     end();
   }
 }

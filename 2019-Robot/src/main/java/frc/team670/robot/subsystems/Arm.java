@@ -8,11 +8,14 @@
 package frc.team670.robot.subsystems;
 
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import frc.team670.robot.commands.arm.armTransitions.ArmTransition;
 import frc.team670.robot.commands.arm.armTransitions.IntakeBallIntakeForwardToNeutral;
 import frc.team670.robot.commands.arm.armTransitions.NeutralToIntakeBallIntakeForward;
+import frc.team670.robot.commands.arm.armTransitions.CommonTransition;
+import frc.team670.robot.commands.arm.armTransitions.LowerHatchToNeutral;
 import frc.team670.robot.commands.arm.armTransitions.NeutralToLowerHatch;
 import frc.team670.robot.commands.arm.armTransitions.NeutralToReadyToClimb;
 import frc.team670.robot.commands.arm.armTransitions.NeutralToStow;
@@ -68,11 +71,16 @@ public class Arm {
     // states.put(LegalState.PLACE_BALLCARGOB, new Neutral(this));
     // states.put(LegalState.PLACE_HATCHCARGOF, new Neutral(this));
     // states.put(LegalState.PLACE_HATCHCARGOB, new Neutral(this));
-    // states.put(LegalState.PLACE_HATCHROCKETLOWF, new Neutral(this));
-    // states.put(LegalState.PLACE_HATCHROCKETLOWB, new Neutral(this));
+    states.put(LegalState.PLACE_HATCHROCKETLOWF, new LowHatchPlace(this)); 
+    // states.put(LegalState.PLACE_HATCHROCKETLOWB, new Neutral(this)); 
     // states.put(LegalState.PLACE_HATCHROCKETMEDF, new Neutral(this));
     // states.put(LegalState.PLACE_HATCHROCKETMEDB, new Neutral(this));
-    currentState = new Neutral(this); // Default state
+    currentState = getArmState(LegalState.NEUTRAL); //Default state
+
+    for(ArmState state : getStatesArrayList()) { // Initialize all the transitions
+      state.initTransitions();
+    }
+
     /*
      *
      * NEUTRAL(0), START_BALL(1), START_HATCH(2), START_EMPTY(3), IN_BALLGROUNDF(4),
@@ -104,10 +112,17 @@ public class Arm {
     return states;
   }
 
+  public static ArrayList<ArmState> getStatesArrayList() {
+    return new ArrayList<ArmState>(states.values());
+  }
+
   /**
    * Sets the current state of the arm.
    */
   public static void setState(ArmState state) {
+    for (ArmTransition transition : state.getEdges()) {
+      System.out.println("Transition Destination: " + transition.getDest().getClass().getName());
+    }
     currentState = state;
   }
 
@@ -130,7 +145,7 @@ public class Arm {
    * Returns the arm's point in forward facing plane relative to (0,0) at the base
    * of the arm.
    */
-  public static Point2D.Double getCoordPosition(double extensionLength, double wristAngle, double elbowAngle) {
+  public static Point2D.Double getCoordPosition(double elbowAngle, double wristAngle, double extensionLength) {
     double x = extensionLength * Math.sin(elbowAngle) + RobotConstants.CLAW_RADIUS_IN_INCHES * Math.sin(wristAngle);
     double y = extensionLength * Math.cos(elbowAngle) + RobotConstants.CLAW_RADIUS_IN_INCHES * Math.cos(wristAngle)
         + RobotConstants.ARM_HEIGHT_IN_INCHES;
@@ -190,11 +205,11 @@ public class Arm {
      *                        front of the robot.
      * @param transitions     The ArmTransitions that begin at this ArmState
      */
-    public ArmState(double extensionLength, double elbowAngle, double wristAngle, ArmTransition[] transitions) {
+    protected ArmState(double elbowAngle, double wristAngle, double extensionLength, ArmTransition[] transitions) {
       this.extensionLength = extensionLength;
       this.elbowAngle = elbowAngle;
       this.wristAngle = wristAngle;
-      coord = Arm.getCoordPosition(extensionLength, wristAngle, elbowAngle);
+      coord = Arm.getCoordPosition(elbowAngle, wristAngle, extensionLength);
       this.transitions = transitions;
     }
 
@@ -223,6 +238,12 @@ public class Arm {
       return wristAngle;
     }
 
+    public void initTransitions() {
+      for (ArmTransition transition : transitions) {
+        transition.initTransition();
+      }
+    }
+
     @Override
     public ArmTransition[] getEdges() {
       return transitions;
@@ -237,23 +258,14 @@ public class Arm {
   }
 
   private class Neutral extends ArmState {
-    public Neutral(Arm arm) {
-      super(0, 45, 45, new ArmTransition[] { 
-        new NeutralToLowerHatch(arm), new NeutralToIntakeBallIntakeForward(arm), new NeutralToReadyToClimb(arm),
-        new NeutralToStow(arm)
-      });
+    private Neutral(Arm arm) {
+      super(0, 0, 0, new ArmTransition[] { new CommonTransition(LegalState.NEUTRAL, LegalState.PLACE_HATCHROCKETLOWF, arm) });
     }
   }
 
-  private class IntakeBallIntakeForward extends ArmState {
-    public IntakeBallIntakeForward(Arm arm) { // TODO set this
-      super(0, -45, 0, new ArmTransition[] { new IntakeBallIntakeForwardToNeutral(arm) });
-    }
-  }
-
-  private class ReadyToClimb extends ArmState {
-    public ReadyToClimb(Arm arm){ // TODO set this
-      super(0, -45, 0, new ArmTransition[] { new ReadyToClimbToNeutral(arm) });
+  private class LowHatchPlace extends ArmState {
+    private LowHatchPlace(Arm arm) {
+      super(30, 40, 6, new ArmTransition[] { new CommonTransition(LegalState.PLACE_HATCHROCKETLOWF, LegalState.NEUTRAL, arm)});
     }
   }
 

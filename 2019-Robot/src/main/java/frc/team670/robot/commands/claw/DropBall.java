@@ -9,15 +9,16 @@ package frc.team670.robot.commands.claw;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team670.robot.subsystems.Claw;
+import frc.team670.robot.utils.Logger;
 
 /**
- * Add your docs here.
+ * Drops the ball using a hard open and by pushing it
  */
-public class OpenClaw extends InstantCommand {
+public class DropBall extends InstantCommand {
   
   private Claw claw;
 
-  public OpenClaw(Claw claw) {
+  public DropBall(Claw claw) {
     super();
     this.claw = claw;
     requires(claw);
@@ -26,6 +27,9 @@ public class OpenClaw extends InstantCommand {
   // Called once when the command executes
   @Override
   protected void initialize() {
+    claw.openClaw(false);
+    claw.push();
+    Logger.consoleLog();
   }
 
 }

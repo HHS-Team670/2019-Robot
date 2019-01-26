@@ -9,6 +9,7 @@ package frc.team670.robot.commands.arm.zero;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.subsystems.wrist.Wrist;
+import frc.team670.robot.utils.Logger;
 
 /**
  * Zeroes the Wrist encoder by slowly driving it to its front limit switch and resetting its value.
@@ -24,7 +25,7 @@ public class WristForwardReset extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-
+    Logger.consoleLog();
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -46,6 +47,7 @@ public class WristForwardReset extends Command {
   protected void end() {
     wrist.zero(Wrist.MAX_WRIST_FORWARD);
     wrist.setOutput(0);
+    Logger.consoleLog();
   }
 
   // Called when another command which requires one or more of the same
@@ -53,5 +55,6 @@ public class WristForwardReset extends Command {
   @Override
   protected void interrupted() {
     wrist.setOutput(0);
+    Logger.consoleLog();
   }
 }

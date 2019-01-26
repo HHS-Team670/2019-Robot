@@ -29,11 +29,6 @@ public class TestWrist extends BaseWrist{
     }
 
     @Override
-    public void initializeMotionmagic() {
-        
-    }
-
-    @Override
     public double getAngle() {
         return angle;
     }

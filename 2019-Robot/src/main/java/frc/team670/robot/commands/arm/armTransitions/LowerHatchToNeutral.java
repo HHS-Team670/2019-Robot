@@ -15,14 +15,12 @@ import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
 import frc.team670.robot.subsystems.Arm.LegalState;
 
-/**
- * Example for a specified transition where you would need to take certain steps to optimize it.
- */
-public class NeutralToLowerHatch extends ArmTransition {
-  
-  public NeutralToLowerHatch(Arm arm) {
-    super(LegalState.NEUTRAL, LegalState.PLACE_HATCHROCKETLOWF, arm);
-
+public class LowerHatchToNeutral extends ArmTransition {
+  /**
+   * Add your docs here.
+   */
+  public LowerHatchToNeutral(Arm arm) {
+    super(LegalState.PLACE_HATCHROCKETLOWF, LegalState.NEUTRAL, arm);
   }
 
   @Override
@@ -34,5 +32,4 @@ public class NeutralToLowerHatch extends ArmTransition {
     addSequential(new MoveElbow(elbow, dest.getElbowAngle()));
     addSequential(new WaitForChildren());
   }
-
 }

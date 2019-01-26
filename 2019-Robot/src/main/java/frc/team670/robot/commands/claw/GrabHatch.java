@@ -7,42 +7,28 @@
 
 package frc.team670.robot.commands.claw;
 
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team670.robot.subsystems.Claw;
+import frc.team670.robot.utils.Logger;
 
-public class CloseClaw extends Command {
-
+/**
+ * Grabs the hatch by opening the intake hard.
+ */
+public class GrabHatch extends InstantCommand {
+  
   private Claw claw;
 
-  public CloseClaw(Claw claw) {
+  public GrabHatch(Claw claw) {
+    super();
     this.claw = claw;
     requires(claw);
   }
 
-  // Called just before this Command runs the first time
+  // Called once when the command executes
   @Override
   protected void initialize() {
+    claw.openClaw(false);
+    Logger.consoleLog();
   }
 
-  // Called repeatedly when this Command is scheduled to run
-  @Override
-  protected void execute() {
-  }
-
-  // Make this return true when this Command no longer needs to run execute()
-  @Override
-  protected boolean isFinished() {
-    return false;
-  }
-
-  // Called once after isFinished returns true
-  @Override
-  protected void end() {
-  }
-
-  // Called when another command which requires one or more of the same
-  // subsystems is scheduled to run
-  @Override
-  protected void interrupted() {
-  }
 }

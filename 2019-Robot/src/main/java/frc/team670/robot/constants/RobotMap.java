@@ -47,6 +47,13 @@ public class RobotMap {
   public static final int ARM_ELBOW_ROTATION_MOTOR_VICTOR = 7;
   public static final int ARM_WRIST_ROTATION = 8;
 
+  // Claw
+  public static final int HARD_GRIP_SOLENOID = 9;
+  public static final int SOFT_GRIP_SOLENOID = 10;
+  public static final int CLAW_PUSH_SOLENOID = 11;
+
+  public static final int PC_MODULE = 12;
+
   // Climber
   public static final int BACK_CLIMBER_PISTON_CONTROLLER = 14;
   public static final int FRONT_CLIMBER_PISTON_CONTROLLER = 15;

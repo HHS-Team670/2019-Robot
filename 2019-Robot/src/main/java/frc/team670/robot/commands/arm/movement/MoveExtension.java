@@ -30,6 +30,7 @@ public class MoveExtension extends Command {
    * @param distance The absolute distance to move to [0, farthest extension possible] moving outwards with 0 at no extension.
    */
   public MoveExtension(BaseExtension extension, double distance) {
+    this.extension = extension;
     requires(extension);
     this.distance = distance;
   }
@@ -37,17 +38,16 @@ public class MoveExtension extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    extension.initializeMotionmagic();
+    extension.setMotionMagicSetpoint(distance);
     executeCount = 0;
-    Logger.consoleLog("MoveExtension: distance: %s", distance);
+    Logger.consoleLog("distance: %s", distance);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    extension.setMotionMagicSetpoint(distance);
     if(executeCount % 5 == 0) {
-      Logger.consoleLog("MoveExtension: distance: %s", distance);
+      Logger.consoleLog("distance: %s", distance);
     }
     executeCount++;
   }
@@ -61,14 +61,14 @@ public class MoveExtension extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Logger.consoleLog("MoveExtension: targetDistance: %s, endingDistance: %s", distance, extension.getLengthInches());
+    Logger.consoleLog("targetDistance: %s, endingDistance: %s", distance, extension.getLengthInches());
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    Logger.consoleLog("MoveExtension Interrupted");
+    Logger.consoleLog();
     end();
   }
 }

@@ -7,8 +7,6 @@ public interface ElbowInterface {
 
     public void setMotionMagicSetpoint(double wristAngle);
 
-    public void initializeMotionmagic();
-
     public double getAngle();
 
 /**

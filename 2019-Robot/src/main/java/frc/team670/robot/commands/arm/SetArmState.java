@@ -5,36 +5,28 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.commands.arm.movement;
+package frc.team670.robot.commands.arm;
 
-import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.InstantCommand;
-import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
 
 /**
- * Add your docs here.
+ * Sets teh current ArmState to the provided ArmState state
  */
-public class MoveArm extends InstantCommand {
- 
-  private ArmState destination;
-  private Arm arm;
+public class SetArmState extends InstantCommand {
+  
+  private ArmState state;
 
-  public MoveArm(ArmState destination, Arm arm) {
+  public SetArmState(ArmState state) {
     super();
-    this.destination = destination;
-    this.arm = arm;
+    this.state = state;
   }
 
   // Called once when the command executes
   @Override
   protected void initialize() {
-
-    CommandGroup moveArm = ArmPathGenerator.getPath(destination, arm);
-    // TODO add stuff in here to store the path made based on the currentState and then do a lookup instead of a new search
-    Scheduler.getInstance().add(moveArm);
-    
+    Arm.setState(state);
   }
 
 }

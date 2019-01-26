@@ -32,11 +32,6 @@ public interface WristInterface {
       public void zero(double encoderValue);
     
       /**
-       * Selects the PID Slot dedicated to MotionMagic to give it the correct PID Values
-       */
-      public void initializeMotionmagic();
-    
-      /**
        * Setup for movement and Motion Magic
        */
       public void setMotionMagicSetpoint(double wristAngle);
