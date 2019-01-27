@@ -100,4 +100,8 @@ public class RobotConstants {
     public static final int PISTON_ENCODER_FLAT = 0; // TODO set these
     public static final int PISTON_ENCODER_LEVEL_TWO = 0;
     public static final int PISTON_ENCODER_LEVEL_THREE = 0;
+
+    //Intake constants
+    /** Intake will have an absolute Mag Encoder */
+    public static double INTAKE_TICKS_PER_ROTATION = 0; // Still needs to be set
 }

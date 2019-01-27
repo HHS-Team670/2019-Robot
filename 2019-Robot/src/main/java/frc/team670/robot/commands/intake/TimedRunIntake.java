@@ -13,45 +13,45 @@ import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.Intake;
 import frc.team670.robot.utils.Logger;
 
-public class RunIntake extends Command {
+public class TimedRunIntake extends Command {
 
   private Intake intake;
   private MustangSensors sensors;
 
   private static final double RUNNING_POWER = 1.0; // TODO figure out if we want to run full speed
-  private boolean hasBeenTriggered;
   private long time;
+  private int millisecondsToRun;
 
 
-  public RunIntake(Intake intake, MustangSensors sensors) {
+  /**
+   * 
+   * @param millisecondsToRun the time for the intake to run in milliseconds
+   */
+  public TimedRunIntake(int millisecondsToRun, Intake intake, MustangSensors sensors) {
     requires(Robot.intake);
     this.intake = intake;
     this.sensors = sensors;
+    this.millisecondsToRun = millisecondsToRun;
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
     Logger.consoleLog("Running Intake");
+    time = System.currentTimeMillis();
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
     intake.runIntake(RUNNING_POWER);
-
-    //If the IR sensor has been tripped and it is for the first time
-    if (sensors.getIntakeIROutput() && !hasBeenTriggered) {
-      hasBeenTriggered = true;
-      time = System.currentTimeMillis();
-    }
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    //If 0.5 seconds has passed since the IR sensor was first tripped or if the cargo is already in the claw
-    return (System.currentTimeMillis() - time > 500 || sensors.getClawIROutput());
+    //If milliseconds has passed since the IR sensor was first tripped or if the cargo is already in the claw
+    return (System.currentTimeMillis() - time > millisecondsToRun);
   }
 
   // Called once after isFinished returns true

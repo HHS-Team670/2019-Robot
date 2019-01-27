@@ -20,7 +20,7 @@ public class LowerHatchToNeutral extends ArmTransition {
    * Add your docs here.
    */
   public LowerHatchToNeutral(Arm arm) {
-    super(LegalState.PLACE_HATCHROCKETLOWF, LegalState.NEUTRAL, arm);
+    super(LegalState.PLACE_HATCH_ROCKET_LOW_FORWARD, LegalState.NEUTRAL, arm);
   }
 
   @Override

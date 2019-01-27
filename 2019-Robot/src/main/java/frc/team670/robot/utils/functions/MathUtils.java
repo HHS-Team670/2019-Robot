@@ -140,6 +140,14 @@ public class MathUtils {
         return ticks / RobotConstants.EXTENSION_TICKS_PER_MOTOR_ROTATION / RobotConstants.EXTENSION_MOTOR_ROTATIONS_PER_INCH;
     }
 
+    public static double convertIntakeDegreesToTicks(double degrees) {
+        return 0.0; //TODO set this
+    }
+
+    public static double convertIntakeTicksToDegrees(double ticks) {
+        return 0.0; //TODO set this
+    }
+
     /**
      * Returns true if the value is within +/- tolerance of target
      * @param tolerance The tolerance (must be positive)
