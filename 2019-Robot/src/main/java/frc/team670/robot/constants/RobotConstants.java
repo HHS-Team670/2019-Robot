@@ -22,7 +22,7 @@ public class RobotConstants {
 
     // TODO Set all of these!!!!
     public static double EXTENSION_TICKS_PER_MOTOR_ROTATION = 4096; //Subject to change, measure real value
-    public static double EXTENSION_MOTOR_ROTATIONS_PER_INCH = 0.168748; //Subject to change, measure real value
+    public static double EXTENSION_MOTOR_ROTATIONS_PER_INCH = 0.05371428571; //Should be real value
     /** Elbow will have an absolute Mag Encoder */
     public static double ELBOW_TICKS_PER_ROTATION = 4096; // Still needs to be set
     /** Wrist has an abolute Mag Encoder */
