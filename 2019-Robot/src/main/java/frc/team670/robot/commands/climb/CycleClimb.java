@@ -9,20 +9,22 @@ package frc.team670.robot.commands.climb;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
+
 import frc.team670.robot.Robot;
 import frc.team670.robot.commands.climb.armClimb.ArmClimb;
 import frc.team670.robot.commands.climb.pistonClimb.PistonClimbWithTiltControl;
 import frc.team670.robot.commands.climb.pistonClimb.RetractBackPistons;
-import frc.team670.robot.commands.climb.pistonClimb.RetractFrontPistons;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Climber;
 import frc.team670.robot.subsystems.elbow.BaseElbow;
 import frc.team670.robot.subsystems.extension.BaseExtension;
 import frc.team670.robot.subsystems.wrist.BaseWrist;
+import frc.team670.robot.commands.climb.pistonClimb.RetractFrontPistonsAndStowArm;;
 
 /**
  * Allows one Button to cycle through all the necessary stages of climbing:
- * deploy pistons, drag the robot with the arm, retract the front pistons, and retract the back pistons.
+ * deploy pistons, drag the robot with the arm, retract the front pistons, and
+ * retract the back pistons.
  */
 public class CycleClimb extends InstantCommand {
   private int setPoint;
@@ -34,8 +36,9 @@ public class CycleClimb extends InstantCommand {
   private Climber climber;
 
   /**
-   * @param setPoint The setpoint in encoder ticks corresponding to the height you want to climb to.
-   * RobotConstants: PISTON_ENCODER_FLAT, PISTON_ENCODER_LEVEL_TWO, PISTON_ENCODER_LEVEL_THREEE
+   * @param setPoint The setpoint in encoder ticks corresponding to the height you
+   *                 want to climb to. RobotConstants: PISTON_ENCODER_FLAT,
+   *                 PISTON_ENCODER_LEVEL_TWO, PISTON_ENCODER_LEVEL_THREE
    */
   public CycleClimb(Arm arm, Climber climber, int setPoint) {
     requires(Robot.climber);
@@ -56,8 +59,9 @@ public class CycleClimb extends InstantCommand {
   // Called just before this Command runs the first time
 
   /**
-   * Has an enum which stores what command to run based on what how many times the command has been called. 
-   * This allows one button to cycle through a set of different commands
+   * Has an enum which stores what command to run based on what how many times the
+   * command has been called. This allows one button to cycle through a set of
+   * different commands
    */
   @Override
   protected void initialize() {
@@ -67,15 +71,15 @@ public class CycleClimb extends InstantCommand {
       cg = ClimbStage.ARM_CLIMB;
       break;
     case ARM_CLIMB:
-      if(Robot.climber.getFrontAndBackControllerOnTarget()) {
-          Scheduler.getInstance().add(new ArmClimb(arm));
+      if (Robot.climber.getFrontAndBackControllerOnTarget()) {
+        Scheduler.getInstance().add(new ArmClimb(arm));
         if (!ArmClimb.getUserWishesToStillClimb()) {
-          cg = ClimbStage.RETRACT_FRONT_PISTONS;
+          cg = ClimbStage.RETRACT_FRONT_PISTONS_AND_STOW_ARM;
         }
       }
       break;
-    case RETRACT_FRONT_PISTONS:
-      Scheduler.getInstance().add(new RetractFrontPistons());
+    case RETRACT_FRONT_PISTONS_AND_STOW_ARM:
+      Scheduler.getInstance().add(new RetractFrontPistonsAndStowArm(arm, climber));
       if (Robot.climber.getFrontPistonsRetracted()) {
         cg = ClimbStage.RETRACT_BACK_PISTONS;
       }
@@ -91,13 +95,13 @@ public class CycleClimb extends InstantCommand {
     }
   }
 
-
   /**
-   * An enum to represent the different stages of climbing that the command can call
+   * An enum to represent the different stages of climbing that the command can
+   * call
    * 
    */
   public enum ClimbStage {
-    DEPLOY_PISTONS, ARM_CLIMB, RETRACT_FRONT_PISTONS, RETRACT_BACK_PISTONS;
+    DEPLOY_PISTONS, ARM_CLIMB, RETRACT_FRONT_PISTONS_AND_STOW_ARM, RETRACT_BACK_PISTONS;
   }
 
 }

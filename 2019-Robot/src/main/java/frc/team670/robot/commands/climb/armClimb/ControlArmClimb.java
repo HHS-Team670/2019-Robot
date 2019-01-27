@@ -5,55 +5,45 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.commands.climb.pistonClimb;
+package frc.team670.robot.commands.climb.armClimb;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.Scheduler;
+import frc.team670.robot.subsystems.Arm;
 
-import frc.team670.robot.Robot;
-import frc.team670.robot.dataCollection.MustangSensors;
-import frc.team670.robot.subsystems.Climber;
+public class ControlArmClimb extends Command {
+  private ArmClimb armClimb;
+  private Arm arm;
 
-public class LinearPistonClimb extends Command {
-
-  private Climber climber;
-  private MustangSensors sensors;
-
-  public LinearPistonClimb(Climber climber, MustangSensors sensors) {
-    this.climber = climber;
-    this.sensors = sensors;
-    requires(climber);
+  public ControlArmClimb(Arm arm) {
+    armClimb = new ArmClimb(arm);
+    this.arm = arm;
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    Robot.climber.enableClimberPIDControllers(0);
+
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    double frontPower = 0.5;
-    double backPower = 0.5;
-    if (sensors.getPitchDouble() > 5) { // i'm assuming this means tilted backwards
-      frontPower -= 0.1;
+    if(armClimb.isFinished()){
+      armClimb = new ArmClimb(arm);
+      Scheduler.getInstance().add(armClimb);
     }
-    if (sensors.getPitchDouble() < 5) { // assuming this means tilted forwards
-      backPower -= 0.1;
-    }
-    climber.drivePistons(frontPower, backPower);
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return climber.getBackPistonsRetracted() && climber.getBackController().onTarget();
+    return !ArmClimb.getUserWishesToStillClimb();
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    climber.drivePistons(Climber.MINIMUM_PISTON_POWER, Climber.MINIMUM_PISTON_POWER);
   }
 
   // Called when another command which requires one or more of the same
