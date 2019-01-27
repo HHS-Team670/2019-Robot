@@ -31,7 +31,7 @@ public class WristForwardReset extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-      wrist.setOutput(0.2);
+      wrist.setOutput(0.1);
   }
 
   // Make this return true when this Command no longer needs to run execute()
