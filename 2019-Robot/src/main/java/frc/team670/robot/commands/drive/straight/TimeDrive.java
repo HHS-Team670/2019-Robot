@@ -37,10 +37,7 @@ public class TimeDrive extends Command {
   @Override
   protected void execute() { 
     Robot.driveBase.tankDrive(speed, speed, false);
-    if (executeCounter % 10 == 0) {
-        Logger.consoleLog("Timed Driving");
-    }
-    executeCounter++;
+    Logger.consoleLog();
 
   }
 

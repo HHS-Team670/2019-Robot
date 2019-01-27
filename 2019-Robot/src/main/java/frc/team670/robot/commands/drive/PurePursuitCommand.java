@@ -51,7 +51,7 @@ public class PurePursuitCommand extends Command
     @Override
     protected void initialize()
     {
-        Logger.consoleLog("Initialized P.P.D");
+        Logger.consoleLog();
         pathControl= new AdaptivePurePursuitController(path, false, lookahead);
 
     }
@@ -75,7 +75,7 @@ public class PurePursuitCommand extends Command
         boolean finishedPath = pathControl.isFinished();
         if(finishedPath)
         {
-            Logger.consoleLog("finished");
+            Logger.consoleLog();
             Robot.driveBase.stop();
         }
         return finishedPath;

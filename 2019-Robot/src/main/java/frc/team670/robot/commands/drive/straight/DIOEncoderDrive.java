@@ -77,6 +77,6 @@ public class DIOEncoderDrive extends Command {
   protected void interrupted() {
     Robot.driveBase.stop();
 
-    Logger.consoleLog("DIOEncoderDrive Interrupted");
+    Logger.consoleLog();
   }
 }

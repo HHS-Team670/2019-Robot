@@ -158,7 +158,7 @@ public class DriveMotionProfile extends Command {
     left.configurePIDVA(P, I, D, (1 / MAX_VELOCITY), KA);
     right.configurePIDVA(P, I, D, (1 / MAX_VELOCITY), KA);
 
-    Logger.consoleLog("Initialized DriveMotionProfile: InitialLeftEncoder: %s, InitialRightEncoder: %s, InitialAngle: %s", initialLeftEncoder, initialRightEncoder, Robot.sensors.getYawDouble());
+    Logger.consoleLog("InitialLeftEncoder: %s, InitialRightEncoder: %s, InitialAngle: %s", initialLeftEncoder, initialRightEncoder, Robot.sensors.getYawDouble());
 
     executeCount = 0;
    
@@ -210,11 +210,9 @@ public class DriveMotionProfile extends Command {
     // Drives the bot based on the input
     Robot.driveBase.tankDrive(leftOutput, rightOutput, false); 
 
-    if(executeCount % 5 == 0) {
-      Logger.consoleLog("Execute: gyroHeading: %s, desiredHeading: %s, angleDifference: %s, angleDivideConstant: %s, turn: %s, leftOuput: %s, rightOutput: %s", gyroHeading, desiredHeading, angleDifference, ANGLE_DIVIDE_CONSTANT, turn, leftOutput , rightOutput) ;
-    }
 
-    executeCount++;
+    Logger.consoleLog("gyroHeading: %s, desiredHeading: %s, angleDifference: %s, angleDivideConstant: %s, turn: %s, leftOuput: %s, rightOutput: %s", gyroHeading, desiredHeading, angleDifference, ANGLE_DIVIDE_CONSTANT, turn, leftOutput , rightOutput) ;
+
   }
 
   // Make this return true when this Command no longer needs to run execute()
@@ -228,7 +226,7 @@ public class DriveMotionProfile extends Command {
   @Override
   protected void end() {
     Robot.driveBase.stop();
-    Logger.consoleLog("Ended. EndingAngle: %s, LeftTicksTraveled: %s, RightTicksTraveled: %s, DistanceTraveled: %s", Pathfinder.boundHalfDegrees(Robot.sensors.getYawDoubleForPathfinder()), 
+    Logger.consoleLog("EndingAngle: %s, LeftTicksTraveled: %s, RightTicksTraveled: %s, DistanceTraveled: %s", Pathfinder.boundHalfDegrees(Robot.sensors.getYawDoubleForPathfinder()), 
                      (Robot.driveBase.getLeftDIOEncoderPosition() - initialLeftEncoder), (Robot.driveBase.getRightDIOEncoderPosition() - initialRightEncoder), MathUtils.convertDriveBaseTicksToInches(MathUtils.average((double)(Robot.driveBase.getLeftDIOEncoderPosition() - initialLeftEncoder), (double)(Robot.driveBase.getRightDIOEncoderPosition() - initialRightEncoder))));
   }
 
@@ -236,7 +234,7 @@ public class DriveMotionProfile extends Command {
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    Logger.consoleLog("Interrupted") ;
+    Logger.consoleLog() ;
     end();
   }
 
