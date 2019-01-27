@@ -24,7 +24,7 @@ import frc.team670.robot.utils.functions.MathUtils;
  */
 public class Intake extends Subsystem {
 
-  public static final int INTAKE_ANGLE_UP = 90, INTAKE_ANGLE_DOWN = 0;
+  public static final int INTAKE_ANGLE_UP = 0, INTAKE_ANGLE_DOWN = 90;
 
   private VictorSPX baseVictor, rollerVictor;
   private Encoder baseVictorEncoder;
