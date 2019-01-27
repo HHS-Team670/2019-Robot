@@ -65,6 +65,6 @@ public class MoveIntakeToSetpointAngle extends Command {
   @Override
   protected void interrupted() {
     end();
-    Logger.consoleLog("Interrupted");
+    Logger.consoleLog();
   }
 }

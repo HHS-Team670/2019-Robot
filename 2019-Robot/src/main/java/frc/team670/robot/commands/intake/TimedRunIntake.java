@@ -37,7 +37,7 @@ public class TimedRunIntake extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    Logger.consoleLog("Running Intake");
+    Logger.consoleLog();
     time = System.currentTimeMillis();
   }
 
@@ -58,7 +58,7 @@ public class TimedRunIntake extends Command {
   @Override
   protected void end() {
     intake.runIntake(0);
-    Logger.consoleLog("RunIntake ended");
+    Logger.consoleLog();
   }
 
   // Called when another command which requires one or more of the same
@@ -66,6 +66,6 @@ public class TimedRunIntake extends Command {
   @Override
   protected void interrupted() {
     intake.runIntake(0);
-    Logger.consoleLog("RunIntake interrupted");
+    Logger.consoleLog();
   }
 }
