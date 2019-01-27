@@ -150,14 +150,14 @@ public class MathUtils {
         return ticks / RobotConstants.EXTENSION_TICKS_PER_MOTOR_ROTATION / RobotConstants.EXTENSION_MOTOR_ROTATIONS_PER_INCH;
     }
 
-    public static double convertIntakeDegreesToTicks(double degrees) {
-        //If straight is 0 and going forward is positive
+    public static int convertIntakeDegreesToTicks(double degrees) {
+        //If straight up is 0 and going forward is positive
         // percentage * half rotation
         return (int)((degrees / 180) * (0.5 * RobotConstants.INTAKE_TICKS_PER_ROTATION));
     }
 
     public static double convertIntakeTicksToDegrees(double ticks) {
-        //If straight is 0 and going forward is positive
+        //If straight up is 0 and going forward is positive
         // percentage * half degrees rotation
         return (ticks / (0.5 * RobotConstants.INTAKE_TICKS_PER_ROTATION) * 180);
     }

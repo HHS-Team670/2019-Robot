@@ -20,8 +20,8 @@ import frc.team670.robot.utils.functions.MathUtils;
 public class MoveIntakeToSetpointAngle extends Command {
 
   private Intake intake;
-  private int loggingIterationCounter, setpointInDegrees;
-  private int toleranceInDegrees = 1;
+  private int loggingIterationCounter, setpointInTicks;
+  private static final int TOLERANCE_IN_TICKS = 10;
 
   /**
    * @param setpoint angle in degrees that the intake is moving to
@@ -30,20 +30,20 @@ public class MoveIntakeToSetpointAngle extends Command {
   public MoveIntakeToSetpointAngle(int setpointInDegrees, Intake intake) {
     requires(intake);
     this.intake = intake;
-    this.setpointInDegrees = setpointInDegrees;
+    this.setpointInTicks = MathUtils.convertIntakeDegreesToTicks(setpointInDegrees);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    intake.setMotionMagicSetpoint(setpointInDegrees);
-    Logger.consoleLog("startIntakeAngle:%s", intake.getIntakeAngleInDegrees());
+    intake.setMotionMagicSetpoint(setpointInTicks);
+    Logger.consoleLog("startIntakePosition:%s", intake.getIntakePositionInTicks());
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Logger.consoleLog("currentIntakeAngle:%s", intake.getIntakeAngleInDegrees());
+    Logger.consoleLog("currentIntakePosition:%s", intake.getIntakePositionInTicks());
 
     loggingIterationCounter++;
   }
@@ -51,13 +51,13 @@ public class MoveIntakeToSetpointAngle extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return (MathUtils.isWithinTolerance(intake.getIntakeAngleInDegrees(), intake.getMotionMagicSetpoint(), toleranceInDegrees));
+    return (MathUtils.isWithinTolerance(intake.getIntakePositionInTicks(), intake.getMotionMagicSetpoint(), TOLERANCE_IN_TICKS));
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Logger.consoleLog("endIntakeAngle:%s", intake.getIntakeAngleInDegrees());
+    Logger.consoleLog("endIntakePosition:%s", intake.getIntakePositionInTicks());
   }
 
   // Called when another command which requires one or more of the same

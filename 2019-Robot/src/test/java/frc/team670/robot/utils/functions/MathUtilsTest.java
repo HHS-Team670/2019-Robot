@@ -109,19 +109,6 @@ public class MathUtilsTest {
         assertEquals(180, MathUtils.convertWristTicksToDegrees(2048), 0.1);
     }
 
-    @Test
-    public void convertExtensionInchesToTicksTest() {
-        assertEquals(3455, MathUtils.convertExtensionInchesToTicks(5), 0.1);    
-        assertEquals(4838, MathUtils.convertExtensionInchesToTicks(7), 0.1);   
-        assertEquals(1382, MathUtils.convertExtensionInchesToTicks(2), 0.1);
-    }
-
-    @Test
-    public void convertExtensionTicksToInchesTest() {
-        assertEquals(2.893, MathUtils.convertExtensionTicksToInches(2000), 0.1);    
-        assertEquals(5.787, MathUtils.convertExtensionTicksToInches(4000), 0.1);   
-        assertEquals(-0.028, MathUtils.convertExtensionTicksToInches(-20), 0.1);
-    }
     /*
      * Add in more tests for all Util methods here.
      */ 
