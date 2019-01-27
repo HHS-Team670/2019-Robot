@@ -26,7 +26,7 @@ import frc.team670.robot.commands.drive.XboxRocketLeagueDrive;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.utils.functions.MathUtils;
-
+import frc.team670.robot.subsystems.Mustangta
 /**
  * Represents a tank drive base.
  * 
@@ -44,7 +44,7 @@ public class DriveBase extends Subsystem {
   private Encoder leftDIOEncoder, rightDIOEncoder;
   private final double P_P = 0.1, P_I = 1E-4, P_D = 1, P_FF = 0; // Position PID Values. Set based off the default in REV Robotics example code.
   private final double V_P = 5E-5, V_I = 1E-5, V_D = 0, V_FF = 0; // Velocity PID Values. Set based off the default in REV Robotics example code.
-
+  private MustangLEDs_2019 leds = new MustangLEDs_2019();
 
   public DriveBase() {
     left1 = new CANSparkMax(RobotMap.SPARK_LEFT_MOTOR_1, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -106,10 +106,16 @@ public class DriveBase extends Subsystem {
    * 
    * @param leftSpeed Speed for left side of drive base [-1, 1]. Automatically squares this value to linearize it.
    * @param rightSpeed Speed for right side of drive base [-1, 1]. Automatically squares this value to linearize it.
-   */
-  public void tankDrive(double leftSpeed, double rightSpeed) {
+  
+ */
+  
+   public void tankDrive(double leftSpeed, double rightSpeed) {
+    if(leftSpeed==rightSpeed){
+      leds.setForwardData(true,0);
+    }
     tankDrive(leftSpeed, rightSpeed, false);
   }
+
 
   public void initAutonDrive(){
     setMotorsBrakeMode(allMotors, IdleMode.kBrake);
