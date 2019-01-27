@@ -66,6 +66,11 @@ public class Extension extends BaseExtension {
     extensionMotor.configReverseSoftLimitEnable(true);
     extensionMotor.enableCurrentLimit(true);
     extensionMotor.configPeakCurrentLimit(PEAK_CURRENT_LIMIT);
+
+    extensionMotor.configNominalOutputForward(0, RobotConstants.kTimeoutMs);
+    extensionMotor.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
+    extensionMotor.configPeakOutputForward(1, RobotConstants.kTimeoutMs);
+    extensionMotor.configPeakOutputReverse(-1, RobotConstants.kTimeoutMs);
   }
 
   @Override
