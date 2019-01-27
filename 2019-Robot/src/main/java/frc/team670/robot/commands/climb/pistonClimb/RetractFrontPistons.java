@@ -26,7 +26,7 @@ public class RetractFrontPistons extends Command {
    * @param climber The climber upon which this command will be used
    */
   public RetractFrontPistons(Climber climber) {
-    requires(Robot.climber);
+    requires(climber);
     this.climber = climber;
   }
 
@@ -48,7 +48,7 @@ public class RetractFrontPistons extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return climber.getFrontController().onTarget();
+    return climber.getFrontControllerOnTarget();
   }
 
   // Called once after isFinished returns true

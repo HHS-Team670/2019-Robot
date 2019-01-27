@@ -5,24 +5,23 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.commands.climb;
+package frc.team670.robot.commands.climb.controlClimb;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
-
 import frc.team670.robot.Robot;
 import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.commands.climb.armClimb.ArmClimb;
 import frc.team670.robot.commands.climb.pistonClimb.PistonClimbWithTiltControl;
 import frc.team670.robot.commands.climb.pistonClimb.RetractBackPistons;
+import frc.team670.robot.commands.climb.pistonClimb.RetractFrontPistons;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.LegalState;
 import frc.team670.robot.subsystems.Climber;
 import frc.team670.robot.subsystems.elbow.BaseElbow;
 import frc.team670.robot.subsystems.extension.BaseExtension;
 import frc.team670.robot.subsystems.wrist.BaseWrist;
-import frc.team670.robot.commands.climb.pistonClimb.RetractFrontPistonsAndStowArm;
 
 /**
  * Allows one Button to cycle through all the necessary stages of climbing:

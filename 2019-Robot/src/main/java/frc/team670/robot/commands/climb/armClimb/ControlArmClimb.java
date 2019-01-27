@@ -10,14 +10,17 @@ package frc.team670.robot.commands.climb.armClimb;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team670.robot.subsystems.Arm;
+import frc.team670.robot.subsystems.Climber;
 
 public class ControlArmClimb extends Command {
   private ArmClimb armClimb;
   private Arm arm;
+  private Climber climber;
 
-  public ControlArmClimb(Arm arm) {
-    armClimb = new ArmClimb(arm);
+  public ControlArmClimb(Arm arm, Climber climber) {
+    armClimb = new ArmClimb(arm, climber);
     this.arm = arm;
+    this.climber = climber;
   }
 
   // Called just before this Command runs the first time
@@ -30,7 +33,7 @@ public class ControlArmClimb extends Command {
   @Override
   protected void execute() {
     if(armClimb.isFinished()){
-      armClimb = new ArmClimb(arm);
+      armClimb = new ArmClimb(arm, climber);
       Scheduler.getInstance().add(armClimb);
     }
   }
@@ -44,11 +47,13 @@ public class ControlArmClimb extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    armClimb.cancel();
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    armClimb.cancel();
   }
 }
