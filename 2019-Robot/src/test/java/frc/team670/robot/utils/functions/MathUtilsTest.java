@@ -84,10 +84,43 @@ public class MathUtilsTest {
     }
 
     @Test
-    public void convertInchesPerSecondToDriveBaseRoundsPerMinuteTest() {
-        assertEquals(159.23, MathUtils.convertInchesPerSecondToDriveBaseRoundsPerMinute(50), 0.1);    
-        assertEquals(111.41, MathUtils.convertInchesPerSecondToDriveBaseRoundsPerMinute(35), 0.1);   
-        assertEquals(238.73, MathUtils.convertInchesPerSecondToDriveBaseRoundsPerMinute(75), 0.1);
+    public void convertElbowDegreesToTicksTest() {
+        assertEquals(0, MathUtils.convertElbowDegreesToTicks(0), 0.1);    
+        assertEquals(2048, MathUtils.convertElbowDegreesToTicks(180), 0.1);   
+        assertEquals(-1024, MathUtils.convertElbowDegreesToTicks(-90), 0.1);
+    }
+    @Test
+    public void convertElbowTicksToDegreesTest() {
+        assertEquals(0, MathUtils.convertElbowTicksToDegrees(0), 0.1);    
+        assertEquals(-90, MathUtils.convertElbowTicksToDegrees(-1024), 0.1);   
+        assertEquals(90, MathUtils.convertElbowTicksToDegrees(1024), 0.1);
+    }
+    @Test
+    public void convertWristDegreesToTicksTest() {
+        assertEquals(1024, MathUtils.convertWristDegreesToTicks(90), 0.1);    
+        assertEquals(-1024, MathUtils.convertWristDegreesToTicks(-90), 0.1);   
+        assertEquals(512, MathUtils.convertWristDegreesToTicks(45), 0.1);
+    }
+
+    @Test
+    public void convertWristTicksToDegreesTest() {
+        assertEquals(90, MathUtils.convertWristTicksToDegrees(1024), 0.1);    
+        assertEquals(0, MathUtils.convertWristTicksToDegrees(0), 0.1);   
+        assertEquals(180, MathUtils.convertWristTicksToDegrees(2048), 0.1);
+    }
+
+    @Test
+    public void convertExtensionInchesToTicksTest() {
+        assertEquals(3455, MathUtils.convertExtensionInchesToTicks(5), 0.1);    
+        assertEquals(4838, MathUtils.convertExtensionInchesToTicks(7), 0.1);   
+        assertEquals(1382, MathUtils.convertExtensionInchesToTicks(2), 0.1);
+    }
+
+    @Test
+    public void convertExtensionTicksToInchesTest() {
+        assertEquals(2.893, MathUtils.convertExtensionTicksToInches(2000), 0.1);    
+        assertEquals(5.787, MathUtils.convertExtensionTicksToInches(4000), 0.1);   
+        assertEquals(-0.028, MathUtils.convertExtensionTicksToInches(-20), 0.1);
     }
     /*
      * Add in more tests for all Util methods here.

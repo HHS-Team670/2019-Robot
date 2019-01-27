@@ -20,7 +20,7 @@ public class ToggleIntakeUpDown extends Command {
 
   private Intake intake;
   private int loggingIterationCounter;
-  private int toleranceInDegrees = 5;
+  private int toleranceInDegrees = 1;
 
   public ToggleIntakeUpDown(Intake intake) {
     requires(intake);

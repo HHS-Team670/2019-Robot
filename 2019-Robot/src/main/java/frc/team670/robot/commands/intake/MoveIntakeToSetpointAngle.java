@@ -21,7 +21,7 @@ public class MoveIntakeToSetpointAngle extends Command {
 
   private Intake intake;
   private int loggingIterationCounter, setpointInDegrees;
-  private int toleranceInDegrees = 5;
+  private int toleranceInDegrees = 1;
 
   /**
    * @param setpoint angle in degrees that the intake is moving to
