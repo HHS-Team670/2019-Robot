@@ -19,7 +19,7 @@ import frc.team670.robot.subsystems.Climber;
 import frc.team670.robot.subsystems.elbow.BaseElbow;
 import frc.team670.robot.subsystems.extension.BaseExtension;
 import frc.team670.robot.subsystems.wrist.BaseWrist;
-import frc.team670.robot.commands.climb.pistonClimb.RetractFrontPistonsAndStowArm;;
+import frc.team670.robot.commands.climb.pistonClimb.RetractFrontPistonsAndStowArm;
 
 /**
  * Allows one Button to cycle through all the necessary stages of climbing:
