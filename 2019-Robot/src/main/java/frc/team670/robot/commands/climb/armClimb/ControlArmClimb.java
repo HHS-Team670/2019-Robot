@@ -5,66 +5,55 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.commands.climb.pistonClimb;
+package frc.team670.robot.commands.climb.armClimb;
 
 import edu.wpi.first.wpilibj.command.Command;
-
-import frc.team670.robot.constants.RobotConstants;
+import edu.wpi.first.wpilibj.command.Scheduler;
+import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Climber;
-import frc.team670.robot.utils.Logger;
-import frc.team670.robot.utils.functions.SettingUtils;
 
-/**
- * Command to retract the front pistons all the way
- */
-public class RetractFrontPistons extends Command {
-  private int loggingIterationCounter;
+public class ControlArmClimb extends Command {
+  private ArmClimb armClimb;
+  private Arm arm;
   private Climber climber;
 
-  /**
-   * 
-   * @param climber The climber upon which this command will be used
-   */
-  public RetractFrontPistons(Climber climber) {
-    requires(climber);
+  public ControlArmClimb(Arm arm, Climber climber) {
+    armClimb = new ArmClimb(arm, climber);
+    this.arm = arm;
     this.climber = climber;
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    climber.setFrontPIDControllerSetpoint(RobotConstants.PISTON_ENCODER_FLAT);
-    climber.setFrontPistonsRetractionInProgress(true);
-    Logger.consoleLog("startFrontPistonPosition:%s", climber.getFrontTalonPositionInTicks());
+
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Logger.consoleLog("CurrentFrontPistonPosition:%s", climber.getFrontTalonPositionInTicks());
-    loggingIterationCounter++;
+    if(armClimb.isFinished()){
+      armClimb = new ArmClimb(arm, climber);
+      Scheduler.getInstance().add(armClimb);
+    }
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return climber.getFrontControllerOnTarget();
+    return !ArmClimb.getUserWishesToStillClimb();
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    climber.setFrontPistonsRetracted(true);
-    //Retraction is no longer in progress, so the pistons have been retracted all the way
-    climber.setFrontPistonsRetractionInProgress(false);
-    Logger.consoleLog("EndFrontPistonPosition:%s", climber.getFrontTalonPositionInTicks());
+    armClimb.cancel();
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    end();
-    Logger.consoleLog();
+    armClimb.cancel();
   }
 }
