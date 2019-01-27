@@ -23,11 +23,11 @@ import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Claw;
 import frc.team670.robot.subsystems.Climber;
 import frc.team670.robot.subsystems.DriveBase;
-import frc.team670.robot.subsystems.Elbow;
-import frc.team670.robot.subsystems.Extension;
 import frc.team670.robot.subsystems.Intake;
 import frc.team670.robot.subsystems.MustangLEDs_2019;
-import frc.team670.robot.subsystems.Wrist;
+import frc.team670.robot.subsystems.elbow.Elbow;
+import frc.team670.robot.subsystems.wrist.Wrist;
+import frc.team670.robot.subsystems.extension.Extension;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.MustangController;
 
@@ -48,13 +48,13 @@ public class Robot extends TimedRobot {
 
   private long savedTime=0;
 
-  public static Arm arm = new Arm();
-  public static Elbow elbow = new Elbow();
-  public static Wrist wrist = new Wrist();
-  public static Extension extension = new Extension();
+  private static Elbow elbow = new Elbow();
+  private static Wrist wrist = new Wrist();
+  private static Extension extension = new Extension();
+  public static Arm arm = new Arm(elbow, wrist, extension);
   public static Intake intake = new Intake();
   public static Claw claw = new Claw();
-  public static Climber climber = new Climber();
+  public static Climber climber = new Climber(sensors);
 
   private long periodCount = 0;
 
@@ -143,7 +143,7 @@ public class Robot extends TimedRobot {
     // }
       SmartDashboard.putNumber("NavX Yaw", sensors.getYawDouble());
 
-    periodCount ++;
+    periodCount++;
     leds.setClimbingData(true);//we climb
 
     // System.out.println("Voltage: "+(irSensor.getVoltage()));

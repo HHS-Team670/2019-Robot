@@ -8,53 +8,60 @@
 package frc.team670.robot.commands.climb.pistonClimb;
 
 import edu.wpi.first.wpilibj.command.Command;
+
 import frc.team670.robot.Robot;
-import frc.team670.robot.constants.RobotConstants;
+import frc.team670.robot.subsystems.Climber;
+import frc.team670.robot.utils.Logger;
 
 
-public class LinearPistonClimb extends Command {
+/**
+ * Command to move the front pistons to a given setpoint
+ */
+public class MoveFrontPistonsToSetpoint extends Command {
+  private int loggingIterationCounter;
+  private int setpoint;
+  private Climber climber;
 
-  public LinearPistonClimb() {
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
-    requires(Robot.climber);
+  /**
+   * 
+   * @param setpoint The desired setpoint in ticks
+   * @param climber The climber upon which this command will be used
+   */
+  public MoveFrontPistonsToSetpoint(int setpoint, Climber climber) {
+    this.setpoint = setpoint;
+    this.climber = climber;
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    Robot.climber.enableClimberPIDControllers(0);
+    Logger.consoleLog("startFrontPistonPosition:%s", Robot.climber.getFrontTalonPositionInTicks());
+    climber.setFrontPIDControllerSetpoint(setpoint);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    double frontPower = 0.5;
-    double backPower = 0.5;
-    if (Robot.sensors.getPitchDouble() > 5) { // i'm assuming this means tilted backwards
-      frontPower -= 0.1;
-    }
-    if (Robot.sensors.getPitchDouble() < 5) { // assuming this means tilted forwards
-      backPower -= 0.1;
-    }
-    Robot.climber.drivePistons(frontPower, backPower);
+    Logger.consoleLog("CurrentFrontPistonPosition:%s", climber.getFrontTalonPositionInTicks());
+    loggingIterationCounter++;
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return Robot.climber.getBackPistonsRetracted() && Robot.climber.getBackController().onTarget();
+    return climber.getFrontControllerOnTarget();
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Robot.climber.drivePistons(RobotConstants.MINIMUM_PISTON_POWER, RobotConstants.MINIMUM_PISTON_POWER);
+    Logger.consoleLog("EndFrontPistonPosition:%s", climber.getFrontTalonPositionInTicks());
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    Logger.consoleLog("RetractFrontPiston interrupted");
   }
 }

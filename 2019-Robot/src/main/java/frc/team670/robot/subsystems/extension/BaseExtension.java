@@ -5,26 +5,17 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.subsystems;
-
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+package frc.team670.robot.subsystems.extension;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
-import frc.team670.robot.constants.RobotMap;
 
 /**
- * Controls wrist motors
+ * Add your docs here.
  */
-public class Wrist extends Subsystem {
+public abstract class BaseExtension extends Subsystem implements ExtensionInterface {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
-  
-  private TalonSRX wristRotation;
 
-  public Wrist() {   
-    wristRotation = new TalonSRX(RobotMap.ARM_WRIST_ROTATION);
-  }
-  
   @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.

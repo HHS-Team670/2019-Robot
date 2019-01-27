@@ -8,38 +8,51 @@
 package frc.team670.robot.commands.climb.pistonClimb;
 
 import edu.wpi.first.wpilibj.command.Command;
-import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
-import frc.team670.robot.utils.functions.SettingUtils;
+import frc.team670.robot.subsystems.Climber;
+import frc.team670.robot.utils.Logger;
 
+/**
+ * Command to retract the back pistons all the way
+ */
 public class RetractBackPistons extends Command {
+  private int loggingIterationCounter;
+  private Climber climber;
 
-  public RetractBackPistons() {
-    Robot.climber.setBackPistonsRetracted(false);
-    requires(Robot.climber);
+  public RetractBackPistons(Climber climber) {
+    requires(climber);
+    this.climber = climber;
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    Robot.climber.getBackController().setSetpoint(RobotConstants.PISTON_ENCODER_FLAT);
+    climber.setBackPIDControllerSetpoint(RobotConstants.PISTON_ENCODER_FLAT);
+    climber.setBackPistonsRetractionInProgress(true);
+    Logger.consoleLog("startBackPistonPosition:%s", climber.getBackTalonPositionInTicks());
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
+    Logger.consoleLog("CurrentBackPistonPosition:%s", climber.getBackTalonPositionInTicks());
+    loggingIterationCounter++;
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return Robot.climber.getBackController().onTarget();
+    return climber.getBackControllerOnTarget();
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    SettingUtils.releaseController(Robot.climber.getBackController());
+    climber.setBackPistonsRetracted(true);
+
+    //Retraction is no longer in progress, so the pistons have been retracted all the way
+    climber.setBackPistonsRetractionInProgress(false);
+    Logger.consoleLog("BackPistonPosition:%s", climber.getBackTalonPositionInTicks());
   }
 
   // Called when another command which requires one or more of the same
@@ -47,5 +60,6 @@ public class RetractBackPistons extends Command {
   @Override
   protected void interrupted() {
     end();
+    Logger.consoleLog();
   }
 }

@@ -9,89 +9,84 @@ package frc.team670.robot.commands.climb.pistonClimb;
 
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.Command;
+
 import frc.team670.robot.Robot;
-import frc.team670.robot.constants.RobotConstants;
+import frc.team670.robot.subsystems.Climber;
 import frc.team670.robot.dataCollection.NullPIDOutput;
 import frc.team670.robot.utils.functions.SettingUtils;
+import frc.team670.robot.utils.Logger;
 
+/**
+ * Class to deploy the pistons down with a some degree of control from the NavX
+ * 
+ */
 public class PistonClimbWithTiltControl extends Command {
 
-  private double tiltControllerLowerOutput = 1.0, tiltControllerUpperOutput = 1.5;
-  private double P = 0.0, I = 0.0, D = 0.0, F = 0.0;
+  private double tiltControllerLowerOutput = -0.2, tiltControllerUpperOutput = 0.2;
+  private double tiltTolerance = 0; // TODO set this
+  private double P = 0.1, I = 0.0, D = 0.0, F = 0.0; // TODO set these
   private PIDController tiltController;
   private boolean goingUp;
+  private int loggingIterationCounter, setPoint;
 
-  public PistonClimbWithTiltControl(int setPoint) {
-    if(!Robot.climber.getBackPistonsRetracted() || !Robot.climber.getBackPistonsRetracted())
-      super.cancel();
+  private Climber climber;
 
-
+  /**
+   * @param setPoint the desired end goal of the climber (Flat, Level 2 or Level 3)
+   * @param climber the climber upon which this command will be called on
+   */
+  public PistonClimbWithTiltControl(int setPoint, Climber climber) {
     requires(Robot.climber);
     tiltController = new PIDController(P, I, D, F, Robot.sensors.getNavXPitchPIDSource(), new NullPIDOutput());
-    Robot.climber.enableClimberPIDControllers(setPoint);
-
-    goingUp = setPoint >= Robot.climber.getFrontTalonPosition();
+    this.setPoint = setPoint;
+    this.climber = climber;
   }
 
   // Called just before this Command runs the first time
   protected void initialize() {
+    
+    // Scheduler.getInstance().add(new MoveArm()) TODO: move arm so it's  at neutral state on the climb up
+    Robot.climber.enableClimberPIDControllers(setPoint);
     tiltController.setSetpoint(0);
-    tiltController.setAbsoluteTolerance(RobotConstants.TILT_TOLERANCE);
+    tiltController.setAbsoluteTolerance(tiltTolerance);
     tiltController.setOutputRange(tiltControllerLowerOutput, tiltControllerUpperOutput);
     tiltController.enable();
+
+    goingUp = (setPoint >= Robot.climber.getFrontTalonPositionInTicks());
+
+    Logger.consoleLog("startBackPistonPosition:%s startFrontPistonPosition:%s ", Robot.climber.getBackTalonPositionInTicks(), Robot.climber.getFrontTalonPositionInTicks());
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    // Tilt Control
-    if (goingUp) {
-      if (Robot.sensors.getPitchDouble() < -RobotConstants.TILT_TOLERANCE) {
-        Robot.climber.setFrontPistonOutputRange(RobotConstants.MINIMUM_PISTON_POWER,
-            RobotConstants.MAXIMUM_PISTON_POWER * tiltController.get());
-        Robot.climber.setBackPistonOutputRange(RobotConstants.MINIMUM_PISTON_POWER,
-            RobotConstants.MAXIMUM_PISTON_POWER * (1.5 - tiltController.get()));
-      } else if (Robot.sensors.getPitchDouble() > RobotConstants.TILT_TOLERANCE) {
-        Robot.climber.setFrontPistonOutputRange(RobotConstants.MINIMUM_PISTON_POWER,
-            RobotConstants.MAXIMUM_PISTON_POWER * (1.5 - tiltController.get()));
-        Robot.climber.setBackPistonOutputRange(RobotConstants.MINIMUM_PISTON_POWER,
-            RobotConstants.MAXIMUM_PISTON_POWER * tiltController.get());
-      }
-    } else {
-      if (Robot.sensors.getPitchDouble() > RobotConstants.TILT_TOLERANCE) {
-        Robot.climber.setFrontPistonOutputRange(RobotConstants.LOWERING_PISTON_POWER * tiltController.get(),
-            RobotConstants.MINIMUM_PISTON_POWER);
-        Robot.climber.setBackPistonOutputRange(RobotConstants.MINIMUM_PISTON_POWER * (1.5 - tiltController.get()),
-            RobotConstants.MINIMUM_PISTON_POWER);
-      } else if (Robot.sensors.getPitchDouble() < -RobotConstants.TILT_TOLERANCE) {
-        Robot.climber.setFrontPistonOutputRange(RobotConstants.LOWERING_PISTON_POWER * (1.5 - tiltController.get()),
-            RobotConstants.MINIMUM_PISTON_POWER);
-        Robot.climber.setBackPistonOutputRange(RobotConstants.MINIMUM_PISTON_POWER * tiltController.get(),
-            RobotConstants.MINIMUM_PISTON_POWER);
-      }
+    if(Math.abs(Robot.sensors.getPitchDouble()) - tiltTolerance > 0){
+      Robot.climber.handleTilt(goingUp, tiltTolerance, tiltController.get());
     }
+
+    Logger.consoleLog("currentBackPistonPosition:%s currentFrontPistonPosition:%s tiltControlScalar:%s", Robot.climber.getBackTalonPositionInTicks(), Robot.climber.getFrontTalonPositionInTicks(), tiltController.get());
+
+    loggingIterationCounter++;
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return (Robot.climber.getFrontController().onTarget() && Robot.climber.getBackController().onTarget());
+    return climber.getFrontControllerOnTarget() && climber.getBackControllerOnTarget();
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Robot.climber.setFrontPistonOutputRange(RobotConstants.MINIMUM_PISTON_POWER, RobotConstants.MAXIMUM_PISTON_POWER);
-    Robot.climber.setBackPistonOutputRange(RobotConstants.MAXIMUM_PISTON_POWER, RobotConstants.MAXIMUM_PISTON_POWER);
     SettingUtils.releaseController(tiltController);
+    Logger.consoleLog("endBackPistonPosition:%s endFrontPistonPosition:%s ", Robot.climber.getBackTalonPositionInTicks(), Robot.climber.getFrontTalonPositionInTicks());
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    Robot.climber.setFrontPistonOutputRange(RobotConstants.MINIMUM_PISTON_POWER, RobotConstants.MAXIMUM_PISTON_POWER);
-    Robot.climber.setBackPistonOutputRange(RobotConstants.MAXIMUM_PISTON_POWER, RobotConstants.MAXIMUM_PISTON_POWER);
-    SettingUtils.releaseController(tiltController);
+    end();
+    Logger.consoleLog();
   }
 }

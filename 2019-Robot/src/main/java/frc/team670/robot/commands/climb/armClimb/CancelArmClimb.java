@@ -8,23 +8,26 @@
 package frc.team670.robot.commands.climb.armClimb;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
+
 import frc.team670.robot.Robot;
+import frc.team670.robot.subsystems.Arm;
 
 /**
- * Add your docs here.
+ * Turns a boolean in the ArmClimb class to false which stops it from running
  */
 public class CancelArmClimb extends InstantCommand {
 
-  public CancelArmClimb() {
+  public CancelArmClimb(Arm arm) {
     super();
-    requires(Robot.arm);
-    requires(Robot.elbow);
+    requires(arm.getElbow());
+    requires(arm.getWrist());
+    requires(arm.getExtension());
   }
 
   // Called once when the command executes
   @Override
   protected void initialize() {
-    ArmClimb.setCanClimb(false);
+    ArmClimb.setUserWishesToStillClimb(false);
   }
 
 }

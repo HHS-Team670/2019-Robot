@@ -1,5 +1,6 @@
 package frc.team670.robot.dataCollection;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team670.robot.constants.RobotMap;
@@ -15,6 +16,8 @@ public class MustangSensors extends Subsystem {
 
   // NavX
   private NavX navXMicro = null;
+  private DigitalInput intakeIRSensor;
+  private DigitalInput clawIRSensor;
   public static final double NAVX_ERROR_CODE = -40001;
 
 
@@ -24,7 +27,10 @@ public class MustangSensors extends Subsystem {
 		} catch (RuntimeException ex) {
 			DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
 			navXMicro = null;
-		}
+    }
+    
+    intakeIRSensor = new DigitalInput(RobotMap.INTAKE_IR_DIO_PORT);
+    clawIRSensor = new DigitalInput(RobotMap.CLAW_IR_DIO_PORT);
   }
 
   @Override
@@ -117,11 +123,31 @@ public class MustangSensors extends Subsystem {
     return null;
   }
 
+  /**
+   * Returns a PIDSource with the NavX pitch
+   */
   public NavX_Pitch_PIDSource getNavXPitchPIDSource() {
     if(navXMicro != null){
       return navXMicro.getNavXPitchPIDSource();
     }
     return null;
   }
+
+  /**
+   * Returns true if object is within threshold and false if not
+   */
+  public boolean getIntakeIROutput(){
+    return intakeIRSensor.get();
+  }
+
+
+  /**
+   * Returns true if object is within threshold and false if not
+   */
+  public boolean getClawIROutput(){
+    return clawIRSensor.get();
+  }
+
+
 
 }

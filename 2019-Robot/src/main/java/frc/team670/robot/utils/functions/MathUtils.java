@@ -8,6 +8,7 @@
 package frc.team670.robot.utils.functions;
 
 import frc.team670.robot.constants.RobotConstants;
+import jaci.pathfinder.Pathfinder;
 
 /**
  * Provides useful math-related functions.
@@ -115,13 +116,53 @@ public class MathUtils {
         return Math.sqrt(Math.pow((x1-x2), 2) + Math.pow(y2-y1, 2));
     }
 
+    public static double convertElbowDegreesToTicks(double degrees) {
+        return (degrees / 360) * RobotConstants.ELBOW_TICKS_PER_ROTATION;
+    }
+
+    public static double convertElbowTicksToDegrees(double ticks) {
+        return (ticks / RobotConstants.ELBOW_TICKS_PER_ROTATION) * 360;
+    }
+
+    public static double convertWristDegreesToTicks(double degrees) {
+        return (degrees / 360) * RobotConstants.WRIST_TICKS_PER_ROTATION;
+    }
+
+    public static double convertWristTicksToDegrees(double ticks) {
+        return -1 * Pathfinder.boundHalfDegrees((ticks / RobotConstants.WRIST_TICKS_PER_ROTATION) * 360); // Multiplied by -1 to flip from (-180,180) to (180,-180)
+    }
+
+    public static int convertExtensionInchesToTicks(double inches) { // TODO Dimensional Analysis on this cuz this is wrong!
+        return (int)(RobotConstants.EXTENSION_TICKS_PER_MOTOR_ROTATION / inches);
+    }
+
+    public static double convertExtensionTicksToInches(double ticks) {
+        return ticks / RobotConstants.EXTENSION_TICKS_PER_MOTOR_ROTATION / RobotConstants.EXTENSION_MOTOR_ROTATIONS_PER_INCH;
+    }
+
+    public static double convertIntakeDegreesToTicks(double degrees) {
+        return 0.0; //TODO set this
+    }
+
+    public static double convertIntakeTicksToDegrees(double ticks) {
+        return 0.0; //TODO set this
+    }
+
+    /**
+     * Returns true if the value is within +/- tolerance of target
+     * @param tolerance The tolerance (must be positive)
+     */
+    public static boolean isWithinTolerance(double value, double target, double tolerance) {
+        return (value > target - tolerance && value < target + tolerance);
+    }
+
     /**
      * Returns the hypotenuse of a triangle given two legs according to the Pythagorean Theorem
      * 
      * @param leg1 The length of the first leg
      * @param leg2 The length of the second leg
      */
-    public static double findHypotenuse(double leg1, double leg2){
+    public static double findHypotenuse(double leg1, double leg2) {
         return Math.sqrt(leg1 * leg1 + leg2 * leg2);
     }
 

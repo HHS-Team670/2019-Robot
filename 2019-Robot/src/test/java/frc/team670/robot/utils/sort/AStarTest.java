@@ -16,20 +16,27 @@ public class AStarTest{
 
       @Test  
       public void AStarSearchTest(){
-        TestEdge e0 = new TestEdge(), e1 = new TestEdge(), e2 = new TestEdge(), e3 = new TestEdge(), e4 = new TestEdge();
+        TestEdge e0 = new TestEdge(), e1 = new TestEdge(), e2 = new TestEdge(), e3 = new TestEdge(), e4 = new TestEdge(), e5 = new TestEdge();
         TestNode t0 = new TestNode(0, 0, new Edge[]{e0, e1});
-        TestNode t1 = new TestNode(1, 1, new Edge[]{e1, e3});
-        TestNode t2 = new TestNode(1, 4, new Edge[]{e1, e2});
+        TestNode t1 = new TestNode(1, 1, new Edge[]{e3, e5});
+        TestNode t2 = new TestNode(1, 4, new Edge[]{e2});
         TestNode t3=new TestNode(4, 3, new Edge[]{e3, e4});
         TestNode t4=new TestNode(6, 2, new Edge[]{} ); //island
-        TestNode t5= new TestNode(6, 4, new Edge[]{e2, e4});
+        TestNode t5= new TestNode(6, 4, new Edge[]{});
         e0.setNodes(t0, t1);
         e1.setNodes(t0, t2);
         e2.setNodes(t2, t5);
         e3.setNodes(t1, t3);
         e4.setNodes(t3, t5);
+        e5.setNodes(t1, t0);
+
+        List<Edge> result = AStarSearch.search(t0, t1);
+        assertArrayEquals(new Edge[]{e0}, result.toArray());
+        result = AStarSearch.search(t1, t0);
+        assertArrayEquals(new Edge[]{e5}, result.toArray());
+
         // Regular search test, correct path has more edges than other & similar length.
-        List<Edge> result = AStarSearch.search(t0, t5);
+        result = AStarSearch.search(t0, t5);
         assertArrayEquals(new Edge[]{e0, e3, e4}, result.toArray());
         // Case: starting point is island 
         try {
@@ -55,6 +62,8 @@ public class AStarTest{
         // Regular search test. Makes sure it finds the fastest path, which is the "bottom"
         List<Edge> result4 = AStarSearch.search(t0, t3);
         assertArrayEquals(new Edge[]{e0, e3}, result4.toArray());
+
+        // Search from one 
     }
 }
 

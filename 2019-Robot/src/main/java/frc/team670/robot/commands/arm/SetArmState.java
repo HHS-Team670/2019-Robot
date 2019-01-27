@@ -5,20 +5,28 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.commands.arm.armTransitions;
+package frc.team670.robot.commands.arm;
 
+import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team670.robot.subsystems.Arm;
-import frc.team670.robot.subsystems.Arm.LegalState;
+import frc.team670.robot.subsystems.Arm.ArmState;
 
-public class NeutralToCargoPickup extends ArmTransition {
+/**
+ * Sets teh current ArmState to the provided ArmState state
+ */
+public class SetArmState extends InstantCommand {
   
-  public NeutralToCargoPickup() {
-    super(Arm.getArmState(LegalState.NEUTRAL), Arm.getArmState(LegalState.CARGO_PICKUP));
+  private ArmState state;
 
-    /*
-     * Enter your addSequential() and addParallel() commands here.
-     */
+  public SetArmState(ArmState state) {
+    super();
+    this.state = state;
+  }
 
+  // Called once when the command executes
+  @Override
+  protected void initialize() {
+    Arm.setState(state);
   }
 
 }
