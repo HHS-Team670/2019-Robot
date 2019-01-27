@@ -29,7 +29,7 @@ public class Intake extends Subsystem {
   private VictorSPX baseVictor, rollerVictor;
   private Encoder baseVictorEncoder;
 
-  private static final double MIN_BASE_OUTPUT = -0.75, MAX_BASE_OUTPUT = 0.75;
+  private static final double MAX_BASE_OUTPUT = 0.75;
 
 
   private static final double kF = 0, kP = 0.1, kI = 0, kD = 0; //TODO figure out what these are
@@ -57,6 +57,10 @@ public class Intake extends Subsystem {
     baseVictor.configMotionCruiseVelocity(RobotConstants.MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
     baseVictor.configMotionAcceleration(RobotConstants.MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
     
+    baseVictor.configNominalOutputForward(0, RobotConstants.kTimeoutMs);
+    baseVictor.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
+    baseVictor.configPeakOutputForward(MAX_BASE_OUTPUT, RobotConstants.kTimeoutMs);
+    baseVictor.configPeakOutputReverse(-MAX_BASE_OUTPUT, RobotConstants.kTimeoutMs);
 
     // These thresholds stop the motor when limit is reached
     baseVictor.configForwardSoftLimitThreshold(FORWARD_SOFT_LIMIT);
