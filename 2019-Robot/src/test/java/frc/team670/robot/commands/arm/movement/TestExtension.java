@@ -48,7 +48,7 @@ public class TestExtension extends BaseExtension {
     }
   
     @Override
-    public int getLengthTicks() {
+    public int getLengthTicks() { 
       return (int)extensionTicks;
     }
   
