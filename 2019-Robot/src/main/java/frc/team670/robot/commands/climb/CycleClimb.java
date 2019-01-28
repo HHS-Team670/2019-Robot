@@ -66,6 +66,9 @@ public class CycleClimb extends InstantCommand {
    */
   @Override
   protected void initialize() {
+    //If robot hasn't retracted the front pistons yet, and driver attempts to move onto the next 
+    Scheduler.getInstance().add(new CancelClimbBasedOnTimeLeftInMatch(arm, climber));
+
     switch (cg) {
       case DEPLOY_PISTONS:
         Scheduler.getInstance().add(new PistonClimbWithTiltControl(setPoint, climber));

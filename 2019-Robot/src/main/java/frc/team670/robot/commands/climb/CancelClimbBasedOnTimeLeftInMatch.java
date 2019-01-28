@@ -15,7 +15,7 @@ import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Climber;
 
 /**
- * I assume that this would be running constantly and once a small amount of time is left in the match
+ * I assume that this would be called whenever anyone calls Cycle Climb and once a small amount of time is left in the match
  * and the front pistons haven't been retracted (in which case we assume the drivers should just get onto the platform instead),
  * it adds a command to stow the arm and bring the pistons down to flat
  */
@@ -36,7 +36,7 @@ public class CancelClimbBasedOnTimeLeftInMatch extends InstantCommand {
   @Override
   protected void initialize() {
     if(ds.getMatchTime() <= MIN_TIME_FOR_CLIMB && !climber.getFrontPistonsRetracted()){
-      Scheduler.getInstance().add(new AbortRobotPistonClimb(climber, arm));
+      Scheduler.getInstance().add(new AbortRobotPistonClimb(climber, arm)); //
     }
   }
 }
