@@ -3,6 +3,7 @@ package frc.team670.robot.commands.drive.purePursuit;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.utils.math.DrivePower;
 import frc.team670.robot.utils.math.Vector;
 
@@ -10,13 +11,14 @@ import frc.team670.robot.utils.math.Vector;
  * Given a path and a couple parameters, this class will handle much of the processing of the Pure Pursuit algorithm
  */
 public class PurePursuitTracker {
-    private static PurePursuitTracker instance;
-    private PoseEstimator poseEstimator;
+
+	private static final double FEEDBACK_MULTIPLIER = 0.3;
+
+	private PoseEstimator poseEstimator;
 	private int lastClosestPoint;
 	private Path path;
 	private double lookaheadDistance;
 	private double robotTrack = 0;
-	private double feedbackMultiplier = 0;
 
 	public PurePursuitTracker(PoseEstimator poseEstimator) {
         this.poseEstimator = poseEstimator;
@@ -32,23 +34,7 @@ public class PurePursuitTracker {
 	public void setPath(Path path, double lookaheadDistance) {
 		this.path = path;
 		this.lookaheadDistance = lookaheadDistance;
-	}
-
-	/**
-	 * Sets robot track
-	 * @param robotTrack width of robot measured from center of each side of drivetrain
-	 */
-	public void setRobotTrack(double robotTrack) {
-		this.robotTrack = robotTrack;
-	}
-
-	/**
-	 * Sets the feedback multiplier (proportional feedback constant) for velocities
-	 *
-	 * @param feedbackMultiplier feedback multiplier
-	 */
-	public void setFeedbackMultiplier(double feedbackMultiplier) {
-		this.feedbackMultiplier = feedbackMultiplier;
+		robotTrack = RobotConstants.DRIVEBASE_TRACK_WIDTH;
 	}
 
 	public void reset() {
@@ -84,8 +70,8 @@ public class PurePursuitTracker {
 		double leftTargetVel = calculateLeftTargetVelocity(robotPath.get(getClosestPointIndex(currPose)).getVelocity(), curvature);
 		double rightTargetVel = calculateRightTargetVelocity(robotPath.get(getClosestPointIndex(currPose)).getVelocity(), curvature);
 
-		double leftFeedback = feedbackMultiplier * (leftTargetVel - currLeftVel);
-		double rightFeedback = feedbackMultiplier * (rightTargetVel - currRightVel);
+		double leftFeedback = FEEDBACK_MULTIPLIER * (leftTargetVel - currLeftVel);
+		double rightFeedback = FEEDBACK_MULTIPLIER * (rightTargetVel - currRightVel);
         /*
         System.out.println("leftTargetVel: " + leftTargetVel);
         System.out.println("rightTargetVel: " + rightTargetVel);
@@ -97,22 +83,6 @@ public class PurePursuitTracker {
 
 		return new DrivePower(leftTargetVel + leftFeedback, rightTargetVel + rightFeedback);
 	}
-
-    /*
-    //calculates the feedForward and the feedBack that will get passed through to the motors
-    private double calculateFeedForward(double targetVel, double currVel, boolean right) {
-        double targetAcc = (targetVel - currVel)/(Constants.loopTime);
-		double maxAccel = Constants.maxAccel;
-		targetAcc = Range.clip(targetAcc, -maxAccel, maxAccel);
-        double rateLimitedVel = rateLimiter(targetVel, maxAccel, right);
-        return (Constants.kV * rateLimitedVel) + (Constants.kA * targetAcc);
-    }
-    private double calculateFeedback(double targetVel, double currVel) {
-        return Constants.kP * (targetVel - currVel);
-    }
-    */
-
-	//calculates the left and right target velocities given the targetRobotVelocity
 
 	/**
 	 * Calculates the left target velocity given target overall velocity
@@ -136,25 +106,6 @@ public class PurePursuitTracker {
 		//System.out.println("curvature " + curvature);
 		return targetRobotVelocity * ((2 - (robotTrack * curvature))) / 2;
 	}
-
-    /*
-    //limits the rate of change of a value given a maxRate parameter
-    private double rateLimiter(double input, double maxRate, boolean right) {
-        double maxChange = Constants.loopTime * maxRate;
-        if (right) {
-            rightOutput += Range.clip(input - prevRightOutput, -maxChange, maxChange);
-            prevRightOutput = rightOutput;
-            return rightOutput;
-        }
-        else {
-            leftOutput += Range.clip(input - prevLeftOutput, -maxChange, maxChange);
-            prevLeftOutput = leftOutput;
-            return leftOutput;
-        }
-    }
-    */
-
-	//calculates the intersection point between a point and a circle
 
 	/**
 	 * Calculates the intersection t-value between a line and a circle, using quadratic formula
@@ -193,8 +144,6 @@ public class PurePursuitTracker {
 
 		return Optional.empty();
 	}
-
-	//uses the calculated intersection point to get a Vector value on the path that is the lookahead point
 
 	/**
 	 * Uses the calculated intersection t-value to get a point on the path of where to look ahead

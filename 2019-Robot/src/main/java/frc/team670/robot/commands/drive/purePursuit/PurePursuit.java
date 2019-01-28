@@ -15,15 +15,18 @@ import frc.team670.robot.utils.math.DrivePower;
 
 public class PurePursuit extends Command {
 
+  private static final double LOOKAHEAD_DISTANCE = 15;
+
   private PurePursuitTracker purePursuitTracker;
   private PoseEstimator poseEstimator;
   private DriveBase driveBase;
   private MustangSensors sensors;
 
-  public PurePursuit(DriveBase driveBase, MustangSensors sensors) {
+  public PurePursuit(Path path, DriveBase driveBase, MustangSensors sensors) {
    this.driveBase = driveBase;
    poseEstimator = new PoseEstimator(driveBase, sensors);
    purePursuitTracker = new PurePursuitTracker(poseEstimator);
+   purePursuitTracker.setPath(path, LOOKAHEAD_DISTANCE);
    requires(driveBase);
   }
 

@@ -17,18 +17,11 @@ public class PoseEstimator {
 	private DriveBase driveBase;
 	private MustangSensors sensors;
 
-	// private static PoseEstimator instance;
-
 	public PoseEstimator(DriveBase driveBase, MustangSensors sensors) {
 		reset();
 		this.driveBase = driveBase;
 		this.sensors = sensors;
 	}
-
-	// public static PoseEstimator getInstance() {
-	// 	return instance == null ? instance = new PoseEstimator() : instance;
-	// }
-
 	public void setDriveTrainBase(DriveBase driveTrainBase) {
 		this.driveBase = driveTrainBase;
 	}

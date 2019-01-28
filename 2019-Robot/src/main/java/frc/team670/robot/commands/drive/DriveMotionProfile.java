@@ -39,10 +39,9 @@ public class DriveMotionProfile extends Command {
   private EncoderFollower left, right;
   // Max Velocities in m/s. For generation, we need it to be lower than the actual max velocity, 
   // otherwise we get motor outputs >1.0 and <-1.0 which makes us unable to turn properly.
-  private static final String BASE_PATH_NAME = "home/deploy/";
   private static final double MAX_VELOCITY = 120, MAX_ACCELERATION = 60, MAX_JERK = 60; // Equivalent units in inches
   private static final double TIME_STEP = 0.05;
-  private static final double WHEEL_BASE = 25; //Inches
+  private static final double WHEEL_BASE = RobotConstants.DRIVEBASE_TRACK_WIDTH; //Inches
   private static final double ANGLE_DIVIDE_CONSTANT = 240.0; // Default = 80
 
 
