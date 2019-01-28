@@ -66,7 +66,10 @@ public class CycleClimb extends InstantCommand {
    */
   @Override
   protected void initialize() {
-    //If robot hasn't retracted the front pistons yet, and driver attempts to move onto the next 
+    /*
+    If robot hasn't retracted the front pistons yet and driver attempts to move onto the next stage, but there's 
+    very little time left, this will stow the arm and bring the robot back down to flat
+    */
     Scheduler.getInstance().add(new CancelClimbBasedOnTimeLeftInMatch(arm, climber));
 
     switch (cg) {
