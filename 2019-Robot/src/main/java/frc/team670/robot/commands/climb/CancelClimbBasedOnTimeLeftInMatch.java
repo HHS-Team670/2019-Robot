@@ -24,6 +24,8 @@ public class CancelClimbBasedOnTimeLeftInMatch extends InstantCommand {
   private Climber climber;
   private DriverStation ds;
 
+  private boolean hasBeenAborted;
+
   private static final int MIN_TIME_FOR_CLIMB = 0; //TODO set this based on testing the climber itself and seeing how long it takes drivers to climb
 
   public CancelClimbBasedOnTimeLeftInMatch(Arm arm, Climber climber) {
@@ -35,8 +37,9 @@ public class CancelClimbBasedOnTimeLeftInMatch extends InstantCommand {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    if(ds.getMatchTime() <= MIN_TIME_FOR_CLIMB && !climber.getFrontPistonsRetracted()){
+    if(ds.getMatchTime() <= MIN_TIME_FOR_CLIMB && !climber.getFrontPistonsRetracted() && !hasBeenAborted){
       Scheduler.getInstance().add(new AbortRobotPistonClimb(climber, arm));
+      hasBeenAborted = true;
     }
   }
 }
