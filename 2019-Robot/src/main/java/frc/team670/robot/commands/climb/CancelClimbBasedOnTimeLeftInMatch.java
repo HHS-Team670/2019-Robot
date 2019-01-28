@@ -32,6 +32,7 @@ public class CancelClimbBasedOnTimeLeftInMatch extends InstantCommand {
     this.climber = climber;
     this.arm = arm;
     ds = DriverStation.getInstance();
+    hasBeenAborted = false;
   }
 
   // Called just before this Command runs the first time
