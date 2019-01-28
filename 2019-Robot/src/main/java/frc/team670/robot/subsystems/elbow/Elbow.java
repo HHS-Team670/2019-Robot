@@ -133,9 +133,9 @@ public class Elbow extends BaseElbow {
   }
 
   @Override
-  public void setMotionMagicSetpoint(double elbowAngle) {
+  public void setMotionMagicSetpoint(double elbowSetpointInTicks) {
     elbowRotationMain.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
-    elbowRotationMain.set(ControlMode.MotionMagic, MathUtils.convertElbowDegreesToTicks(elbowAngle));
+    elbowRotationMain.set(ControlMode.MotionMagic, elbowSetpointInTicks);
   }
 
   @Override

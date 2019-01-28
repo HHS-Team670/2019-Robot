@@ -137,9 +137,9 @@ public class Extension extends BaseExtension {
   }
 
   @Override
-  public void setMotionMagicSetpoint(double extensionLength) {
+  public void setMotionMagicSetpoint(double extensionTicks) {
     extensionMotor.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
-    extensionMotor.set(ControlMode.MotionMagic, extensionLength);
+    extensionMotor.set(ControlMode.MotionMagic, extensionTicks);
   }
 
 }

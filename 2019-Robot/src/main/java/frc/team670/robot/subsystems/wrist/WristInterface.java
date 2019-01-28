@@ -34,5 +34,5 @@ public interface WristInterface {
       /**
        * Setup for movement and Motion Magic
        */
-      public void setMotionMagicSetpoint(double wristAngle);
+      public void setMotionMagicSetpoint(double wristSetpointInTicks);
 }
