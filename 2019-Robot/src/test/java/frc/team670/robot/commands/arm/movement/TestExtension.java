@@ -15,7 +15,7 @@ import frc.team670.robot.utils.functions.MathUtils;;
  */
 public class TestExtension extends BaseExtension {
 
-    double extensionLength;
+    double extensionTicks;
 
     public TestExtension() {
 
@@ -23,12 +23,12 @@ public class TestExtension extends BaseExtension {
 
     @Override
     public double getLengthInches() {
-        return extensionLength;
+        return MathUtils.convertExtensionTicksToInches(extensionTicks);
     }
 
     @Override
-    public void setMotionMagicSetpoint(double extensionLength) {
-        this.extensionLength = extensionLength;
+    public void setMotionMagicSetpoint(double extensionTicks) {
+        this.extensionTicks = extensionTicks;
     }
     
     @Override
@@ -49,7 +49,7 @@ public class TestExtension extends BaseExtension {
   
     @Override
     public int getLengthTicks() {
-      return (int)MathUtils.convertExtensionInchesToTicks(extensionLength);
+      return (int)extensionTicks;
     }
   
     @Override
