@@ -55,9 +55,9 @@ public class RobotConstants {
             MAX_LOOKAHEAD_SPEED);
 
     // Arm Constants
-    /** Multiplies the power input by this value when oeprator is controlling the arm */
-    public static final double ARM_HEIGHT_IN_INCHES = 0;
-    public static final double CLAW_LENGTH_IN_INCHES = 0;
+    // TODO Set these
+    public static final double ARM_HEIGHT_IN_INCHES = 5;
+    public static final double CLAW_LENGTH_IN_INCHES = 8;
     public static final int FIXED_ARM_LENGTH_IN_INCHES = 0;
     public static final double OPERATOR_ARM_CONTROL_SCALAR = 0.5;
 
