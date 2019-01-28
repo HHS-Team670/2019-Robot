@@ -8,6 +8,7 @@
 package frc.team670.robot.commands.arm.movement;
 
 import frc.team670.robot.subsystems.elbow.BaseElbow;
+import frc.team670.robot.utils.functions.MathUtils;
 
 /**
  * Add your docs here.
@@ -15,7 +16,7 @@ import frc.team670.robot.subsystems.elbow.BaseElbow;
 public class TestElbow extends BaseElbow {
 
 
-    private double angle;
+    private double elbowTicks;
 
     public TestElbow() {
 
@@ -25,13 +26,13 @@ public class TestElbow extends BaseElbow {
      * Doesn't actually set MotionMagicSetpoint, instead moves the angle to that point.
      */
     @Override
-    public void setMotionMagicSetpoint(double elbowAngle) {
-        angle = elbowAngle;
+    public void setMotionMagicSetpoint(double elbowTicks) {
+        this.elbowTicks = elbowTicks;
     }
 
     @Override
     public double getAngle() {
-        return angle;
+        return MathUtils.convertElbowTicksToDegrees(elbowTicks);
     }
 
     @Override
@@ -56,7 +57,7 @@ public class TestElbow extends BaseElbow {
 
     @Override
     public int getPositionTicks() {
-        return 0;
+        return (int)elbowTicks;
     }
 
     @Override

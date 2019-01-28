@@ -7,7 +7,8 @@
 
 package frc.team670.robot.commands.arm.movement;
 
-import frc.team670.robot.subsystems.extension.BaseExtension;;
+import frc.team670.robot.subsystems.extension.BaseExtension;
+import frc.team670.robot.utils.functions.MathUtils;;
 
 /**
  * Add your docs here.
@@ -48,7 +49,7 @@ public class TestExtension extends BaseExtension {
   
     @Override
     public int getLengthTicks() {
-      return 0;
+      return (int)MathUtils.convertExtensionInchesToTicks(extensionLength);
     }
   
     @Override

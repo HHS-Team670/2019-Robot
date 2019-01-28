@@ -9,6 +9,7 @@ package frc.team670.robot.commands.arm.movement;
 
 import static org.junit.Assert.assertEquals;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -56,10 +57,12 @@ public class ArmTransitionTest {
                     Scheduler.getInstance().run();
                 }
                 
-                assertEquals(finalElbowAngle, elbow.getAngle(), 0.00001);
-                assertEquals(finalWristAngle, wrist.getAngle(), 0.00001);
-                assertEquals(finalExtensionLength, extension.getLengthInches(), 0.00001);
-                assertEquals(dest.getCoordPosition(), Arm.getCoordPosition(elbow.getAngle(), wrist.getAngle(), extension.getLengthInches()));
+                assertEquals(finalElbowAngle, elbow.getAngle(), 0.1);
+                assertEquals(finalWristAngle, wrist.getAngle(), 0.1);
+                assertEquals(finalExtensionLength, extension.getLengthInches(), 0.1);
+                Point2D.Double armCoord = Arm.getCoordPosition(elbow.getAngle(), wrist.getAngle(), extension.getLengthInches());
+                assertEquals(dest.getCoordPosition().x, armCoord.x, 0.2);
+                assertEquals(dest.getCoordPosition().y, armCoord.y, 0.2);
                 assertEquals(dest, Arm.getCurrentState());
             }
 
