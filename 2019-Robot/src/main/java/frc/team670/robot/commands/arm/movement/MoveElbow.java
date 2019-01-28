@@ -53,6 +53,7 @@ public class MoveElbow extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
+    System.out.println(elbow.getPositionTicks() + ", " + elbowSetpointInTicks);
     return MathUtils.isWithinTolerance(elbow.getPositionTicks(), elbowSetpointInTicks, TICKS_TOLERANCE);
   }
 
