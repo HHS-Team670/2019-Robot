@@ -68,6 +68,7 @@ public class Intake extends Subsystem {
     baseVictor.configReverseSoftLimitEnable(true);
 
     baseVictor.setNeutralMode(NeutralMode.Brake);
+    rollerVictor.setNeutralMode(NeutralMode.Coast);
 
     baseVictor.configClosedloopRamp(RAMP_RATE);
     baseVictor.configOpenloopRamp(RAMP_RATE);
@@ -77,7 +78,7 @@ public class Intake extends Subsystem {
    * Should set the setpoint for the Motion Magic on the intake
    */
   public void setMotionMagicSetpoint(double intakeAngle) {  
-    baseVictor.set(ControlMode.MotionMagic, MathUtils.convertWristDegreesToTicks(intakeAngle));
+    baseVictor.set(ControlMode.MotionMagic, MathUtils.convertIntakeDegreesToTicks(intakeAngle));
   }
 
   /**
@@ -87,6 +88,9 @@ public class Intake extends Subsystem {
     return baseVictor.getClosedLoopTarget(); 
   }
 
+  public void setRotatorNeutralMode(NeutralMode mode) {
+    baseVictor.setNeutralMode(mode);
+  }
 
   /**
    * Returns the tick value of the base motor

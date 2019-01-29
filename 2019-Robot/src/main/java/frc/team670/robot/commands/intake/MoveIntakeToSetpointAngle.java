@@ -7,8 +7,9 @@
 
 package frc.team670.robot.commands.intake;
 
-import edu.wpi.first.wpilibj.command.Command;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 
+import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.subsystems.Intake;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.functions.MathUtils;
@@ -36,6 +37,7 @@ public class MoveIntakeToSetpointAngle extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    intake.setRotatorNeutralMode(NeutralMode.Brake);
     intake.setMotionMagicSetpoint(setpointInDegrees);
     Logger.consoleLog("startIntakeAngle:%s", intake.getIntakeAngleInDegrees());
   }
@@ -57,6 +59,7 @@ public class MoveIntakeToSetpointAngle extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    intake.setRotatorNeutralMode(NeutralMode.Coast);
     Logger.consoleLog("endIntakeAngle:%s", intake.getIntakeAngleInDegrees());
   }
 
