@@ -145,13 +145,13 @@ body.login #login {
   position: absolute;
   transform: translate(85vw);
 }
-#field-map {
+/* #field-map {
   position: absolute;
   transform: translate(55vw, 40vh);
-}
+} */
 #status-lights {
   position: absolute;
-  transform: translate(55vw, 25vh);
+  transform: translate(0vw, 3vh);
 }
 .bottom-tick {
   transform-origin: top center;
@@ -188,4 +188,33 @@ body.login #login {
 }
 #right-cargo-3 {
   transform: translate(10px);
+}
+#auton-chooser {
+    position: relative;
+    transform: translate(50vw, 40vh);
+    width: 50vw;
+    height: 55vh;
+}
+#start-position {
+    position: absolute;
+}
+#target-1 {
+    position: absolute;
+    transform: translate(90px);
+}
+#height-1 {
+    position: absolute;
+    transform: translate(calc(90px + 125px));
+}
+#target-2 {
+    position: absolute;
+    transform: translate(calc(90px + 125px + 75px));
+}
+#target-3 {
+    position: absolute;
+    transform: translate(calc(90px + 125px + 75px + 130px));
+}
+#height-3 {
+    position: absolute;
+    transform: translate(calc(90px + 125px + 75px + 130px + 125px));
 }

@@ -1,6 +1,5 @@
 // Define UI elements
 var ui = {
-    timer: document.getElementById('timer'),
     robotState: document.getElementById('robot-state'),
     multiCamSRC: document.getElementById('multicam-src'),
     navx: {
@@ -12,26 +11,6 @@ var ui = {
       number: document.getElementById('turret-number')
     }
 };
-
-let allLocations = [
-  'RocketLeft.1', 'RocketLeft.2', 'RocketLeft.3',
-  'ExchangeLeft.Hatch', 'BallLeft',
-  'CargoLeft.1', 'CargoLeft.2', 'CargoLeft.3', 'CargoFront.1',
-  'RocketRight.1', 'RocketRight.2', 'RocketRight.3',
-  'ExchangeRight.Hatch', 'BallRight',
-  'CargoRight.1', 'CargoRight.2', 'CargoRight.3', 'CargoFront.2'
-];
-var endpoints = [];
-
-NetworkTables.addKeyListener('/SmartDashboard/robotTime', (key, value) => {
-  var minutes = ~~(value / 60); // converts to integer
-  var seconds = (value - 60*minutes) % 60;
-  seconds = (seconds < 10) ? '0'+seconds : seconds;
-  ui.timer.style.color = `rgb(0, 200, 0)`;
-  if (value < 135) ui.timer.style.color = `rgb(255, 255, 255)`;
-  if (value < 30) ui.timer.style.color = `rgb(200, 0, 0)`;
-  ui.timer.innerHTML = minutes + ':' + seconds;
-});
 
 NetworkTables.addKeyListener('/SmartDashboard/gyro', (key, value) => {
   var angle = value % 360;
@@ -46,63 +25,18 @@ NetworkTables.addKeyListener('/SmartDashboard/cameraSource', (key, value) => {
 });
 
 var keys = [];
+var armStates = [];
+var auton = new Array(6);
 
 window.onkeyup = function(event) {
     let key = event.key;
 
     if (key == '9') {
       keys.pop();
+    } else if (key == 'w') {
+      finalize();
     } else {
-      if (keys.length % 2 == 0 && key == 'w') finalize();
-      if (keys.length < 4) {
-        if (keys.length % 2 == 0 && getRobotLocation(key) != null) keys.push(key);
-        else if (keys.length % 2 == 1 && getHeight(key) != null) keys.push(key);
-      }
-
-      // document.getElementById(getRobotLocation(keys[keys.length-2])).innerHTML = '*';
-      // (getHeight(key).split('-')[1].charAt(0).toUpperCase());
-    }
-
-    document.getElementById('test').innerHTML = keys;
-
-    endpoints = [];
-    if (keys.length > 0) {
-      highlight(getRobotLocation(keys[0]), 'white');
-    }
-    if (keys.length > 1) {
-      var location = getRobotLocation(keys[0]);
-      var height;
-      if (location.includes('Ball')) height = 'Ball';
-      else {
-        height = getHeight(keys[1]);
-        if (height == null) keys.pop();
-        else {
-          highlight(location, 'green');
-          endpoints.push([location, height]);
-          var startText = document.getElementById('start-text');
-          positionText(startText, location);
-          startText.innerHTML = getHeight(keys[1]).split('-')[1].charAt(0).toUpperCase();
-        }
-      }
-    }
-    if (keys.length > 2) {
-      highlight(getRobotLocation(keys[2]), 'white');
-    }
-    if (keys.length > 3) {
-      var location = getRobotLocation(keys[2]);
-      var height;
-      if (location.includes('Ball')) height = 'Ball';
-      else {
-        height = getHeight(keys[3]);
-        if (height == null) keys.pop();
-        else {
-          highlight(location, 'red');
-          endpoints.push([location, height]);
-          var endText = document.getElementById('end-text');
-          positionText(endText, location);
-          endText.innerHTML = getHeight(keys[3]).split('-')[1].charAt(0).toUpperCase();
-        }
-      }
+      keys.push(key);
     }
 }
 
@@ -115,82 +49,72 @@ s t u v
 */
 
 // returns the location on the field corresponding with a given key
-function getRobotLocation(key) {
-  if (key == 'a') return 'RocketRight.3';
-  if (key == 'j') return 'RocketRight.2';
-  if (key == 's') return 'RocketRight.1';
-  if (key == '1') return 'ExchangeLeft.Hatch';
-  if (key == '0') return 'BallLeft';
-  if (key == 'b') return 'CargoLeft.3';
-  if (key == 'k') return 'CargoLeft.2';
-  if (key == 't') return 'CargoLeft.1';
-  if (key == '2') return 'CargoFront.1';
-  if (key == 'c') return 'CargoRight.3';
-  if (key == 'l') return 'CargoRight.2';
-  if (key == 'u') return 'CargoRight.1';
-  if (key == '3') return 'CargoFront.2';
-  if (key == 'd') return 'RocketRight.3';
-  if (key == 'm') return 'RocketRight.2';
-  if (key == 'v') return 'RocketRight.1';
-  if (key == '4') return 'ExchangeRight.Hatch';
-  if (key == 'w') return 'BallRight';
-  // return null;
-}
-
-// returns the arm height corresponding with a given key
-function getHeight(key) {
-  if (key == 'a') return 'RocketMiddle';
-  if (key == 'b') return 'RocketBottom';
-  if (key == 'j') return 'CargoCargo';
-  if (key == 'k') return 'CargoPlate';
-  if (key == 's') return 'ExchangeCargo';
-  if (key == 't') return 'ExchangePlate';
+function getArmState(key) {
+  if (key == 'a') return '';
+  if (key == 'j') return '';
+  if (key == 's') return '';
+  if (key == '1') return '';
+  if (key == '0') return '';
+  if (key == 'b') return '';
+  if (key == 'k') return '';
+  if (key == 't') return '';
+  if (key == '2') return '';
+  if (key == 'c') return '';
+  if (key == 'l') return '';
+  if (key == 'u') return '';
+  if (key == '3') return '';
+  if (key == 'd') return '';
+  if (key == 'm') return '';
+  if (key == 'v') return '';
+  if (key == '4') return '';
+  if (key == 'w') return '';
   return null;
 }
 
-function highlight(toHighlight, color) {
-  var endpoint = document.getElementById(toHighlight);
-  if (color == 'green') endpoint.style.fill = `rgb(0,255,0)`;
-  if (color == 'red') endpoint.style.fill = `rgb(255,0,0)`;
-  if (color == 'blue') endpoint.style.fill = `rgb(0,0,255)`;
-  if (color == 'white') endpoint.style.fill = `rgb(255,255,255)`;
-  if (color == 'clear') endpoint.style.fill = `rgb(0,0,0)`;
-}
-
-function clearHighlight() {
-  var len = allLocations.length;
-  for (var i = 0; i < len; i++) {
-    var endpoint = allLocations[i];
-    document.getElementById(endpoint).style.fill = `rgb(0,0,0)`;
-  }
-  document.getElementById('start-text').innerHTML = '';
-  document.getElementById('end-text').innerHTML = '';
-}
-
-function positionText(text, position) {
-  if (position === 'RocketLeft.3') text.style.transform = `translate(15px, 20px)`;
-  if (position === 'RocketLeft.2') text.style.transform = `translate(15px, 50px)`;
-  if (position === 'RocketLeft.1') text.style.transform = `translate(15px, 80px)`;
-  if (position === 'CargoLeft.3') text.style.transform = `translate(120px, 20px)`;
-  if (position === 'CargoLeft.2') text.style.transform = `translate(120px, 50px)`;
-  if (position === 'CargoLeft.1') text.style.transform = `translate(120px, 80px)`;
-  if (position === 'CargoFront.1') text.style.transform = `translate(130px, 110px)`;
-  if (position === 'ExchangeLeft.Hatch') text.style.transform = `translate(15px, 280px)`;
-  if (position === 'BallLeft') text.style.transform = `translate(65px, 280px)`;
-  if (position === 'RocketRight.3') text.style.transform = `translate(275px, 20px)`;
-  if (position === 'RocketRight.2') text.style.transform = `translate(275px, 50px)`;
-  if (position === 'RocketRight.1') text.style.transform = `translate(275px, 80px)`;
-  if (position === 'CargoRight.3') text.style.transform = `translate(170px, 20px)`;
-  if (position === 'CargoRight.2') text.style.transform = `translate(170px, 50px)`;
-  if (position === 'CargoRight.1') text.style.transform = `translate(170px, 80px)`;
-  if (position === 'CargoFront.2') text.style.transform = `translate(160px, 110px)`;
-  if (position === 'ExchangeRight.Hatch') text.style.transform = `translate(275px, 280px)`;
-  if (position === 'BallRight') text.style.transform = `translate(225px, 280px)`;
-}
-
 function finalize() {
-  document.getElementById('test').innerHTML = endpoints;
-  NetworkTables.putValue('/SmartDashboard/endpoints', endpoints);
-  keys = [];
-  clearHighlight();
+  NetworkTables.putValue('armSequence', armStates);
+  NetworkTables.putValue('autonSequence', auton);
+}
+
+var startChooser = document.forms['auto-chooser'].elements['start'];
+for (var i = 0, len = startChooser.length; i < len; i++) {
+  startChooser[i].onclick = function() {
+    auton[0] = this.value;
+  }
+}
+var target1 = document.forms['auto-chooser'].elements['target1'];
+for (var i = 0, len = target1.length; i < len; i++) {
+  target1[i].onclick = function() {
+    auton[1] = this.value;
+  }
+}
+var height1 = document.forms['auto-chooser'].elements['height1'];
+for (var i = 0, len = height1.length; i < len; i++) {
+  height1[i].onclick = function() {
+    auton[2] = this.value;
+  }
+}
+var target2 = document.forms['auto-chooser'].elements['target2'];
+for (var i = 0, len = target2.length; i < len; i++) {
+  target2[i].onclick = function() {
+    auton[1] = this.value;
+  }
+}
+var height2 = document.forms['auto-chooser'].elements['height1'];
+for (var i = 0, len = height2.length; i < len; i++) {
+  height2[i].onclick = function() {
+    auton[3] = this.value;
+  }
+}
+var target3 = document.forms['auto-chooser'].elements['target2'];
+for (var i = 0, len = target3.length; i < len; i++) {
+  target3[i].onclick = function() {
+    auton[4] = this.value;
+  }
+}
+var height3 = document.forms['auto-chooser'].elements['height1'];
+for (var i = 0, len = height3.length; i < len; i++) {
+  height3[i].onclick = function() {
+    auton[5] = this.value;
+  }
 }
