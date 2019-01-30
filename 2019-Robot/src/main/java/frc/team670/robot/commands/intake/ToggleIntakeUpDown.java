@@ -33,12 +33,12 @@ public class ToggleIntakeUpDown extends Command {
   protected void initialize() {
     // If the intake is closer to the up postion, we assume that we want to move it
     // down
-    if (Math.abs(intake.getIntakePositionInTicks() - Intake.INTAKE_ANGLE_UP) < Math.abs(intake.getIntakePositionInTicks() - Intake.INTAKE_ANGLE_DOWN)) {
-      intakeSetpointInTicks = MathUtils.convertIntakeDegreesToTicks(Intake.INTAKE_ANGLE_DOWN);
+    if (Math.abs(intake.getIntakePositionInTicks() - Intake.INTAKE_ANGLE_IN) < Math.abs(intake.getIntakePositionInTicks() - Intake.INTAKE_ANGLE_DEPLOYED)) {
+      intakeSetpointInTicks = MathUtils.convertIntakeDegreesToTicks(Intake.INTAKE_ANGLE_DEPLOYED);
     } else {
       // If intake is instead closer to the down postion, we assume that we want to
       // move it up
-      intakeSetpointInTicks = MathUtils.convertIntakeDegreesToTicks(Intake.INTAKE_ANGLE_UP);
+      intakeSetpointInTicks = MathUtils.convertIntakeDegreesToTicks(Intake.INTAKE_ANGLE_IN);
     }
 
     intake.setMotionMagicSetpoint(intakeSetpointInTicks);

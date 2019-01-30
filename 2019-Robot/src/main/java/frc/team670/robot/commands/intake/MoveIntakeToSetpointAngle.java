@@ -10,7 +10,7 @@ package frc.team670.robot.commands.intake;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.command.Command;
-import frc.team670.robot.subsystems.Intake;
+import frc.team670.robot.subsystems.BaseIntake;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.functions.MathUtils;
 
@@ -20,7 +20,7 @@ import frc.team670.robot.utils.functions.MathUtils;
  */
 public class MoveIntakeToSetpointAngle extends Command {
 
-  private Intake intake;
+  private BaseIntake intake;
   private int loggingIterationCounter, setpointInTicks;
   private static final int TOLERANCE_IN_TICKS = 10;
 
@@ -28,7 +28,7 @@ public class MoveIntakeToSetpointAngle extends Command {
    * @param setpoint angle in degrees that the intake is moving to
    * @param intake the intake upon which command will be called upon
    */
-  public MoveIntakeToSetpointAngle(int setpointInDegrees, Intake intake) {
+  public MoveIntakeToSetpointAngle(int setpointInDegrees, BaseIntake intake) {
     requires(intake);
     this.intake = intake;
     this.setpointInTicks = MathUtils.convertIntakeDegreesToTicks(setpointInDegrees);

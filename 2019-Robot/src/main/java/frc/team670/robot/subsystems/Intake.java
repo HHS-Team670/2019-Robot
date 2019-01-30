@@ -13,8 +13,6 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.command.Subsystem;
-
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.utils.functions.MathUtils;
@@ -22,9 +20,9 @@ import frc.team670.robot.utils.functions.MathUtils;
 /**
  * Represents the Intake mechanism of the robot.
  */
-public class Intake extends Subsystem {
+public class Intake extends BaseIntake {
 
-  public static final int INTAKE_ANGLE_UP = 0, INTAKE_ANGLE_DOWN = 90;
+  public static final int INTAKE_ANGLE_IN = 0, INTAKE_ANGLE_DEPLOYED = 90;
 
   private VictorSPX baseVictor, rollerVictor;
   private Encoder baseVictorEncoder;

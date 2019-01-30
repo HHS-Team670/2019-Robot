@@ -11,6 +11,7 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import frc.team670.robot.Robot;
 import frc.team670.robot.commands.arm.armTransitions.ArmTransition;
 import frc.team670.robot.commands.arm.armTransitions.CommonTransition;
 import frc.team670.robot.constants.RobotConstants;
@@ -38,7 +39,7 @@ public class Arm {
   private BaseWrist wrist;
   private BaseExtension extension;
 
-  public Arm(BaseElbow elbow, BaseWrist wrist, BaseExtension extension) {
+  public Arm(BaseElbow elbow, BaseWrist wrist, BaseExtension extension, BaseIntake intake) {
 
     this.elbow = elbow;
     this.wrist = wrist;
@@ -46,7 +47,7 @@ public class Arm {
 
     // State Setup
     states = new HashMap<LegalState, ArmState>();
-    states.put(LegalState.NEUTRAL, new Neutral(this));
+    states.put(LegalState.NEUTRAL, new Neutral(this, intake));
     // states.put(LegalState.INTAKE_BALL_INTAKE_FORWARD, new IntakeBallIntakeForward(this));
     // states.put(LegalState.READY_TO_CLIMB, new ReadyToClimb(this));
     // states.put(LegalState.START_BALL, new Neutral(this)); // This obviously needs
@@ -63,7 +64,7 @@ public class Arm {
     // states.put(LegalState.PLACE_BALLCARGOB, new Neutral(this));
     // states.put(LegalState.PLACE_HATCHCARGOF, new Neutral(this));
     // states.put(LegalState.PLACE_HATCHCARGOB, new Neutral(this));
-    states.put(LegalState.PLACE_HATCH_ROCKET_LOW_FORWARD, new LowHatchPlace(this)); 
+    states.put(LegalState.PLACE_HATCH_ROCKET_LOW_FORWARD, new LowHatchPlace(this, intake)); 
     // states.put(LegalState.PLACE_HATCHROCKETLOWB, new Neutral(this)); 
     // states.put(LegalState.PLACE_HATCHROCKETMEDF, new Neutral(this));
     // states.put(LegalState.PLACE_HATCHROCKETMEDB, new Neutral(this));
@@ -184,6 +185,7 @@ public class Arm {
     private double elbowAngle, wristAngle;
     private double extensionLength;
     private Point2D.Double coord;
+    boolean isIntakeDeployed;
 
     private ArmTransition[] transitions;
 
@@ -196,18 +198,28 @@ public class Arm {
      * @param wristAngle      The absolute Wrist angle with 0 being in line with the
      *                        arm in the space (180,-180) with 180 being towards the
      *                        front of the robot.
+     * @param isIntakeDeployed  True if the intake is deployed (out to intake balls), false
+     *                          if it is retracted into the robot.
      * @param transitions     The ArmTransitions that begin at this ArmState
      */
-    protected ArmState(double elbowAngle, double wristAngle, double extensionLength, ArmTransition[] transitions) {
+    protected ArmState(double elbowAngle, double wristAngle, double extensionLength, boolean isIntakeDeployed, ArmTransition[] transitions) {
       this.extensionLength = extensionLength;
       this.elbowAngle = elbowAngle;
       this.wristAngle = wristAngle;
       coord = Arm.getCoordPosition(elbowAngle, wristAngle, extensionLength);
       this.transitions = transitions;
+      this.isIntakeDeployed = isIntakeDeployed;
     }
 
     public Point2D.Double getCoordPosition() {
       return new Point2D.Double(coord.x, coord.y);
+    }
+
+    /**
+     * True if the intake should be deployed at this ArmState
+     */
+    public boolean isIntakeDeployed() {
+      return isIntakeDeployed;
     }
 
     /**
@@ -251,14 +263,14 @@ public class Arm {
   }
 
   private class Neutral extends ArmState {
-    private Neutral(Arm arm) {
-      super(0, 0, 0, new ArmTransition[] { new CommonTransition(LegalState.NEUTRAL, LegalState.PLACE_HATCH_ROCKET_LOW_FORWARD, arm) });
+    private Neutral(Arm arm, BaseIntake intake) {
+      super(0, 0, 0, false, new ArmTransition[] { new CommonTransition(LegalState.NEUTRAL, LegalState.PLACE_HATCH_ROCKET_LOW_FORWARD, arm, intake) });
     }
   }
 
   private class LowHatchPlace extends ArmState {
-    private LowHatchPlace(Arm arm) {
-      super(30, 40, 6, new ArmTransition[] { new CommonTransition(LegalState.PLACE_HATCH_ROCKET_LOW_FORWARD, LegalState.NEUTRAL, arm)});
+    private LowHatchPlace(Arm arm, BaseIntake intake) {
+      super(30, 40, 6, false, new ArmTransition[] { new CommonTransition(LegalState.PLACE_HATCH_ROCKET_LOW_FORWARD, LegalState.NEUTRAL, arm, intake)});
     }
   }
 

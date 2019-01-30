@@ -18,6 +18,8 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
 import frc.team670.robot.subsystems.Arm.LegalState;
+import frc.team670.robot.subsystems.Intake;
+import frc.team670.robot.utils.functions.MathUtils;
 
 /**
  * Add your docs here.
@@ -30,7 +32,8 @@ public class MoveArmTest {
         TestElbow elbow = new TestElbow();
         TestWrist wrist = new TestWrist();
         TestExtension extension = new TestExtension();
-        Arm arm = new Arm(elbow, wrist, extension);
+        TestIntake intake = new TestIntake();
+        Arm arm = new Arm(elbow, wrist, extension, intake);
         Arm.setState(Arm.getArmState(LegalState.NEUTRAL));
         ArmState dest = Arm.getArmState(LegalState.PLACE_HATCH_ROCKET_LOW_FORWARD);
 
@@ -46,6 +49,15 @@ public class MoveArmTest {
         Point2D.Double armCoord = Arm.getCoordPosition(elbow.getAngle(), wrist.getAngle(), extension.getLengthInches());
         assertEquals(dest.getCoordPosition().x, armCoord.x, 0.3);
         assertEquals(dest.getCoordPosition().y, armCoord.y, 0.3);
+        double isIntakeDeployed;
+        if(dest.isIntakeDeployed()) {
+            isIntakeDeployed = Intake.INTAKE_ANGLE_DEPLOYED;
+        } else {
+            isIntakeDeployed = Intake.INTAKE_ANGLE_IN;
+        }
+
+        
+        assertEquals(true, MathUtils.isWithinTolerance(isIntakeDeployed, intake.getIntakeAngleInDegrees(), 0.3));
 
         Arm.setState(Arm.getArmState(LegalState.PLACE_HATCH_ROCKET_LOW_FORWARD));
         dest = Arm.getArmState(LegalState.NEUTRAL);
@@ -60,6 +72,12 @@ public class MoveArmTest {
         armCoord = Arm.getCoordPosition(elbow.getAngle(), wrist.getAngle(), extension.getLengthInches());
         assertEquals(dest.getCoordPosition().x, armCoord.x, 0.3);
         assertEquals(dest.getCoordPosition().y, armCoord.y, 0.3);
+        if(dest.isIntakeDeployed()) {
+            isIntakeDeployed = Intake.INTAKE_ANGLE_DEPLOYED;
+        } else {
+            isIntakeDeployed = Intake.INTAKE_ANGLE_IN;
+        }
+        assertEquals(true, MathUtils.isWithinTolerance(isIntakeDeployed, intake.getIntakeAngleInDegrees(), 0.3));
     }
 
 }

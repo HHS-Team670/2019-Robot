@@ -18,8 +18,10 @@ import org.junit.Test;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team670.robot.commands.arm.armTransitions.ArmTransition;
 import frc.team670.robot.subsystems.Arm;
+import frc.team670.robot.subsystems.Intake;
 import frc.team670.robot.subsystems.Arm.ArmState;
 import frc.team670.robot.subsystems.Arm.LegalState;
+import frc.team670.robot.utils.functions.MathUtils;
 
 /**
  * Tests the MoveArm Command by running through all ArmStates and ensuring they pathfind to the proper position by testing
@@ -33,7 +35,8 @@ public class ArmTransitionTest {
         TestElbow elbow = new TestElbow();
         TestWrist wrist = new TestWrist();
         TestExtension extension = new TestExtension();
-        Arm arm = new Arm(elbow, wrist, extension);
+        TestIntake intake = new TestIntake();
+        Arm arm = new Arm(elbow, wrist, extension, intake);
 
         HashMap<LegalState, ArmState> armStates = Arm.getStates();
 
@@ -56,7 +59,16 @@ public class ArmTransitionTest {
                 while(!transition.isCompleted()) {
                     Scheduler.getInstance().run();
                 }
+
+                double isIntakeDeployed;
+                if(dest.isIntakeDeployed()) {
+                    isIntakeDeployed = Intake.INTAKE_ANGLE_DEPLOYED;
+                } else {
+                    isIntakeDeployed = Intake.INTAKE_ANGLE_IN;
+                }
+
                 
+                assertEquals(true, MathUtils.isWithinTolerance(isIntakeDeployed, intake.getIntakeAngleInDegrees(), 0.3));
                 assertEquals(finalElbowAngle, elbow.getAngle(), 0.1);
                 assertEquals(finalWristAngle, wrist.getAngle(), 0.1);
                 assertEquals(finalExtensionLength, extension.getLengthInches(), 0.1);
