@@ -102,7 +102,7 @@ public class Extension extends BaseExtension {
   
   @Override
   public double getLengthInches() {
-    return MathUtils.convertExtensionTicksToInches(getLengthTicks());
+    return convertExtensionTicksToInches(getLengthTicks());
   }
 
   @Override
@@ -145,6 +145,22 @@ public class Extension extends BaseExtension {
   public void setMotionMagicSetpoint(double extensionTicks) {
     extensionMotor.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
     extensionMotor.set(ControlMode.MotionMagic, extensionTicks);
+  }
+
+  /**
+   * Converts inches for the intake into ticks
+   */
+  public static int convertExtensionInchesToTicks(double inches) { 
+    //inches * (rotation/inches) * (ticks / rotation)
+    return (int)(inches * RobotConstants.EXTENSION_MOTOR_ROTATIONS_PER_INCH * RobotConstants.EXTENSION_TICKS_PER_MOTOR_ROTATION);
+  }
+
+  /**
+   * Converts ticks for the intake into inches
+   */
+  public static double convertExtensionTicksToInches(double ticks) {
+    //ticks * (rotations/ticks) * (inches / rotations)
+    return ticks / RobotConstants.EXTENSION_TICKS_PER_MOTOR_ROTATION / RobotConstants.EXTENSION_MOTOR_ROTATIONS_PER_INCH;
   }
 
 }

@@ -112,7 +112,7 @@ public class Elbow extends BaseElbow {
   
   @Override
   public double getAngle() {
-    return MathUtils.convertElbowTicksToDegrees(getPositionTicks());
+    return convertElbowTicksToDegrees(getPositionTicks());
   }
 
   @Override
@@ -153,6 +153,18 @@ public class Elbow extends BaseElbow {
     elbowRotationMain.selectProfileSlot(CURRENT_CONTROL_SLOT, 0);
     elbowRotationMain.set(ControlMode.Current, current);
   }
+
+  public static int convertElbowDegreesToTicks(double degrees) {
+    // If straight up is 0 and going forward is positive
+    // percentage * half rotation
+    return (int)((degrees / 180) * (0.5 * RobotConstants.ELBOW_TICKS_PER_ROTATION));
+}
+
+public static double convertElbowTicksToDegrees(double ticks) {
+   //If straight up is 0 and going forward is positive
+   // percentage * half degrees rotation
+    return (ticks / (0.5 * RobotConstants.ELBOW_TICKS_PER_ROTATION)) * 180;
+}
 
 //  /**
 //    * Should create a closed loop for the current to hold the elbow down

@@ -217,8 +217,8 @@ public class DriveBase extends Subsystem {
    * @param rightVel Velocity for right motors in inches/sec
    */
   public void setSparkVelocityControl(double leftVel, double rightVel) {
-    leftVel = MathUtils.convertInchesPerSecondToDriveBaseRoundsPerMinute(MathUtils.convertInchesToDriveBaseTicks(leftVel));
-    rightVel = MathUtils.convertInchesPerSecondToDriveBaseRoundsPerMinute(MathUtils.convertInchesToDriveBaseTicks(rightVel));
+    leftVel = convertInchesPerSecondToDriveBaseRoundsPerMinute(convertInchesToDriveBaseTicks(leftVel));
+    rightVel = convertInchesPerSecondToDriveBaseRoundsPerMinute(convertInchesToDriveBaseTicks(rightVel));
     left1.getPIDController().setReference(leftVel, ControlType.kVelocity, VELOCITY_PID_SLOT);
     right1.getPIDController().setReference(rightVel, ControlType.kVelocity, VELOCITY_PID_SLOT);
   }
@@ -400,14 +400,14 @@ public class DriveBase extends Subsystem {
    * Returns the velocity of the right side of the drivebase in ticks/second from the DIO Encoder
    */
   public double getRightDIOEncoderVelocityTicks() {
-    return MathUtils.convertInchesToDriveBaseTicks(rightDIOEncoder.getRate());
+    return convertInchesToDriveBaseTicks(rightDIOEncoder.getRate());
   }
 
   /**
    * Returns the velocity of the left side of the drivebase in ticks/second from the DIO Encoder
    */
   public double getLeftDIOEncoderVelocityTicks() {
-    return MathUtils.convertInchesToDriveBaseTicks(leftDIOEncoder.getRate());
+    return convertInchesToDriveBaseTicks(leftDIOEncoder.getRate());
   }
 
   public double getLeftDIODistanceInches() {
@@ -441,4 +441,43 @@ public class DriveBase extends Subsystem {
       m.setRampRate(rampRate);
     }
   }
+
+  /**
+  * Converts a tick value taken from a drive base DIO encoder to inches.
+  */
+  public static double convertDriveBaseTicksToInches(double ticks) {
+      double rotations = ticks / RobotConstants.DIO_TICKS_PER_ROTATION;
+      return rotations * Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER;
+   }
+
+  /**
+  * Converts an inch value into drive base DIO Encoder ticks.
+  */
+  public static int convertInchesToDriveBaseTicks(double inches) {
+      double rotations = inches / (Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
+      return (int)(rotations * RobotConstants.DIO_TICKS_PER_ROTATION);
+  }
+
+  /**
+   * Gets inches per rotations of a NEO motor on the drive base since SparkMAX encoders work in rotations.
+   */
+  public static double convertDriveBaseRotationsToInches(double rotations) {
+      return RobotConstants.DRIVEBASE_INCHES_PER_ROTATION * rotations;
+  }
+
+  /**
+   * Gets rotations of a NEO motor on the drive base per a value in inches ince SparkMAX encoders work in rotations.
+   */
+  public static double convertInchesToDriveBaseRotations(double inches) {
+      return inches / RobotConstants.DRIVEBASE_INCHES_PER_ROTATION;
+  }
+
+  /**
+   * Converts a value of per second of the DriveBase Rounds Per Minute
+   */
+  public static double convertInchesPerSecondToDriveBaseRoundsPerMinute(double inchesPerSecond) {
+      // (Inches/seconds) * (60 seconds/1 minute) * ((2 * Diameter inches)/Rotation)
+      return inchesPerSecond * 60 / (Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
+  }
+
 }

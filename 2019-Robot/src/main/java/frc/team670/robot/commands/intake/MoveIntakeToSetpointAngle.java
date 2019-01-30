@@ -31,7 +31,7 @@ public class MoveIntakeToSetpointAngle extends Command {
   public MoveIntakeToSetpointAngle(int setpointInDegrees, Intake intake) {
     requires(intake);
     this.intake = intake;
-    this.setpointInTicks = MathUtils.convertIntakeDegreesToTicks(setpointInDegrees);
+    this.setpointInTicks = Intake.convertIntakeDegreesToTicks(setpointInDegrees);
   }
 
   // Called just before this Command runs the first time

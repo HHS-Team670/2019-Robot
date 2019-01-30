@@ -8,6 +8,7 @@
 package frc.team670.robot.commands.arm.movement;
 
 import frc.team670.robot.subsystems.elbow.BaseElbow;
+import frc.team670.robot.subsystems.elbow.Elbow;
 import frc.team670.robot.utils.functions.MathUtils;
 
 /**
@@ -32,7 +33,7 @@ public class TestElbow extends BaseElbow {
 
     @Override
     public double getAngle() {
-        return MathUtils.convertElbowTicksToDegrees(elbowTicks);
+        return Elbow.convertElbowTicksToDegrees(elbowTicks);
     }
 
     @Override

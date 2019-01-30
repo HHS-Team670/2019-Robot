@@ -93,7 +93,7 @@ public class Wrist extends BaseWrist {
   
   @Override
   public double getAngle() {
-    return MathUtils.convertWristTicksToDegrees(getPositionTicks());
+    return convertWristTicksToDegrees(getPositionTicks());
   }
 
   @Override
@@ -122,5 +122,23 @@ public class Wrist extends BaseWrist {
   public void setMotionMagicSetpoint(double wristSetpointInTicks) { 
     wristRotation.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx); 
     wristRotation.set(ControlMode.MotionMagic, wristSetpointInTicks);
+  }
+
+  /**
+   * Converts an angle for the wrist into ticks
+   */
+  public static int convertWristDegreesToTicks(double degrees) {
+    //If straight is 0 and going forward is positive
+    // percentage * half rotation
+    return (int)((degrees / 180) * (0.5 * RobotConstants.WRIST_TICKS_PER_ROTATION));
+  }
+
+  /**
+   * Converts an angle for the wrist into ticks
+   */
+  public static double convertWristTicksToDegrees(int ticks) {
+    //If straight is 0 and going forward is positive
+    // percentage * half degrees rotation
+    return (ticks / (0.5 * RobotConstants.WRIST_TICKS_PER_ROTATION)) * 180;
   }
 }

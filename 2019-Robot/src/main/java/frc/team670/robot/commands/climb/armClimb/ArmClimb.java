@@ -68,7 +68,7 @@ public class ArmClimb extends Command {
 
     double deltaSetPointInInches = (heightInInches/(Math.cos(Math.toDegrees(elbow.getAngle())))) - RobotConstants.FIXED_ARM_LENGTH_IN_INCHES;
 
-    int deltaSetPointInTicks = MathUtils.convertExtensionInchesToTicks(deltaSetPointInInches);
+    int deltaSetPointInTicks = Extension.convertExtensionInchesToTicks(deltaSetPointInInches);
 
     // TODO make EXTENSION_ENCODER_OUT the actual extension value of Extension at the ReadyToClimb ArmState
     extension.setPIDControllerSetpoint(Extension.EXTENSION_ENCODER_OUT - deltaSetPointInTicks); // Changes the
