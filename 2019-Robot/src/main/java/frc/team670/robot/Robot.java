@@ -118,7 +118,7 @@ public class Robot extends TimedRobot {
     // autonomousCommand = new MeasureTrackwidth();
 
     String[] autonSequence = table.getEntry("autonSequence").getStringArray(new String[1]);
-    Scheduler.getInstance().add(new BuildAuton(autonSequence, arm));
+    Scheduler.getInstance().add(new BuildAuton(autonSequence, arm, false));
   }
 
   /**

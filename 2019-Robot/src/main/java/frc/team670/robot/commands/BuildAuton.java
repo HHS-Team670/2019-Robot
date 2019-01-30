@@ -21,35 +21,34 @@ public class BuildAuton extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public BuildAuton(String[] autonSequence, Arm arm) {
+  public BuildAuton(String[] autonSequence, Arm arm, boolean isReversed) {
     String start = autonSequence[0];
     String target1 = autonSequence[1];
     String height1 = autonSequence[2];
     String target2 = autonSequence[3];
-    String height2 = autonSequence[4];
-    String target3 = autonSequence[5];
-    String height3 = autonSequence[6];
+    String target3 = autonSequence[4];
+    String height3 = autonSequence[5];
     Waypoint[] points = new Waypoint[2];
     ArmState destination; 
 
     points[0] = RobotConstants.waypoints.get(start);
     points[1] = RobotConstants.waypoints.get(target1);
     destination = Arm.getArmState(LegalState.valueOf(height1)); // TODO change this
-    addSequential(new DriveMotionProfile(points, false));
+    addSequential(new DriveMotionProfile(points, isReversed));
     addParallel(new MoveArm(destination, arm));
     // addSequential: do appropriate thing with claw
 
     points[0] = RobotConstants.waypoints.get(target1);
     points[1] = RobotConstants.waypoints.get(target2);
-    destination = Arm.getArmState(LegalState.valueOf(height2)); // TODO change this
-    addSequential(new DriveMotionProfile(points, false));
+    destination = Arm.getArmState(LegalState.INTAKE_HATCH_LOADINGSTATION_FORWARD); // TODO change this
+    addSequential(new DriveMotionProfile(points, isReversed));
     addParallel(new MoveArm(destination, arm));
     // addSequential: do appropriate thing with claw
 
     points[0] = RobotConstants.waypoints.get(target2);
     points[1] = RobotConstants.waypoints.get(target3);
     destination = Arm.getArmState(LegalState.valueOf(height3)); // TODO change this
-    addSequential(new DriveMotionProfile(points, false));
+    addSequential(new DriveMotionProfile(points, isReversed));
     addParallel(new MoveArm(destination, arm));
     // addSequential: do appropriate thing with claw
   }
