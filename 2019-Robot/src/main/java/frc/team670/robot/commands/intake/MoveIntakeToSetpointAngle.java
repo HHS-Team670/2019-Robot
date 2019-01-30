@@ -38,7 +38,7 @@ public class MoveIntakeToSetpointAngle extends Command {
   @Override
   protected void initialize() {
     intake.setRotatorNeutralMode(NeutralMode.Brake);
-    intake.setMotionMagicSetpoint(setpointInDegrees);
+    intake.setMotionMagicSetpoint(setpointInTicks);
     Logger.consoleLog("startIntakeAngle:%s", intake.getIntakeAngleInDegrees());
   }
 
@@ -53,7 +53,7 @@ public class MoveIntakeToSetpointAngle extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return (MathUtils.isWithinTolerance(intake.getIntakePositionInTicks(), intake.getMotionMagicSetpoint(), TOLERANCE_IN_TICKS));
+    return (MathUtils.isWithinTolerance(intake.getIntakePositionInTicks(), setpointInTicks, TOLERANCE_IN_TICKS));
   }
 
   // Called once after isFinished returns true

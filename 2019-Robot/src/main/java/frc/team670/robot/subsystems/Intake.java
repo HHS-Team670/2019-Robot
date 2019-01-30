@@ -80,8 +80,8 @@ public class Intake extends Subsystem {
   /**
    * Should set the setpoint for the Motion Magic on the intake
    */
-  public void setMotionMagicSetpoint(double intakeAngle) {  
-    baseVictor.set(ControlMode.MotionMagic, MathUtils.convertIntakeDegreesToTicks(intakeAngle));
+  public void setMotionMagicSetpoint(double intakeTicks) {  
+    baseVictor.set(ControlMode.MotionMagic, intakeTicks);
   }
 
   /**
