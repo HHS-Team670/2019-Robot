@@ -1,6 +1,9 @@
 package frc.team670.robot.constants;
 
+import java.util.HashMap;
+
 import frc.team254.lib.util.control.Lookahead;
+import jaci.pathfinder.Waypoint;
 
 public class RobotConstants {
 
@@ -103,4 +106,32 @@ public class RobotConstants {
     //Intake constants
     /** Intake will have an absolute Mag Encoder */
     public static double INTAKE_TICKS_PER_ROTATION = 0; // Still needs to be set
+
+    // Waypoint constants
+    public static final HashMap<String, Waypoint> waypoints = new HashMap<String, Waypoint>() {
+        {
+            put("Left", new Waypoint(0, 0, 0));
+            put("LeftHigh", new Waypoint(0, 0, 0));
+            put("Middle", new Waypoint(0, 0, 0));
+            put("Right", new Waypoint(0, 0, 0));
+            put("RightHigh", new Waypoint(0, 0, 0));
+            put("RocketRight1", new Waypoint(0, 0, 0));
+            put("RocketRight2", new Waypoint(0, 0, 0));
+            put("RocketRight3", new Waypoint(0, 0, 0));
+            put("RocketLeft1", new Waypoint(0, 0, 0));
+            put("RocketLeft2", new Waypoint(0, 0, 0));
+            put("RocketLeft3", new Waypoint(0, 0, 0));
+            put("CargoLeft1", new Waypoint(0, 0, 0));
+            put("CargoLeft2", new Waypoint(0, 0, 0));
+            put("CargoLeft3", new Waypoint(0, 0, 0));
+            put("CargoRight1", new Waypoint(0, 0, 0));
+            put("CargoRight2", new Waypoint(0, 0, 0));
+            put("CargoRight3", new Waypoint(0, 0, 0));
+            put("CargoFront1", new Waypoint(0, 0, 0));
+            put("CargoFront2", new Waypoint(0, 0, 0));
+            put("ExchangeRight", new Waypoint(0, 0, 0));
+            put("ExchangeLeft", new Waypoint(0, 0, 0));
+        }
+    };
+
 }

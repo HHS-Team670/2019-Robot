@@ -9,13 +9,16 @@ package frc.team670.robot;
 
 import java.io.FileNotFoundException;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team670.robot.commands.BuildAuton;
+import frc.team670.robot.commands.arm.BuildArmSequence;
 import frc.team670.robot.commands.drive.DriveMotionProfile;
-import frc.team670.robot.commands.drive.MeasureTrackwidth;
 import frc.team670.robot.dataCollection.MustangPi;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.dataCollection.Pose;
@@ -26,10 +29,9 @@ import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.subsystems.Intake;
 import frc.team670.robot.subsystems.MustangLEDs_2019;
 import frc.team670.robot.subsystems.elbow.Elbow;
-import frc.team670.robot.subsystems.wrist.Wrist;
 import frc.team670.robot.subsystems.extension.Extension;
+import frc.team670.robot.subsystems.wrist.Wrist;
 import frc.team670.robot.utils.Logger;
-import frc.team670.robot.utils.MustangController;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -62,6 +64,9 @@ public class Robot extends TimedRobot {
   SendableChooser<Command> auton_chooser = new SendableChooser<>();
   public static SendableChooser<Boolean> pid_chooser = new SendableChooser<>();
 
+  private NetworkTableInstance instance;
+  private NetworkTable table;
+
   public Robot() {
 
     oi = new OI();
@@ -73,6 +78,8 @@ public class Robot extends TimedRobot {
     catch (Throwable e) { Logger.logException(e);}
     
     Logger.consoleLog();
+    instance = NetworkTableInstance.getDefault();
+    table = instance.getTable("SmartDashboard");    
   }
 
   /**
@@ -102,13 +109,16 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("KA", 0);
 
     
-    try{ 
-      autonomousCommand = new DriveMotionProfile("10ft-straight.pf1.csv", false);
-    }
-    catch (FileNotFoundException e) {
-      e.printStackTrace();
-    }
+    // try{ 
+    //   autonomousCommand = new DriveMotionProfile("10ft-straight.pf1.csv", false);
+    // }
+    // catch (FileNotFoundException e) {
+    //   e.printStackTrace();
+    // }
     // autonomousCommand = new MeasureTrackwidth();
+
+    String[] autonSequence = table.getEntry("autonSequence").getStringArray(new String[1]);
+    Scheduler.getInstance().add(new BuildAuton(autonSequence, arm));
   }
 
   /**
@@ -229,6 +239,8 @@ public class Robot extends TimedRobot {
       autonomousCommand.cancel();
     }
     // leds.socketSetup(RobotConstants.LED_PORT);
+    String[] armSequence = table.getEntry("armSequence").getStringArray(new String[1]);
+    Scheduler.getInstance().add(new BuildArmSequence(armSequence, arm));
   }
 
   /**
