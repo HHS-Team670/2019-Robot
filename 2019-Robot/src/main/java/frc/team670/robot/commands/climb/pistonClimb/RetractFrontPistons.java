@@ -8,10 +8,11 @@
 package frc.team670.robot.commands.climb.pistonClimb;
 
 import edu.wpi.first.wpilibj.command.Command;
-import frc.team670.robot.Robot;
+
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.subsystems.Climber;
 import frc.team670.robot.utils.Logger;
+import frc.team670.robot.utils.functions.SettingUtils;
 
 /**
  * Command to retract the front pistons all the way
@@ -22,10 +23,10 @@ public class RetractFrontPistons extends Command {
 
   /**
    * 
-   * @param climber The climber upon which this command will be called on
+   * @param climber The climber upon which this command will be used
    */
   public RetractFrontPistons(Climber climber) {
-    requires(Robot.climber);
+    requires(climber);
     this.climber = climber;
   }
 
@@ -34,7 +35,7 @@ public class RetractFrontPistons extends Command {
   protected void initialize() {
     climber.setFrontPIDControllerSetpoint(RobotConstants.PISTON_ENCODER_FLAT);
     climber.setFrontPistonsRetractionInProgress(true);
-    Logger.consoleLog("startFrontPistonPosition:%s", Robot.climber.getFrontTalonPositionInTicks());
+    Logger.consoleLog("startFrontPistonPosition:%s", climber.getFrontTalonPositionInTicks());
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -47,14 +48,13 @@ public class RetractFrontPistons extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return climber.getFrontPistonsRetracted();
+    return climber.getFrontControllerOnTarget();
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
     climber.setFrontPistonsRetracted(true);
-
     //Retraction is no longer in progress, so the pistons have been retracted all the way
     climber.setFrontPistonsRetractionInProgress(false);
     Logger.consoleLog("EndFrontPistonPosition:%s", climber.getFrontTalonPositionInTicks());
@@ -64,6 +64,7 @@ public class RetractFrontPistons extends Command {
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    end();
     Logger.consoleLog();
   }
 }

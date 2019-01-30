@@ -1,0 +1,25 @@
+distance, left, right
+
+==== 01/25/19 ====
+--level ground--
+130in, 7029ticks, 7064ticks
+133in, 7448ticks, 7500ticks
+131in, 7154ticks, 7177ticks
+--off platform--
+139in, 7285ticks, 7339ticks
+140in, 7348ticks, 7389ticks
+128in
+133in
+
+==== 01/26/19 ====
+--off platform--
+134in, 6737ticks, 6806ticks
+127.5in, 6775ticks, 6787ticks
+130in, 5906ticks, 5787ticks
+116in, 6433ticks, 6419ticks
+125in, 6241ticks, 6337ticks
+130.5in, 13323ticks, 13219ticks
+131in, 6719ticks, 6744ticks
+131in, 6731ticks, 6768ticks
+132in, 6729ticks, 6792ticks
+average: 128.6in, 7288ticks, 7295ticks

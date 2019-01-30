@@ -53,6 +53,17 @@ public class Claw extends Subsystem {
     updateClaw(false, isSoft);
   }
 
+  public boolean isOpen() {
+    return openClose.get();
+  }
+
+  /**
+   * @return true if soft, false if hard.
+   */
+  public boolean isSoft() {
+    return hardSoft.get();
+  }
+
   private void updateClaw(boolean isClosed, boolean isSoft) {
     openClose.set(isClosed);
     hardSoft.set(isSoft);

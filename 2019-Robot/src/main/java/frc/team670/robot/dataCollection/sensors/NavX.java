@@ -99,6 +99,10 @@ public class NavX {
         return rtrnAngle;
     }
 
+    public synchronized double getAngle() {
+        return mAHRS.getAngle();
+    }
+
     /**
      * The rate of change of the NavX angle in degrees per second.
      */

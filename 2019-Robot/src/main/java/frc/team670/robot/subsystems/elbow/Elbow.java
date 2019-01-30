@@ -53,6 +53,17 @@ public class Elbow extends BaseElbow {
     elbowRotationMain.configMotionCruiseVelocity(RobotConstants.MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
     elbowRotationMain.configMotionAcceleration(RobotConstants.MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
 
+    /* Config closed loop gains for Primary closed loop (Current) */
+    elbowRotationMain.config_kP(CURRENT_CONTROL_SLOT, currentP, RobotConstants.kTimeoutMs);
+    elbowRotationMain.config_kI(CURRENT_CONTROL_SLOT, currentI, RobotConstants.kTimeoutMs);
+    elbowRotationMain.config_kD(CURRENT_CONTROL_SLOT, currentD, RobotConstants.kTimeoutMs);
+    elbowRotationMain.config_kF(CURRENT_CONTROL_SLOT, currentF, RobotConstants.kTimeoutMs);
+
+    elbowRotationMain.configNominalOutputForward(0, RobotConstants.kTimeoutMs);
+    elbowRotationMain.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
+    elbowRotationMain.configPeakOutputForward(1, RobotConstants.kTimeoutMs);
+    elbowRotationMain.configPeakOutputReverse(-1, RobotConstants.kTimeoutMs);
+
     elbowRotationMain.setNeutralMode(NeutralMode.Brake);
     elbowRotationSlave.setNeutralMode(NeutralMode.Brake);
 
@@ -139,34 +150,35 @@ public class Elbow extends BaseElbow {
 
   @Override
   public void setCurrentControl(int current) {
+    elbowRotationMain.selectProfileSlot(CURRENT_CONTROL_SLOT, 0);
     elbowRotationMain.set(ControlMode.Current, current);
   }
 
- // /**
-  //  * Should create a closed loop for the current to hold the elbow down
-  //  */
-  // public void setCurrentClosedLoopToHoldElbowDown() {
-  //   /* Factory default hardware to prevent unexpected behaviour */
-  //   elbowRotationMain.configFactoryDefault();
+//  /**
+//    * Should create a closed loop for the current to hold the elbow down
+//    */
+//   public void setCurrentClosedLoopToHoldElbowDown() {
+//     /* Factory default hardware to prevent unexpected behaviour */
+//     elbowRotationMain.configFactoryDefault();
 
-  //   /* Config the peak and nominal outputs ([-1, 1] represents [-100, 100]%) */
-  //   elbowRotationMain.configNominalOutputForward(0, RobotConstants.kTimeoutMs);
-  //   elbowRotationMain.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
-  //   elbowRotationMain.configPeakOutputForward(1, RobotConstants.kTimeoutMs);
-  //   elbowRotationMain.configPeakOutputReverse(-1, RobotConstants.kTimeoutMs);
+//     /* Config the peak and nominal outputs ([-1, 1] represents [-100, 100]%) */
+//     elbowRotationMain.configNominalOutputForward(0, RobotConstants.kTimeoutMs);
+//     elbowRotationMain.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
+//     elbowRotationMain.configPeakOutputForward(1, RobotConstants.kTimeoutMs);
+//     elbowRotationMain.configPeakOutputReverse(-1, RobotConstants.kTimeoutMs);
 
-  //   /**
-  //    * Config the allowable closed-loop error, Closed-Loop output will be neutral
-  //    * within this range. See Table here for units to use:
-  //    * https://github.com/CrossTheRoadElec/Phoenix-Documentation#what-are-the-units-of-my-sensor
-  //    */
-  //   elbowRotationMain.configAllowableClosedloopError(0,CURRENT_CONTROL_SLOT, RobotConstants.kTimeoutMs);
+//     /**
+//      * Config the allowable closed-loop error, Closed-Loop output will be neutral
+//      * within this range. See Table here for units to use:
+//      * https://github.com/CrossTheRoadElec/Phoenix-Documentation#what-are-the-units-of-my-sensor
+//      */
+//     elbowRotationMain.configAllowableClosedloopError(0,CURRENT_CONTROL_SLOT, RobotConstants.kTimeoutMs);
 
-  //   /* Config closed loop gains for Primary closed loop (Current) */
-  //   elbowRotationMain.config_kP(CURRENT_CONTROL_SLOT, currentP, RobotConstants.kTimeoutMs);
-  //   elbowRotationMain.config_kI(CURRENT_CONTROL_SLOT, currentI, RobotConstants.kTimeoutMs);
-  //   elbowRotationMain.config_kD(CURRENT_CONTROL_SLOT, currentD, RobotConstants.kTimeoutMs);
-  //   elbowRotationMain.config_kF(CURRENT_CONTROL_SLOT, currentF, RobotConstants.kTimeoutMs);
-  // }
+//     /* Config closed loop gains for Primary closed loop (Current) */
+//     elbowRotationMain.config_kP(CURRENT_CONTROL_SLOT, currentP, RobotConstants.kTimeoutMs);
+//     elbowRotationMain.config_kI(CURRENT_CONTROL_SLOT, currentI, RobotConstants.kTimeoutMs);
+//     elbowRotationMain.config_kD(CURRENT_CONTROL_SLOT, currentD, RobotConstants.kTimeoutMs);
+//     elbowRotationMain.config_kF(CURRENT_CONTROL_SLOT, currentF, RobotConstants.kTimeoutMs);
+//   }
 
 }

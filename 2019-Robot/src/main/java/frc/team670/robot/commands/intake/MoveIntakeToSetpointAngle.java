@@ -7,8 +7,9 @@
 
 package frc.team670.robot.commands.intake;
 
-import edu.wpi.first.wpilibj.command.Command;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 
+import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.subsystems.Intake;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.functions.MathUtils;
@@ -36,8 +37,9 @@ public class MoveIntakeToSetpointAngle extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    intake.setMotionMagicSetpoint(setpointInTicks);
-    Logger.consoleLog("startIntakePosition:%s", intake.getIntakePositionInTicks());
+    intake.setRotatorNeutralMode(NeutralMode.Brake);
+    intake.setMotionMagicSetpoint(setpointInDegrees);
+    Logger.consoleLog("startIntakeAngle:%s", intake.getIntakeAngleInDegrees());
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -57,7 +59,8 @@ public class MoveIntakeToSetpointAngle extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Logger.consoleLog("endIntakePosition:%s", intake.getIntakePositionInTicks());
+    intake.setRotatorNeutralMode(NeutralMode.Coast);
+    Logger.consoleLog("endIntakeAngle:%s", intake.getIntakeAngleInDegrees());
   }
 
   // Called when another command which requires one or more of the same
@@ -65,6 +68,6 @@ public class MoveIntakeToSetpointAngle extends Command {
   @Override
   protected void interrupted() {
     end();
-    Logger.consoleLog("Interrupted");
+    Logger.consoleLog();
   }
 }

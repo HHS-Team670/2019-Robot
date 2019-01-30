@@ -62,6 +62,6 @@ public class MoveFrontPistonsToSetpoint extends Command {
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    Logger.consoleLog("RetractFrontPiston interrupted");
+    Logger.consoleLog();
   }
 }

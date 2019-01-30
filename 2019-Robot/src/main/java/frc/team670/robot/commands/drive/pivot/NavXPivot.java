@@ -83,7 +83,7 @@ public class NavXPivot extends Command {
   @Override
   protected void end() {
 		Robot.driveBase.stop();
-		Logger.consoleLog("FinishedPivot, CurrentAngle: %s, TargetAngle", Robot.sensors.getYawDouble(), finalAngle);
+		Logger.consoleLog("CurrentAngle: %s, TargetAngle", Robot.sensors.getYawDouble(), finalAngle);
   }
 
   // Called when another command which requires one or more of the same
@@ -91,7 +91,7 @@ public class NavXPivot extends Command {
   @Override
   protected void interrupted() {
 		end();
-		Logger.consoleLog("Pivot Interrupted");
+		Logger.consoleLog();
 	}
 	
 }
