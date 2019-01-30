@@ -34,7 +34,7 @@ public class PurePursuitTracker {
 	public void setPath(Path path, double lookaheadDistance) {
 		this.path = path;
 		this.lookaheadDistance = lookaheadDistance;
-		robotTrack = RobotConstants.DRIVEBASE_TRACK_WIDTH;
+		robotTrack = RobotConstants.WHEEL_BASE;
 	}
 
 	public void reset() {
