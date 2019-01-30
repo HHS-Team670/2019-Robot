@@ -17,10 +17,10 @@ import frc.team670.robot.utils.functions.MathUtils;
  */
 public class MoveExtension extends Command {
 
-  private static final double DISTANCE_TOLERANCE = 0.1;
+  private static final double DISTANCE_TOLERANCE = 10;
 
   private BaseExtension extension;
-  private double distance;
+  private double extensionSetpointInTicks;
   private long executeCount;
   
 
@@ -32,36 +32,33 @@ public class MoveExtension extends Command {
   public MoveExtension(BaseExtension extension, double distance) {
     this.extension = extension;
     requires(extension);
-    this.distance = distance;
+    extensionSetpointInTicks = MathUtils.convertExtensionInchesToTicks(distance);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    extension.setMotionMagicSetpoint(distance);
+    extension.setMotionMagicSetpoint(extensionSetpointInTicks);
     executeCount = 0;
-    Logger.consoleLog("distance: %s", distance);
+    Logger.consoleLog("extensionSetpointInTicks: %s", extensionSetpointInTicks);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    if(executeCount % 5 == 0) {
-      Logger.consoleLog("distance: %s", distance);
-    }
     executeCount++;
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return MathUtils.isWithinTolerance(extension.getLengthInches(), distance, DISTANCE_TOLERANCE);
+    return MathUtils.isWithinTolerance(extension.getLengthTicks(), extensionSetpointInTicks, DISTANCE_TOLERANCE);
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Logger.consoleLog("targetDistance: %s, endingDistance: %s", distance, extension.getLengthInches());
+    Logger.consoleLog("extensionSetpointInTicks: %s, endingPositionInTicks: %s", extensionSetpointInTicks, extension.getLengthTicks());
   }
 
   // Called when another command which requires one or more of the same

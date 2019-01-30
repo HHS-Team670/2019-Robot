@@ -5,7 +5,7 @@ package frc.team670.robot.subsystems.elbow;
  */
 public interface ElbowInterface {
 
-    public void setMotionMagicSetpoint(double wristAngle);
+    public void setMotionMagicSetpoint(double elbowSetpointInTicks);
 
     public double getAngle();
 

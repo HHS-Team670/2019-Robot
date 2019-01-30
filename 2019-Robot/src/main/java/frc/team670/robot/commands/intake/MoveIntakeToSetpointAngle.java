@@ -7,9 +7,10 @@
 
 package frc.team670.robot.commands.intake;
 
-import edu.wpi.first.wpilibj.command.Command;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 
-import frc.team670.robot.subsystems.Intake;
+import edu.wpi.first.wpilibj.command.Command;
+import frc.team670.robot.subsystems.BaseIntake;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.functions.MathUtils;
 
@@ -19,31 +20,32 @@ import frc.team670.robot.utils.functions.MathUtils;
  */
 public class MoveIntakeToSetpointAngle extends Command {
 
-  private Intake intake;
-  private int loggingIterationCounter, setpointInDegrees;
-  private int toleranceInDegrees = 5;
+  private BaseIntake intake;
+  private int loggingIterationCounter, setpointInTicks;
+  private static final int TOLERANCE_IN_TICKS = 10;
 
   /**
    * @param setpoint angle in degrees that the intake is moving to
    * @param intake the intake upon which command will be called upon
    */
-  public MoveIntakeToSetpointAngle(int setpointInDegrees, Intake intake) {
+  public MoveIntakeToSetpointAngle(int setpointInDegrees, BaseIntake intake) {
     requires(intake);
     this.intake = intake;
-    this.setpointInDegrees = setpointInDegrees;
+    this.setpointInTicks = MathUtils.convertIntakeDegreesToTicks(setpointInDegrees);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    intake.setMotionMagicSetpoint(setpointInDegrees);
+    intake.setRotatorNeutralMode(NeutralMode.Brake);
+    intake.setMotionMagicSetpoint(setpointInTicks);
     Logger.consoleLog("startIntakeAngle:%s", intake.getIntakeAngleInDegrees());
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Logger.consoleLog("currentIntakeAngle:%s", intake.getIntakeAngleInDegrees());
+    Logger.consoleLog("currentIntakePosition:%s", intake.getIntakePositionInTicks());
 
     loggingIterationCounter++;
   }
@@ -51,12 +53,13 @@ public class MoveIntakeToSetpointAngle extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return (MathUtils.isWithinTolerance(intake.getIntakeAngleInDegrees(), intake.getMotionMagicSetpoint(), toleranceInDegrees));
+    return (MathUtils.isWithinTolerance(intake.getIntakePositionInTicks(), setpointInTicks, TOLERANCE_IN_TICKS));
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    intake.setRotatorNeutralMode(NeutralMode.Coast);
     Logger.consoleLog("endIntakeAngle:%s", intake.getIntakeAngleInDegrees());
   }
 
@@ -65,6 +68,6 @@ public class MoveIntakeToSetpointAngle extends Command {
   @Override
   protected void interrupted() {
     end();
-    Logger.consoleLog("Interrupted");
+    Logger.consoleLog();
   }
 }

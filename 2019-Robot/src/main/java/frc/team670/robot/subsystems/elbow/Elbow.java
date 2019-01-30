@@ -26,7 +26,6 @@ public class Elbow extends BaseElbow {
 
   private TalonSRX elbowRotationMain;
   private VictorSPX elbowRotationSlave;
-  private double elbowAngle;
   public static final double MAX_ELBOW_BACK = 0; //TODO find what is this number
   public static final double MAX_ELBOW_FORWARD = 0; //TODO also find this
   private static final double kF = 0, kP = 0, kI = 0, kD = 0; //TODO figure out what these are
@@ -53,6 +52,17 @@ public class Elbow extends BaseElbow {
     elbowRotationMain.config_kD(kSlotMotionMagic, kD, kTimeoutMs);
     elbowRotationMain.configMotionCruiseVelocity(RobotConstants.MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
     elbowRotationMain.configMotionAcceleration(RobotConstants.MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+
+    /* Config closed loop gains for Primary closed loop (Current) */
+    elbowRotationMain.config_kP(CURRENT_CONTROL_SLOT, currentP, RobotConstants.kTimeoutMs);
+    elbowRotationMain.config_kI(CURRENT_CONTROL_SLOT, currentI, RobotConstants.kTimeoutMs);
+    elbowRotationMain.config_kD(CURRENT_CONTROL_SLOT, currentD, RobotConstants.kTimeoutMs);
+    elbowRotationMain.config_kF(CURRENT_CONTROL_SLOT, currentF, RobotConstants.kTimeoutMs);
+
+    elbowRotationMain.configNominalOutputForward(0, RobotConstants.kTimeoutMs);
+    elbowRotationMain.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
+    elbowRotationMain.configPeakOutputForward(1, RobotConstants.kTimeoutMs);
+    elbowRotationMain.configPeakOutputReverse(-1, RobotConstants.kTimeoutMs);
 
     elbowRotationMain.setNeutralMode(NeutralMode.Brake);
     elbowRotationSlave.setNeutralMode(NeutralMode.Brake);
@@ -133,41 +143,42 @@ public class Elbow extends BaseElbow {
   }
 
   @Override
-  public void setMotionMagicSetpoint(double elbowAngle) {
+  public void setMotionMagicSetpoint(double elbowSetpointInTicks) {
     elbowRotationMain.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
-    elbowRotationMain.set(ControlMode.MotionMagic, MathUtils.convertElbowDegreesToTicks(elbowAngle));
+    elbowRotationMain.set(ControlMode.MotionMagic, elbowSetpointInTicks);
   }
 
   @Override
   public void setCurrentControl(int current) {
+    elbowRotationMain.selectProfileSlot(CURRENT_CONTROL_SLOT, 0);
     elbowRotationMain.set(ControlMode.Current, current);
   }
 
- // /**
-  //  * Should create a closed loop for the current to hold the elbow down
-  //  */
-  // public void setCurrentClosedLoopToHoldElbowDown() {
-  //   /* Factory default hardware to prevent unexpected behaviour */
-  //   elbowRotationMain.configFactoryDefault();
+//  /**
+//    * Should create a closed loop for the current to hold the elbow down
+//    */
+//   public void setCurrentClosedLoopToHoldElbowDown() {
+//     /* Factory default hardware to prevent unexpected behaviour */
+//     elbowRotationMain.configFactoryDefault();
 
-  //   /* Config the peak and nominal outputs ([-1, 1] represents [-100, 100]%) */
-  //   elbowRotationMain.configNominalOutputForward(0, RobotConstants.kTimeoutMs);
-  //   elbowRotationMain.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
-  //   elbowRotationMain.configPeakOutputForward(1, RobotConstants.kTimeoutMs);
-  //   elbowRotationMain.configPeakOutputReverse(-1, RobotConstants.kTimeoutMs);
+//     /* Config the peak and nominal outputs ([-1, 1] represents [-100, 100]%) */
+//     elbowRotationMain.configNominalOutputForward(0, RobotConstants.kTimeoutMs);
+//     elbowRotationMain.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
+//     elbowRotationMain.configPeakOutputForward(1, RobotConstants.kTimeoutMs);
+//     elbowRotationMain.configPeakOutputReverse(-1, RobotConstants.kTimeoutMs);
 
-  //   /**
-  //    * Config the allowable closed-loop error, Closed-Loop output will be neutral
-  //    * within this range. See Table here for units to use:
-  //    * https://github.com/CrossTheRoadElec/Phoenix-Documentation#what-are-the-units-of-my-sensor
-  //    */
-  //   elbowRotationMain.configAllowableClosedloopError(0,CURRENT_CONTROL_SLOT, RobotConstants.kTimeoutMs);
+//     /**
+//      * Config the allowable closed-loop error, Closed-Loop output will be neutral
+//      * within this range. See Table here for units to use:
+//      * https://github.com/CrossTheRoadElec/Phoenix-Documentation#what-are-the-units-of-my-sensor
+//      */
+//     elbowRotationMain.configAllowableClosedloopError(0,CURRENT_CONTROL_SLOT, RobotConstants.kTimeoutMs);
 
-  //   /* Config closed loop gains for Primary closed loop (Current) */
-  //   elbowRotationMain.config_kP(CURRENT_CONTROL_SLOT, currentP, RobotConstants.kTimeoutMs);
-  //   elbowRotationMain.config_kI(CURRENT_CONTROL_SLOT, currentI, RobotConstants.kTimeoutMs);
-  //   elbowRotationMain.config_kD(CURRENT_CONTROL_SLOT, currentD, RobotConstants.kTimeoutMs);
-  //   elbowRotationMain.config_kF(CURRENT_CONTROL_SLOT, currentF, RobotConstants.kTimeoutMs);
-  // }
+//     /* Config closed loop gains for Primary closed loop (Current) */
+//     elbowRotationMain.config_kP(CURRENT_CONTROL_SLOT, currentP, RobotConstants.kTimeoutMs);
+//     elbowRotationMain.config_kI(CURRENT_CONTROL_SLOT, currentI, RobotConstants.kTimeoutMs);
+//     elbowRotationMain.config_kD(CURRENT_CONTROL_SLOT, currentD, RobotConstants.kTimeoutMs);
+//     elbowRotationMain.config_kF(CURRENT_CONTROL_SLOT, currentF, RobotConstants.kTimeoutMs);
+//   }
 
 }

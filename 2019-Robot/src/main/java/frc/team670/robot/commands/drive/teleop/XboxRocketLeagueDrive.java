@@ -9,6 +9,7 @@ package frc.team670.robot.commands.drive.teleop;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team670.robot.Robot;
+
  
 
 /**
@@ -35,7 +36,6 @@ public class XboxRocketLeagueDrive extends InstantCommand {
     // by -1 to reverse that because we want right trigger to correspond to forward.
     double speed = -1 * (Robot.oi.getDriverController().getLeftTriggerAxis() - Robot.oi.getDriverController().getRightTriggerAxis()); 
     double steer = Robot.oi.getDriverController().getLeftStickX(); 
-
 
     // Decides whether or not to smooth the Steering and Trigger. Smoothing helps reduce jerkiness when driving.
     // tankDrive actually does this for us automatically, so no need to do it ourselves

@@ -7,12 +7,15 @@
 
 package frc.team670.robot;
 
+import java.io.FileNotFoundException;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.drive.DriveMotionProfile;
+import frc.team670.robot.commands.drive.MeasureTrackwidth;
 import frc.team670.robot.dataCollection.MustangPi;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.dataCollection.Pose;
@@ -26,6 +29,7 @@ import frc.team670.robot.subsystems.elbow.Elbow;
 import frc.team670.robot.subsystems.wrist.Wrist;
 import frc.team670.robot.subsystems.extension.Extension;
 import frc.team670.robot.utils.Logger;
+import frc.team670.robot.utils.MustangController;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -47,8 +51,8 @@ public class Robot extends TimedRobot {
   private static Elbow elbow = new Elbow();
   private static Wrist wrist = new Wrist();
   private static Extension extension = new Extension();
-  public static Arm arm = new Arm(elbow, wrist, extension);
   public static Intake intake = new Intake();
+  public static Arm arm = new Arm(elbow, wrist, extension, intake);
   public static Claw claw = new Claw();
   public static Climber climber = new Climber(sensors);
 
@@ -56,6 +60,7 @@ public class Robot extends TimedRobot {
 
   Command autonomousCommand;
   SendableChooser<Command> auton_chooser = new SendableChooser<>();
+  public static SendableChooser<Boolean> pid_chooser = new SendableChooser<>();
 
   public Robot() {
 
@@ -86,7 +91,24 @@ public class Robot extends TimedRobot {
     leds.socketSetup(5801);
     System.out.println("LED Setup Run");
     //leds.socketSetup(RobotConstants.LED_PORT);    
+
+    // Setup to receive PID values from smart dashboard
+    pid_chooser.setDefaultOption("false", false);
+    pid_chooser.addOption("true", true);
+    SmartDashboard.putData("PID Inputs from Dashboard?", pid_chooser);
+    SmartDashboard.putNumber("P", 0);
+    SmartDashboard.putNumber("I", 0);
+    SmartDashboard.putNumber("D", 0);
+    SmartDashboard.putNumber("KA", 0);
+
     
+    try{ 
+      autonomousCommand = new DriveMotionProfile("10ft-straight.pf1.csv", false);
+    }
+    catch (FileNotFoundException e) {
+      e.printStackTrace();
+    }
+    // autonomousCommand = new MeasureTrackwidth();
   }
 
   /**
@@ -126,6 +148,7 @@ public class Robot extends TimedRobot {
 
     // System.out.println("Voltage: "+(irSensor.getVoltage()));
     fieldCentricPose.update(); // Update our field centric Pose to the new robot position. Commented out to avoid null-pointers until sensors hooked up.
+ 
   }
 
   /**
@@ -136,6 +159,13 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     Logger.consoleLog("Robot Disabled");
+
+    try{ 
+      autonomousCommand = new DriveMotionProfile("10ft-straight.pf1.csv", false);
+    }
+    catch (FileNotFoundException e) {
+      e.printStackTrace();
+    }
   }
 
   @Override
@@ -159,7 +189,12 @@ public class Robot extends TimedRobot {
     sensors.resetNavX(); // Reset NavX completely, zero the field centric based on how robot faces from start of game.
     fieldCentricPose = new Pose();
     Logger.consoleLog("Auton Started");
-    autonomousCommand = new DriveMotionProfile("/output/DriveRightCurve.pf1.csv", false);
+    // try{ 
+    //   autonomousCommand = new DriveMotionProfile("/output/2ft-straight.pf1.csv", false);
+    // }
+    // catch (FileNotFoundException e) {
+    //   e.printStackTrace();
+    // }
 
     /*
      * String autoSelected = SmartDashboard.getString("Auto Selector",

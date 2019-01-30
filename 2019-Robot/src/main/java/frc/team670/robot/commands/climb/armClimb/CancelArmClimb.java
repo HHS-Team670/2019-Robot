@@ -9,7 +9,6 @@ package frc.team670.robot.commands.climb.armClimb;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 
-import frc.team670.robot.Robot;
 import frc.team670.robot.subsystems.Arm;
 
 /**

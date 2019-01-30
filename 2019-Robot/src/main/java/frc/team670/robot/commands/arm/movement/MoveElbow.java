@@ -18,9 +18,9 @@ import frc.team670.robot.utils.functions.MathUtils;
 public class MoveElbow extends Command {
 
   private BaseElbow elbow;
-  private double angle;
+  private int elbowSetpointInTicks;
 
-  private static final double DEGREE_TOLERANCE = 0.5;
+  private static final double TICKS_TOLERANCE = 10;
 
   private long executeCount;
 
@@ -33,36 +33,34 @@ public class MoveElbow extends Command {
   public MoveElbow(BaseElbow elbow, double angle) {
     this.elbow = elbow;
     requires(elbow);
-    this.angle = angle;
+    elbowSetpointInTicks = MathUtils.convertElbowDegreesToTicks(angle);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    elbow.setMotionMagicSetpoint(angle);
+    elbow.setMotionMagicSetpoint(elbowSetpointInTicks);
     executeCount = 0;
-    Logger.consoleLog("angle: %s", angle);
+    Logger.consoleLog("tickSetpoint: %s", elbowSetpointInTicks);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    if(executeCount % 5 == 0) {
-      Logger.consoleLog("angle: %s", angle);
-    }
     executeCount++;
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return MathUtils.isWithinTolerance(elbow.getAngle(), angle, DEGREE_TOLERANCE);
+    System.out.println(elbow.getPositionTicks() + ", " + elbowSetpointInTicks);
+    return MathUtils.isWithinTolerance(elbow.getPositionTicks(), elbowSetpointInTicks, TICKS_TOLERANCE);
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Logger.consoleLog("targetAngle: %s, endingAngle: %s", angle, elbow.getAngle());
+    Logger.consoleLog("targetTickValue: %s, endingTickValue: %s", elbowSetpointInTicks, elbow.getPositionTicks());
   }
 
   // Called when another command which requires one or more of the same

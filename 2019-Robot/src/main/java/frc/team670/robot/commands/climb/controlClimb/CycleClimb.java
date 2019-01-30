@@ -5,13 +5,14 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.commands.climb;
+package frc.team670.robot.commands.climb.controlClimb;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team670.robot.Robot;
 import frc.team670.robot.commands.arm.movement.MoveArm;
+import frc.team670.robot.commands.climb.CancelClimbBasedOnTimeLeftInMatch;
 import frc.team670.robot.commands.climb.armClimb.ArmClimb;
 import frc.team670.robot.commands.climb.pistonClimb.PistonClimbWithTiltControl;
 import frc.team670.robot.commands.climb.pistonClimb.RetractBackPistons;
@@ -40,7 +41,7 @@ public class CycleClimb extends InstantCommand {
   /**
    * @param setPoint The setpoint in encoder ticks corresponding to the height you
    *                 want to climb to. RobotConstants: PISTON_ENCODER_FLAT,
-   *                 PISTON_ENCODER_LEVEL_TWO, PISTON_ENCODER_LEVEL_THREEE
+   *                 PISTON_ENCODER_LEVEL_TWO, PISTON_ENCODER_LEVEL_THREE
    */
   public CycleClimb(Arm arm, Climber climber, int setPoint) {
     requires(Robot.climber);
@@ -61,11 +62,18 @@ public class CycleClimb extends InstantCommand {
   // Called just before this Command runs the first time
 
   /**
-   * Has an enum which stores what command to run based on what how many times the command has been called. 
-   * This allows one button to cycle through a set of different commands
+   * Has an enum which stores what command to run based on what how many times the
+   * command has been called. This allows one button to cycle through a set of
+   * different commands
    */
   @Override
   protected void initialize() {
+    /*
+    If robot hasn't retracted the front pistons yet and driver attempts to move onto the next stage, but there's 
+    very little time left, this will stow the arm and bring the robot back down to flat
+    */
+    Scheduler.getInstance().add(new CancelClimbBasedOnTimeLeftInMatch(arm, climber));
+
     switch (cg) {
       case DEPLOY_PISTONS:
         Scheduler.getInstance().add(new PistonClimbWithTiltControl(setPoint, climber));
@@ -79,10 +87,10 @@ public class CycleClimb extends InstantCommand {
             Scheduler.getInstance().add(initiateArmClimb);
         }
         if (!ArmClimb.getUserWishesToStillClimb()) {
-          cg = ClimbStage.RETRACT_FRONT_PISTONS;
+          cg = ClimbStage.RETRACT_FRONT_PISTONS_AND_STOW_ARM;
         }
         break;
-      case RETRACT_FRONT_PISTONS:
+      case RETRACT_FRONT_PISTONS_AND_STOW_ARM:
         Scheduler.getInstance().add(new RetractFrontPistons(climber));
         if (Robot.climber.getFrontPistonsRetracted()) {
           cg = ClimbStage.RETRACT_BACK_PISTONS;
@@ -105,6 +113,6 @@ public class CycleClimb extends InstantCommand {
    * 
    */
   public enum ClimbStage {
-    DEPLOY_PISTONS, ARM_CLIMB, RETRACT_FRONT_PISTONS, RETRACT_BACK_PISTONS;
+    DEPLOY_PISTONS, ARM_CLIMB, RETRACT_FRONT_PISTONS_AND_STOW_ARM, RETRACT_BACK_PISTONS;
   }
 }

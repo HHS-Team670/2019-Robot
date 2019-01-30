@@ -45,6 +45,10 @@ public class Wrist extends BaseWrist {
     wristRotation.configMotionCruiseVelocity(RobotConstants.MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
     wristRotation.configMotionAcceleration(RobotConstants.MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
     
+    wristRotation.configNominalOutputForward(0, RobotConstants.kTimeoutMs);
+    wristRotation.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
+    wristRotation.configPeakOutputForward(1, RobotConstants.kTimeoutMs);
+    wristRotation.configPeakOutputReverse(-1, RobotConstants.kTimeoutMs);
 
     // These thresholds stop the motor when limit is reached
     wristRotation.configForwardSoftLimitThreshold(FORWARD_SOFT_LIMIT);
@@ -115,8 +119,8 @@ public class Wrist extends BaseWrist {
   }
 
   @Override
-  public void setMotionMagicSetpoint(double wristAngle) { 
+  public void setMotionMagicSetpoint(double wristSetpointInTicks) { 
     wristRotation.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx); 
-    wristRotation.set(ControlMode.MotionMagic, MathUtils.convertWristDegreesToTicks(wristAngle));
+    wristRotation.set(ControlMode.MotionMagic, wristSetpointInTicks);
   }
 }

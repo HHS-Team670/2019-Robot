@@ -51,6 +51,6 @@ public interface ExtensionInterface {
   /**
    * Setup for movement and Motion Magic
    */
-  public void setMotionMagicSetpoint(double extensionLength);
+  public void setMotionMagicSetpoint(double extensionTicks);
 
 }

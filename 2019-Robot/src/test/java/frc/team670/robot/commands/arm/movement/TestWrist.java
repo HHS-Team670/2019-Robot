@@ -8,13 +8,14 @@
 package frc.team670.robot.commands.arm.movement;
 
 import frc.team670.robot.subsystems.wrist.BaseWrist;
+import frc.team670.robot.utils.functions.MathUtils;
 
 /**
  * Add your docs here.
  */
 public class TestWrist extends BaseWrist{
 
-    private double angle;
+    private double wristTicks;
 
     public TestWrist() {
 
@@ -24,13 +25,13 @@ public class TestWrist extends BaseWrist{
      * Doesn't actually set MotionMagicSetpoint, instead moves the angle to that point.
      */
     @Override
-    public void setMotionMagicSetpoint(double wristAngle) {
-        angle = wristAngle;
+    public void setMotionMagicSetpoint(double wristTicks) {
+        this.wristTicks = wristTicks;
     }
 
     @Override
     public double getAngle() {
-        return angle;
+        return MathUtils.convertWristTicksToDegrees((int)wristTicks);
     }
 
     @Override
@@ -47,7 +48,7 @@ public class TestWrist extends BaseWrist{
 
     @Override
     public int getPositionTicks() {
-        return 0;
+        return (int)wristTicks;
     }
 
     @Override

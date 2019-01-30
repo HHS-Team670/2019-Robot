@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
 import frc.team670.robot.subsystems.Arm.LegalState;
+import frc.team670.robot.subsystems.BaseIntake;
+import frc.team670.robot.subsystems.Intake;
 import frc.team670.robot.subsystems.elbow.BaseElbow;
 import frc.team670.robot.subsystems.extension.BaseExtension;
 import frc.team670.robot.subsystems.wrist.BaseWrist;
@@ -30,13 +32,15 @@ public abstract class ArmTransition extends CommandGroup implements Edge {
   protected BaseElbow elbow;
   protected BaseWrist wrist;
   protected BaseExtension extension;
+  protected BaseIntake intake;
 
-  protected ArmTransition(LegalState source, LegalState dest, Arm arm) {
+  protected ArmTransition(LegalState source, LegalState dest, Arm arm, BaseIntake intake) {
     this.source = source;
     this.dest = dest;
     elbow = arm.getElbow();
     wrist = arm.getWrist();
     extension = arm.getExtension();
+    this.intake = intake;
   }
   
   /**

@@ -66,6 +66,11 @@ public class Extension extends BaseExtension {
     extensionMotor.configReverseSoftLimitEnable(true);
     extensionMotor.enableCurrentLimit(true);
     extensionMotor.configPeakCurrentLimit(PEAK_CURRENT_LIMIT);
+
+    extensionMotor.configNominalOutputForward(0, RobotConstants.kTimeoutMs);
+    extensionMotor.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
+    extensionMotor.configPeakOutputForward(1, RobotConstants.kTimeoutMs);
+    extensionMotor.configPeakOutputReverse(-1, RobotConstants.kTimeoutMs);
   }
 
   @Override
@@ -103,8 +108,8 @@ public class Extension extends BaseExtension {
   @Override
   public void enableExtensionPIDController() {
     SettingUtils.initTalonPID(extensionMotor, POSITION_SLOT, P, I, D, F, -EXTENSION_POWER,
-        EXTENSION_POWER, FeedbackDevice.CTRE_MagEncoder_Relative, RAMP_RATE);
-        extensionMotor.selectProfileSlot(POSITION_SLOT, 0);
+                              EXTENSION_POWER, FeedbackDevice.CTRE_MagEncoder_Relative, RAMP_RATE);
+    extensionMotor.selectProfileSlot(POSITION_SLOT, 0);
   }
 
   @Override
@@ -137,9 +142,9 @@ public class Extension extends BaseExtension {
   }
 
   @Override
-  public void setMotionMagicSetpoint(double extensionLength) {
+  public void setMotionMagicSetpoint(double extensionTicks) {
     extensionMotor.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
-    extensionMotor.set(ControlMode.MotionMagic, extensionLength);
+    extensionMotor.set(ControlMode.MotionMagic, extensionTicks);
   }
 
 }

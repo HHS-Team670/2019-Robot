@@ -76,6 +76,6 @@ public class SparkCANPIDEncoderDrive extends Command {
   @Override
   protected void interrupted() {
     end();
-    Logger.consoleLog("CANPIDEncoderDrive interrupted");
+    Logger.consoleLog();
   }
 }

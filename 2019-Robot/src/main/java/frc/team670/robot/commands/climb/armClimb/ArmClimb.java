@@ -8,12 +8,8 @@
 package frc.team670.robot.commands.climb.armClimb;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.Scheduler;
-
-import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.subsystems.Arm;
-import frc.team670.robot.subsystems.Arm.LegalState;
 import frc.team670.robot.subsystems.Climber;
 import frc.team670.robot.subsystems.elbow.BaseElbow;
 import frc.team670.robot.subsystems.extension.BaseExtension;
@@ -61,13 +57,14 @@ public class ArmClimb extends Command {
 
     heightInInches = climber.getFrontTalonPositionInInches() + RobotConstants.ARM_HEIGHT_IN_INCHES + RobotConstants.DRIVEBASE_TO_GROUND; // TODO get the actual method
 
+    holdElbowDownWithCurrentLimit(CLIMB_CURRENT); // Brings arm down
+
     Logger.consoleLog("startHeightOfRobot%s, startAngleOfElbow%s ", heightInInches, elbow.getAngle());
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    holdElbowDownWithCurrentLimit(CLIMB_CURRENT); // Brings arm down
 
     double deltaSetPointInInches = (heightInInches/(Math.cos(Math.toDegrees(elbow.getAngle())))) - RobotConstants.FIXED_ARM_LENGTH_IN_INCHES;
 
@@ -76,8 +73,7 @@ public class ArmClimb extends Command {
     // TODO make EXTENSION_ENCODER_OUT the actual extension value of Extension at the ReadyToClimb ArmState
     extension.setPIDControllerSetpoint(Extension.EXTENSION_ENCODER_OUT - deltaSetPointInTicks); // Changes the
                                                                                                     // setpoint
-    if (loggingIterationCounter % 7 == 0)
-      Logger.consoleLog("heightOfRobot%s, angleOfElbow%s, extensionSetpoint%s ", heightInInches, elbow.getAngle(), Extension.EXTENSION_ENCODER_OUT - deltaSetPointInTicks);
+    Logger.consoleLog("heightOfRobot%s, angleOfElbow%s, extensionSetpoint%s ", heightInInches, elbow.getAngle(), Extension.EXTENSION_ENCODER_OUT - deltaSetPointInTicks);
 
     loggingIterationCounter++;
   }
@@ -101,7 +97,6 @@ public class ArmClimb extends Command {
   @Override
   protected void end() {
     releaseElbow();
-    Scheduler.getInstance().add(new MoveArm(Arm.getArmState(LegalState.STOW), arm));
     Logger.consoleLog("endHeightOfRobot%s, endAngleOfElbow%s ", heightInInches, elbow.getAngle());
   }
 
@@ -134,7 +129,7 @@ public class ArmClimb extends Command {
   }
 
   /**
-   * Returns a boolean wish keeps track of whether or not the cancel command has
+   * Returns a boolean that keeps track of whether or not the cancel command has
    * been called
    */
   public static boolean getUserWishesToStillClimb() {
