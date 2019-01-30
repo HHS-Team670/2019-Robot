@@ -50,24 +50,30 @@ s t u v
 
 // returns the location on the field corresponding with a given key
 function getArmState(key) {
-  if (key == 'a') return '';
+  if (key == 'a') return 'NEUTRAL';
+  if (key == 'b') return 'READY_TO_CLIMB';
+  if (key == 'c') return 'STOW';
+  if (key == 'd') return 'DEFENSE';
   if (key == 'j') return '';
-  if (key == 's') return '';
-  if (key == '1') return '';
-  if (key == '0') return '';
-  if (key == 'b') return '';
   if (key == 'k') return '';
-  if (key == 't') return '';
-  if (key == '2') return '';
-  if (key == 'c') return '';
   if (key == 'l') return '';
-  if (key == 'u') return '';
-  if (key == '3') return '';
-  if (key == 'd') return '';
   if (key == 'm') return '';
+  if (key == 's') return '';
+  if (key == 't') return '';
+  if (key == 'u') return '';
   if (key == 'v') return '';
+  if (key == '1') return '';
+  if (key == '2') return '';
+  if (key == '3') return '';
   if (key == '4') return '';
+  if (key == '9') return '';
   if (key == 'w') return '';
+  return null;
+}
+
+function getSide(key) {
+  if (key == 'a') return 'BACK';
+  if (key == 'd') return 'FRONT';
   return null;
 }
 
