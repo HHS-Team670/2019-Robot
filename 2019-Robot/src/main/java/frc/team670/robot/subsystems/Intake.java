@@ -13,7 +13,6 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 import frc.team670.robot.constants.RobotConstants;
@@ -25,12 +24,12 @@ import frc.team670.robot.utils.functions.MathUtils;
  */
 public class Intake extends Subsystem {
 
-  public static final int INTAKE_ANGLE_UP = 0, INTAKE_ANGLE_DOWN = 0; //TODO set these
+  public static final int INTAKE_ANGLE_UP = 0, INTAKE_ANGLE_DOWN = 90;
 
   private VictorSPX baseVictor, rollerVictor;
   private Encoder baseVictorEncoder;
 
-  private static final double MIN_BASE_OUTPUT = -0.75, MAX_BASE_OUTPUT = 0.75;
+  private static final double MAX_BASE_OUTPUT = 0.75;
 
 
   private static final double kF = 0, kP = 0.1, kI = 0, kD = 0; //TODO figure out what these are
@@ -58,6 +57,10 @@ public class Intake extends Subsystem {
     baseVictor.configMotionCruiseVelocity(RobotConstants.MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
     baseVictor.configMotionAcceleration(RobotConstants.MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
     
+    baseVictor.configNominalOutputForward(0, RobotConstants.kTimeoutMs);
+    baseVictor.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
+    baseVictor.configPeakOutputForward(MAX_BASE_OUTPUT, RobotConstants.kTimeoutMs);
+    baseVictor.configPeakOutputReverse(-MAX_BASE_OUTPUT, RobotConstants.kTimeoutMs);
 
     // These thresholds stop the motor when limit is reached
     baseVictor.configForwardSoftLimitThreshold(FORWARD_SOFT_LIMIT);
@@ -77,8 +80,8 @@ public class Intake extends Subsystem {
   /**
    * Should set the setpoint for the Motion Magic on the intake
    */
-  public void setMotionMagicSetpoint(double intakeAngle) {  
-    baseVictor.set(ControlMode.MotionMagic, MathUtils.convertIntakeDegreesToTicks(intakeAngle));
+  public void setMotionMagicSetpoint(double intakeTicks) {  
+    baseVictor.set(ControlMode.MotionMagic, intakeTicks);
   }
 
   /**

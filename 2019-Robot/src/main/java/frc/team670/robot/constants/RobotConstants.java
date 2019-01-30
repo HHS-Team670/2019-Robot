@@ -20,12 +20,12 @@ public class RobotConstants {
     public static final int DIO_TICKS_PER_INCH = (int) (DIO_TICKS_PER_ROTATION / (Math.PI * DRIVE_BASE_WHEEL_DIAMETER));
 
     // TODO Set all of these!!!!
-    public static double EXTENSION_TICKS_PER_MOTOR_ROTATION = 1024; //Subject to change, measure real value
-    public static double EXTENSION_MOTOR_ROTATIONS_PER_INCH = 0.168748; //Subject to change, measure real value
+    public static double EXTENSION_TICKS_PER_MOTOR_ROTATION = 4096; //Subject to change, measure real value
+    public static double EXTENSION_MOTOR_ROTATIONS_PER_INCH = 0.05371428571; //Should be real value
     /** Elbow will have an absolute Mag Encoder */
-    public static double ELBOW_TICKS_PER_ROTATION = 2000; // Still needs to be set
+    public static double ELBOW_TICKS_PER_ROTATION = 4096; // Still needs to be set
     /** Wrist has an abolute Mag Encoder */
-    public static double WRIST_TICKS_PER_ROTATION = 1024; //Subject to change, check sources
+    public static double WRIST_TICKS_PER_ROTATION = 4096; //Subject to change, check sources
 
     // LEDs
     public static final int LED_PORT = 5801;
@@ -54,9 +54,9 @@ public class RobotConstants {
             MAX_LOOKAHEAD_SPEED);
 
     // Arm Constants
-    /** Multiplies the power input by this value when oeprator is controlling the arm */
-    public static final double ARM_HEIGHT_IN_INCHES = 0;
-    public static final double CLAW_RADIUS_IN_INCHES = 0;
+    // TODO Set these
+    public static final double ARM_HEIGHT_IN_INCHES = 5;
+    public static final double CLAW_LENGTH_IN_INCHES = 8;
     public static final int FIXED_ARM_LENGTH_IN_INCHES = 0;
     public static final double OPERATOR_ARM_CONTROL_SCALAR = 0.5;
 
@@ -102,5 +102,5 @@ public class RobotConstants {
 
     //Intake constants
     /** Intake will have an absolute Mag Encoder */
-    public static double INTAKE_TICKS_PER_ROTATION = 0; // Still needs to be set
+    public static double INTAKE_TICKS_PER_ROTATION = 4096; // Still needs to be set
 }

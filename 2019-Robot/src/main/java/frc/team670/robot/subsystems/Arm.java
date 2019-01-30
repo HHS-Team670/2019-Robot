@@ -138,8 +138,8 @@ public class Arm {
    * of the arm.
    */
   public static Point2D.Double getCoordPosition(double elbowAngle, double wristAngle, double extensionLength) {
-    double x = extensionLength * Math.sin(elbowAngle) + RobotConstants.CLAW_RADIUS_IN_INCHES * Math.sin(wristAngle);
-    double y = extensionLength * Math.cos(elbowAngle) + RobotConstants.CLAW_RADIUS_IN_INCHES * Math.cos(wristAngle)
+    double x = (extensionLength + RobotConstants.FIXED_ARM_LENGTH_IN_INCHES) * Math.sin(elbowAngle) + RobotConstants.CLAW_LENGTH_IN_INCHES * Math.sin(wristAngle);
+    double y = (extensionLength + RobotConstants.FIXED_ARM_LENGTH_IN_INCHES) * Math.cos(elbowAngle) + RobotConstants.CLAW_LENGTH_IN_INCHES * Math.cos(wristAngle)
         + RobotConstants.ARM_HEIGHT_IN_INCHES;
     return new Point2D.Double(x, y);
   }
