@@ -162,34 +162,19 @@ public class DriveMotionProfile extends Command {
     // Wheel Diameter is the diameter of your wheels (or pulley for a track system) in meters
 
   //Default: use DIO Encoders
-  if(Robot.driveBase.getLeftDIOEncoder() != null && Robot.driveBase.getRightDIOEncoder() != null){
+
     if(isReversed) {
-        initialLeftEncoder = -1 * Robot.driveBase.getLeftDIOEncoderPosition();
-        initialRightEncoder = -1 * Robot.driveBase.getRightDIOEncoderPosition();
+        initialLeftEncoder = -1 * Robot.driveBase.getLeftMustangEncoder().getPosition();
+        initialRightEncoder = -1 * Robot.driveBase.getRightMustangEncoder().getPosition();
     }
     else {
-        initialLeftEncoder = Robot.driveBase.getLeftDIOEncoderPosition();
-        initialRightEncoder = Robot.driveBase.getRightDIOEncoderPosition();
+        initialLeftEncoder = Robot.driveBase.getLeftMustangEncoder().getPosition();
+        initialRightEncoder = Robot.driveBase.getRightMustangEncoder().getPosition();
     }
 
     left.configureEncoder(initialLeftEncoder, RobotConstants.DIO_TICKS_PER_ROTATION, RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
     right.configureEncoder(initialRightEncoder, RobotConstants.DIO_TICKS_PER_ROTATION, RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);  
   
-  }   
-  //If: DIO Encoders are null, use Spark Encoders
-  else {
-    if(isReversed) {
-      initialLeftEncoder = -1 * Robot.driveBase.getLeftSparkEncoderPosition();
-      initialRightEncoder = -1 * Robot.driveBase.getRightSparkEncoderPosition();
-    }
-    else {
-      initialLeftEncoder = Robot.driveBase.getLeftSparkEncoderPosition();
-      initialRightEncoder = Robot.driveBase.getRightSparkEncoderPosition();
-    }
-
-    left.configureEncoder(initialLeftEncoder, RobotConstants.SPARK_TICKS_PER_ROTATION, RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
-    right.configureEncoder(initialRightEncoder, RobotConstants.SPARK_TICKS_PER_ROTATION, RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);  
-  }
 
     Logger.consoleLog("isReversed: " + isReversed);
     Logger.consoleLog("initial encoders: " + initialLeftEncoder + ", " + initialRightEncoder);
@@ -229,27 +214,15 @@ public class DriveMotionProfile extends Command {
     int leftEncoder, rightEncoder;
 
   //Default: use DIO Encoders
-  if(Robot.driveBase.getLeftDIOEncoder() != null && Robot.driveBase.getRightDIOEncoder() != null){
+
     if(isReversed) {
-      leftEncoder = -1 * Robot.driveBase.getLeftDIOEncoderPosition();
-      rightEncoder = -1 * Robot.driveBase.getRightDIOEncoderPosition();
+      leftEncoder = -1 * Robot.driveBase.getLeftMustangEncoder().getPosition();
+      rightEncoder = -1 * Robot.driveBase.getRightMustangEncoder().getPosition();
     }
     else {
-      leftEncoder = Robot.driveBase.getLeftDIOEncoderPosition();
-      rightEncoder = Robot.driveBase.getRightDIOEncoderPosition();
+      leftEncoder = Robot.driveBase.getLeftMustangEncoder().getPosition();
+      rightEncoder = Robot.driveBase.getRightMustangEncoder().getPosition();
     }  
-  } 
-  //If: DIO Encoders are null, use Spark Encoders
-  else {
-    if(isReversed) {
-      leftEncoder =  -1 * Robot.driveBase.getLeftSparkEncoderPosition();
-      rightEncoder = -1 * Robot.driveBase.getRightSparkEncoderPosition();
-    }
-    else {
-      leftEncoder = Robot.driveBase.getLeftSparkEncoderPosition();
-      rightEncoder = Robot.driveBase.getRightSparkEncoderPosition();
-    }
-  }
 
     // System.out.println("encoders: " + leftEncoder + ", " + rightEncoder);
   
@@ -311,9 +284,9 @@ public class DriveMotionProfile extends Command {
   @Override
   protected void end() {
     Robot.driveBase.stop();
-    if(Robot.driveBase.getLeftDIOEncoder() != null && Robot.driveBase.getRightDIOEncoder() != null && Robot.sensors.getNavX() != null)
+    if(Robot.sensors.getNavX() != null)
        Logger.consoleLog("EndingAngle: %s, LeftTicksTraveled: %s, RightTicksTraveled: %s, DistanceTraveled: %s", Pathfinder.boundHalfDegrees(Robot.sensors.getYawDoubleForPathfinder()), 
-                     (Robot.driveBase.getLeftDIOEncoderPosition() - initialLeftEncoder), (Robot.driveBase.getRightDIOEncoderPosition() - initialRightEncoder), MathUtils.convertDriveBaseTicksToInches(MathUtils.average((double)(Robot.driveBase.getLeftDIOEncoderPosition() - initialLeftEncoder), (double)(Robot.driveBase.getRightDIOEncoderPosition() - initialRightEncoder))));
+                     (Robot.driveBase.getLeftMustangEncoder().getPosition() - initialLeftEncoder), (Robot.driveBase.getRightMustangEncoder().getPosition() - initialRightEncoder), MathUtils.convertDriveBaseTicksToInches(MathUtils.average((double)(Robot.driveBase.getLeftMustangEncoder().getPosition() - initialLeftEncoder), (double)(Robot.driveBase.getRightMustangEncoder().getPosition() - initialRightEncoder))));
   }
 
   // Called when another command which requires one or more of the same
