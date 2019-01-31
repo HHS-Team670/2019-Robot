@@ -79,8 +79,8 @@
       <text x="40%" y="100%" style="text-anchor: middle">Auton</text>   
       <circle id="intake-status" cx="60%" cy="50%" r="5"/>
       <text x="60%" y="25%" style="text-anchor: middle">Intake</text>
-      <circle id="arm-status" cx="80%" cy="50%" r="5"/>
-      <text x="80%" y="100%" style="text-anchor: middle">Arm</text>
+      <circle id="claw-status" cx="80%" cy="50%" r="5"/>
+      <text x="80%" y="100%" style="text-anchor: middle">Claw</text>
     </svg>
 
     <div id="login">
@@ -88,7 +88,10 @@
         <button id="connect" disabled>Connecting</button>
     </div>
 
+    <button id="test-button">Button</button>
+
     <div id="auton-chooser">
+      <form id="auto-chooser">
       <fieldset id="start-position">
         <input type="radio" name="start" value="Left"> Left</input> <br>
         <input type="radio" name="start" value="LeftHigh"> LeftHigh</input> <br>
@@ -117,14 +120,13 @@
         <input type="radio" name="height1" value="Middle"> Middle</input> <br>
       </fieldset>
       <fieldset id="target-2">
-        <input type="radio" name="target2" value="ExchangeRight.Hatch"> ExchangeRight</input> <br>
-        <input type="radio" name="target2" value="ExchangeLeft.Hatch"> ExchangeLeft</input>
+        <input type="radio" name="target2" value="ExchangeLeft"> ExchangeLeft</input> <br>
+        <input type="radio" name="target2" value="ExchangeRight"> ExchangeRight</input>
       </fieldset>
-      <!-- <fieldset id="height-2">
-        <input type="radio" name="height2" value="1"> val1</input> <br>
-        <input type="radio" name="height2" value="2"> val2</input> <br>
-        <input type="radio" name="height2" value="3"> val3</input>
-      </fieldset> -->
+      <fieldset id="height-2">
+        <input type="radio" name="height2" value="Ball"> Ball</input> <br>
+        <input type="radio" name="height2" value="Hatch"> Hatch</input> 
+      </fieldset>
       <fieldset id="target-3">
         <input type="radio" name="target3" value="RocketRight1"> RocketRight1</input> <br>
         <input type="radio" name="target3" value="RocketRight2"> RocketRight2</input> <br>
@@ -145,6 +147,7 @@
         <input type="radio" name="height3" value="Low"> Low</input> <br>
         <input type="radio" name="height3" value="Middle"> Middle</input> <br>
       </fieldset>
+      </form>
     </div>
 
     <script src="networktables/networktables.js"></script>

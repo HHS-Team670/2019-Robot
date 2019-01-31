@@ -40,7 +40,7 @@ function onRobotConnection(connected) {
 function setLogin() {
   // Add Enter key handler
   // Enable the input and the button
-  address.disabled = connect.disabled = false;
+  address.disabled = connect.disabled = true;
   connect.textContent = 'Connect';
   // Add the default address and select xxxx
 

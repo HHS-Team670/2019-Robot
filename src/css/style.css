@@ -129,8 +129,8 @@ body.login #login {
   z-index: 1;
 }
 #robot-info {
-  bottom: 0vw;
-  right: 0vh;
+  position: absolute;
+  transform: translate(50vw, 10vh);
   font-size: 12pt;
 }
 #navx {
@@ -145,10 +145,6 @@ body.login #login {
   position: absolute;
   transform: translate(85vw);
 }
-/* #field-map {
-  position: absolute;
-  transform: translate(55vw, 40vh);
-} */
 #status-lights {
   position: absolute;
   transform: translate(0vw, 3vh);
@@ -191,9 +187,9 @@ body.login #login {
 }
 #auton-chooser {
     position: relative;
-    transform: translate(50vw, 40vh);
+    transform: translate(50vw, 30vh);
     width: 50vw;
-    height: 55vh;
+    height: 65vh;
 }
 #start-position {
     position: absolute;
@@ -204,17 +200,25 @@ body.login #login {
 }
 #height-1 {
     position: absolute;
-    transform: translate(calc(90px + 125px));
+    transform: translate(calc(90px), 275px);
 }
 #target-2 {
     position: absolute;
-    transform: translate(calc(90px + 125px + 75px));
+    transform: translate(calc(90px + 125px));
+}
+#height-2 {
+    position: absolute;
+    transform: translate(calc(90px + 125px), 45px);
 }
 #target-3 {
     position: absolute;
-    transform: translate(calc(90px + 125px + 75px + 130px));
+    transform: translate(calc(90px + 125px + 130px));
 }
 #height-3 {
     position: absolute;
-    transform: translate(calc(90px + 125px + 75px + 130px + 125px));
+    transform: translate(calc(90px + 125px + 130px), 275px);
+}
+#test-button {
+    position: absolute;
+    transform: translate(90vw, 50vh);
 }
