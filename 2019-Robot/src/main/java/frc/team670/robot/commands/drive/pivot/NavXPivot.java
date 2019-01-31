@@ -28,6 +28,10 @@ public class NavXPivot extends Command {
 	private int onTargetCount;
 
   public NavXPivot(double angle) {
+	if(Robot.sensors.getNavX() == null){
+		super.cancel();
+	}
+
 	this.angle = angle;
 	
 	pivotController = new PIDController(P, I, D, Robot.sensors.getZeroableNavXPIDSource(), new NullPIDOutput());

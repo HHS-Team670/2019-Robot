@@ -9,9 +9,11 @@ package frc.team670.robot.commands.drive.vision;
 
 import java.util.ArrayList;
 
+import com.revrobotics.CANEncoder;
+
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDSource;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.Robot;
@@ -50,10 +52,17 @@ public class AdvancedVisionPIDDrive extends Command {
 
   public AdvancedVisionPIDDrive() {
     requires(Robot.driveBase);
-    distanceController = new PIDController(P, I, D, F,
-        new TwoEncoder_PIDSource(Robot.driveBase.getLeftDIOEncoder(), Robot.driveBase.getRightDIOEncoder()), new NullPIDOutput());
-    headingController = new PIDController(P, I, D, F, Robot.sensors.getZeroableNavXPIDSource(), new NullPIDOutput());
 
+    //Default: Use DIO Encoders
+    if(Robot.driveBase.getLeftDIOEncoder() != null && Robot.driveBase.getRightDIOEncoder() != null){   
+      distanceController = new PIDController(P, I, D, F, new TwoEncoder_PIDSource(Robot.driveBase.getLeftDIOEncoder(), Robot.driveBase.getRightDIOEncoder()), new NullPIDOutput());
+      headingController = new PIDController(P, I, D, F, Robot.sensors.getZeroableNavXPIDSource(), new NullPIDOutput());
+    }
+    // If DIO encoders are null, use Spark Encoders 
+    else {
+      distanceController = new PIDController(P, I, D, F, new TwoEncoder_PIDSource(Robot.driveBase.getLeftSparkEncoder(), Robot.driveBase.getRightSparkEncoder()), new NullPIDOutput());
+      headingController = new PIDController(P, I, D, F, Robot.sensors.getZeroableNavXPIDSource(), new NullPIDOutput());
+    }
     headingController.setInputRange(-180.0, 180.0);
     headingController.setOutputRange(visionHeadingControllerLowerOutput, visionHeadingControllerUpperOutput);
     headingController.setAbsoluteTolerance(DEGREE_TOLERANCE);
@@ -164,18 +173,30 @@ public class AdvancedVisionPIDDrive extends Command {
   }
 
   private class TwoEncoder_PIDSource implements PIDSource {
-    private Encoder left, right;
+    private Encoder leftDIO, rightDIO;
+    private CANEncoder leftSpark, rightSpark;
+    private boolean isDio;
 
     private double initialLeft, initialRight;
 
     private PIDSourceType pidSourceType;
 
     public TwoEncoder_PIDSource(Encoder left, Encoder right) {
-      this.left = left;
-      this.right = right;
+      this.leftDIO = left;
+      this.rightDIO = right;
       initialLeft = left.get();
       initialRight = right.get();
       pidSourceType = PIDSourceType.kDisplacement;
+      isDio = true;
+    }
+
+    public TwoEncoder_PIDSource(CANEncoder left, CANEncoder right){
+      this.leftSpark= left;
+      this.rightSpark = right;
+      initialLeft = left.getPosition();
+      initialRight = right.getPosition();
+      pidSourceType = PIDSourceType.kDisplacement;
+      isDio = false;
     }
 
     @Override
@@ -185,8 +206,16 @@ public class AdvancedVisionPIDDrive extends Command {
 
     @Override
     public double pidGet() {
-      double displacementLeft = left.get() - initialLeft;
-      double displacementRight = right.get() - initialRight;
+      double displacementLeft = 0;
+      double displacementRight = 0;
+
+      if(isDio) {
+        displacementLeft = leftDIO.get() - initialLeft;
+        displacementRight = rightDIO.get() - initialRight;
+      } else{
+        displacementLeft = leftSpark.getPosition() - initialLeft;
+        displacementRight = rightSpark.getPosition() - initialRight;
+      }
       return MathUtils.convertDriveBaseTicksToInches((displacementLeft + displacementRight) / 2);
     }
 

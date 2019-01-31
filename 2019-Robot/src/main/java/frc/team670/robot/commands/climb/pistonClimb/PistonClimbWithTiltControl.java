@@ -9,12 +9,11 @@ package frc.team670.robot.commands.climb.pistonClimb;
 
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.Command;
-
-import frc.team670.robot.Robot;
-import frc.team670.robot.subsystems.Climber;
+import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.dataCollection.NullPIDOutput;
-import frc.team670.robot.utils.functions.SettingUtils;
+import frc.team670.robot.subsystems.Climber;
 import frc.team670.robot.utils.Logger;
+import frc.team670.robot.utils.functions.SettingUtils;
 
 /**
  * Class to deploy the pistons down with a some degree of control from the NavX
@@ -25,6 +24,8 @@ public class PistonClimbWithTiltControl extends Command {
   private double tiltControllerLowerOutput = -0.2, tiltControllerUpperOutput = 0.2;
   private double tiltTolerance = 0; // TODO set this
   private double P = 0.1, I = 0.0, D = 0.0, F = 0.0; // TODO set these
+  private MustangSensors sensors;
+
   private PIDController tiltController;
   private boolean goingUp;
   private int loggingIterationCounter, setPoint;
@@ -32,39 +33,53 @@ public class PistonClimbWithTiltControl extends Command {
   private Climber climber;
 
   /**
-   * @param setPoint the desired end goal of the climber (Flat, Level 2 or Level 3)
-   * @param climber the climber upon which this command will be called on
+   * @param setPoint the desired end goal of the climber (Flat, Level 2 or Level
+   *                 3)
+   * @param climber  the climber upon which this command will be called on
    */
-  public PistonClimbWithTiltControl(int setPoint, Climber climber) {
-    requires(Robot.climber);
-    tiltController = new PIDController(P, I, D, F, Robot.sensors.getNavXPitchPIDSource(), new NullPIDOutput());
+  public PistonClimbWithTiltControl(int setPoint, Climber climber, MustangSensors sensors) {
+    requires(climber);
+    
     this.setPoint = setPoint;
     this.climber = climber;
+    this.sensors = sensors;
+    // If the NavX is null, we don't do any tilt control
+    if (sensors.getNavX() != null) {
+      tiltController = new PIDController(P, I, D, F, sensors.getNavXPitchPIDSource(), new NullPIDOutput());
+      tiltController.setSetpoint(0);
+      tiltController.setAbsoluteTolerance(tiltTolerance);
+      tiltController.setOutputRange(tiltControllerLowerOutput, tiltControllerUpperOutput);
+      tiltController.enable();
+    }
+
+   
   }
 
   // Called just before this Command runs the first time
   protected void initialize() {
-    
-    // Scheduler.getInstance().add(new MoveArm()) TODO: move arm so it's  at neutral state on the climb up
-    Robot.climber.enableClimberPIDControllers(setPoint);
-    tiltController.setSetpoint(0);
-    tiltController.setAbsoluteTolerance(tiltTolerance);
-    tiltController.setOutputRange(tiltControllerLowerOutput, tiltControllerUpperOutput);
-    tiltController.enable();
 
-    goingUp = (setPoint >= Robot.climber.getFrontTalonPositionInTicks());
+    // Scheduler.getInstance().add(new MoveArm()) TODO: move arm so it's at neutral
+    // state on the climb up
+    climber.enableClimberPIDControllers(setPoint);
 
-    Logger.consoleLog("startBackPistonPosition:%s startFrontPistonPosition:%s ", Robot.climber.getBackTalonPositionInTicks(), Robot.climber.getFrontTalonPositionInTicks());
+    goingUp = (setPoint >= climber.getFrontTalonPositionInTicks());
+
+    Logger.consoleLog("startBackPistonPosition:%s startFrontPistonPosition:%s ", climber.getBackTalonPositionInTicks(), climber.getFrontTalonPositionInTicks());
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    if(Math.abs(Robot.sensors.getPitchDouble()) - tiltTolerance > 0){
-      Robot.climber.handleTilt(goingUp, tiltTolerance, tiltController.get());
+
+    // If the NavX is null, we don't do any tilt control
+    if (sensors.getNavX() != null) {
+      if (Math.abs(sensors.getPitchDouble()) - tiltTolerance > 0) {
+          climber.handleTilt(goingUp, tiltTolerance, tiltController.get());
+      }
     }
 
-    Logger.consoleLog("currentBackPistonPosition:%s currentFrontPistonPosition:%s tiltControlScalar:%s", Robot.climber.getBackTalonPositionInTicks(), Robot.climber.getFrontTalonPositionInTicks(), tiltController.get());
+    Logger.consoleLog("currentBackPistonPosition:%s, currentFrontPistonPosition:%s", climber.getBackTalonPositionInTicks(), climber.getFrontTalonPositionInTicks());
+    
 
     loggingIterationCounter++;
   }
@@ -79,7 +94,7 @@ public class PistonClimbWithTiltControl extends Command {
   @Override
   protected void end() {
     SettingUtils.releaseController(tiltController);
-    Logger.consoleLog("endBackPistonPosition:%s endFrontPistonPosition:%s ", Robot.climber.getBackTalonPositionInTicks(), Robot.climber.getFrontTalonPositionInTicks());
+    Logger.consoleLog("endBackPistonPosition:%s, endFrontPistonPosition:%s ", climber.getBackTalonPositionInTicks(), climber.getFrontTalonPositionInTicks());
   }
 
   // Called when another command which requires one or more of the same

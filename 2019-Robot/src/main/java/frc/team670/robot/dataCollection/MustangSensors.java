@@ -24,14 +24,25 @@ public class MustangSensors extends Subsystem {
 
   public MustangSensors(){
     try {
-			navXMicro = new NavX(RobotMap.NAVX_PORT);
-		} catch (RuntimeException ex) {
+      navXMicro = new NavX(RobotMap.NAVX_PORT); 
+    } catch (RuntimeException ex) {
 			DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
 			navXMicro = null;
-    }
+    } 
     
-    intakeIRSensor = new DigitalInput(RobotMap.INTAKE_IR_DIO_PORT);
-    clawIRSensor = new DigitalInput(RobotMap.CLAW_IR_DIO_PORT);
+    try {
+      intakeIRSensor = new DigitalInput(RobotMap.INTAKE_IR_DIO_PORT);
+    } catch (RuntimeException ex) {
+      DriverStation.reportError("Error instantiating intakeIRSensor: " + ex.getMessage(), true);
+      intakeIRSensor = null;
+    }
+
+    try {
+      clawIRSensor = new DigitalInput(RobotMap.CLAW_IR_DIO_PORT);
+    } catch (RuntimeException ex) {
+      DriverStation.reportError("Error instantiating clawIRSensor: " + ex.getMessage(), true);
+      clawIRSensor = null;
+    }
   }
 
   @Override
@@ -152,6 +163,27 @@ public class MustangSensors extends Subsystem {
    */
   public boolean getClawIROutput(){
     return clawIRSensor.get();
+  }
+
+  /**
+   * Returns the intake IR sensor
+   */
+  public DigitalInput getIntakeIRSensor(){
+    return intakeIRSensor;
+  }
+
+  /**
+   * Returns the claw IR sensor
+   */
+  public DigitalInput getClawIRSensor(){
+    return clawIRSensor;
+  }
+
+  /**
+   * Returns the navX
+   */
+  public NavX getNavX(){
+    return navXMicro;
   }
 
 

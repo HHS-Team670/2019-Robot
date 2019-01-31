@@ -60,6 +60,11 @@ public class DriveMotionProfile extends Command {
    * Drives a Pathfinder Motion Profile using set Waypoints
    */
   public DriveMotionProfile(Waypoint[] waypoints, boolean isReversed) {
+    // If Nav
+    // if(Robot.sensors.getNavX() == null){
+    //   super.cancel();
+    // }
+
     requires(Robot.driveBase);
 
     this.isReversed = isReversed;
@@ -83,6 +88,9 @@ public class DriveMotionProfile extends Command {
    * @param fileName path to trajectory file inside the output folder in the deploy directory
    */
   public DriveMotionProfile(String fileName, boolean isReversed) throws FileNotFoundException {
+    if(Robot.sensors.getNavX() == null){
+      super.cancel();
+    }
 
     this.isReversed = isReversed;
 
@@ -152,20 +160,39 @@ public class DriveMotionProfile extends Command {
     // 'getEncPosition' function.
     // 1024 is the amount of encoder ticks per full revolution
     // Wheel Diameter is the diameter of your wheels (or pulley for a track system) in meters
+
+  //Default: use DIO Encoders
+  if(Robot.driveBase.getLeftDIOEncoder() != null && Robot.driveBase.getRightDIOEncoder() != null){
     if(isReversed) {
-      initialLeftEncoder = -1 * Robot.driveBase.getLeftDIOEncoderPosition();
-      initialRightEncoder = -1 * Robot.driveBase.getRightDIOEncoderPosition();
+        initialLeftEncoder = -1 * Robot.driveBase.getLeftDIOEncoderPosition();
+        initialRightEncoder = -1 * Robot.driveBase.getRightDIOEncoderPosition();
     }
     else {
-      initialLeftEncoder = Robot.driveBase.getLeftDIOEncoderPosition();
-      initialRightEncoder = Robot.driveBase.getRightDIOEncoderPosition();
+        initialLeftEncoder = Robot.driveBase.getLeftDIOEncoderPosition();
+        initialRightEncoder = Robot.driveBase.getRightDIOEncoderPosition();
     }
-
-    Logger.consoleLog("isReversed: " + isReversed);
-    Logger.consoleLog("initial encoders: " + initialLeftEncoder + ", " + initialRightEncoder);
 
     left.configureEncoder(initialLeftEncoder, RobotConstants.DIO_TICKS_PER_ROTATION, RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
     right.configureEncoder(initialRightEncoder, RobotConstants.DIO_TICKS_PER_ROTATION, RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);  
+  
+  }   
+  //If: DIO Encoders are null, use Spark Encoders
+  else {
+    if(isReversed) {
+      initialLeftEncoder = -1 * Robot.driveBase.getLeftSparkEncoderPosition();
+      initialRightEncoder = -1 * Robot.driveBase.getRightSparkEncoderPosition();
+    }
+    else {
+      initialLeftEncoder = Robot.driveBase.getLeftSparkEncoderPosition();
+      initialRightEncoder = Robot.driveBase.getRightSparkEncoderPosition();
+    }
+
+    left.configureEncoder(initialLeftEncoder, RobotConstants.SPARK_TICKS_PER_ROTATION, RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
+    right.configureEncoder(initialRightEncoder, RobotConstants.SPARK_TICKS_PER_ROTATION, RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);  
+  }
+
+    Logger.consoleLog("isReversed: " + isReversed);
+    Logger.consoleLog("initial encoders: " + initialLeftEncoder + ", " + initialRightEncoder);
 
     // Set up Robot for Auton Driving
     Robot.driveBase.initAutonDrive();
@@ -200,6 +227,9 @@ public class DriveMotionProfile extends Command {
   protected void execute() {
 
     int leftEncoder, rightEncoder;
+
+  //Default: use DIO Encoders
+  if(Robot.driveBase.getLeftDIOEncoder() != null && Robot.driveBase.getRightDIOEncoder() != null){
     if(isReversed) {
       leftEncoder = -1 * Robot.driveBase.getLeftDIOEncoderPosition();
       rightEncoder = -1 * Robot.driveBase.getRightDIOEncoderPosition();
@@ -207,7 +237,19 @@ public class DriveMotionProfile extends Command {
     else {
       leftEncoder = Robot.driveBase.getLeftDIOEncoderPosition();
       rightEncoder = Robot.driveBase.getRightDIOEncoderPosition();
+    }  
+  } 
+  //If: DIO Encoders are null, use Spark Encoders
+  else {
+    if(isReversed) {
+      leftEncoder =  -1 * Robot.driveBase.getLeftSparkEncoderPosition();
+      rightEncoder = -1 * Robot.driveBase.getRightSparkEncoderPosition();
     }
+    else {
+      leftEncoder = Robot.driveBase.getLeftSparkEncoderPosition();
+      rightEncoder = Robot.driveBase.getRightSparkEncoderPosition();
+    }
+  }
 
     // System.out.println("encoders: " + leftEncoder + ", " + rightEncoder);
   
@@ -215,18 +257,22 @@ public class DriveMotionProfile extends Command {
     double l = left.calculate(leftEncoder);
     double r = right.calculate(rightEncoder);
 
+    /* Code below dependent on the NavX. Right now, is not required for this command. If uncommented, need a condition to 
+      check if NavX is null, otherwise if NavX is unplugged, robot code will crash
+     */
+
     // Calculates the angle offset for PID
-    // It tracks the wrong angle (mirrors the correct one)
-    double gyroHeading;
-    if(isReversed) {
-      gyroHeading = Pathfinder.boundHalfDegrees(-1 * Robot.sensors.getYawDoubleForPathfinder());   // Assuming the gyro is giving a value in degrees
-    }
-    else {
-      gyroHeading = Pathfinder.boundHalfDegrees(Robot.sensors.getYawDoubleForPathfinder());   // Assuming the gyro is giving a value in degrees
-    }
-    double desiredHeading = Pathfinder.boundHalfDegrees(Pathfinder.r2d(left.getHeading()));  // Should also be in degrees 
-    // Make sure gyro and desired angle match up [-180, 180], navX reports the opposite orientation as Pathfinder expects
-    double angleDifference = Pathfinder.boundHalfDegrees(desiredHeading - gyroHeading);    
+    // // It tracks the wrong angle (mirrors the correct one)
+    // double gyroHeading;
+    // if(isReversed) {
+    //   gyroHeading = Pathfinder.boundHalfDegrees(-1 * Robot.sensors.getYawDoubleForPathfinder());   // Assuming the gyro is giving a value in degrees
+    // }
+    // else {
+    //   gyroHeading = Pathfinder.boundHalfDegrees(Robot.sensors.getYawDoubleForPathfinder());   // Assuming the gyro is giving a value in degrees
+    // }
+    // double desiredHeading = Pathfinder.boundHalfDegrees(Pathfinder.r2d(left.getHeading()));  // Should also be in degrees 
+    // // Make sure gyro and desired angle match up [-180, 180], navX reports the opposite orientation as Pathfinder expects
+    // double angleDifference = Pathfinder.boundHalfDegrees(desiredHeading - gyroHeading);    
     
     // Making this constant higher helps prevent the robot from overturning (overturning also will make it not drive far enough in the correct direction)
     // TODO MAKE THE -1 HERE MATCH uP WITH THE DIRECTION THE ROBOT SHOULD TURN
@@ -265,7 +311,8 @@ public class DriveMotionProfile extends Command {
   @Override
   protected void end() {
     Robot.driveBase.stop();
-    Logger.consoleLog("EndingAngle: %s, LeftTicksTraveled: %s, RightTicksTraveled: %s, DistanceTraveled: %s", Pathfinder.boundHalfDegrees(Robot.sensors.getYawDoubleForPathfinder()), 
+    if(Robot.driveBase.getLeftDIOEncoder() != null && Robot.driveBase.getRightDIOEncoder() != null && Robot.sensors.getNavX() != null)
+       Logger.consoleLog("EndingAngle: %s, LeftTicksTraveled: %s, RightTicksTraveled: %s, DistanceTraveled: %s", Pathfinder.boundHalfDegrees(Robot.sensors.getYawDoubleForPathfinder()), 
                      (Robot.driveBase.getLeftDIOEncoderPosition() - initialLeftEncoder), (Robot.driveBase.getRightDIOEncoderPosition() - initialRightEncoder), MathUtils.convertDriveBaseTicksToInches(MathUtils.average((double)(Robot.driveBase.getLeftDIOEncoderPosition() - initialLeftEncoder), (double)(Robot.driveBase.getRightDIOEncoderPosition() - initialRightEncoder))));
   }
 

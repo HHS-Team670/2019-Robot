@@ -24,8 +24,12 @@ public class Pose {
    * Makes new pose using current robot encoder values and angles. Does everything in ticks using the DIO Encoders
    */
   public Pose() {
-    this(Robot.driveBase.getLeftDIOEncoderPosition(), Robot.driveBase.getRightDIOEncoderPosition(), Robot.sensors.getYawDouble(), 
-         Robot.driveBase.getLeftDIOEncoderVelocityTicks(), Robot.driveBase.getRightDIOEncoderVelocityTicks());
+  
+   // Scuffed way of passing in either the Spark encoder or the DIO Encoder based on whether the DIO Encoder is null, because this constructor call has to be the first line.
+   // I'm expecting one of you to find a better way to write this, so if so, we should probably change this
+   this((Robot.driveBase.getLeftDIOEncoder() == null) ? Robot.driveBase.getLeftDIOEncoderPosition() : Robot.driveBase.getLeftSparkEncoderPosition(),
+   (Robot.driveBase.getRightDIOEncoder() == null) ? Robot.driveBase.getRightDIOEncoderPosition() : Robot.driveBase.getRightSparkEncoderPosition(), Robot.sensors.getYawDouble(), Robot.driveBase.getLeftDIOEncoderVelocityTicks(), Robot.driveBase.getRightDIOEncoderVelocityTicks());
+  
   }
 
   /**

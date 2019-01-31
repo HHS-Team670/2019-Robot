@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
@@ -40,9 +41,15 @@ public class Intake extends BaseIntake {
     baseVictor = new VictorSPX(RobotMap.INTAKE_BASE_VICTOR);
     rollerVictor = new VictorSPX(RobotMap.INTAKE_ROLLER_VICTOR);
 
-    baseVictorEncoder = new Encoder(RobotMap.INTAKE_BASE_ENCODER_CHANNEL_A, RobotMap.INTAKE_BASE_ENCODER_CHANNEL_B, false, EncodingType.k4X);
+    try{
+     baseVictorEncoder = new Encoder(RobotMap.INTAKE_BASE_ENCODER_CHANNEL_A, RobotMap.INTAKE_BASE_ENCODER_CHANNEL_B, false, EncodingType.k4X);
+     enableBaseMotionMagic();
+    } catch (RuntimeException ex){
+      DriverStation.reportError("Error instantiating intakeEncoder: " + ex.getMessage(), true);
+      baseVictorEncoder = null;
+    }
 
-    enableBaseMotionMagic();
+   
   }
 
   // May need to set tolerance
