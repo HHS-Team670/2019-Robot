@@ -230,6 +230,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
 
+    table.getEntry("teleopState").setString("teleop started");
+
     Logger.consoleLog("Teleop Started");
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
@@ -239,8 +241,7 @@ public class Robot extends TimedRobot {
       autonomousCommand.cancel();
     }
     // leds.socketSetup(RobotConstants.LED_PORT);
-    String[] armSequence = table.getEntry("armSequence").getStringArray(new String[1]);
-    Scheduler.getInstance().add(new BuildArmSequence(armSequence, arm));
+    
   }
 
   /**
@@ -248,6 +249,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
+    String[] armSequence = table.getEntry("armSequence").getStringArray(new String[1]);
+    if (armSequence != null) {
+      Scheduler.getInstance().add(new BuildArmSequence(armSequence, arm));
+      table.getEntry("armSequence").setString(null);
+    }
     Scheduler.getInstance().run();
   }
 
