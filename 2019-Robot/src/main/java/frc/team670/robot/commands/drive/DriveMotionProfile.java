@@ -13,6 +13,7 @@ package frc.team670.robot.commands.drive;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.Robot;
@@ -87,61 +88,66 @@ public class DriveMotionProfile extends Command {
    * Creates a DriveMotionProfile from a text file
    * @param fileName path to trajectory file inside the output folder in the deploy directory
    */
-  public DriveMotionProfile(String fileName, boolean isReversed) throws FileNotFoundException {
-    if(Robot.sensors.getNavX() == null){
-      super.cancel();
-    }
+  public DriveMotionProfile(String fileName, boolean isReversed) {
+    try {
+      this.isReversed = isReversed;
 
-    this.isReversed = isReversed;
+      String binary = "traj";
+      String csv = "csv";
+      boolean encoderFollowersSet = false;
 
-    String binary = "traj";
-    String csv = "csv";
-    boolean encoderFollowersSet = false;
-    
-    requires(Robot.driveBase);
+      requires(Robot.driveBase);
 
-    String leftPathname = Filesystem.getDeployDirectory() + "/output/" + fileName.replace(".pf1", ".left.pf1");
-    String rightPathname = Filesystem.getDeployDirectory() + "/output/" + fileName.replace(".pf1", ".right.pf1");
-    Logger.consoleLog("Left path name: " + leftPathname);
-    Logger.consoleLog("Right path name: " + rightPathname);
-    File leftFile = new File(leftPathname);
-    File rightFile = new File(rightPathname);
+      String leftPathname = Filesystem.getDeployDirectory() + "/output/" + fileName.replace(".pf1", ".left.pf1");
+      String rightPathname = Filesystem.getDeployDirectory() + "/output/" + fileName.replace(".pf1", ".right.pf1");
+      Logger.consoleLog("Left path name: " + leftPathname);
+      Logger.consoleLog("Right path name: " + rightPathname);
+      File leftFile = new File(leftPathname);
+      File rightFile = new File(rightPathname);
 
-    String extension = "";
-    int i = fileName.lastIndexOf('.');
-    if (i > 0) {
-        extension = fileName.substring(i+1);
-    }
+      String extension = "";
+      int i = fileName.lastIndexOf('.');
+      if (i > 0) {
+        extension = fileName.substring(i + 1);
+      }
 
-    if (extension.equals(csv)){
-      leftTrajectory = Pathfinder.readFromCSV(leftFile);
-      rightTrajectory = Pathfinder.readFromCSV(rightFile);
-    }
-    else if (extension.equals(binary)) {
-      leftTrajectory = Pathfinder.readFromFile(leftFile);
-      rightTrajectory = Pathfinder.readFromFile(rightFile);
-    } else {
-      // // Set the max velocity to something lower than the actual max velocity, otherwise we get motor outputs >1.0 and <-1.0 which makes us unable to turn properly
-      // // For here let's set it to 
-      // config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, TIME_STEP, MAX_VELOCITY, MAX_ACCELERATION, MAX_JERK);
-      // Trajectory trajectory = Pathfinder.generate(waypoints, config);
-      // // follow old method of splitting one trajectory into left and right if generated with waypoints
+      if (extension.equals(csv)) {
+        leftTrajectory = Pathfinder.readFromCSV(leftFile);
+        rightTrajectory = Pathfinder.readFromCSV(rightFile);
+      } else if (extension.equals(binary)) {
+        leftTrajectory = Pathfinder.readFromFile(leftFile);
+        rightTrajectory = Pathfinder.readFromFile(rightFile);
+      } else {
+        // // Set the max velocity to something lower than the actual max velocity,
+        // otherwise we get motor outputs >1.0 and <-1.0 which makes us unable to turn
+        // properly
+        // // For here let's set it to
+        // config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
+        // Trajectory.Config.SAMPLES_HIGH, TIME_STEP, MAX_VELOCITY, MAX_ACCELERATION,
+        // MAX_JERK);
+        // Trajectory trajectory = Pathfinder.generate(waypoints, config);
+        // // follow old method of splitting one trajectory into left and right if
+        // generated with waypoints
+        // modifier = new TankModifier(trajectory).modify(RobotConstants.WHEEL_BASE);
+        // left = new EncoderFollower(modifier.getLeftTrajectory());
+        // right= new EncoderFollower(modifier.getRightTrajectory());
+        // encoderFollowersSet = true;
+        throw new FileNotFoundException("DriveMotionProfile did not receive a valid filename.");
+      }
+      // Don't need this if reading in left and right trajectories
       // modifier = new TankModifier(trajectory).modify(RobotConstants.WHEEL_BASE);
-      // left = new EncoderFollower(modifier.getLeftTrajectory());
-      // right= new EncoderFollower(modifier.getRightTrajectory());
-      // encoderFollowersSet = true;
-      throw new FileNotFoundException("DriveMotionProfile did not receive a valid filename.");
-    }
-    // Don't need this if reading in left and right trajectories
-    // modifier = new TankModifier(trajectory).modify(RobotConstants.WHEEL_BASE);
 
-    // TODO figure out why these are switched and switch them back
-    if (isReversed) {
-      left = new EncoderFollower(leftTrajectory);
-      right = new EncoderFollower(rightTrajectory);
-    } else {
-      left = new EncoderFollower(rightTrajectory);
-      right = new EncoderFollower(leftTrajectory);
+      // TODO figure out why these are switched and switch them back
+      if (isReversed) {
+        left = new EncoderFollower(leftTrajectory);
+        right = new EncoderFollower(rightTrajectory);
+      } else {
+        left = new EncoderFollower(rightTrajectory);
+        right = new EncoderFollower(leftTrajectory);
+      }
+    } catch (FileNotFoundException ex) {
+      DriverStation.reportError("Error reading in File for DriveMotionProfile" + ex.getMessage(), true);
+      super.cancel();
     }
   }
 
@@ -234,21 +240,23 @@ public class DriveMotionProfile extends Command {
       check if NavX is null, otherwise if NavX is unplugged, robot code will crash
      */
 
-    // Calculates the angle offset for PID
-    // // It tracks the wrong angle (mirrors the correct one)
-    // double gyroHeading;
-    // if(isReversed) {
-    //   gyroHeading = Pathfinder.boundHalfDegrees(-1 * Robot.sensors.getYawDoubleForPathfinder());   // Assuming the gyro is giving a value in degrees
-    // }
-    // else {
-    //   gyroHeading = Pathfinder.boundHalfDegrees(Robot.sensors.getYawDoubleForPathfinder());   // Assuming the gyro is giving a value in degrees
-    // }
-    // double desiredHeading = Pathfinder.boundHalfDegrees(Pathfinder.r2d(left.getHeading()));  // Should also be in degrees 
-    // // Make sure gyro and desired angle match up [-180, 180], navX reports the opposite orientation as Pathfinder expects
-    // double angleDifference = Pathfinder.boundHalfDegrees(desiredHeading - gyroHeading);    
-    
-    // Making this constant higher helps prevent the robot from overturning (overturning also will make it not drive far enough in the correct direction)
-    // TODO MAKE THE -1 HERE MATCH uP WITH THE DIRECTION THE ROBOT SHOULD TURN
+     if(Robot.sensors.getNavX() != null){
+      // Calculates the angle offset for PID
+      // // It tracks the wrong angle (mirrors the correct one)
+      // double gyroHeading;
+      // if(isReversed) {
+      //   gyroHeading = Pathfinder.boundHalfDegrees(-1 * Robot.sensors.getYawDoubleForPathfinder());   // Assuming the gyro is giving a value in degrees
+      // }
+      // else {
+      //   gyroHeading = Pathfinder.boundHalfDegrees(Robot.sensors.getYawDoubleForPathfinder());   // Assuming the gyro is giving a value in degrees
+      // }
+      // double desiredHeading = Pathfinder.boundHalfDegrees(Pathfinder.r2d(left.getHeading()));  // Should also be in degrees 
+      // // Make sure gyro and desired angle match up [-180, 180], navX reports the opposite orientation as Pathfinder expects
+      // double angleDifference = Pathfinder.boundHalfDegrees(desiredHeading - gyroHeading);    
+      
+      // Making this constant higher helps prevent the robot from overturning (overturning also will make it not drive far enough in the correct direction)
+      // TODO MAKE THE -1 HERE MATCH uP WITH THE DIRECTION THE ROBOT SHOULD TURN
+     }
     double turn = 0;//0.8 * (-1.0/ANGLE_DIVIDE_CONSTANT) * angleDifference;
     
     
