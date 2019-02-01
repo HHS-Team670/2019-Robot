@@ -602,7 +602,7 @@ public class DriveBase extends Subsystem {
   /**
    * Returns the velocity of the MustangDriveBaseEncoder used for the right motors in inches/second
    */
-  public double getRightMustangEncoderPositionInInchesPerSecond(){
+  public double getRightMustangEncoderVelocityInInchesPerSecond(){
     return rightMustangEncoder.getVelocityInches();
   }
 }
