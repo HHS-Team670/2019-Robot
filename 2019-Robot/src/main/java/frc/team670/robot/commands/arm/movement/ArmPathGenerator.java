@@ -7,12 +7,9 @@
 
 package frc.team670.robot.commands.arm.movement;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import frc.team670.robot.commands.arm.SetArmState;
 import frc.team670.robot.commands.arm.armTransitions.ArmTransition;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;

@@ -35,7 +35,7 @@ public class MoveArmTest {
         TestIntake intake = new TestIntake();
         Arm arm = new Arm(elbow, wrist, extension, intake);
         Arm.setState(Arm.getArmState(LegalState.NEUTRAL));
-        ArmState dest = Arm.getArmState(LegalState.PLACE_HATCH_ROCKET_LOW_FORWARD);
+        ArmState dest = Arm.getArmState(LegalState.LOW_HATCH_FORWARD);
 
         CommandGroup moveArm = ArmPathGenerator.getPath(dest, arm);
 
@@ -59,7 +59,7 @@ public class MoveArmTest {
         
         assertEquals(true, MathUtils.isWithinTolerance(isIntakeDeployed, intake.getIntakeAngleInDegrees(), 0.3));
 
-        Arm.setState(Arm.getArmState(LegalState.PLACE_HATCH_ROCKET_LOW_FORWARD));
+        Arm.setState(Arm.getArmState(LegalState.LOW_HATCH_FORWARD));
         dest = Arm.getArmState(LegalState.NEUTRAL);
         moveArm = ArmPathGenerator.getPath(dest, arm);
         
