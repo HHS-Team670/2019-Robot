@@ -18,10 +18,8 @@ public class RobotConstants {
     public static final int DIO_TICKS_PER_ROTATION = 1024;
     /** The number of ticks per inch of wheel travel */
     public static final int DIO_TICKS_PER_INCH = (int) (DIO_TICKS_PER_ROTATION / (Math.PI * DRIVE_BASE_WHEEL_DIAMETER));
-    /**The number of ticks per rotation of a drivebase wheel for the Spark Encoders (TODO: check value)*/
-    public static final int SPARK_TICKS_PER_ROTATION = 1024;
-    /** The number of ticks per inch of wheel travel */
-    public static final int SPARK_TICKS_PER_INCH = (int) (SPARK_TICKS_PER_ROTATION / (Math.PI * DRIVE_BASE_WHEEL_DIAMETER));
+     /** The number of ticks per rotation of a drivebase wheel for the SPARK Encoders  */
+     public static final int SPARK_TICKS_PER_ROTATION = 1024;
 
     // TODO Set all of these!!!!
     public static double EXTENSION_TICKS_PER_MOTOR_ROTATION = 4096; //Subject to change, measure real value

@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.team670.robot.commands.drive.teleop.XboxRocketLeagueDrive;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
-import frc.team670.robot.dataCollection.sensors.MustangEncoder;
+import frc.team670.robot.dataCollection.sensors.MustangDriveBaseEncoder;
 import frc.team670.robot.utils.functions.MathUtils;
 
 /**
@@ -43,9 +43,8 @@ public class DriveBase extends Subsystem {
   private DifferentialDrive driveTrain;
   private List<CANSparkMax> leftControllers, rightControllers;
   private List<CANSparkMax> allMotors;
-  private MustangEncoder leftMustangEncoder, rightMustangEncoder;
+  private MustangDriveBaseEncoder leftMustangEncoder, rightMustangEncoder;
   private Encoder leftDIOEncoder, rightDIOEncoder;
-  private CANEncoder leftCANEncoder, rightCANEncoder;
 
 
   private final double P_P = 0.1, P_I = 1E-4, P_D = 1, P_FF = 0; // Position PID Values. Set based off the default in
@@ -66,6 +65,7 @@ public class DriveBase extends Subsystem {
     allMotors.addAll(rightControllers);
 
     setMotorsInvert(leftControllers, false);
+
     // Invert this so it will work properly with the CANPIDController
     // and then invert the SpeedController to compensate for automatic inversion.
     setMotorsInvert(rightControllers, true);
@@ -116,9 +116,6 @@ public class DriveBase extends Subsystem {
       rightDIOEncoder = null;
     }
 
-    leftMustangEncoder = new MustangEncoder(leftDIOEncoder, left1.getEncoder());
-    rightMustangEncoder = new MustangEncoder(rightDIOEncoder, right1.getEncoder());
-
     double distancePerPulse = (1 / RobotConstants.DIO_TICKS_PER_ROTATION)
         * (Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
 
@@ -128,15 +125,12 @@ public class DriveBase extends Subsystem {
       leftDIOEncoder.setReverseDirection(true); // These have been set properly.
       rightDIOEncoder.setReverseDirection(false);
     }
+
+    leftMustangEncoder = new MustangDriveBaseEncoder(leftDIOEncoder, left1.getEncoder());
+    rightMustangEncoder = new MustangDriveBaseEncoder(rightDIOEncoder, right1.getEncoder());
+
   }
 
-  public MustangEncoder getLeftMustangEncoder(){
-    return leftMustangEncoder;
-  }
-
-  public MustangEncoder getRightMustangEncoder(){
-    return rightMustangEncoder;
-  }
 
   /**
    * 
@@ -541,5 +535,74 @@ public class DriveBase extends Subsystem {
     for (CANSparkMax m : motors) {
       m.setRampRate(rampRate);
     }
+  }
+
+  /**
+   * Returns the MustangDriveBaseEncoder used for the left motors
+   */
+  public MustangDriveBaseEncoder getLeftMustangDriveBaseEncoder(){
+    return leftMustangEncoder;
+  }
+
+  /**
+   * Returns the MustangDriveBaseEncoder used for the right motors
+   */
+  public MustangDriveBaseEncoder getRightMustangDriveBaseEncoder(){
+    return rightMustangEncoder;
+  }
+
+  /**
+   * Returns the position of the MustangDriveBaseEncoder used for the left motors in ticks
+   */
+  public int getLeftMustangEncoderPositionInTicks(){
+    return leftMustangEncoder.getPositionTicks();
+  }
+
+  /**
+   * Returns the position of the MustangDriveBaseEncoder used for the right motors in ticks
+   */
+  public int getRightMustangEncoderPositionInTicks(){
+    return rightMustangEncoder.getPositionTicks();
+  }
+
+  /**
+   * Returns the position of the MustangDriveBaseEncoder used for the left motors in inches
+   */
+  public double getLeftMustangEncoderPositionInInches(){
+    return leftMustangEncoder.getPositionInches();
+  }
+
+  /**
+   * Returns the position of the MustangDriveBaseEncoder used for the right motors in inches
+   */
+  public double getRightMustangEncoderPositionInInches(){
+    return rightMustangEncoder.getPositionInches();
+  }
+    /**
+   * Returns the velocity of the MustangDriveBaseEncoder used for the left motors in ticks/second
+   */
+  public double getLeftMustangEncoderVelocityInTicksPerSecond(){
+    return leftMustangEncoder.getVelocityTicks();
+  }
+
+  /**
+   * Returns the velocity of the MustangDriveBaseEncoder used for the right motors in ticks/second
+   */
+  public double getRightMustangEncoderVelocityInTicksPerSecond(){
+    return rightMustangEncoder.getVelocityTicks();
+  }
+
+  /**
+   * Returns the velocity of the MustangDriveBaseEncoder used for the left motors in inches/second
+   */
+  public double getLeftMustangEncoderVelocityInInchesPerSecond(){
+    return leftMustangEncoder.getVelocityInches();
+  }
+
+  /**
+   * Returns the velocity of the MustangDriveBaseEncoder used for the right motors in inches/second
+   */
+  public double getRightMustangEncoderPositionInInchesPerSecond(){
+    return rightMustangEncoder.getVelocityInches();
   }
 }

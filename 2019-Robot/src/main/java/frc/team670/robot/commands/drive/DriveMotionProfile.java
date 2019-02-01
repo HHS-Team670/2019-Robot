@@ -164,12 +164,12 @@ public class DriveMotionProfile extends Command {
   //Default: use DIO Encoders
 
     if(isReversed) {
-        initialLeftEncoder = -1 * Robot.driveBase.getLeftMustangEncoder().getPosition();
-        initialRightEncoder = -1 * Robot.driveBase.getRightMustangEncoder().getPosition();
+        initialLeftEncoder = -1 * Robot.driveBase.getLeftMustangDriveBaseEncoder().getPositionTicks();
+        initialRightEncoder = -1 * Robot.driveBase.getRightMustangDriveBaseEncoder().getPositionTicks();
     }
     else {
-        initialLeftEncoder = Robot.driveBase.getLeftMustangEncoder().getPosition();
-        initialRightEncoder = Robot.driveBase.getRightMustangEncoder().getPosition();
+        initialLeftEncoder = Robot.driveBase.getLeftMustangDriveBaseEncoder().getPositionTicks();
+        initialRightEncoder = Robot.driveBase.getRightMustangDriveBaseEncoder().getPositionTicks();
     }
 
     left.configureEncoder(initialLeftEncoder, RobotConstants.DIO_TICKS_PER_ROTATION, RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
@@ -216,12 +216,12 @@ public class DriveMotionProfile extends Command {
   //Default: use DIO Encoders
 
     if(isReversed) {
-      leftEncoder = -1 * Robot.driveBase.getLeftMustangEncoder().getPosition();
-      rightEncoder = -1 * Robot.driveBase.getRightMustangEncoder().getPosition();
+      leftEncoder = -1 * Robot.driveBase.getLeftMustangDriveBaseEncoder().getPositionTicks();
+      rightEncoder = -1 * Robot.driveBase.getRightMustangDriveBaseEncoder().getPositionTicks();
     }
     else {
-      leftEncoder = Robot.driveBase.getLeftMustangEncoder().getPosition();
-      rightEncoder = Robot.driveBase.getRightMustangEncoder().getPosition();
+      leftEncoder = Robot.driveBase.getLeftMustangDriveBaseEncoder().getPositionTicks();
+      rightEncoder = Robot.driveBase.getRightMustangDriveBaseEncoder().getPositionTicks();
     }  
 
     // System.out.println("encoders: " + leftEncoder + ", " + rightEncoder);
@@ -286,7 +286,7 @@ public class DriveMotionProfile extends Command {
     Robot.driveBase.stop();
     if(Robot.sensors.getNavX() != null)
        Logger.consoleLog("EndingAngle: %s, LeftTicksTraveled: %s, RightTicksTraveled: %s, DistanceTraveled: %s", Pathfinder.boundHalfDegrees(Robot.sensors.getYawDoubleForPathfinder()), 
-                     (Robot.driveBase.getLeftMustangEncoder().getPosition() - initialLeftEncoder), (Robot.driveBase.getRightMustangEncoder().getPosition() - initialRightEncoder), MathUtils.convertDriveBaseTicksToInches(MathUtils.average((double)(Robot.driveBase.getLeftMustangEncoder().getPosition() - initialLeftEncoder), (double)(Robot.driveBase.getRightMustangEncoder().getPosition() - initialRightEncoder))));
+                     (Robot.driveBase.getLeftMustangDriveBaseEncoder().getPositionTicks() - initialLeftEncoder), (Robot.driveBase.getRightMustangDriveBaseEncoder().getPositionTicks() - initialRightEncoder), MathUtils.convertDriveBaseTicksToInches(MathUtils.average((double)(Robot.driveBase.getLeftMustangDriveBaseEncoder().getPositionTicks() - initialLeftEncoder), (double)(Robot.driveBase.getRightMustangDriveBaseEncoder().getPositionTicks() - initialRightEncoder))));
   }
 
   // Called when another command which requires one or more of the same

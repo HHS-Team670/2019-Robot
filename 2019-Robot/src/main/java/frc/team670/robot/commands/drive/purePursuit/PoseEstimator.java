@@ -54,8 +54,8 @@ public class PoseEstimator {
 	}
 
 	public void update() {
-		double leftDist = driveBase.getLeftDIODistanceInches();
-		double rightDist = driveBase.getRightDIODistanceInches();
+		double leftDist = driveBase.getLeftMustangEncoderPositionInInches();
+		double rightDist = driveBase.getRightMustangEncoderPositionInInches();
 		double deltaLeftDist = leftDist - prevLeftDist;
 		double deltaRightDist = rightDist - prevRightDist;
 		Rotation deltaHeading = prevPose.getRotation().inverse().rotate(sensors.getRotationAngle());

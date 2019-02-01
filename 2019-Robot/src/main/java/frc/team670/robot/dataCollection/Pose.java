@@ -21,14 +21,10 @@ public class Pose {
   private long timeOfPose;
 
   /**
-   * Makes new pose using current robot encoder values and angles. Does everything in ticks using the DIO Encoders
+   * Makes new pose using current robot encoder values and angles. Does everything in ticks 
    */
   public Pose() {
-  
-   // Scuffed way of passing in either the Spark encoder or the DIO Encoder based on whether the DIO Encoder is null, because this constructor call has to be the first line.
-   // I'm expecting one of you to find a better way to write this, so if so, we should probably change this
-   this(Robot.driveBase.getLeftMustangEncoder().getPosition(), Robot.driveBase.getRightMustangEncoder().getPosition(), Robot.sensors.getYawDouble(), Robot.driveBase.getLeftDIOEncoderVelocityTicks(), Robot.driveBase.getRightDIOEncoderVelocityTicks());
-  
+   this(Robot.driveBase.getLeftMustangEncoderPositionInTicks(), Robot.driveBase.getRightMustangEncoderPositionInTicks(), Robot.sensors.getYawDouble(), Robot.driveBase.getLeftMustangEncoderVelocityInTicksPerSecond(), Robot.driveBase.getRightMustangEncoderVelocityInTicksPerSecond());  
   }
 
   /**
@@ -122,33 +118,33 @@ public Pose(double x, double y, double angle, int leftEncoderPosition, int right
   }
 
   public void update() {
-    update(Robot.driveBase.getLeftDIOEncoderPosition(), Robot.driveBase.getRightDIOEncoderPosition(), Robot.sensors.getYawDouble(),
-           Robot.driveBase.getLeftDIOEncoderVelocityTicks(), Robot.driveBase.getRightDIOEncoderVelocityTicks());
+    update(Robot.driveBase.getLeftMustangEncoderPositionInTicks(), Robot.driveBase.getRightMustangEncoderPositionInTicks(), Robot.sensors.getYawDouble(),
+           Robot.driveBase.getLeftMustangEncoderVelocityInTicksPerSecond(), Robot.driveBase.getRightMustangEncoderVelocityInTicksPerSecond());
   }
 
   /**
-   * The X Position in DIO encoder ticks
+   * The X Position in Mustang encoder ticks
    */
   public long getPosX(){
     return currRobotX;
   }
 
   /**
-   * The Y Position in DIO Encoder ticks
+   * The Y Position in Mustang Encoder ticks
    */
   public long getPosY(){
     return currRobotY;
   }
 
   /**
-   * The left tick value in DIO Encoder ticks
+   * The left tick value in Mustang Encoder ticks
    */
  public double getLeftEncoderTick(){
     return leftEncoderTick;
   }
 
   /**
-   * The right tick value in DIO Encoder ticks
+   * The right tick value in Mustang Encoder ticks
    */
   public double getRightEncoderTick(){
     return rightEncoderTick;
@@ -166,14 +162,14 @@ public Pose(double x, double y, double angle, int leftEncoderPosition, int right
   }
 
   /**
-   * Gets the left side of the robot's velocity at the time of the pose in ticks/second using DIO Encoder ticks
+   * Gets the left side of the robot's velocity at the time of the pose in ticks/second using Mustang Encoder ticks
    */
   public double getLeftVelocity() {
     return leftVelocity;
   }
 
   /**
-   * Gets the right side of the robot's velocity at the time of the pose in ticks/second using DIO Encoder ticks
+   * Gets the right side of the robot's velocity at the time of the pose in ticks/second using Mustang Encoder ticks
    */
   public double getRightVelocity() {
     return rightVelocity;
