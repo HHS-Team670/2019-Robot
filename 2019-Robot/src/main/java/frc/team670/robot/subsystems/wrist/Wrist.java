@@ -35,6 +35,9 @@ public class Wrist extends BaseWrist {
   private final int FORWARD_SOFT_LIMIT = 0, REVERSE_SOFT_LIMIT = 0; // TODO figure out the values in rotations
   private final int CONTINUOUS_CURRENT_LIMIT = 20, PEAK_CURRENT_LIMIT = 0; // TODO set current limit in Amps
 
+  private static int WRIST_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 15000; // TODO set this
+  private static int WRIST_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS = 6000; // TODO set this
+
   public Wrist() {
     wristRotation = new TalonSRX(RobotMap.ARM_WRIST_ROTATION); 
     wristRotation.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
@@ -42,8 +45,8 @@ public class Wrist extends BaseWrist {
 		wristRotation.config_kP(kSlotMotionMagic, kP, kTimeoutMs);
 		wristRotation.config_kI(kSlotMotionMagic, kI, kTimeoutMs);
     wristRotation.config_kD(kSlotMotionMagic, kD, kTimeoutMs);
-    wristRotation.configMotionCruiseVelocity(RobotConstants.MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
-    wristRotation.configMotionAcceleration(RobotConstants.MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+    wristRotation.configMotionCruiseVelocity(WRIST_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+    wristRotation.configMotionAcceleration(WRIST_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
     
     wristRotation.configNominalOutputForward(0, RobotConstants.kTimeoutMs);
     wristRotation.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);

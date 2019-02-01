@@ -69,9 +69,6 @@ public class RobotConstants {
     public static final int kTimeoutMs = 0;
     public static final int ALLOWABLE_PID_ERROR = 0;
 
-    public static int MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 15000; // TODO set this
-    public static int MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS = 6000; // TODO set this
-
     // Different values/encoder positions to set arm to
     public static int ARM_RESET_TIMEOUTMS = 0;
     public static double ELBOW_START_POS = 6000;

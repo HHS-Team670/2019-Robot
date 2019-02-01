@@ -36,6 +36,9 @@ public class Intake extends BaseIntake {
   private final int FORWARD_SOFT_LIMIT = 0, REVERSE_SOFT_LIMIT = 0; // TODO figure out the values in rotations
   private static final double RAMP_RATE = 0.1;
 
+  private static int INTAKE_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 15000; // TODO set this
+  private static int INTAKE_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS = 6000; // TODO set this
+
 
   public Intake() {
     baseVictor = new VictorSPX(RobotMap.INTAKE_BASE_VICTOR);
@@ -59,8 +62,8 @@ public class Intake extends BaseIntake {
 		baseVictor.config_kP(kSlotMotionMagic, kP, kTimeoutMs);
 		baseVictor.config_kI(kSlotMotionMagic, kI, kTimeoutMs);
     baseVictor.config_kD(kSlotMotionMagic, kD, kTimeoutMs);
-    baseVictor.configMotionCruiseVelocity(RobotConstants.MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
-    baseVictor.configMotionAcceleration(RobotConstants.MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+    baseVictor.configMotionCruiseVelocity(INTAKE_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+    baseVictor.configMotionAcceleration(INTAKE_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
     
     baseVictor.configNominalOutputForward(0, RobotConstants.kTimeoutMs);
     baseVictor.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
