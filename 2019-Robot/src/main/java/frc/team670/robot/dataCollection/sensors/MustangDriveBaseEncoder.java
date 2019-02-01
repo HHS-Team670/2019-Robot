@@ -17,7 +17,7 @@ import frc.team670.robot.utils.functions.MathUtils;
 
 /**
  * A Mustang Encoder holds both a DIOEncoder and a Spark Encoder. The Spark Encoder will only be used if
- * the DIOEncoder is not plugged in properly (is null).
+ * the DIOEncoder is not plugged in properly (is null). Does PIDOutput in ticks.
  */
 public class MustangDriveBaseEncoder implements PIDSource {
     private PIDSourceType type;
