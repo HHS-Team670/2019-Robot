@@ -101,16 +101,14 @@ public class DriveBase extends Subsystem {
     // DIO Encoders
 
     try {
-      leftDIOEncoder = new Encoder(RobotMap.LEFT_ENCODER_CHANNEL_A, RobotMap.LEFT_ENCODER_CHANNEL_B, false,
-          EncodingType.k4X);
+      leftDIOEncoder = new Encoder(RobotMap.LEFT_ENCODER_CHANNEL_A, RobotMap.LEFT_ENCODER_CHANNEL_B, false, EncodingType.k4X);
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error Instantiating leftDIOEncoder: " + ex.getMessage(), true);
       leftDIOEncoder = null;
     }
     
     try {
-      rightDIOEncoder = new Encoder(RobotMap.RIGHT_ENCODER_CHANNEL_A, RobotMap.RIGHT_ENCODER_CHANNEL_B, false,
-          EncodingType.k4X);
+      rightDIOEncoder = new Encoder(RobotMap.RIGHT_ENCODER_CHANNEL_A, RobotMap.RIGHT_ENCODER_CHANNEL_B, false, EncodingType.k4X);
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error Instantiating rightDIOEncoder: " + ex.getMessage(), true);
       rightDIOEncoder = null;
@@ -287,11 +285,17 @@ public class DriveBase extends Subsystem {
     return (int) (right1.getEncoder().getPosition() / RobotConstants.SPARK_TICKS_PER_ROTATION);
   }
 
-  public int getLeftSparkVelocity() {
+  /**
+   * Returns the velocity of the left Spark controller in RPM
+   */
+  public int getLeftSparkVelocityInRotationsPerMinute() {
     return (int) left1.getEncoder().getVelocity();
   }
 
-  public int getRightSparkVelocity() {
+  /**
+   * Returns the velocity of the right Spark controller in RPM
+   */
+  public int getRightSparkVelocityInRotationsPerMinute() {
     return (int) right1.getEncoder().getVelocity();
   }
 

@@ -265,29 +265,31 @@ public class Climber extends Subsystem {
    * @param tiltAdjustment The amount of adjustment desired for the robot
    */
   public void handleTilt(boolean goingUp, double tiltTolerance, double tiltAdjustment){
-    if (goingUp) {
-      // If tipped down (front is down)
-      if (sensors.getPitchDouble() < -tiltTolerance) {
-        setFrontPistonOutputRange(MINIMUM_PISTON_POWER, MAXIMUM_PISTON_POWER + tiltAdjustment);
-        setBackPistonOutputRange(MINIMUM_PISTON_POWER, MAXIMUM_PISTON_POWER - tiltAdjustment);
+    if (sensors.getNavX() != null) {
+      if (goingUp) {
+        // If tipped down (front is down)
+        if (sensors.getPitchDouble() < -tiltTolerance) {
+          setFrontPistonOutputRange(MINIMUM_PISTON_POWER, MAXIMUM_PISTON_POWER + tiltAdjustment);
+          setBackPistonOutputRange(MINIMUM_PISTON_POWER, MAXIMUM_PISTON_POWER - tiltAdjustment);
 
-        // If tipped up (front is up)
-      } else if (sensors.getPitchDouble() > tiltTolerance) {
-        setFrontPistonOutputRange(MINIMUM_PISTON_POWER, MAXIMUM_PISTON_POWER - tiltAdjustment);
-        setBackPistonOutputRange(MINIMUM_PISTON_POWER, MAXIMUM_PISTON_POWER + tiltAdjustment);
+          // If tipped up (front is up)
+        } else if (sensors.getPitchDouble() > tiltTolerance) {
+          setFrontPistonOutputRange(MINIMUM_PISTON_POWER, MAXIMUM_PISTON_POWER - tiltAdjustment);
+          setBackPistonOutputRange(MINIMUM_PISTON_POWER, MAXIMUM_PISTON_POWER + tiltAdjustment);
+        }
       }
-    }
 
-    // For going down
-    else {
-      // If tipped down (front is down)
-      if (sensors.getPitchDouble() < -tiltTolerance) {
-        setFrontPistonOutputRange(MINIMUM_PISTON_POWER + tiltAdjustment,MINIMUM_PISTON_POWER);
-        setBackPistonOutputRange(MINIMUM_PISTON_POWER - tiltAdjustment, MINIMUM_PISTON_POWER);
-        // If tipped up (front is up)
-      } else if (sensors.getPitchDouble() > tiltTolerance) {
-        setFrontPistonOutputRange(MINIMUM_PISTON_POWER - tiltAdjustment, MINIMUM_PISTON_POWER);
-        setBackPistonOutputRange(MINIMUM_PISTON_POWER + tiltAdjustment, MINIMUM_PISTON_POWER);
+      // For going down
+      else {
+        // If tipped down (front is down)
+        if (sensors.getPitchDouble() < -tiltTolerance) {
+          setFrontPistonOutputRange(MINIMUM_PISTON_POWER + tiltAdjustment, MINIMUM_PISTON_POWER);
+          setBackPistonOutputRange(MINIMUM_PISTON_POWER - tiltAdjustment, MINIMUM_PISTON_POWER);
+          // If tipped up (front is up)
+        } else if (sensors.getPitchDouble() > tiltTolerance) {
+          setFrontPistonOutputRange(MINIMUM_PISTON_POWER - tiltAdjustment, MINIMUM_PISTON_POWER);
+          setBackPistonOutputRange(MINIMUM_PISTON_POWER + tiltAdjustment, MINIMUM_PISTON_POWER);
+        }
       }
     }
   }

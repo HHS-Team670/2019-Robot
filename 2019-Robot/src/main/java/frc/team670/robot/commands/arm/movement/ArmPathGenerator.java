@@ -44,11 +44,13 @@ public class ArmPathGenerator {
       transitions = (List<ArmTransition>)(List<?>)(AStarSearch.search(currentState, destination));
     } catch(ClassCastException e) {
       Logger.logException(e);
-      Logger.consoleLog("You really messed up.");
+      Logger.consoleLog("Edge passed in was not an ArmTransition. Command canceling");
+      movements.cancel();
       return movements;
     } catch (IllegalArgumentException e) {
       // Logger.logException(e);
-      Logger.consoleLog("IllegalArgumentException");
+      Logger.consoleLog("Passed in bad argument");
+      movements.cancel();
       return movements;
     // searched.put(currentState, transitions); //Stores current path in instance variable
     }

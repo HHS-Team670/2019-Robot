@@ -61,11 +61,6 @@ public class DriveMotionProfile extends Command {
    * Drives a Pathfinder Motion Profile using set Waypoints
    */
   public DriveMotionProfile(Waypoint[] waypoints, boolean isReversed) {
-    // If Nav
-    // if(Robot.sensors.getNavX() == null){
-    //   super.cancel();
-    // }
-
     requires(Robot.driveBase);
 
     this.isReversed = isReversed;
@@ -178,9 +173,13 @@ public class DriveMotionProfile extends Command {
         initialRightEncoder = Robot.driveBase.getRightMustangDriveBaseEncoder().getPositionTicks();
     }
 
-    left.configureEncoder(initialLeftEncoder, RobotConstants.DIO_TICKS_PER_ROTATION, RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
-    right.configureEncoder(initialRightEncoder, RobotConstants.DIO_TICKS_PER_ROTATION, RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);  
-  
+    if (Robot.driveBase.getLeftDIOEncoder() != null && Robot.driveBase.getRightDIOEncoder() != null) {
+      left.configureEncoder(initialLeftEncoder, RobotConstants.DIO_TICKS_PER_ROTATION, RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
+      right.configureEncoder(initialRightEncoder, RobotConstants.DIO_TICKS_PER_ROTATION, RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
+    } else {
+      left.configureEncoder(initialLeftEncoder, RobotConstants.SPARK_TICKS_PER_ROTATION, RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
+      right.configureEncoder(initialRightEncoder, RobotConstants.SPARK_TICKS_PER_ROTATION, RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
+    }
 
     Logger.consoleLog("isReversed: " + isReversed);
     Logger.consoleLog("initial encoders: " + initialLeftEncoder + ", " + initialRightEncoder);
@@ -222,12 +221,12 @@ public class DriveMotionProfile extends Command {
   //Default: use DIO Encoders
 
     if(isReversed) {
-      leftEncoder = -1 * Robot.driveBase.getLeftMustangDriveBaseEncoder().getPositionTicks();
-      rightEncoder = -1 * Robot.driveBase.getRightMustangDriveBaseEncoder().getPositionTicks();
+      leftEncoder = -1 * Robot.driveBase.getLeftMustangEncoderPositionInTicks();
+      rightEncoder = -1 * Robot.driveBase.getRightMustangEncoderPositionInTicks();
     }
     else {
-      leftEncoder = Robot.driveBase.getLeftMustangDriveBaseEncoder().getPositionTicks();
-      rightEncoder = Robot.driveBase.getRightMustangDriveBaseEncoder().getPositionTicks();
+      leftEncoder = Robot.driveBase.getLeftMustangEncoderPositionInTicks();
+      rightEncoder = Robot.driveBase.getRightMustangEncoderPositionInTicks();
     }  
 
     // System.out.println("encoders: " + leftEncoder + ", " + rightEncoder);
@@ -294,7 +293,7 @@ public class DriveMotionProfile extends Command {
     Robot.driveBase.stop();
     if(Robot.sensors.getNavX() != null)
        Logger.consoleLog("EndingAngle: %s, LeftTicksTraveled: %s, RightTicksTraveled: %s, DistanceTraveled: %s", Pathfinder.boundHalfDegrees(Robot.sensors.getYawDoubleForPathfinder()), 
-                     (Robot.driveBase.getLeftMustangDriveBaseEncoder().getPositionTicks() - initialLeftEncoder), (Robot.driveBase.getRightMustangDriveBaseEncoder().getPositionTicks() - initialRightEncoder), MathUtils.convertDriveBaseTicksToInches(MathUtils.average((double)(Robot.driveBase.getLeftMustangDriveBaseEncoder().getPositionTicks() - initialLeftEncoder), (double)(Robot.driveBase.getRightMustangDriveBaseEncoder().getPositionTicks() - initialRightEncoder))));
+                     (Robot.driveBase.getLeftMustangEncoderPositionInTicks() - initialLeftEncoder), (Robot.driveBase.getRightMustangEncoderPositionInTicks() - initialRightEncoder), MathUtils.convertDriveBaseTicksToInches(MathUtils.average((double)(Robot.driveBase.getLeftMustangEncoderPositionInTicks() - initialLeftEncoder), (double)(Robot.driveBase.getRightMustangEncoderPositionInTicks() - initialRightEncoder))));
   }
 
   // Called when another command which requires one or more of the same

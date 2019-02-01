@@ -126,11 +126,19 @@ public class MustangSensors extends Subsystem {
   }
 
   public double getFieldCentricYaw() {
-    return navXMicro.getYawFieldCentric();
+    if (navXMicro != null) {
+      return navXMicro.getYawFieldCentric();
+    } else {
+      return NAVX_ERROR_CODE;
+    }
   }
 
   public double getAngle() {
-    return navXMicro.getAngle();
+    if (navXMicro != null) {
+      return navXMicro.getAngle();
+    } else {
+      return NAVX_ERROR_CODE;
+    }
   }
 
   public ZeroableNavX_Yaw_PIDSource getZeroableNavXPIDSource() {
@@ -154,7 +162,10 @@ public class MustangSensors extends Subsystem {
    * Returns true if object is within threshold and false if not
    */
   public boolean getIntakeIROutput(){
-    return intakeIRSensor.get();
+    if(intakeIRSensor != null){
+      return intakeIRSensor.get();
+    }
+    return false;
   }
 
 
@@ -162,7 +173,10 @@ public class MustangSensors extends Subsystem {
    * Returns true if object is within threshold and false if not
    */
   public boolean getClawIROutput(){
-    return clawIRSensor.get();
+    if(clawIRSensor != null){
+      return clawIRSensor.get();
+    }
+    return false;
   }
 
   /**
@@ -185,7 +199,4 @@ public class MustangSensors extends Subsystem {
   public NavX getNavX(){
     return navXMicro;
   }
-
-
-
 }
