@@ -11,7 +11,6 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.PIDController;
-import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
 
 /**
@@ -24,7 +23,6 @@ public class SettingUtils {
    */
   public static void releaseController(PIDController controller) {
     controller.disable();
-    controller.free();
   }
 
   /**

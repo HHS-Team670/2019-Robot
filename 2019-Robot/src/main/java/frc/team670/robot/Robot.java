@@ -51,8 +51,8 @@ public class Robot extends TimedRobot {
   private static Elbow elbow = new Elbow();
   private static Wrist wrist = new Wrist();
   private static Extension extension = new Extension();
-  public static Arm arm = new Arm(elbow, wrist, extension);
   public static Intake intake = new Intake();
+  public static Arm arm = new Arm(elbow, wrist, extension, intake);
   public static Claw claw = new Claw();
   public static Climber climber = new Climber(sensors);
 

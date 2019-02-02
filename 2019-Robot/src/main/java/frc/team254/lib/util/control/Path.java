@@ -18,6 +18,11 @@ import frc.team254.lib.util.motion.MotionState;
  */
 
 public class Path {
+
+    public static final double MIN_LOOKAHEAD = 12.0; // Inches. TODO: set the value; 1 ft for now idk
+    public static final double MAX_LOOKAHEAD = 18.0; // Inches. TODO: set this to something legit
+    public static final double SEGMENT_COMPLETION_TOLERANCE = 3; // TODO: set value of this
+
     List<PathSegment> segments;
     PathSegment prevSegment;
     HashSet<String> mMarkersCrossed = new HashSet<String>();
@@ -161,7 +166,7 @@ public class Path {
     public void checkSegmentDone(Translation2d robotPos) {
         PathSegment currentSegment = segments.get(0);
         double remainingDist = currentSegment.getRemainingDistance(currentSegment.getClosestPoint(robotPos));
-        if (remainingDist < RobotConstants.SEGMENT_COMPLETION_TOLERANCE) {
+        if (remainingDist < SEGMENT_COMPLETION_TOLERANCE) {
             removeCurrentSegment();
         }
     }
@@ -183,7 +188,7 @@ public class Path {
         for (int i = segments.size() - 1; i >= 0; i--) {
             PathSegment segment = segments.get(i);
             maxStartSpeed += Math
-                    .sqrt(maxStartSpeed * maxStartSpeed + 2 * RobotConstants.PATH_FOLLOWING_MAX_ACCEL * segment.getLength());
+                    .sqrt(maxStartSpeed * maxStartSpeed + 2 * PathSegment.PATH_FOLLOWING_MAX_ACCEL * segment.getLength());
             startSpeeds[i] = segment.getStartState().vel();
             // System.out.println(maxStartSpeed + ", " + startSpeeds[i]);
             if (startSpeeds[i] > maxStartSpeed) {

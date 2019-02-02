@@ -40,19 +40,7 @@ public class RobotConstants {
     public static final double INTEGRAL = 0;//0.05*KU/TU;
     public static final double DERIVATIVE = 5*KU*TU/40;
     public static final double WHEEL_BASE = 25.662; //measured 1/26/19
-
-    // Pure Pursuit Constants
-    public static final double MIN_LOOKAHEAD = 12.0; // Inches. TODO: set the value; 1 ft for now idk
-    public static final double MAX_LOOKAHEAD = 18.0; // Inches. TODO: set this to something legit
-    public static final double PATH_FOLLOWING_MAX_ACCEL = 0; // TODO: set value of this
-    public static final double SEGMENT_COMPLETION_TOLERANCE = 0; // TODO: set value of this
-    public static final double KTRACK_WIDTH_INCHES = 0; // TODO: figure out what this is
-    public static final double KTRACK_SCRUB_FACTOR = 0; // TODO: figure out what this is
-    public static final double MIN_LOOKAHEAD_SPEED = 0; // TODO: figure this out
-    public static final double MAX_LOOKAHEAD_SPEED = 0; // TODO: figure this out
-    public static final Lookahead LOOKAHEAD = new Lookahead(MIN_LOOKAHEAD, MAX_LOOKAHEAD, MIN_LOOKAHEAD_SPEED,
-            MAX_LOOKAHEAD_SPEED);
-
+    
     // Arm Constants
     // TODO Set these
     public static final double ARM_HEIGHT_IN_INCHES = 5;
