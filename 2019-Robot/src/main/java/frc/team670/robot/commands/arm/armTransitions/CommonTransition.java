@@ -47,8 +47,8 @@ public class CommonTransition extends ArmTransition {
 
     double intakeSourceY = intake.getIntakeCoordinates().getY();
     double intakeDestY = (dest.isIntakeDeployed()) ? (Intake.INTAKE_FIXED_LENGTH_IN_INCHES + Intake.INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(Intake.INTAKE_ANGLE_DEPLOYED)) : (Intake.INTAKE_FIXED_LENGTH_IN_INCHES + Intake.INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(Intake.INTAKE_ANGLE_IN));
-    double sourceY = source.getLowestPointOnArm();
-    double destY = dest.getLowestPointOnArm();
+    double sourceY = source.getMaximumLowestPointOnClaw();
+    double destY = dest.getMaximumLowestPointOnClaw();
     double sourceX = source.getCoordPosition().getX();
     double destX = dest.getCoordPosition().getX();
 
@@ -81,7 +81,7 @@ public class CommonTransition extends ArmTransition {
         }
     }
    
-    //Redundant code most likely
+    //Redundant code most likely, will run here if boolean says to not run second
     if (!moveIntakeSecond) {
       if (intakeMovementsAddedSequential) {
         if (dest.isIntakeDeployed()) {
@@ -103,6 +103,7 @@ public class CommonTransition extends ArmTransition {
     addSequential(new MoveElbow(elbow, dest.getElbowAngle()));
     addSequential(new WaitForChildren());
 
+     //Redundant code most likely, will run here if boolean says to run second
     if (moveIntakeSecond) {
       if (intakeMovementsAddedSequential) {
         if (dest.isIntakeDeployed()) {

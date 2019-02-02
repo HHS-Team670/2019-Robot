@@ -247,17 +247,24 @@ public class Arm {
       return new Point2D.Double(coord.x, coord.y);
     }
 
-    public double getLowestPointOnArm(){
-      double lowestPoint = 0;
-      if (claw.isOpen())
-        lowestPoint = getCoordPosition().getY() - Claw.CLAW_OPEN_DISTANCE/2 * Math.sin(Math.toRadians(wrist.getAngle() + 90));
-      else
-        lowestPoint = getCoordPosition().getY() - Claw.CLAW_CLOSED_DISTANCE/2 * Math.sin(Math.toRadians(wrist.getAngle() + 90));
-
-      double extensionTip = getCoordPosition().getY() - Claw.DISTANCE_FROM_CENTER_CLAW_TO_EXTENSION_TIP * Math.sin(wrist.getAngle());
-      
-      lowestPoint = Math.min(lowestPoint, extensionTip);
-      
+    /**
+     * Returns the lowest point on the claw/arm which should be the place the intake is most likely to hit
+     */
+    public double getMaximumLowestPointOnClaw(){
+      double extraClearanceInInches = 2;
+      // If wrist angle is at 0, this should be the lowest point on the claw. If the
+      // wrist is angled up, that does not change this calculation.
+      // This should be relatively safe. It should not hit the pistons on the claw
+      // either.
+      double lowestPoint = getCoordPosition().getY() - Claw.MAX_CLAW_OPEN_DIAMETER / 2;
+      // If the wrist is angled forward, the center point that we are using to get arm
+      // coordinates will be closer to the ends of the claw so we shouldn't need to
+      // add in claw diameter. The cosine function brings that addition down to 0.
+      if (wrist.getAngle() > 0) {
+        lowestPoint = getCoordPosition().getY() -  (Claw.MAX_CLAW_OPEN_DIAMETER / 2) * Math.abs(Math.cos(Math.toRadians(wrist.getAngle())));
+      }
+      //To be more safe, there is an extra buffer
+      lowestPoint += extraClearanceInInches;
       return lowestPoint;
     }
 

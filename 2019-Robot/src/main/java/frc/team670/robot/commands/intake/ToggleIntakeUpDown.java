@@ -8,6 +8,7 @@
 package frc.team670.robot.commands.intake;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Intake;
 import frc.team670.robot.utils.Logger;
@@ -43,8 +44,11 @@ public class ToggleIntakeUpDown extends Command {
     }
 
     double intakeHighPoint = Intake.INTAKE_FIXED_LENGTH_IN_INCHES + Intake.INTAKE_ROTATING_LENGTH_IN_INCHES;
-    double currentArmBottomY = Arm.getCurrentState().getLowestPointOnArm();
-    if(intakeHighPoint >= currentArmBottomY && (Arm.getCurrentState().getCoordPosition().getX() > 0)){
+    double lowestPointOnClaw = Arm.getCurrentState().getMaximumLowestPointOnClaw();
+
+    //TODO: Check if arm is moving when this command is called.
+    
+    if(intakeHighPoint >= lowestPointOnClaw && (Arm.getCurrentState().getCoordPosition().getX() > 0)){
       super.cancel();
     }
     intake.setMotionMagicSetpoint(intakeSetpointInTicks);
