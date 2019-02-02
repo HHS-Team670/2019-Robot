@@ -119,8 +119,8 @@ public class Wrist extends BaseWrist {
   }
 
   @Override
-  public void setMotionMagicSetpoint(double wristAngle) { 
+  public void setMotionMagicSetpoint(double wristSetpointInTicks) { 
     wristRotation.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx); 
-    wristRotation.set(ControlMode.MotionMagic, MathUtils.convertWristDegreesToTicks(wristAngle));
+    wristRotation.set(ControlMode.MotionMagic, wristSetpointInTicks);
   }
 }

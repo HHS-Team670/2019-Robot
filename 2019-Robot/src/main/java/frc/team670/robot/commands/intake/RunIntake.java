@@ -8,14 +8,13 @@
 package frc.team670.robot.commands.intake;
 
 import edu.wpi.first.wpilibj.command.Command;
-import frc.team670.robot.Robot;
 import frc.team670.robot.dataCollection.MustangSensors;
-import frc.team670.robot.subsystems.Intake;
+import frc.team670.robot.subsystems.BaseIntake;
 import frc.team670.robot.utils.Logger;
 
 public class RunIntake extends Command {
 
-  private Intake intake;
+  private BaseIntake intake;
   private MustangSensors sensors;
 
   private static final double RUNNING_POWER = 1.0; // TODO figure out if we want to run full speed
@@ -23,8 +22,8 @@ public class RunIntake extends Command {
   private long time;
 
 
-  public RunIntake(Intake intake, MustangSensors sensors) {
-    requires(Robot.intake);
+  public RunIntake(BaseIntake intake, MustangSensors sensors) {
+    requires(intake);
     this.intake = intake;
     this.sensors = sensors;
   }

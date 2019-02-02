@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team670.robot.Robot;
 import frc.team670.robot.commands.arm.movement.MoveArm;
+import frc.team670.robot.commands.climb.CancelClimbBasedOnTimeLeftInMatch;
 import frc.team670.robot.commands.climb.armClimb.ArmClimb;
 import frc.team670.robot.commands.climb.pistonClimb.PistonClimbWithTiltControl;
 import frc.team670.robot.commands.climb.pistonClimb.RetractBackPistons;
@@ -67,6 +68,12 @@ public class CycleClimb extends InstantCommand {
    */
   @Override
   protected void initialize() {
+    /*
+    If robot hasn't retracted the front pistons yet and driver attempts to move onto the next stage, but there's 
+    very little time left, this will stow the arm and bring the robot back down to flat
+    */
+    Scheduler.getInstance().add(new CancelClimbBasedOnTimeLeftInMatch(arm, climber));
+
     switch (cg) {
       case DEPLOY_PISTONS:
         Scheduler.getInstance().add(new PistonClimbWithTiltControl(setPoint, climber));

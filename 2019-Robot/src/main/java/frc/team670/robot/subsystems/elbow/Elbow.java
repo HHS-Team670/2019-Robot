@@ -26,7 +26,6 @@ public class Elbow extends BaseElbow {
 
   private TalonSRX elbowRotationMain;
   private VictorSPX elbowRotationSlave;
-  private double elbowAngle;
   public static final double MAX_ELBOW_BACK = 0; //TODO find what is this number
   public static final double MAX_ELBOW_FORWARD = 0; //TODO also find this
   private static final double kF = 0, kP = 0, kI = 0, kD = 0; //TODO figure out what these are
@@ -144,9 +143,9 @@ public class Elbow extends BaseElbow {
   }
 
   @Override
-  public void setMotionMagicSetpoint(double elbowAngle) {
+  public void setMotionMagicSetpoint(double elbowSetpointInTicks) {
     elbowRotationMain.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
-    elbowRotationMain.set(ControlMode.MotionMagic, MathUtils.convertElbowDegreesToTicks(elbowAngle));
+    elbowRotationMain.set(ControlMode.MotionMagic, elbowSetpointInTicks);
   }
 
   @Override

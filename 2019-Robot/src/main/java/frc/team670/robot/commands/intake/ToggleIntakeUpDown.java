@@ -20,7 +20,8 @@ public class ToggleIntakeUpDown extends Command {
 
   private Intake intake;
   private int loggingIterationCounter;
-  private int toleranceInDegrees = 5;
+  private int intakeSetpointInTicks;
+  private int toleranceInTicks = 10;
 
   public ToggleIntakeUpDown(Intake intake) {
     requires(intake);
@@ -32,34 +33,35 @@ public class ToggleIntakeUpDown extends Command {
   protected void initialize() {
     // If the intake is closer to the up postion, we assume that we want to move it
     // down
-    if (Math.abs(intake.getIntakePositionInTicks() - Intake.INTAKE_ANGLE_UP) < Math.abs(intake.getIntakePositionInTicks() - Intake.INTAKE_ANGLE_DOWN)) {
-      intake.setMotionMagicSetpoint(Intake.INTAKE_ANGLE_DOWN);
+    if (Math.abs(intake.getIntakePositionInTicks() - Intake.INTAKE_ANGLE_IN) < Math.abs(intake.getIntakePositionInTicks() - Intake.INTAKE_ANGLE_DEPLOYED)) {
+      intakeSetpointInTicks = MathUtils.convertIntakeDegreesToTicks(Intake.INTAKE_ANGLE_DEPLOYED);
     } else {
       // If intake is instead closer to the down postion, we assume that we want to
       // move it up
-      intake.setMotionMagicSetpoint(Intake.INTAKE_ANGLE_UP);
+      intakeSetpointInTicks = MathUtils.convertIntakeDegreesToTicks(Intake.INTAKE_ANGLE_IN);
     }
 
-    Logger.consoleLog("startIntakeAngle:%s", intake.getIntakeAngleInDegrees());
+    intake.setMotionMagicSetpoint(intakeSetpointInTicks);
+    Logger.consoleLog("startIntakePosition:%s, intakeSetpointInTicks", intake.getIntakePositionInTicks(), intakeSetpointInTicks);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Logger.consoleLog("currentIntakeAngle:%s", intake.getIntakeAngleInDegrees());
+  
     loggingIterationCounter++;
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return (MathUtils.isWithinTolerance(intake.getIntakeAngleInDegrees(), intake.getMotionMagicSetpoint(), toleranceInDegrees));
+    return (MathUtils.isWithinTolerance(intake.getIntakePositionInTicks(), intake.getMotionMagicSetpoint(), toleranceInTicks));
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Logger.consoleLog("endIntakeAngle:%s", intake.getIntakeAngleInDegrees());
+    Logger.consoleLog("endIntakePosition:%s", intake.getIntakePositionInTicks());
   }
 
   // Called when another command which requires one or more of the same
