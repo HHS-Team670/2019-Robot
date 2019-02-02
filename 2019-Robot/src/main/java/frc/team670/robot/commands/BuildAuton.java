@@ -7,14 +7,11 @@
 
 package frc.team670.robot.commands;
 
-import java.io.FileNotFoundException;
-
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.team670.robot.commands.arm.movement.MoveArm;
-import frc.team670.robot.commands.arm.movement.PlaceAndRetract;
+import frc.team670.robot.commands.arm.movement.PlaceOrGrab;
 import frc.team670.robot.commands.drive.DriveMotionProfile;
 import frc.team670.robot.subsystems.Arm;
-import frc.team670.robot.subsystems.Arm.ArmState;
 import frc.team670.robot.subsystems.Arm.LegalState;
 
 
@@ -30,43 +27,56 @@ public class BuildAuton extends CommandGroup {
     String height2 = autonSequence[4];
     String target3 = autonSequence[5];
     String height3 = autonSequence[6];
-    ArmState destination; 
+    LegalState destination; 
     String fileName = "";
 
+    destination = getLegalState(target1, height1); 
     fileName = start + "_" + target1 + ".pf1.csv";
-    destination = Arm.getArmState(LegalState.valueOf("READY_" + height1)); 
-    try {
-        addSequential(new DriveMotionProfile(fileName, isReversed));
-        addParallel(new MoveArm(destination, arm));
-    } catch (FileNotFoundException e) {
-        e.printStackTrace();
-        addSequential(new MoveArm(destination, arm));
-    }
-    addSequential(new PlaceAndRetract(target1, height1));
-    // addSequential: do appropriate thing with claw
+    addSequential(new DriveMotionProfile(fileName, isReversed));
+    addParallel(new MoveArm(Arm.getArmState(destination), arm));
+    addSequential(new PlaceOrGrab(destination, true));
     // addSequential: turn to proper angle to start next path?
-
-    destination = Arm.getArmState(LegalState.valueOf("READY_" + height2)); 
+ 
+    destination = getLegalState(target2, height2); 
     fileName = target1 + "_" + target2 + ".pf1.csv";
-    try {
-        addSequential(new DriveMotionProfile(fileName, isReversed));
-        addParallel(new MoveArm(destination, arm));
-    } catch (FileNotFoundException e) {
-        e.printStackTrace();
-        addSequential(new MoveArm(destination, arm));
-    }    
-    // addSequential: do appropriate thing with claw
+    addSequential(new DriveMotionProfile(fileName, isReversed));
+    addParallel(new MoveArm(Arm.getArmState(destination), arm));
+    addSequential(new PlaceOrGrab(destination, false));
     // addSequential: turn to proper angle to start next path?
 
-    destination = Arm.getArmState(LegalState.valueOf("READY_" + height3)); 
+    destination = getLegalState(target3, height3); 
     fileName = target2 + "_" + target3 + ".pf1.csv";
-    try {
-        addSequential(new DriveMotionProfile(fileName, isReversed));
-        addParallel(new MoveArm(destination, arm));
-    } catch (FileNotFoundException e) {
-        e.printStackTrace();
-        addSequential(new MoveArm(destination, arm));
+    addSequential(new DriveMotionProfile(fileName, isReversed));
+    addParallel(new MoveArm(Arm.getArmState(destination), arm));
+    addSequential(new PlaceOrGrab(destination, true));
+  }
+
+  // TODO account for direction (FRONT or BACK)
+  private LegalState getLegalState(String target, String height) {
+    if (target.contains("Rocket") && (target.contains("1") || target.contains("3"))) {
+        if (height.equals("MIDDLE")) {
+            return LegalState.PLACE_HATCH_ROCKET_MIDDLE_BACK;
+        } else if (height.equals("LOW")) {
+            return LegalState.LOW_HATCH_BACK;
+        }
     }
-    // addSequential: do appropriate thing with claw
+    else if (target.contains("Rocket") && target.contains("2")) {
+        if (height.equals("MIDDLE")) {
+            return LegalState.PLACE_BALL_ROCKET_MIDDLE_BACK;
+        } else if (height.equals("LOW")) {
+            return LegalState.PLACE_BALL_ROCKET_LOW_BACK;
+        }
+    }
+    else if (target.contains("Cargo")) {
+        // if placing ball
+        if (height.equals("MIDDLE")) {
+            return LegalState.PLACE_BALL_CARGOSHIP_BACK;
+        } 
+        // if placing hatch
+        else if (height.equals("LOW")) {
+            return LegalState.LOW_HATCH_BACK;
+        }
+    }
+    return null;
   }
 }
