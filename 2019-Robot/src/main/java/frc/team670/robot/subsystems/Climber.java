@@ -41,10 +41,15 @@ public class Climber extends Subsystem {
   private boolean frontPistonRetractionInProgress, backPistonRetractionInProgress;
 
   private int climberEncoderTolerance = 10; //TODO Set this
- 
   
-  public static final double MINIMUM_PISTON_POWER = -0.2; //Todo set this
+  public static final double MINIMUM_PISTON_POWER = -0.2; //TODO: set this
   public static final double MAXIMUM_PISTON_POWER = 0.75; 
+
+  public static final double WINCH_DIAMETER = 2.0;
+  public static final double GEAR_RATIO = 47;
+  public static final double CLIMBER_TICKS_PER_ROTATION = 4096;
+
+  public static final double DISTANCE_BETWEEN_FRONT_AND_BACK_PISTONS_IN_INCHES = 11.834; 
 
   private MustangSensors sensors;
 
@@ -141,7 +146,7 @@ public class Climber extends Subsystem {
    * @return The position of the front pistons in inches
    */
   public double getFrontTalonPositionInInches() {
-    return 0; //TODO set these
+    return convertPistonTicksToInches(getFrontTalonPositionInTicks());
   }
 
    /**
@@ -150,7 +155,7 @@ public class Climber extends Subsystem {
    * @return The position of the back pistons in inches
    */
   public double getBackTalonPositionInInches() {
-    return 0; // TODO set these
+    return convertPistonTicksToInches(getBackTalonPositionInTicks());
   }
 
 
@@ -242,6 +247,21 @@ public class Climber extends Subsystem {
   }
 
   /**
+   * Returns pitch calculated from the difference in the front and back piston encoders.
+   * Returns negative if front is down and positive if front is up
+   */
+  public double getPitchFromEncoders(){
+    double heightDifferenceFrontBackPistons = getFrontTalonPositionInInches() - getBackTalonPositionInInches();
+    double pitch = Math.toDegrees(Math.asin(heightDifferenceFrontBackPistons / DISTANCE_BETWEEN_FRONT_AND_BACK_PISTONS_IN_INCHES));
+    return pitch;
+  }
+
+  public static double convertPistonTicksToInches(int ticks){
+    // Got this from Ben
+    return ((WINCH_DIAMETER * Math.PI) / GEAR_RATIO) * CLIMBER_TICKS_PER_ROTATION;
+  }
+
+  /**
    * Enables the PIDControllers to get them running
    * 
    * @param setPoint the desired end goal of the piston climb
@@ -270,7 +290,6 @@ public class Climber extends Subsystem {
    * @param tiltAdjustment The amount of adjustment desired for the robot
    */
   public void handleTilt(boolean goingUp, double tiltTolerance, double tiltAdjustment){
-    if (!sensors.isNavXNull()) {
       if (goingUp) {
         // If tipped down (front is down)
         if (sensors.getPitchDouble() < -tiltTolerance) {
@@ -295,7 +314,6 @@ public class Climber extends Subsystem {
           setBackPistonOutputRange(MINIMUM_PISTON_POWER + tiltAdjustment, MINIMUM_PISTON_POWER);
         }
       }
-    }
   }
 
   @Override
