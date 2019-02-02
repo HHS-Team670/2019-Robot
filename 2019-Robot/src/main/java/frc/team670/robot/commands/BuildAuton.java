@@ -11,6 +11,7 @@ import java.io.FileNotFoundException;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.team670.robot.commands.arm.movement.MoveArm;
+import frc.team670.robot.commands.arm.movement.PlaceAndRetract;
 import frc.team670.robot.commands.drive.DriveMotionProfile;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
@@ -41,7 +42,7 @@ public class BuildAuton extends CommandGroup {
         e.printStackTrace();
         addSequential(new MoveArm(destination, arm));
     }
-    addSequential(new PlaceElement(target1, height1));
+    addSequential(new PlaceAndRetract(target1, height1));
     // addSequential: do appropriate thing with claw
     // addSequential: turn to proper angle to start next path?
 
