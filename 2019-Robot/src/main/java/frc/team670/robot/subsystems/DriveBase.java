@@ -99,7 +99,6 @@ public class DriveBase extends Subsystem {
     setRampRate(allMotors, 0.254); // Will automatically cook some Cheezy Poofs
 
     // DIO Encoders
-
     try {
       leftDIOEncoder = new Encoder(RobotMap.LEFT_ENCODER_CHANNEL_A, RobotMap.LEFT_ENCODER_CHANNEL_B, false, EncodingType.k4X);
     } catch (RuntimeException ex) {
@@ -117,10 +116,12 @@ public class DriveBase extends Subsystem {
     double distancePerPulse = (1 / RobotConstants.DIO_TICKS_PER_ROTATION)
         * (Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
 
-    if (leftDIOEncoder != null || rightDIOEncoder != null){
+    if (leftDIOEncoder != null){
       leftDIOEncoder.setDistancePerPulse(distancePerPulse);
+      leftDIOEncoder.setReverseDirection(true);
+    }
+    if(rightDIOEncoder != null) {
       rightDIOEncoder.setDistancePerPulse(distancePerPulse);
-      leftDIOEncoder.setReverseDirection(true); // These have been set properly.
       rightDIOEncoder.setReverseDirection(false);
     }
 
@@ -128,7 +129,6 @@ public class DriveBase extends Subsystem {
     rightMustangEncoder = new MustangDriveBaseEncoder(rightDIOEncoder, right1.getEncoder());
 
   }
-
 
   /**
    * 
