@@ -41,7 +41,7 @@ public class BuildAuton extends CommandGroup {
 
     points[0] = RobotConstants.waypoints.get(target1);
     points[1] = RobotConstants.waypoints.get(target2);
-    destination = Arm.getArmState(LegalState.valueOf(height2)); // TODO change this
+    destination = Arm.getArmState(LegalState.GRAB_HATCH_LOADINGSTATION_FORWARD); // TODO change this
     addSequential(new DriveMotionProfile(points, isReversed));
     addParallel(new MoveArm(destination, arm));
     // addSequential: do appropriate thing with claw
