@@ -7,8 +7,6 @@
 
 package frc.team670.robot.commands.climb.pistonClimb;
 
-import com.ctre.phoenix.motorcontrol.SensorCollection;
-
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
@@ -16,7 +14,6 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.dataCollection.NullPIDOutput;
 import frc.team670.robot.subsystems.Climber;
 import frc.team670.robot.utils.Logger;
-import frc.team670.robot.utils.functions.MathUtils;
 import frc.team670.robot.utils.functions.SettingUtils;
 
 /**

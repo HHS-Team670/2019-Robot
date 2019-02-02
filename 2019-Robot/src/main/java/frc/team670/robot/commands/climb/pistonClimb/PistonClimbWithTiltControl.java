@@ -45,11 +45,13 @@ public class PistonClimbWithTiltControl extends Command {
     this.climber = climber;
     this.sensors = sensors;
 
-    tiltController = new PIDController(P, I, D, F, sensors.getNavXPitchPIDSource(), new NullPIDOutput());
-    tiltController.setSetpoint(0);
-    tiltController.setAbsoluteTolerance(tiltTolerance);
-    tiltController.setOutputRange(tiltControllerLowerOutput, tiltControllerUpperOutput);
-    tiltController.enable();
+    if(!sensors.isNavXNull()) {
+      tiltController = new PIDController(P, I, D, F, sensors.getNavXPitchPIDSource(), new NullPIDOutput());
+      tiltController.setSetpoint(0);
+      tiltController.setAbsoluteTolerance(tiltTolerance);
+      tiltController.setOutputRange(tiltControllerLowerOutput, tiltControllerUpperOutput);
+      tiltController.enable();
+    }
 
   }
 
@@ -60,6 +62,7 @@ public class PistonClimbWithTiltControl extends Command {
     if (sensors.isNavXNull()) {
       Scheduler.getInstance().add(new NoNavXPistonClimb(setPoint, climber));
       super.cancel();
+      return;
     }
 
     // Scheduler.getInstance().add(new MoveArm()) TODO: move arm so it's at neutral
