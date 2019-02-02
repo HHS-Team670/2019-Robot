@@ -35,6 +35,7 @@ public class CommonTransition extends ArmTransition {
 
   @Override
   public void initTransition() {
+
     ArmState dest = getDest();
     if(dest.isIntakeDeployed()) {
       addParallel(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_DEPLOYED, intake));
