@@ -47,8 +47,6 @@ public class MustangEncoderDrive extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Robot.driveBase.tankDrive(leftPIDController.get(), rightPIDController.get(), false);
-
     Logger.consoleLog("leftCurrentPosition:%s rightCurrentPosition:%s ", Robot.driveBase.getLeftMustangEncoderPositionInTicks(), Robot.driveBase.getRightMustangEncoderPositionInTicks());
   }
 
