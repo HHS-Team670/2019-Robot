@@ -282,7 +282,6 @@ public class Climber extends Subsystem {
    * @param tiltAdjustment The amount of adjustment desired for the robot
    */
   public void handleTilt(boolean goingUp, double tiltTolerance, double tiltAdjustment){
-    if (!sensors.isNavXNull()) {
       if (goingUp) {
         // If tipped down (front is down)
         if (sensors.getPitchDouble() < -tiltTolerance) {
@@ -307,7 +306,6 @@ public class Climber extends Subsystem {
           setBackPistonOutputRange(MINIMUM_PISTON_POWER + tiltAdjustment, MINIMUM_PISTON_POWER);
         }
       }
-    }
   }
 
   @Override
