@@ -40,25 +40,61 @@ var keys = [];
 var armStates = [];
 var auton = new Array(7);
 
-window.onkeyup = function(event) {
-    let key = event.key;
+// window.onkeyup = function(event) {
+//     let key = event.key;
 
-    if (key == '9') {
-      keys.pop();
-    } else if (key == 'w') {
-      finalize();
-    } else {
-      keys.push(key);
-    }
+//     if (key == 'x12') document.getElementById('test').innerHTML = 'changed';
+//     if (key == 'a') document.getElementById('test').innerHTML = 'a';
 
-    if (keys.length > 0) {
+//     // if (key == '9') {
+//     //   keys.pop();
+//     // } else if (key == 'w') {
+//     //   finalize();
+//     // } else {
+//     //   keys.push(key);
+//     // }
 
-    }
-    if (keys.length > 1) {
+//     // if (keys.length > 0) {
 
-    }
+//     // }
+//     // if (keys.length > 1) {
+
+//     // }
     
-}
+// }
+
+var allKeys = '';
+var counter = 0;
+document.addEventListener("keyup", function(event) {
+  var pressed = event.key.replace("Enter", "");
+  // counter++;
+  // document.getElementById('test').innerHTML = pressed;
+  allKeys += pressed;
+  var split = allKeys.split(" ");
+  var result = split[split.length - 1];
+  var state = getArmState(result);
+  // document.getElementById('test').innerHTML += state + " ";
+  if (state != null) {
+    counter++;
+    if (state === "backspace") {
+      armStates.pop();
+      // counter -= 4;
+    }
+    else if (state === "enter") {
+      finalize();
+    }
+    // else if (state != "undefined" && counter % 5 == 0) {
+    else {
+      // var state = getArmState(result);
+      armStates.push(state);
+      // document.getElementById('test').innerHTML = state;
+    }
+
+    if (counter % 2 == 1 && state !== "backspace") armStates.pop();
+  }
+  document.getElementById('test').innerHTML = armStates.length;
+  document.getElementById('test2').innerHTML = armStates;
+});
 
 /*
 a b c d
@@ -69,26 +105,63 @@ s t u v
 */
 
 // returns the location on the field corresponding with a given key
+// function getArmState(key) {
+//   // still unmapped: START_BALL, START_HATCH, START_EMPTY, INTAKE_HATCH_GROUND
+//   if (key == 'a') return 'NEUTRAL';
+//   if (key == 'b') return 'READY_TO_CLIMB';
+//   if (key == 'c') return 'STOW';
+//   if (key == 'd') return 'DEFENSE';
+//   if (key == 'j') return 'INTAKE_BALL_GROUND';
+//   if (key == 'k') return 'INTAKE_BALL_INTAKE';
+//   if (key == 'l') return 'INTAKE_BALL_LOADINGSTATION';
+//   if (key == 'm') return 'INTAKE_HATCH_LOADINGSTATION';
+//   if (key == 's') return 'PLACE_BALL_CARGOSHIP';
+//   if (key == 't') return 'PLACE_HATCH_CARGOSHIP';
+//   if (key == 'u') return '';
+//   if (key == 'v') return '';
+//   if (key == '1') return 'PLACE_BALL_ROCKET_LOW';
+//   if (key == '2') return 'PLACE_BALL_ROCKET_MIDDLE';
+//   if (key == '3') return 'PLACE_HATCH_ROCKET_LOW';
+//   if (key == '4') return 'PLACE_HATCH_ROCKET_MIDDLE';
+//   if (key == '9') return '';
+//   if (key == 'w') return '';
+//   return null;
+// }
+
 function getArmState(key) {
-  // still unmapped: START_BALL, START_HATCH, START_EMPTY, INTAKE_HATCH_GROUND
-  if (key == 'a') return 'NEUTRAL';
-  if (key == 'b') return 'READY_TO_CLIMB';
-  if (key == 'c') return 'STOW';
-  if (key == 'd') return 'DEFENSE';
-  if (key == 'j') return 'INTAKE_BALL_GROUND';
-  if (key == 'k') return 'INTAKE_BALL_INTAKE';
-  if (key == 'l') return 'INTAKE_BALL_LOADINGSTATION';
-  if (key == 'm') return 'INTAKE_HATCH_LOADINGSTATION';
-  if (key == 's') return 'PLACE_BALL_CARGOSHIP';
-  if (key == 't') return 'PLACE_HATCH_CARGOSHIP';
-  if (key == 'u') return '';
-  if (key == 'v') return '';
-  if (key == '1') return 'PLACE_BALL_ROCKET_LOW';
-  if (key == '2') return 'PLACE_BALL_ROCKET_MIDDLE';
-  if (key == '3') return 'PLACE_HATCH_ROCKET_LOW';
-  if (key == '4') return 'PLACE_HATCH_ROCKET_MIDDLE';
-  if (key == '9') return '';
-  if (key == 'w') return '';
+  if (key === "x06") return "backspace";
+  if (key === "x3e") return "enter";
+
+  if (key === "x12") return "READY_LOW_HATCH_BACK";
+  if (key === "x13") return "READY_PLACE_BALL_ROCKET_LOW_BACK";
+  if (key === "x14") return "GRAB_BALL_GROUND_BACK";
+  // if (key === "x15") return "";
+  // if (key === "x16") return "";
+  if (key === "x1a") return "READY_PLACE_HATCH_ROCKET_MIDDLE_BACK";
+  if (key === "x1b") return "READY_PLACE_BALL_ROCKET_MIDDLE_BACK";
+  if (key === "x1c") return "READY_GRAB_BALL_LOADINGSTATION_BACK";
+  // if (key === "x1d") return "";
+  // if (key === "x1e") return "";
+  if (key === "x22") return "READY_PLACE_HATCH_ROCKET_MIDDLE_FORWARD";
+  if (key === "x23") return "READY_PLACE_BALL_ROCKET_MIDDLE_FORWARD";
+  if (key === "x24") return "READY_GRAB_BALL_LOADINGSTATION_FORWARD";
+  // if (key === "x25") return "";
+  // if (key === "x26") return "";
+  if (key === "x2a") return "READY_LOW_HATCH_FORWARD";
+  if (key === "x2b") return "READY_PLACE_BALL_ROCKET_LOW_FORWARD";
+  if (key === "x2c") return "GRAB_BALL_INTAKE";
+  // if (key === "x2d") return "";
+  if (key === "x2e") return "DO_THE_THING";
+  // if (key === "x32") return "";
+  // if (key === "x33") return "";
+  // if (key === "x34") return "";
+  // if (key === "x35") return "";
+  // if (key === "x36") return "";
+  // if (key === "x3a") return "";
+  // if (key === "x3b") return "";
+  // if (key === "x3c") return "";
+  // if (key === "x3d") return "";
+  // if (key === "x3e") return "";
   return null;
 }
 
@@ -102,7 +175,6 @@ function finalize() {
   NetworkTables.putValue('armSequence', armStates);
   NetworkTables.putValue('autonSequence', auton);
 }
-document.getElementById('test').innerHTML = 'changed';
 
 function readRadioButtons() {
   var startChooser = document.forms['auto-chooser'].elements['start'];
