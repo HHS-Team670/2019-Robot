@@ -9,6 +9,7 @@ package frc.team670.robot.commands.arm.movement;
 
 import frc.team670.robot.subsystems.wrist.BaseWrist;
 import frc.team670.robot.utils.functions.MathUtils;
+import frc.team670.robot.subsystems.wrist.Wrist;
 
 /**
  * Add your docs here.
@@ -31,7 +32,7 @@ public class TestWrist extends BaseWrist{
 
     @Override
     public double getAngle() {
-        return MathUtils.convertWristTicksToDegrees((int)wristTicks);
+        return Wrist.convertWristTicksToDegrees((int)wristTicks);
     }
 
     @Override

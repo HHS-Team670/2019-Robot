@@ -41,6 +41,10 @@ public class Extension extends BaseExtension {
 
   private static final double EXTENSION_POWER = 0.75;
 
+  private static int EXTENSION_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 15000; // TODO set this
+  private static int EXTENSION_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS = 6000; // TODO set this
+
+
   public Extension() {
     extensionMotor = new TalonSRX(RobotMap.ARM_EXTENSION_MOTOR);   
     extensionMotor.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
@@ -48,8 +52,8 @@ public class Extension extends BaseExtension {
 		extensionMotor.config_kP(kSlotMotionMagic, kP, kTimeoutMs);
 		extensionMotor.config_kI(kSlotMotionMagic, kI, kTimeoutMs);
     extensionMotor.config_kD(kSlotMotionMagic, kD, kTimeoutMs);
-    extensionMotor.configMotionCruiseVelocity(RobotConstants.MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
-		extensionMotor.configMotionAcceleration(RobotConstants.MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+    extensionMotor.configMotionCruiseVelocity(EXTENSION_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+		extensionMotor.configMotionAcceleration(EXTENSION_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
  
     // These thresholds stop the motor when limit is reached
     extensionMotor.configForwardSoftLimitThreshold(FORWARD_SOFT_LIMIT);
@@ -102,7 +106,7 @@ public class Extension extends BaseExtension {
   
   @Override
   public double getLengthInches() {
-    return MathUtils.convertExtensionTicksToInches(getLengthTicks());
+    return convertExtensionTicksToInches(getLengthTicks());
   }
 
   @Override
@@ -145,6 +149,22 @@ public class Extension extends BaseExtension {
   public void setMotionMagicSetpoint(double extensionTicks) {
     extensionMotor.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
     extensionMotor.set(ControlMode.MotionMagic, extensionTicks);
+  }
+
+  /**
+   * Converts inches for the intake into ticks
+   */
+  public static int convertExtensionInchesToTicks(double inches) { 
+    //inches * (rotation/inches) * (ticks / rotation)
+    return (int)(inches * RobotConstants.EXTENSION_MOTOR_ROTATIONS_PER_INCH * RobotConstants.EXTENSION_TICKS_PER_MOTOR_ROTATION);
+  }
+
+  /**
+   * Converts ticks for the intake into inches
+   */
+  public static double convertExtensionTicksToInches(double ticks) {
+    //ticks * (rotations/ticks) * (inches / rotations)
+    return ticks / RobotConstants.EXTENSION_TICKS_PER_MOTOR_ROTATION / RobotConstants.EXTENSION_MOTOR_ROTATIONS_PER_INCH;
   }
 
 }

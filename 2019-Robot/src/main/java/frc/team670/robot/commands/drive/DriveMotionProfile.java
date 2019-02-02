@@ -13,12 +13,15 @@ package frc.team670.robot.commands.drive;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.command.Command;
+
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.functions.MathUtils;
+import frc.team670.robot.subsystems.DriveBase;
 import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Trajectory;
 import jaci.pathfinder.Waypoint;
@@ -44,6 +47,7 @@ public class DriveMotionProfile extends Command {
   private static final String BASE_PATH_NAME = "home/deploy/";
   private static final double MAX_VELOCITY = 90, MAX_ACCELERATION = 20, MAX_JERK = 60; // Equivalent units in inches
   private static final double TIME_STEP = 0.05;
+  // Making this constant higher helps prevent the robot from overturning (overturning also will make it not drive far enough in the correct direction)
   private static final double ANGLE_DIVIDE_CONSTANT = 240.0; // Default = 80
 
 
@@ -82,58 +86,66 @@ public class DriveMotionProfile extends Command {
    * Creates a DriveMotionProfile from a text file
    * @param fileName path to trajectory file inside the output folder in the deploy directory
    */
-  public DriveMotionProfile(String fileName, boolean isReversed) throws FileNotFoundException {
+  public DriveMotionProfile(String fileName, boolean isReversed) {
+    try {
+      this.isReversed = isReversed;
 
-    this.isReversed = isReversed;
+      String binary = "traj";
+      String csv = "csv";
+      boolean encoderFollowersSet = false;
 
-    String binary = "traj";
-    String csv = "csv";
-    boolean encoderFollowersSet = false;
-    
-    requires(Robot.driveBase);
+      requires(Robot.driveBase);
 
-    String leftPathname = Filesystem.getDeployDirectory() + "/output/" + fileName.replace(".pf1", ".left.pf1");
-    String rightPathname = Filesystem.getDeployDirectory() + "/output/" + fileName.replace(".pf1", ".right.pf1");
-    Logger.consoleLog("Left path name: " + leftPathname);
-    Logger.consoleLog("Right path name: " + rightPathname);
-    File leftFile = new File(leftPathname);
-    File rightFile = new File(rightPathname);
+      String leftPathname = Filesystem.getDeployDirectory() + "/output/" + fileName.replace(".pf1", ".left.pf1");
+      String rightPathname = Filesystem.getDeployDirectory() + "/output/" + fileName.replace(".pf1", ".right.pf1");
+      Logger.consoleLog("Left path name: " + leftPathname);
+      Logger.consoleLog("Right path name: " + rightPathname);
+      File leftFile = new File(leftPathname);
+      File rightFile = new File(rightPathname);
 
-    String extension = "";
-    int i = fileName.lastIndexOf('.');
-    if (i > 0) {
-        extension = fileName.substring(i+1);
-    }
+      String extension = "";
+      int i = fileName.lastIndexOf('.');
+      if (i > 0) {
+        extension = fileName.substring(i + 1);
+      }
 
-    if (extension.equals(csv)){
-      leftTrajectory = Pathfinder.readFromCSV(leftFile);
-      rightTrajectory = Pathfinder.readFromCSV(rightFile);
-    }
-    else if (extension.equals(binary)) {
-      leftTrajectory = Pathfinder.readFromFile(leftFile);
-      rightTrajectory = Pathfinder.readFromFile(rightFile);
-    } else {
-      // // Set the max velocity to something lower than the actual max velocity, otherwise we get motor outputs >1.0 and <-1.0 which makes us unable to turn properly
-      // // For here let's set it to 
-      // config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, TIME_STEP, MAX_VELOCITY, MAX_ACCELERATION, MAX_JERK);
-      // Trajectory trajectory = Pathfinder.generate(waypoints, config);
-      // // follow old method of splitting one trajectory into left and right if generated with waypoints
+      if (extension.equals(csv)) {
+        leftTrajectory = Pathfinder.readFromCSV(leftFile);
+        rightTrajectory = Pathfinder.readFromCSV(rightFile);
+      } else if (extension.equals(binary)) {
+        leftTrajectory = Pathfinder.readFromFile(leftFile);
+        rightTrajectory = Pathfinder.readFromFile(rightFile);
+      } else {
+        // // Set the max velocity to something lower than the actual max velocity,
+        // otherwise we get motor outputs >1.0 and <-1.0 which makes us unable to turn
+        // properly
+        // // For here let's set it to
+        // config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC,
+        // Trajectory.Config.SAMPLES_HIGH, TIME_STEP, MAX_VELOCITY, MAX_ACCELERATION,
+        // MAX_JERK);
+        // Trajectory trajectory = Pathfinder.generate(waypoints, config);
+        // // follow old method of splitting one trajectory into left and right if
+        // generated with waypoints
+        // modifier = new TankModifier(trajectory).modify(RobotConstants.WHEEL_BASE);
+        // left = new EncoderFollower(modifier.getLeftTrajectory());
+        // right= new EncoderFollower(modifier.getRightTrajectory());
+        // encoderFollowersSet = true;
+        throw new FileNotFoundException("DriveMotionProfile did not receive a valid filename.");
+      }
+      // Don't need this if reading in left and right trajectories
       // modifier = new TankModifier(trajectory).modify(RobotConstants.WHEEL_BASE);
-      // left = new EncoderFollower(modifier.getLeftTrajectory());
-      // right= new EncoderFollower(modifier.getRightTrajectory());
-      // encoderFollowersSet = true;
-      throw new FileNotFoundException("DriveMotionProfile did not receive a valid filename.");
-    }
-    // Don't need this if reading in left and right trajectories
-    // modifier = new TankModifier(trajectory).modify(RobotConstants.WHEEL_BASE);
 
-    // TODO figure out why these are switched and switch them back
-    if (isReversed) {
-      left = new EncoderFollower(leftTrajectory);
-      right = new EncoderFollower(rightTrajectory);
-    } else {
-      left = new EncoderFollower(rightTrajectory);
-      right = new EncoderFollower(leftTrajectory);
+      // TODO figure out why these are switched and switch them back
+      if (isReversed) {
+        left = new EncoderFollower(leftTrajectory);
+        right = new EncoderFollower(rightTrajectory);
+      } else {
+        left = new EncoderFollower(rightTrajectory);
+        right = new EncoderFollower(leftTrajectory);
+      }
+    } catch (FileNotFoundException ex) {
+      DriverStation.reportError("Error reading in File for DriveMotionProfile" + ex.getMessage(), true);
+      super.cancel();
     }
   }
 
@@ -152,20 +164,28 @@ public class DriveMotionProfile extends Command {
     // 'getEncPosition' function.
     // 1024 is the amount of encoder ticks per full revolution
     // Wheel Diameter is the diameter of your wheels (or pulley for a track system) in meters
+
+  //Default: use DIO Encoders
+
     if(isReversed) {
-      initialLeftEncoder = -1 * Robot.driveBase.getLeftDIOEncoderPosition();
-      initialRightEncoder = -1 * Robot.driveBase.getRightDIOEncoderPosition();
+        initialLeftEncoder = -1 * Robot.driveBase.getLeftMustangDriveBaseEncoder().getPositionTicks();
+        initialRightEncoder = -1 * Robot.driveBase.getRightMustangDriveBaseEncoder().getPositionTicks();
     }
     else {
-      initialLeftEncoder = Robot.driveBase.getLeftDIOEncoderPosition();
-      initialRightEncoder = Robot.driveBase.getRightDIOEncoderPosition();
+        initialLeftEncoder = Robot.driveBase.getLeftMustangDriveBaseEncoder().getPositionTicks();
+        initialRightEncoder = Robot.driveBase.getRightMustangDriveBaseEncoder().getPositionTicks();
+    }
+
+    if (Robot.driveBase.getLeftDIOEncoder() != null && Robot.driveBase.getRightDIOEncoder() != null) {
+      left.configureEncoder(initialLeftEncoder, RobotConstants.DIO_TICKS_PER_ROTATION, RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
+      right.configureEncoder(initialRightEncoder, RobotConstants.DIO_TICKS_PER_ROTATION, RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
+    } else {
+      left.configureEncoder(initialLeftEncoder, RobotConstants.SPARK_TICKS_PER_ROTATION, RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
+      right.configureEncoder(initialRightEncoder, RobotConstants.SPARK_TICKS_PER_ROTATION, RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
     }
 
     Logger.consoleLog("isReversed: " + isReversed);
     Logger.consoleLog("initial encoders: " + initialLeftEncoder + ", " + initialRightEncoder);
-
-    left.configureEncoder(initialLeftEncoder, RobotConstants.DIO_TICKS_PER_ROTATION, RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
-    right.configureEncoder(initialRightEncoder, RobotConstants.DIO_TICKS_PER_ROTATION, RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);  
 
     // Set up Robot for Auton Driving
     Robot.driveBase.initAutonDrive();
@@ -200,14 +220,17 @@ public class DriveMotionProfile extends Command {
   protected void execute() {
 
     int leftEncoder, rightEncoder;
+
+  //Default: use DIO Encoders
+
     if(isReversed) {
-      leftEncoder = -1 * Robot.driveBase.getLeftDIOEncoderPosition();
-      rightEncoder = -1 * Robot.driveBase.getRightDIOEncoderPosition();
+      leftEncoder = -1 * Robot.driveBase.getLeftMustangEncoderPositionInTicks();
+      rightEncoder = -1 * Robot.driveBase.getRightMustangEncoderPositionInTicks();
     }
     else {
-      leftEncoder = Robot.driveBase.getLeftDIOEncoderPosition();
-      rightEncoder = Robot.driveBase.getRightDIOEncoderPosition();
-    }
+      leftEncoder = Robot.driveBase.getLeftMustangEncoderPositionInTicks();
+      rightEncoder = Robot.driveBase.getRightMustangEncoderPositionInTicks();
+    }  
 
     // System.out.println("encoders: " + leftEncoder + ", " + rightEncoder);
   
@@ -215,23 +238,29 @@ public class DriveMotionProfile extends Command {
     double l = left.calculate(leftEncoder);
     double r = right.calculate(rightEncoder);
 
-    // Calculates the angle offset for PID
-    // It tracks the wrong angle (mirrors the correct one)
-    double gyroHeading;
-    if(isReversed) {
-      gyroHeading = Pathfinder.boundHalfDegrees(-1 * Robot.sensors.getYawDoubleForPathfinder());   // Assuming the gyro is giving a value in degrees
-    }
-    else {
-      gyroHeading = Pathfinder.boundHalfDegrees(Robot.sensors.getYawDoubleForPathfinder());   // Assuming the gyro is giving a value in degrees
-    }
-    double desiredHeading = Pathfinder.boundHalfDegrees(Pathfinder.r2d(left.getHeading()));  // Should also be in degrees 
-    // Make sure gyro and desired angle match up [-180, 180], navX reports the opposite orientation as Pathfinder expects
-    double angleDifference = Pathfinder.boundHalfDegrees(desiredHeading - gyroHeading);    
-    
-    // Making this constant higher helps prevent the robot from overturning (overturning also will make it not drive far enough in the correct direction)
-    // TODO MAKE THE -1 HERE MATCH uP WITH THE DIRECTION THE ROBOT SHOULD TURN
-    double turn = 0;//0.8 * (-1.0/ANGLE_DIVIDE_CONSTANT) * angleDifference;
-    
+    /* Code below dependent on the NavX. Right now, is not required for this command. If uncommented, need a condition to 
+      check if NavX is null, otherwise if NavX is unplugged, robot code will crash
+     */
+
+    double turn = 0;
+
+     if(!Robot.sensors.isNavXNull()) {
+      // Calculates the angle offset for PID
+      // // It tracks the wrong angle (mirrors the correct one)
+      double gyroHeading;
+      if(isReversed) {
+        gyroHeading = Pathfinder.boundHalfDegrees(-1 * Robot.sensors.getYawDoubleForPathfinder());   // Assuming the gyro is giving a value in degrees
+      }
+      else {
+        gyroHeading = Pathfinder.boundHalfDegrees(Robot.sensors.getYawDoubleForPathfinder());   // Assuming the gyro is giving a value in degrees
+      }
+      double desiredHeading = Pathfinder.boundHalfDegrees(Pathfinder.r2d(left.getHeading()));  // Should also be in degrees 
+      // Make sure gyro and desired angle match up [-180, 180], navX reports the opposite orientation as Pathfinder expects
+      double angleDifference = Pathfinder.boundHalfDegrees(desiredHeading - gyroHeading);    
+      
+      // TODO MAKE THE -1 HERE MATCH uP WITH THE DIRECTION THE ROBOT SHOULD TURN
+      turn = 0.8 * (-1.0/ANGLE_DIVIDE_CONSTANT) * angleDifference;
+     }
     
     double leftOutput = l + turn;
     double rightOutput = r - turn;
@@ -241,9 +270,6 @@ public class DriveMotionProfile extends Command {
     }
 
     Logger.consoleLog("encoders: " + leftEncoder + ", " + rightEncoder + " outputs: " + leftOutput + ", " + rightOutput);
-    // Logger.consoleLog("outputs: " + leftOutput + ", " + rightOutput);
-    // Logger.consoleLog("heading: " + gyroHeading + " desired: " + desiredHeading);
-
     // Drives the bot based on the input
     Robot.driveBase.tankDrive(leftOutput, rightOutput, false); 
 
@@ -265,8 +291,11 @@ public class DriveMotionProfile extends Command {
   @Override
   protected void end() {
     Robot.driveBase.stop();
-    Logger.consoleLog("EndingAngle: %s, LeftTicksTraveled: %s, RightTicksTraveled: %s, DistanceTraveled: %s", Pathfinder.boundHalfDegrees(Robot.sensors.getYawDoubleForPathfinder()), 
-                     (Robot.driveBase.getLeftDIOEncoderPosition() - initialLeftEncoder), (Robot.driveBase.getRightDIOEncoderPosition() - initialRightEncoder), MathUtils.convertDriveBaseTicksToInches(MathUtils.average((double)(Robot.driveBase.getLeftDIOEncoderPosition() - initialLeftEncoder), (double)(Robot.driveBase.getRightDIOEncoderPosition() - initialRightEncoder))));
+    if(!Robot.sensors.isNavXNull())
+       Logger.consoleLog("EndingAngle: %s, LeftTicksTraveled: %s, RightTicksTraveled: %s, DistanceTraveled: %s", Pathfinder.boundHalfDegrees(Robot.sensors.getYawDoubleForPathfinder()), 
+                     (Robot.driveBase.getLeftMustangEncoderPositionInTicks() - initialLeftEncoder), (Robot.driveBase.getRightMustangEncoderPositionInTicks() - initialRightEncoder), DriveBase.convertDriveBaseTicksToInches(MathUtils.average((double)(Robot.driveBase.getLeftMustangEncoderPositionInTicks() - initialLeftEncoder), (double)(Robot.driveBase.getRightMustangEncoderPositionInTicks() - initialRightEncoder))));
+    else
+       Logger.consoleLog("LeftTicksTraveled: %s, RightTicksTraveled: %s, DistanceTraveled: %s", (Robot.driveBase.getLeftMustangEncoderPositionInTicks() - initialLeftEncoder), (Robot.driveBase.getRightMustangEncoderPositionInTicks() - initialRightEncoder), DriveBase.convertDriveBaseTicksToInches(MathUtils.average((double)(Robot.driveBase.getLeftMustangEncoderPositionInTicks() - initialLeftEncoder), (double)(Robot.driveBase.getRightMustangEncoderPositionInTicks() - initialRightEncoder))));
   }
 
   // Called when another command which requires one or more of the same

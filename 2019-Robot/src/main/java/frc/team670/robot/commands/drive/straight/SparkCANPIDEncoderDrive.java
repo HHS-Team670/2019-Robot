@@ -9,20 +9,18 @@ package frc.team670.robot.commands.drive.straight;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.Robot;
+import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.utils.Logger;
-import frc.team670.robot.utils.functions.MathUtils;
 
 public class SparkCANPIDEncoderDrive extends Command {
 
-  private double inchesToTravel;
   private double rotationsToTravel;
   private int leftStartingPosition, rightStartingPosition, leftEndingPosition, rightEndingPosition, leftCurrentPosition, rightCurrentPosition;
   private final double THRESHOLD = 1; // TODO Define threshold
 
   public SparkCANPIDEncoderDrive(int inchesToTravel) {
     requires (Robot.driveBase);
-    this.inchesToTravel = inchesToTravel;
-    rotationsToTravel = MathUtils.convertInchesToDriveBaseRotations(inchesToTravel);
+    rotationsToTravel = DriveBase.convertInchesToDriveBaseRotations(inchesToTravel);
   }
 
   // Called just before this Command runs the first time

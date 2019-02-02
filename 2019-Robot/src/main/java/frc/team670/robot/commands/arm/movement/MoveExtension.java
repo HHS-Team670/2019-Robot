@@ -8,9 +8,11 @@
 package frc.team670.robot.commands.arm.movement;
 
 import edu.wpi.first.wpilibj.command.Command;
+
 import frc.team670.robot.subsystems.extension.BaseExtension;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.functions.MathUtils;
+import frc.team670.robot.subsystems.extension.Extension;
 
 /*
  * Moves the Extension to an absolute inch value using MotionMagic. Use this as part of an ArmTransition.
@@ -32,7 +34,7 @@ public class MoveExtension extends Command {
   public MoveExtension(BaseExtension extension, double distance) {
     this.extension = extension;
     requires(extension);
-    extensionSetpointInTicks = MathUtils.convertExtensionInchesToTicks(distance);
+    extensionSetpointInTicks = Extension.convertExtensionInchesToTicks(distance);
   }
 
   // Called just before this Command runs the first time

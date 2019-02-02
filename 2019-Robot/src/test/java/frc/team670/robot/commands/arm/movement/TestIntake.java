@@ -57,7 +57,7 @@ public class TestIntake extends BaseIntake {
      * Returns the intake angle in degrees
      */
     public double getIntakeAngleInDegrees() {
-        return MathUtils.convertIntakeTicksToDegrees(intakeTicks);
+        return Intake.convertIntakeTicksToDegrees(intakeTicks);
     }
 
 

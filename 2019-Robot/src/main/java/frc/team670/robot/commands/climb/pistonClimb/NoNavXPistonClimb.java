@@ -8,24 +8,23 @@
 package frc.team670.robot.commands.climb.pistonClimb;
 
 import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.PIDSource;
+import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.Scheduler;
-import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.dataCollection.NullPIDOutput;
 import frc.team670.robot.subsystems.Climber;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.functions.SettingUtils;
 
 /**
- * Class to deploy the pistons down with a some degree of control from the NavX
+ * Class to deploy the pistons down with a some degree of control from the encoders
  * 
  */
-public class PistonClimbWithTiltControl extends Command {
+public class NoNavXPistonClimb extends Command {
 
   private double tiltControllerLowerOutput = -0.2, tiltControllerUpperOutput = 0.2;
   private double tiltTolerance = 0; // TODO set this
   private double P = 0.1, I = 0.0, D = 0.0, F = 0.0; // TODO set these
-  private MustangSensors sensors;
 
   private PIDController tiltController;
   private boolean goingUp;
@@ -38,35 +37,20 @@ public class PistonClimbWithTiltControl extends Command {
    *                 3)
    * @param climber  the climber upon which this command will be called on
    */
-  public PistonClimbWithTiltControl(int setPoint, Climber climber, MustangSensors sensors) {
+  public NoNavXPistonClimb(int setPoint, Climber climber) {
     requires(climber);
-
+    
     this.setPoint = setPoint;
     this.climber = climber;
-    this.sensors = sensors;
-
-    if(!sensors.isNavXNull()) {
-      tiltController = new PIDController(P, I, D, F, sensors.getNavXPitchPIDSource(), new NullPIDOutput());
-      tiltController.setSetpoint(0);
-      tiltController.setAbsoluteTolerance(tiltTolerance);
-      tiltController.setOutputRange(tiltControllerLowerOutput, tiltControllerUpperOutput);
-      tiltController.enable();
-    }
-
+    tiltController = new PIDController(P, I, D, F, new ClimberEncoderPitchPIDSource(climber), new NullPIDOutput());
+    tiltController.setSetpoint(0);
+    tiltController.setAbsoluteTolerance(tiltTolerance);
+    tiltController.setOutputRange(tiltControllerLowerOutput, tiltControllerUpperOutput);
+    tiltController.enable();
   }
 
   // Called just before this Command runs the first time
   protected void initialize() {
-    // If the NavX is null, use the piston climb that takes inputs from the encoders
-    // and not the NavX
-    if (sensors.isNavXNull()) {
-      Scheduler.getInstance().add(new NoNavXPistonClimb(setPoint, climber));
-      super.cancel();
-      return;
-    }
-
-    // Scheduler.getInstance().add(new MoveArm()) TODO: move arm so it's at neutral
-    // state on the climb up
     climber.enableClimberPIDControllers(setPoint);
 
     goingUp = (setPoint >= climber.getFrontTalonPositionInTicks());
@@ -77,15 +61,12 @@ public class PistonClimbWithTiltControl extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-
-    // If the NavX is null, we don't do any tilt control
-    if (!sensors.isNavXNull()) {
-      if (Math.abs(sensors.getPitchDouble()) - tiltTolerance > 0) {
-        climber.handleTilt(goingUp, tiltTolerance, tiltController.get());
+      if (Math.abs(climber.getPitchFromEncoders() - tiltTolerance) > 0) {
+          climber.handleTilt(goingUp, tiltTolerance, tiltController.get());
       }
-    }
 
-    Logger.consoleLog("currentBackPistonPosition:%s, currentFrontPistonPosition:%s", climber.getBackTalonPositionInTicks(), climber.getFrontTalonPositionInTicks());
+    Logger.consoleLog("currentBackPistonPosition:%s, currentFrontPistonPosition:%s, tilt:%s", climber.getBackTalonPositionInTicks(), climber.getFrontTalonPositionInTicks(), climber.getPitchFromEncoders());
+    
 
     loggingIterationCounter++;
   }
@@ -109,5 +90,30 @@ public class PistonClimbWithTiltControl extends Command {
   protected void interrupted() {
     end();
     Logger.consoleLog();
+  }
+
+  public class ClimberEncoderPitchPIDSource implements PIDSource {
+    private Climber climber;
+    private PIDSourceType pidSourceType;
+
+    public ClimberEncoderPitchPIDSource(Climber climber) {
+      this.climber = climber;
+      pidSourceType = PIDSourceType.kDisplacement;
+    }
+
+    @Override
+    public PIDSourceType getPIDSourceType() {
+      return pidSourceType;
+    }
+
+    @Override
+    public double pidGet() {
+      return climber.getPitchFromEncoders();
+    }
+
+    @Override
+    public void setPIDSourceType(PIDSourceType pidSource) {
+      this.pidSourceType = pidSource;
+    }
   }
 }

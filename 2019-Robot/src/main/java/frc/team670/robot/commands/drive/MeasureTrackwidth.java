@@ -2,10 +2,12 @@ package frc.team670.robot.commands.drive;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.functions.MathUtils;
+import frc.team670.robot.subsystems.DriveBase;
 
 
 /**
@@ -24,8 +26,8 @@ public class MeasureTrackwidth extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    initialLeftEncoder = Robot.driveBase.getLeftDIOEncoderPosition();
-    initialRightEncoder = Robot.driveBase.getRightDIOEncoderPosition();
+    initialLeftEncoder = Robot.driveBase.getLeftMustangEncoderPositionInTicks();
+    initialRightEncoder = Robot.driveBase.getRightMustangEncoderPositionInTicks();
     initialAngle = Robot.sensors.getYawDouble();
     goalAngle = initialAngle + totalAngleToDrive;
     Logger.consoleLog("Initial Angle: " + initialAngle);
@@ -54,17 +56,17 @@ public class MeasureTrackwidth extends Command {
   protected void end() {
 
     double overShoot = Robot.sensors.getYawDouble() - initialAngle;
-    double leftDistance = Robot.driveBase.getLeftDIOEncoderPosition() - initialLeftEncoder;
-    double rightDistance = Robot.driveBase.getRightDIOEncoderPosition() - initialRightEncoder;
+    double leftDistance = Robot.driveBase.getLeftMustangEncoderPositionInTicks() - initialLeftEncoder;
+    double rightDistance = Robot.driveBase.getRightMustangEncoderPositionInTicks() - initialRightEncoder;
 
     Logger.consoleLog("Spun the Robot 10 times, or 3600 degrees with " + overShoot + " degrees of overshoot");
     Logger.consoleLog("Left Side Distance Driven (Ticks): " + leftDistance);
-    Logger.consoleLog("Left Side Distance Driven (Inches): " + MathUtils.convertDriveBaseTicksToInches(leftDistance));
+    Logger.consoleLog("Left Side Distance Driven (Inches): " + DriveBase.convertDriveBaseTicksToInches(leftDistance));
     Logger.consoleLog("Right Side Distance Driven (Ticks): " + rightDistance);
-    Logger.consoleLog("Right Side Distance Driven (Inches): " + MathUtils.convertDriveBaseTicksToInches(rightDistance));
+    Logger.consoleLog("Right Side Distance Driven (Inches): " + DriveBase.convertDriveBaseTicksToInches(rightDistance));
     
-    double leftRadiusInches = MathUtils.convertDriveBaseTicksToInches(leftDistance) / (10 * 2 * Math.PI);
-    double rightRadiusInches = MathUtils.convertDriveBaseTicksToInches(rightDistance) / (10 * 2 * Math.PI);
+    double leftRadiusInches = DriveBase.convertDriveBaseTicksToInches(leftDistance) / (10 * 2 * Math.PI);
+    double rightRadiusInches = DriveBase.convertDriveBaseTicksToInches(rightDistance) / (10 * 2 * Math.PI);
 
     double leftDiameter = Math.abs(leftRadiusInches * 2);
     double rightDiameter = Math.abs(rightRadiusInches * 2);

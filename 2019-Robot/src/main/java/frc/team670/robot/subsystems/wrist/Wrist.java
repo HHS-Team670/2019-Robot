@@ -35,6 +35,9 @@ public class Wrist extends BaseWrist {
   private final int FORWARD_SOFT_LIMIT = 0, REVERSE_SOFT_LIMIT = 0; // TODO figure out the values in rotations
   private final int CONTINUOUS_CURRENT_LIMIT = 20, PEAK_CURRENT_LIMIT = 0; // TODO set current limit in Amps
 
+  private static int WRIST_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 15000; // TODO set this
+  private static int WRIST_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS = 6000; // TODO set this
+
   public Wrist() {
     wristRotation = new TalonSRX(RobotMap.ARM_WRIST_ROTATION); 
     wristRotation.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
@@ -42,8 +45,8 @@ public class Wrist extends BaseWrist {
 		wristRotation.config_kP(kSlotMotionMagic, kP, kTimeoutMs);
 		wristRotation.config_kI(kSlotMotionMagic, kI, kTimeoutMs);
     wristRotation.config_kD(kSlotMotionMagic, kD, kTimeoutMs);
-    wristRotation.configMotionCruiseVelocity(RobotConstants.MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
-    wristRotation.configMotionAcceleration(RobotConstants.MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+    wristRotation.configMotionCruiseVelocity(WRIST_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+    wristRotation.configMotionAcceleration(WRIST_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
     
     wristRotation.configNominalOutputForward(0, RobotConstants.kTimeoutMs);
     wristRotation.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
@@ -93,7 +96,7 @@ public class Wrist extends BaseWrist {
   
   @Override
   public double getAngle() {
-    return MathUtils.convertWristTicksToDegrees(getPositionTicks());
+    return convertWristTicksToDegrees(getPositionTicks());
   }
 
   @Override
@@ -122,5 +125,23 @@ public class Wrist extends BaseWrist {
   public void setMotionMagicSetpoint(double wristSetpointInTicks) { 
     wristRotation.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx); 
     wristRotation.set(ControlMode.MotionMagic, wristSetpointInTicks);
+  }
+
+  /**
+   * Converts an angle for the wrist into ticks
+   */
+  public static int convertWristDegreesToTicks(double degrees) {
+    //If straight is 0 and going forward is positive
+    // percentage * half rotation
+    return (int)((degrees / 180) * (0.5 * RobotConstants.WRIST_TICKS_PER_ROTATION));
+  }
+
+  /**
+   * Converts an angle for the wrist into ticks
+   */
+  public static double convertWristTicksToDegrees(int ticks) {
+    //If straight is 0 and going forward is positive
+    // percentage * half degrees rotation
+    return (ticks / (0.5 * RobotConstants.WRIST_TICKS_PER_ROTATION)) * 180;
   }
 }
