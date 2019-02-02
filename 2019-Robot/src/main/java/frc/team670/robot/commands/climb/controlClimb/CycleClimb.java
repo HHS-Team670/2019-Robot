@@ -10,7 +10,6 @@ package frc.team670.robot.commands.climb.controlClimb;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import frc.team670.robot.Robot;
 import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.commands.climb.armClimb.ArmClimb;
 import frc.team670.robot.commands.climb.pistonClimb.PistonClimbWithTiltControl;
@@ -20,9 +19,6 @@ import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.LegalState;
 import frc.team670.robot.subsystems.Climber;
-import frc.team670.robot.subsystems.elbow.BaseElbow;
-import frc.team670.robot.subsystems.extension.BaseExtension;
-import frc.team670.robot.subsystems.wrist.BaseWrist;
 
 /**
  * Allows one Button to cycle through all the necessary stages of climbing:
@@ -33,9 +29,6 @@ public class CycleClimb extends InstantCommand {
   private int setPoint;
   private ClimbStage cg;
   private Arm arm;
-  private BaseElbow elbow;
-  private BaseWrist wrist;
-  private BaseExtension extension;
   private Climber climber;
   private MustangSensors sensors;
 
@@ -45,14 +38,6 @@ public class CycleClimb extends InstantCommand {
    *                 PISTON_ENCODER_LEVEL_TWO, PISTON_ENCODER_LEVEL_THREE
    */
   public CycleClimb(Arm arm, Climber climber, MustangSensors sensors, int setPoint) {
-    requires(Robot.climber);
-    elbow = arm.getElbow();
-    wrist = arm.getWrist();
-    extension = arm.getExtension();
-    requires(extension);
-    requires(elbow);
-    requires(wrist);
-    requires(climber);
 
     this.setPoint = setPoint;
     this.arm = arm;
@@ -83,7 +68,6 @@ public class CycleClimb extends InstantCommand {
       initiatePistonClimb.addSequential(new MoveArm(Arm.getArmState(LegalState.NEUTRAL), arm));
       initiatePistonClimb.addSequential(new PistonClimbWithTiltControl(setPoint, climber, sensors));
       Scheduler.getInstance().add(initiatePistonClimb);
-      Scheduler.getInstance().add(initiatePistonClimb);
       cg = ClimbStage.ARM_CLIMB;
       break;
     case ARM_CLIMB:
@@ -99,13 +83,15 @@ public class CycleClimb extends InstantCommand {
       break;
     case RETRACT_FRONT_PISTONS_AND_STOW_ARM:
       Scheduler.getInstance().add(new RetractFrontPistons(climber));
-      if (Robot.climber.getFrontPistonsRetracted()) {
+      if (climber.getFrontPistonsRetracted()) {
         cg = ClimbStage.RETRACT_BACK_PISTONS;
       }
       break;
     case RETRACT_BACK_PISTONS:
       Scheduler.getInstance().add(new RetractBackPistons(climber));
-      cg = ClimbStage.DEPLOY_PISTONS;
+      if(climber.getBackPistonsRetracted()) {
+        cg = ClimbStage.DEPLOY_PISTONS;
+      }
       break;
     default:
       Scheduler.getInstance().add(new PistonClimbWithTiltControl(setPoint, climber, sensors));
