@@ -187,8 +187,8 @@ public class AdvancedVisionPIDDrive extends Command {
 
     @Override
     public double pidGet() {
-      double displacementLeft = left.get() - initialLeft;
-      double displacementRight = right.get() - initialRight;
+      double displacementLeft = leftEncoder.pidGet() - initialLeft;
+      double displacementRight = rightEncoder.pidGet() - initialRight;
       return DriveBase.convertDriveBaseTicksToInches((displacementLeft + displacementRight) / 2);
     }
 

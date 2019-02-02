@@ -27,7 +27,6 @@ import frc.team670.robot.commands.drive.teleop.XboxRocketLeagueDrive;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.dataCollection.sensors.MustangDriveBaseEncoder;
-import frc.team670.robot.utils.functions.MathUtils;
 
 /**
  * Represents a tank drive base.
@@ -243,6 +242,21 @@ public class DriveBase extends Subsystem {
   }
 
   /**
+   * Returns the left DIO Encoder
+   */
+  public Encoder getLeftDIOEncoder(){
+    return leftDIOEncoder;
+  }
+
+
+  /**
+   * Returns the right DIO Encoder
+   */
+  public Encoder getRightDIOEncoder(){
+    return rightDIOEncoder;
+  }
+
+  /**
    * Sets the PIDControllers setpoints for the left and right side motors to the
    * given positions in ticks forward.
    * 
@@ -281,6 +295,20 @@ public class DriveBase extends Subsystem {
    */
   public int getRightSparkEncoderPosition() {
     return (int) (right1.getEncoder().getPosition() / RobotConstants.SPARK_TICKS_PER_ROTATION);
+  }
+
+  /**
+   * Gets the encoder position of the front left motor in ticks.
+   */
+  public int getLeftDIOEncoderPosition() {
+    return leftDIOEncoder.get();
+  }
+
+  /**
+   * Gets the tick count of the right encoder
+   */
+  public int getRightDIOEncoderPosition() {
+    return rightDIOEncoder.get();
   }
 
   /**
@@ -431,7 +459,7 @@ public class DriveBase extends Subsystem {
    * the Spark Encoder
    */
   public double getRightSparkEncoderVelocityInches() {
-    return (MathUtils.convertDriveBaseTicksToInches(right1.getEncoder().getVelocity() / RobotConstants.SPARK_TICKS_PER_ROTATION) / 60);
+    return (DriveBase.convertDriveBaseTicksToInches(right1.getEncoder().getVelocity() / RobotConstants.SPARK_TICKS_PER_ROTATION) / 60);
   }
 
   /**
@@ -449,13 +477,6 @@ public class DriveBase extends Subsystem {
 
   public double getRightDIODistanceInches() {
     return rightDIOEncoder.getDistance();
-  }
-
-  /**
-   * Gets the tick count of the right encoder
-   */
-  public int getRightDIOEncoderPosition() {
-    return rightDIOEncoder.get();
   }
 
   public List<CANSparkMax> getLeftControllers() {

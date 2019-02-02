@@ -293,9 +293,9 @@ public class DriveMotionProfile extends Command {
     Robot.driveBase.stop();
     if(!Robot.sensors.isNavXNull())
        Logger.consoleLog("EndingAngle: %s, LeftTicksTraveled: %s, RightTicksTraveled: %s, DistanceTraveled: %s", Pathfinder.boundHalfDegrees(Robot.sensors.getYawDoubleForPathfinder()), 
-                     (Robot.driveBase.getLeftMustangEncoderPositionInTicks() - initialLeftEncoder), (Robot.driveBase.getRightMustangEncoderPositionInTicks() - initialRightEncoder), MathUtils.convertDriveBaseTicksToInches(MathUtils.average((double)(Robot.driveBase.getLeftMustangEncoderPositionInTicks() - initialLeftEncoder), (double)(Robot.driveBase.getRightMustangEncoderPositionInTicks() - initialRightEncoder))));
+                     (Robot.driveBase.getLeftMustangEncoderPositionInTicks() - initialLeftEncoder), (Robot.driveBase.getRightMustangEncoderPositionInTicks() - initialRightEncoder), DriveBase.convertDriveBaseTicksToInches(MathUtils.average((double)(Robot.driveBase.getLeftMustangEncoderPositionInTicks() - initialLeftEncoder), (double)(Robot.driveBase.getRightMustangEncoderPositionInTicks() - initialRightEncoder))));
     else
-       Logger.consoleLog("LeftTicksTraveled: %s, RightTicksTraveled: %s, DistanceTraveled: %s", (Robot.driveBase.getLeftMustangEncoderPositionInTicks() - initialLeftEncoder), (Robot.driveBase.getRightMustangEncoderPositionInTicks() - initialRightEncoder), MathUtils.convertDriveBaseTicksToInches(MathUtils.average((double)(Robot.driveBase.getLeftMustangEncoderPositionInTicks() - initialLeftEncoder), (double)(Robot.driveBase.getRightMustangEncoderPositionInTicks() - initialRightEncoder))));
+       Logger.consoleLog("LeftTicksTraveled: %s, RightTicksTraveled: %s, DistanceTraveled: %s", (Robot.driveBase.getLeftMustangEncoderPositionInTicks() - initialLeftEncoder), (Robot.driveBase.getRightMustangEncoderPositionInTicks() - initialRightEncoder), DriveBase.convertDriveBaseTicksToInches(MathUtils.average((double)(Robot.driveBase.getLeftMustangEncoderPositionInTicks() - initialLeftEncoder), (double)(Robot.driveBase.getRightMustangEncoderPositionInTicks() - initialRightEncoder))));
   }
 
   // Called when another command which requires one or more of the same
