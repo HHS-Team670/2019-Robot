@@ -40,6 +40,9 @@ public class Elbow extends BaseElbow {
 
   private double currentP = 0.2, currentI = 0.0, currentD = 0.0, currentF = 0.0; // TODO Check these constants
 
+  private static int ELBOW_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 15000; // TODO set this
+  private static int ELBOW_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS = 6000; // TODO set this
+
   public Elbow() {
     elbowRotationMain = new TalonSRX(RobotMap.ARM_ELBOW_ROTATION_MOTOR_TALON);
     elbowRotationSlave = new VictorSPX(RobotMap.ARM_ELBOW_ROTATION_MOTOR_VICTOR);
@@ -50,8 +53,8 @@ public class Elbow extends BaseElbow {
 		elbowRotationMain.config_kP(kSlotMotionMagic, kP, kTimeoutMs);
 		elbowRotationMain.config_kI(kSlotMotionMagic, kI, kTimeoutMs);
     elbowRotationMain.config_kD(kSlotMotionMagic, kD, kTimeoutMs);
-    elbowRotationMain.configMotionCruiseVelocity(RobotConstants.MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
-    elbowRotationMain.configMotionAcceleration(RobotConstants.MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+    elbowRotationMain.configMotionCruiseVelocity(ELBOW_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+    elbowRotationMain.configMotionAcceleration(ELBOW_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
 
     /* Config closed loop gains for Primary closed loop (Current) */
     elbowRotationMain.config_kP(CURRENT_CONTROL_SLOT, currentP, RobotConstants.kTimeoutMs);

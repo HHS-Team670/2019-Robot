@@ -67,7 +67,6 @@ public class MathUtils {
         return sum/nums.length;
     }
 
-   
     /**
      * Returns the distance (always positive) between two points in a coordinate system.
      * @param x1 The x-coord of point 1

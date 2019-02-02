@@ -46,6 +46,7 @@ public class MoveArmTest {
             Scheduler.getInstance().run();
         }
         
+
         Point2D.Double armCoord = Arm.getCoordPosition(elbow.getAngle(), wrist.getAngle(), extension.getLengthInches());
         assertEquals(dest.getCoordPosition().x, armCoord.x, 0.3);
         assertEquals(dest.getCoordPosition().y, armCoord.y, 0.3);
