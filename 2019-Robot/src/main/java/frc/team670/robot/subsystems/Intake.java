@@ -14,7 +14,6 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
-import frc.team670.robot.utils.functions.MathUtils;
 
 /**
  * Represents the Intake mechanism of the robot.
@@ -25,6 +24,9 @@ public class Intake extends BaseIntake {
 
   private TalonSRX baseTalon;
   private VictorSPX rollerVictor;
+
+  public static double TICKS_PER_ROTATION = 4096; // Still needs to be set
+
 
   private static final double MAX_BASE_OUTPUT = 0.75;
 
@@ -120,7 +122,7 @@ public class Intake extends BaseIntake {
   public static int convertIntakeDegreesToTicks(double degrees) {
     //If straight up is 0 and going forward is positive
     // percentage * half rotation
-    return (int)((degrees / 180) * (0.5 * RobotConstants.INTAKE_TICKS_PER_ROTATION));
+    return (int)((degrees / 180) * (0.5 * TICKS_PER_ROTATION));
   }
 
   /**
@@ -129,7 +131,7 @@ public class Intake extends BaseIntake {
   public static double convertIntakeTicksToDegrees(double ticks) {
     //If straight up is 0 and going forward is positive
     // percentage * half degrees rotation
-    return (ticks / (0.5 * RobotConstants.INTAKE_TICKS_PER_ROTATION) * 180);
+    return (ticks / (0.5 * TICKS_PER_ROTATION) * 180);
   }
 
   @Override

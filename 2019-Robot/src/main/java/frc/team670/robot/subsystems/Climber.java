@@ -23,6 +23,10 @@ import frc.team670.robot.dataCollection.SensorCollection_PIDSource;
  */
 public class Climber extends Subsystem {
 
+  public static final int PISTON_ENCODER_FLAT = 0; // TODO set these
+  public static final int PISTON_ENCODER_LEVEL_TWO = 0;
+  public static final int PISTON_ENCODER_LEVEL_THREE = 0;
+
   // Motor that drives the two pistons in the back of the robot
   private WPI_TalonSRX backTalon;
   // Motor that drives the two pistons in the front of the robot. May be split into two controllers.
