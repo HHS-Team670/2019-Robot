@@ -38,12 +38,14 @@ public class Arm {
   private BaseElbow elbow;
   private BaseWrist wrist;
   private BaseExtension extension;
+  private Claw claw;
 
-  public Arm(BaseElbow elbow, BaseWrist wrist, BaseExtension extension, BaseIntake intake) {
+  public Arm(BaseElbow elbow, BaseWrist wrist, BaseExtension extension, BaseIntake intake, Claw claw) {
 
     this.elbow = elbow;
     this.wrist = wrist;
     this.extension = extension;
+    this.claw = claw;
 
     // State Setup
     states = new HashMap<LegalState, ArmState>();
@@ -243,6 +245,20 @@ public class Arm {
 
     public Point2D.Double getCoordPosition() {
       return new Point2D.Double(coord.x, coord.y);
+    }
+
+    public double getLowestPointOnArm(){
+      double lowestPoint = 0;
+      if (claw.isOpen())
+        lowestPoint = getCoordPosition().getY() - Claw.CLAW_OPEN_DISTANCE/2 * Math.sin(Math.toRadians(wrist.getAngle() + 90));
+      else
+        lowestPoint = getCoordPosition().getY() - Claw.CLAW_CLOSED_DISTANCE/2 * Math.sin(Math.toRadians(wrist.getAngle() + 90));
+
+      double extensionTip = getCoordPosition().getY() - Claw.DISTANCE_FROM_CENTER_CLAW_TO_EXTENSION_TIP * Math.sin(wrist.getAngle());
+      
+      lowestPoint = Math.min(lowestPoint, extensionTip);
+      
+      return lowestPoint;
     }
 
     /**

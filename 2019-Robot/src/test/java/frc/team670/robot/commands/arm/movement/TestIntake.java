@@ -7,9 +7,12 @@
 
 package frc.team670.robot.commands.arm.movement;
 
+import java.awt.geom.Point2D;
+
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import frc.team670.robot.subsystems.BaseIntake;
+import frc.team670.robot.subsystems.Intake;
 import frc.team670.robot.utils.functions.MathUtils;
 
 /**
@@ -65,6 +68,24 @@ public class TestIntake extends BaseIntake {
      */
     public void runIntake(double power) {
 
+    }
+
+    /** 
+     * Returns the x, y coordinates of the top of the intake
+     */
+    public Point2D.Double getIntakeCoordinates(){
+        double x = Intake.INTAKE_ROTATING_LENGTH_IN_INCHES * Math.cos(getIntakeAngleInDegrees());
+        double y = Intake.INTAKE_FIXED_LENGTH_IN_INCHES + Intake.INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(getIntakeAngleInDegrees());
+        return new Point2D.Double(x, y);
+    }
+
+    /**
+     * Should return the setpoint coordinates for the motion magic on the base motor
+     */
+    public Point2D.Double getMotionMagicDestinationCoordinates(){
+        double x = Intake.INTAKE_ROTATING_LENGTH_IN_INCHES * Math.cos(MathUtils.convertIntakeTicksToDegrees(getMotionMagicSetpoint()));
+        double y = Intake.INTAKE_FIXED_LENGTH_IN_INCHES + Intake.INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(MathUtils.convertIntakeTicksToDegrees(getMotionMagicSetpoint()));
+        return new Point2D.Double(x, y);
     }
 
 }

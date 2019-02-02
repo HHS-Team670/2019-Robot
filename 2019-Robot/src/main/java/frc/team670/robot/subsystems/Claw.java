@@ -24,6 +24,10 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class Claw extends Subsystem {
 
   private static double PULSE_DURATION = 0.4; // In seconds
+  public static final double MAX_CLAW_OPEN_DIAMETER = 19.5; //Set distance
+  public static final double CLAW_CLOSED_DISTANCE = 0; //Set distance
+  // Used to find lowest point on arm (so that intake doesn't crash into it). If claw is angled up, the extension tip is lowest point.
+  public static final double DISTANCE_FROM_CENTER_CLAW_TO_EXTENSION_TIP = 0; //Set this
 
   private Compressor compressor;
   private Solenoid openClose, hardSoft, push;

@@ -47,8 +47,8 @@ public class CommonTransition extends ArmTransition {
 
     double intakeSourceY = intake.getIntakeCoordinates().getY();
     double intakeDestY = (dest.isIntakeDeployed()) ? (Intake.INTAKE_FIXED_LENGTH_IN_INCHES + Intake.INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(Intake.INTAKE_ANGLE_DEPLOYED)) : (Intake.INTAKE_FIXED_LENGTH_IN_INCHES + Intake.INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(Intake.INTAKE_ANGLE_IN));
-    double sourceY = source.getCoordPosition().getY();
-    double destY = dest.getCoordPosition().getY();
+    double sourceY = source.getLowestPointOnArm();
+    double destY = dest.getLowestPointOnArm();
     double sourceX = source.getCoordPosition().getX();
     double destX = dest.getCoordPosition().getX();
 
