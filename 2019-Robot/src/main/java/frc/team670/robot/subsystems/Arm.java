@@ -472,20 +472,6 @@ public class Arm {
     }
   }
 
-
-  private class ReadyPlaceBallRocketLowBack extends ArmState {
-    private ReadyPlaceBallRocketLowBack(Arm arm, BaseIntake intake) {
-      super(0, 0, 0, false, new ArmTransition[] { new CommonTransition(LegalState.READY_PLACE_BALL_ROCKET_LOW_BACK, LegalState.PLACE_BALL_ROCKET_LOW_BACK, arm, intake), 
-        new CommonTransition(LegalState.READY_PLACE_BALL_ROCKET_MIDDLE_BACK, LegalState.NEUTRAL, arm, intake) });
-    }
-  }
-
-  private class PlaceBallRocketLowBack extends ArmState {
-    private PlaceBallRocketLowBack(Arm arm, BaseIntake intake) {
-      super(0, 0, 0, false, new ArmTransition[] { new CommonTransition(LegalState.PLACE_BALL_ROCKET_LOW_BACK, LegalState.READY_PLACE_BALL_ROCKET_LOW_BACK, arm, intake)});
-    }
-  }
-
   private class ReadyToClimb extends ArmState {
     private ReadyToClimb(Arm arm, BaseIntake intake) {
       super(0, 0, 0, false, new ArmTransition[] { new CommonTransition(LegalState.READY_TO_CLIMB, LegalState.NEUTRAL, arm, intake)});
