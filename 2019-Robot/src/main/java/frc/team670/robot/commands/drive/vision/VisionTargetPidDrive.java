@@ -82,7 +82,7 @@ public class VisionTargetPidDrive extends Command {
   @Override
   protected void execute() {
 
-    robotPosition.update((long)Robot.driveBase.getLeftDIOEncoderPosition(), (long)Robot.driveBase.getRightDIOEncoderPosition(), Robot.sensors.getYawDouble(), Robot.driveBase.getLeftDIOEncoderVelocityTicks(), Robot.driveBase.getRightDIOEncoderVelocityTicks());
+    robotPosition.update((long)Robot.driveBase.getLeftMustangEncoderPositionInTicks(), (long)Robot.driveBase.getRightMustangEncoderPositionInTicks(), Robot.sensors.getYawDouble(), Robot.driveBase.getLeftMustangEncoderVelocityInTicksPerSecond(), Robot.driveBase.getRightMustangEncoderVelocityInTicksPerSecond());
 
     /** changed output range to insure that the distanceController isn't going into a negative range */
     double distanceOutput = visionDistanceController.get() * -1;

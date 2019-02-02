@@ -21,6 +21,8 @@ public class RobotConstants {
     public static final int DIO_TICKS_PER_ROTATION = 1024;
     /** The number of ticks per inch of wheel travel */
     public static final int DIO_TICKS_PER_INCH = (int) (DIO_TICKS_PER_ROTATION / (Math.PI * DRIVE_BASE_WHEEL_DIAMETER));
+     /** The number of ticks per rotation of a drivebase wheel for the SPARK Encoders  */
+     public static final int SPARK_TICKS_PER_ROTATION = 1024;
 
     // TODO Set all of these!!!!
     public static double EXTENSION_TICKS_PER_MOTOR_ROTATION = 4096; //Subject to change, measure real value
@@ -69,9 +71,6 @@ public class RobotConstants {
     public static final int kPIDLoopIdx = 0;
     public static final int kTimeoutMs = 0;
     public static final int ALLOWABLE_PID_ERROR = 0;
-
-    public static int MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 15000; // TODO set this
-    public static int MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS = 6000; // TODO set this
 
     // Different values/encoder positions to set arm to
     public static int ARM_RESET_TIMEOUTMS = 0;

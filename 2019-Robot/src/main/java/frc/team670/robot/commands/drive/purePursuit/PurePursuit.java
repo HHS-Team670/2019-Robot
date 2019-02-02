@@ -43,7 +43,7 @@ public class PurePursuit extends Command {
   @Override
   protected void execute() {
     poseEstimator.update();
-    DrivePower drivePower = purePursuitTracker.update(poseEstimator.getPose(), driveBase.getLeftDIOEncoderVelocityInches(), driveBase.getRightDIOEncoderVelocityInches(), sensors.getRotationAngle().radians());
+    DrivePower drivePower = purePursuitTracker.update(poseEstimator.getPose(), driveBase.getLeftMustangEncoderVelocityInInchesPerSecond(), driveBase.getRightMustangEncoderVelocityInInchesPerSecond(), sensors.getRotationAngle().radians());
     driveBase.setSparkVelocityControl(drivePower.getLeft(), drivePower.getRight());
     Logger.consoleLog("leftPower: %s, rightPower: %s", drivePower.getLeft(), drivePower.getRight());
   }

@@ -40,7 +40,7 @@ public class AStarSearch {
 
         Comparator<Node> fValueComp = new Comparator<Node>() {
             @Override
-            public int compare(Node o1, Node o2) {
+            public int compare(Node o1, Node o2) { // This compare is dumb and if 2 have the same F-value, one won't get added
                 int o1f = Integer.MAX_VALUE;
                 int o2f = Integer.MAX_VALUE;
 
@@ -71,6 +71,7 @@ public class AStarSearch {
             current = openList.first();
 
             if (current.equals(destination)) {
+                System.out.println("CURRENT EQUALS DESTINATION");
                 end = true;
             }
 
@@ -80,7 +81,17 @@ public class AStarSearch {
 
                 for (Edge e : current.getEdges()) {
                     Node child = e.getDest();
-                    System.out.println("Edge: " + e.getClass().getName() + ", DestinationNode: " + child.getClass().getName());
+                    System.out.println("Edge: " + e.getClass().getName() +", Edge SourceNode: " + e.getSource().getClass().getName() + ", DestinationNode: " + child.getClass().getName());
+
+                    if (child.equals(destination)) {
+                        System.out.println("CURRENT EQUALS DESTINATION IN EDGE LOOP");
+                        // end = true;
+                    }
+                    // if(child.equals(destination)) {
+                    //     cameFrom.put(child, e);
+                    //     end = true;
+                    //     break;
+                    // }
 
                     if (closedList.contains(child)) {
                         continue;
@@ -91,15 +102,15 @@ public class AStarSearch {
 
                     if (!openList.contains(child) || fValues.get(child) == null) {
                         fValues.put(child, tempF);
-                        openList.add(child);
+                        openList.add(child); // WILL NOT ADD IF THE COORDINATES OF THE 2 ARM PIECES ARE THE SAME
                     } else if (gValues.get(child) == null || tempG >= gValues.get(child)) {
                         continue;
                     }
                     cameFrom.put(child, e);
                     gValues.put(child, tempG);
                 }
+                System.out.println("OpenListLength: " + openList.size());
             }
-
         }
 
         if (openList.isEmpty()) { //either start or end is island

@@ -13,19 +13,17 @@ import frc.team670.robot.Robot;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.functions.MathUtils;
 
-public class DIOEncoderDrive extends Command {
+public class MustangEncoderDrive extends Command {
   private PIDController leftPIDController;
   private PIDController rightPIDController;
   private int P, I, D, FF, ticksToTravel, tolerance = 300;
 
-  public DIOEncoderDrive(int inchesToTravel) {
+  public MustangEncoderDrive(int inchesToTravel) {
     requires(Robot.driveBase);
     ticksToTravel = MathUtils.convertInchesToDriveBaseTicks(inchesToTravel);
 
-    leftPIDController = new PIDController(P, I, D, FF, Robot.driveBase.getLeftDIOEncoder(),
-        Robot.driveBase.getLeftControllers().get(0));
-    rightPIDController = new PIDController(P, I, D, FF, Robot.driveBase.getRightDIOEncoder(),
-        Robot.driveBase.getRightControllers().get(0));
+    leftPIDController = new PIDController(P, I, D, FF, Robot.driveBase.getLeftMustangDriveBaseEncoder(), Robot.driveBase.getLeftControllers().get(0));
+    rightPIDController = new PIDController(P, I, D, FF, Robot.driveBase.getRightMustangDriveBaseEncoder(), Robot.driveBase.getRightControllers().get(0));
   }
 
   // Called just before this Command runs the first time
@@ -40,8 +38,7 @@ public class DIOEncoderDrive extends Command {
     leftPIDController.setSetpoint(ticksToTravel);
     rightPIDController.setSetpoint(ticksToTravel);
 
-    Logger.consoleLog("leftStartingPosition:%s rightStartingPosition:%s ", Robot.driveBase.getLeftDIOEncoderPosition(),
-        Robot.driveBase.getRightDIOEncoderPosition());
+    Logger.consoleLog("leftStartingPosition:%s rightStartingPosition:%s ", Robot.driveBase.getLeftMustangEncoderPositionInTicks(), Robot.driveBase.getRightMustangEncoderPositionInTicks());
 
     leftPIDController.enable();
     rightPIDController.enable();
@@ -50,8 +47,7 @@ public class DIOEncoderDrive extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Logger.consoleLog("leftCurrentPosition:%s rightCurrentPosition:%s ", Robot.driveBase.getLeftDIOEncoderPosition(),
-        Robot.driveBase.getRightDIOEncoderPosition());
+    Logger.consoleLog("leftCurrentPosition:%s rightCurrentPosition:%s ", Robot.driveBase.getLeftMustangEncoderPositionInTicks(), Robot.driveBase.getRightMustangEncoderPositionInTicks());
   }
 
   // Make this return true when this Command no longer needs to run execute()
@@ -65,16 +61,14 @@ public class DIOEncoderDrive extends Command {
   protected void end() {
     Robot.driveBase.stop();
 
-    Logger.consoleLog("leftEndingPosition:%s rightEndingPosition:%s ", Robot.driveBase.getLeftDIOEncoderPosition(),
-        Robot.driveBase.getRightDIOEncoderPosition());
+    Logger.consoleLog("leftEndingPosition:%s rightEndingPosition:%s ", Robot.driveBase.getLeftMustangEncoderPositionInTicks(), Robot.driveBase.getRightMustangEncoderPositionInTicks());
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    Robot.driveBase.stop();
-
-    Logger.consoleLog();
+    end();
+    Logger.consoleLog("Interrupted");
   }
 }

@@ -108,13 +108,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("D", 0);
     SmartDashboard.putNumber("KA", 0);
 
-    
-    // try{ 
-    //   autonomousCommand = new DriveMotionProfile("10ft-straight.pf1.csv", false);
-    // }
-    // catch (FileNotFoundException e) {
-    //   e.printStackTrace();
-    // }
+    autonomousCommand = new DriveMotionProfile("10ft-straight.pf1.csv", false);
+
     // autonomousCommand = new MeasureTrackwidth();
 
     String[] autonSequence = table.getEntry("autonSequence").getStringArray(new String[1]);
@@ -169,13 +164,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     Logger.consoleLog("Robot Disabled");
-
-    try{ 
-      autonomousCommand = new DriveMotionProfile("10ft-straight.pf1.csv", false);
-    }
-    catch (FileNotFoundException e) {
-      e.printStackTrace();
-    }
+    autonomousCommand = new DriveMotionProfile("10ft-straight.pf1.csv", false);
   }
 
   @Override
