@@ -41,6 +41,7 @@ public class BuildAuton extends CommandGroup {
         e.printStackTrace();
         addSequential(new MoveArm(destination, arm));
     }
+    addSequential(new PlaceElement(target1, height1));
     // addSequential: do appropriate thing with claw
     // addSequential: turn to proper angle to start next path?
 
