@@ -29,104 +29,29 @@ NetworkTables.addKeyListener('/SmartDashboard/teleopState', (key, value) => {
   document.getElementById('auton-chooser').style.display = "none";
 });
 
-// NetworkTables.addKeyListener(/* claw grip status */'', (key, value) => {
-//   var clawLight = document.getElementById('claw-status');
-//   if (value == 'open') clawLight.style.fill = `white`;
-//   else if (value == 'soft') clawLight.style.fill = `green`;
-//   else if (value == 'hard') clawLight.style.fill = `blue`;
-// });
-
 var keys = [];
 var armStates = [];
 var auton = new Array(7);
-
-// window.onkeyup = function(event) {
-//     let key = event.key;
-
-//     if (key == 'x12') document.getElementById('test').innerHTML = 'changed';
-//     if (key == 'a') document.getElementById('test').innerHTML = 'a';
-
-//     // if (key == '9') {
-//     //   keys.pop();
-//     // } else if (key == 'w') {
-//     //   finalize();
-//     // } else {
-//     //   keys.push(key);
-//     // }
-
-//     // if (keys.length > 0) {
-
-//     // }
-//     // if (keys.length > 1) {
-
-//     // }
-    
-// }
 
 var allKeys = '';
 var counter = 0;
 document.addEventListener("keyup", function(event) {
   var pressed = event.key.replace("Enter", "");
-  // counter++;
-  // document.getElementById('test').innerHTML = pressed;
   allKeys += pressed;
   var split = allKeys.split(" ");
   var result = split[split.length - 1];
   var state = getArmState(result);
-  // document.getElementById('test').innerHTML += state + " ";
   if (state != null) {
     counter++;
-    if (state === "backspace") {
-      armStates.pop();
-      // counter -= 4;
-    }
-    else if (state === "enter") {
-      finalize();
-    }
-    // else if (state != "undefined" && counter % 5 == 0) {
-    else {
-      // var state = getArmState(result);
-      armStates.push(state);
-      // document.getElementById('test').innerHTML = state;
-    }
+    document.getElementById('test').innerHTML = state;
+    if (state === "backspace") armStates.pop();
+    else if (state === "enter") finalize();
+    else armStates.push(state);
 
     if (counter % 2 == 1 && state !== "backspace") armStates.pop();
   }
-  document.getElementById('test').innerHTML = armStates.length;
-  document.getElementById('test2').innerHTML = armStates;
+  document.getElementById('test2').innerHTML = armStates.length;
 });
-
-/*
-a b c d
-j k l m
-s t u v
-1 2 3 4
-9 0 a w
-*/
-
-// returns the location on the field corresponding with a given key
-// function getArmState(key) {
-//   // still unmapped: START_BALL, START_HATCH, START_EMPTY, INTAKE_HATCH_GROUND
-//   if (key == 'a') return 'NEUTRAL';
-//   if (key == 'b') return 'READY_TO_CLIMB';
-//   if (key == 'c') return 'STOW';
-//   if (key == 'd') return 'DEFENSE';
-//   if (key == 'j') return 'INTAKE_BALL_GROUND';
-//   if (key == 'k') return 'INTAKE_BALL_INTAKE';
-//   if (key == 'l') return 'INTAKE_BALL_LOADINGSTATION';
-//   if (key == 'm') return 'INTAKE_HATCH_LOADINGSTATION';
-//   if (key == 's') return 'PLACE_BALL_CARGOSHIP';
-//   if (key == 't') return 'PLACE_HATCH_CARGOSHIP';
-//   if (key == 'u') return '';
-//   if (key == 'v') return '';
-//   if (key == '1') return 'PLACE_BALL_ROCKET_LOW';
-//   if (key == '2') return 'PLACE_BALL_ROCKET_MIDDLE';
-//   if (key == '3') return 'PLACE_HATCH_ROCKET_LOW';
-//   if (key == '4') return 'PLACE_HATCH_ROCKET_MIDDLE';
-//   if (key == '9') return '';
-//   if (key == 'w') return '';
-//   return null;
-// }
 
 function getArmState(key) {
   if (key === "x06") return "backspace";
@@ -165,15 +90,8 @@ function getArmState(key) {
   return null;
 }
 
-function getSide(key) {
-  if (key == 'a') return 'BACK';
-  if (key == 'd') return 'FRONT';
-  return null;
-}
-
 function finalize() {
   NetworkTables.putValue('armSequence', armStates);
-  NetworkTables.putValue('autonSequence', auton);
 }
 
 function readRadioButtons() {
@@ -231,4 +149,5 @@ function readRadioButtons() {
 document.getElementById('test-button').onclick = function () {
   readRadioButtons();
   document.getElementById('test').innerHTML = auton;
+  NetworkTables.putValue("autonSequence", auton);
 }
