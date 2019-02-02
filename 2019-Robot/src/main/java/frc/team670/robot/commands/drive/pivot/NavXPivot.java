@@ -28,7 +28,7 @@ public class NavXPivot extends Command {
 	private int onTargetCount;
 
   public NavXPivot(double angle) {
-	if(Robot.sensors.getNavX() == null){
+	if(Robot.sensors.isNavXNull()){
 		super.cancel();
 	}
 

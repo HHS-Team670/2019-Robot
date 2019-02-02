@@ -258,14 +258,15 @@ public class Climber extends Subsystem {
 
 
   /**
-   * Method to set output ranges of piston controllers in response to an input of tilt adjustment
-   * 
+   * Method to set output ranges of piston controllers in response to an input of tilt adjustment.
+   * Will do nothing if the NavX is not connected!
+   *
    * @param goingUp True if robot is climbing up and false if coming down
    * @param tiltTolerance The tolerance past which the robot is considered too unbalanced in either direction
    * @param tiltAdjustment The amount of adjustment desired for the robot
    */
   public void handleTilt(boolean goingUp, double tiltTolerance, double tiltAdjustment){
-    if (sensors.getNavX() != null) {
+    if (!sensors.isNavXNull()) {
       if (goingUp) {
         // If tipped down (front is down)
         if (sensors.getPitchDouble() < -tiltTolerance) {
@@ -278,7 +279,6 @@ public class Climber extends Subsystem {
           setBackPistonOutputRange(MINIMUM_PISTON_POWER, MAXIMUM_PISTON_POWER + tiltAdjustment);
         }
       }
-
       // For going down
       else {
         // If tipped down (front is down)

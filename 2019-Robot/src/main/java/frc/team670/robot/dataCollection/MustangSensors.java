@@ -2,7 +2,6 @@ package frc.team670.robot.dataCollection;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.dataCollection.sensors.NavX;
 import frc.team670.robot.dataCollection.sensors.NavX.NavX_Pitch_PIDSource;
@@ -13,10 +12,11 @@ import frc.team670.robot.utils.math.Rotation;
  * Instantiates sensor representation objects and contains methods for accessing the sensor data.
  * @author shaylandias
  */
-public class MustangSensors extends Subsystem {
+public class MustangSensors {
 
   // NavX
   private NavX navXMicro = null;
+  private boolean isNavXNull;
   private DigitalInput intakeIRSensor;
   private DigitalInput clawIRSensor;
   public static final double NAVX_ERROR_CODE = -40001;
@@ -25,10 +25,12 @@ public class MustangSensors extends Subsystem {
   public MustangSensors(){
     try {
       navXMicro = new NavX(RobotMap.NAVX_PORT); 
+      isNavXNull = false;
     } catch (RuntimeException ex) {
 			DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
-			navXMicro = null;
-    } 
+      navXMicro = null;
+      isNavXNull = true;
+    }
     
     try {
       intakeIRSensor = new DigitalInput(RobotMap.INTAKE_IR_DIO_PORT);
@@ -43,11 +45,6 @@ public class MustangSensors extends Subsystem {
       DriverStation.reportError("Error instantiating clawIRSensor: " + ex.getMessage(), true);
       clawIRSensor = null;
     }
-  }
-
-  @Override
-  public void initDefaultCommand() {
-    // No Default Command
   }
 
   /**
@@ -65,7 +62,7 @@ public class MustangSensors extends Subsystem {
   public double getYawRateDegreesPerSecond() {
     if(navXMicro != null) {
       return navXMicro.getYawRateDegreesPerSec();
-    } else{
+    } else {
       return NAVX_ERROR_CODE;
     }
   }
@@ -77,7 +74,7 @@ public class MustangSensors extends Subsystem {
   public double getYawDouble(){
     if(navXMicro != null) {
       return navXMicro.getYawDouble();
-    } else{
+    } else {
       return NAVX_ERROR_CODE;
     }
   }
@@ -85,7 +82,7 @@ public class MustangSensors extends Subsystem {
   public double getPitchDouble() {
     if(navXMicro != null) {
       return navXMicro.getPitch();
-    } else{
+    } else {
       return NAVX_ERROR_CODE;
     }
   }
@@ -141,6 +138,10 @@ public class MustangSensors extends Subsystem {
     }
   }
 
+  /**
+   * Returns a PIDSource with the NavX Yaw corresponding to the last zero (not field centric).
+   * @return Zeroable NavX Yaw Source, null if the navX could not be instantiated!
+   */
   public ZeroableNavX_Yaw_PIDSource getZeroableNavXPIDSource() {
     if(navXMicro != null){
       return navXMicro.getZeroableNavXYawPIDSource();
@@ -149,7 +150,8 @@ public class MustangSensors extends Subsystem {
   }
 
   /**
-   * Returns a PIDSource with the NavX pitch
+   * Returns a PIDSource with the NavX pitch.
+   * @return NavX Pitch Source, null if the navX could not be instantiated!
    */
   public NavX_Pitch_PIDSource getNavXPitchPIDSource() {
     if(navXMicro != null){
@@ -196,7 +198,14 @@ public class MustangSensors extends Subsystem {
   /**
    * Returns the navX
    */
-  public NavX getNavX(){
-    return navXMicro;
+  // public NavX getNavX(){
+  //   return navXMicro;
+  // }
+
+  /**
+   * @return true if NavX is null (could not be instantiated), false if you can call methods on the NavX
+   */
+  public boolean isNavXNull() {
+    return isNavXNull;
   }
 }

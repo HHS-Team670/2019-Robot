@@ -44,7 +44,7 @@ public class PistonClimbWithTiltControl extends Command {
     this.climber = climber;
     this.sensors = sensors;
     // If the NavX is null, we don't do any tilt control
-    if (sensors.getNavX() != null) {
+    if (!sensors.isNavXNull()) {
       tiltController = new PIDController(P, I, D, F, sensors.getNavXPitchPIDSource(), new NullPIDOutput());
       tiltController.setSetpoint(0);
       tiltController.setAbsoluteTolerance(tiltTolerance);
@@ -72,7 +72,7 @@ public class PistonClimbWithTiltControl extends Command {
   protected void execute() {
 
     // If the NavX is null, we don't do any tilt control
-    if (sensors.getNavX() != null) {
+    if (!sensors.isNavXNull()) {
       if (Math.abs(sensors.getPitchDouble()) - tiltTolerance > 0) {
           climber.handleTilt(goingUp, tiltTolerance, tiltController.get());
       }

@@ -45,6 +45,7 @@ public class DriveMotionProfile extends Command {
   private static final String BASE_PATH_NAME = "home/deploy/";
   private static final double MAX_VELOCITY = 90, MAX_ACCELERATION = 20, MAX_JERK = 60; // Equivalent units in inches
   private static final double TIME_STEP = 0.05;
+  // Making this constant higher helps prevent the robot from overturning (overturning also will make it not drive far enough in the correct direction)
   private static final double ANGLE_DIVIDE_CONSTANT = 240.0; // Default = 80
 
 
@@ -239,25 +240,25 @@ public class DriveMotionProfile extends Command {
       check if NavX is null, otherwise if NavX is unplugged, robot code will crash
      */
 
-     if(Robot.sensors.getNavX() != null){
+    double turn = 0;
+
+     if(!Robot.sensors.isNavXNull()) {
       // Calculates the angle offset for PID
       // // It tracks the wrong angle (mirrors the correct one)
-      // double gyroHeading;
-      // if(isReversed) {
-      //   gyroHeading = Pathfinder.boundHalfDegrees(-1 * Robot.sensors.getYawDoubleForPathfinder());   // Assuming the gyro is giving a value in degrees
-      // }
-      // else {
-      //   gyroHeading = Pathfinder.boundHalfDegrees(Robot.sensors.getYawDoubleForPathfinder());   // Assuming the gyro is giving a value in degrees
-      // }
-      // double desiredHeading = Pathfinder.boundHalfDegrees(Pathfinder.r2d(left.getHeading()));  // Should also be in degrees 
-      // // Make sure gyro and desired angle match up [-180, 180], navX reports the opposite orientation as Pathfinder expects
-      // double angleDifference = Pathfinder.boundHalfDegrees(desiredHeading - gyroHeading);    
+      double gyroHeading;
+      if(isReversed) {
+        gyroHeading = Pathfinder.boundHalfDegrees(-1 * Robot.sensors.getYawDoubleForPathfinder());   // Assuming the gyro is giving a value in degrees
+      }
+      else {
+        gyroHeading = Pathfinder.boundHalfDegrees(Robot.sensors.getYawDoubleForPathfinder());   // Assuming the gyro is giving a value in degrees
+      }
+      double desiredHeading = Pathfinder.boundHalfDegrees(Pathfinder.r2d(left.getHeading()));  // Should also be in degrees 
+      // Make sure gyro and desired angle match up [-180, 180], navX reports the opposite orientation as Pathfinder expects
+      double angleDifference = Pathfinder.boundHalfDegrees(desiredHeading - gyroHeading);    
       
-      // Making this constant higher helps prevent the robot from overturning (overturning also will make it not drive far enough in the correct direction)
       // TODO MAKE THE -1 HERE MATCH uP WITH THE DIRECTION THE ROBOT SHOULD TURN
+      turn = 0.8 * (-1.0/ANGLE_DIVIDE_CONSTANT) * angleDifference;
      }
-    double turn = 0;//0.8 * (-1.0/ANGLE_DIVIDE_CONSTANT) * angleDifference;
-    
     
     double leftOutput = l + turn;
     double rightOutput = r - turn;
@@ -267,9 +268,6 @@ public class DriveMotionProfile extends Command {
     }
 
     Logger.consoleLog("encoders: " + leftEncoder + ", " + rightEncoder + " outputs: " + leftOutput + ", " + rightOutput);
-    // Logger.consoleLog("outputs: " + leftOutput + ", " + rightOutput);
-    // Logger.consoleLog("heading: " + gyroHeading + " desired: " + desiredHeading);
-
     // Drives the bot based on the input
     Robot.driveBase.tankDrive(leftOutput, rightOutput, false); 
 
@@ -291,9 +289,11 @@ public class DriveMotionProfile extends Command {
   @Override
   protected void end() {
     Robot.driveBase.stop();
-    if(Robot.sensors.getNavX() != null)
+    if(!Robot.sensors.isNavXNull())
        Logger.consoleLog("EndingAngle: %s, LeftTicksTraveled: %s, RightTicksTraveled: %s, DistanceTraveled: %s", Pathfinder.boundHalfDegrees(Robot.sensors.getYawDoubleForPathfinder()), 
                      (Robot.driveBase.getLeftMustangEncoderPositionInTicks() - initialLeftEncoder), (Robot.driveBase.getRightMustangEncoderPositionInTicks() - initialRightEncoder), MathUtils.convertDriveBaseTicksToInches(MathUtils.average((double)(Robot.driveBase.getLeftMustangEncoderPositionInTicks() - initialLeftEncoder), (double)(Robot.driveBase.getRightMustangEncoderPositionInTicks() - initialRightEncoder))));
+    else
+       Logger.consoleLog("LeftTicksTraveled: %s, RightTicksTraveled: %s, DistanceTraveled: %s", (Robot.driveBase.getLeftMustangEncoderPositionInTicks() - initialLeftEncoder), (Robot.driveBase.getRightMustangEncoderPositionInTicks() - initialRightEncoder), MathUtils.convertDriveBaseTicksToInches(MathUtils.average((double)(Robot.driveBase.getLeftMustangEncoderPositionInTicks() - initialLeftEncoder), (double)(Robot.driveBase.getRightMustangEncoderPositionInTicks() - initialRightEncoder))));
   }
 
   // Called when another command which requires one or more of the same
