@@ -78,37 +78,41 @@ public class CycleClimb extends InstantCommand {
     Scheduler.getInstance().add(new CancelClimbBasedOnTimeLeftInMatch(arm, climber, sensors));
 
     switch (cg) {
-      case DEPLOY_PISTONS:
-        Scheduler.getInstance().add(new PistonClimbWithTiltControl(setPoint, climber, sensors));
-        cg = ClimbStage.ARM_CLIMB;
-        break;
-      case ARM_CLIMB:
-        if(climber.getFrontControllerOnTarget() && climber.getBackControllerOnTarget()) {
-            CommandGroup initiateArmClimb = new CommandGroup();
-            initiateArmClimb.addSequential(new MoveArm(Arm.getArmState(LegalState.READY_TO_CLIMB), arm));
-            initiateArmClimb.addSequential(new ArmClimb(arm, climber));
-            Scheduler.getInstance().add(initiateArmClimb);
-        }
-        if (!ArmClimb.getUserWishesToStillClimb()) {
-          cg = ClimbStage.RETRACT_FRONT_PISTONS_AND_STOW_ARM;
-        }
-        break;
-      case RETRACT_FRONT_PISTONS_AND_STOW_ARM:
-        Scheduler.getInstance().add(new RetractFrontPistons(climber));
-        if (Robot.climber.getFrontPistonsRetracted()) {
-          cg = ClimbStage.RETRACT_BACK_PISTONS;
-        }
-        break;
-      case RETRACT_BACK_PISTONS:
-        Scheduler.getInstance().add(new RetractBackPistons(climber));
-        cg = ClimbStage.DEPLOY_PISTONS;
-        break;
-      default:
-        Scheduler.getInstance().add(new PistonClimbWithTiltControl(setPoint, climber, sensors));
-        cg = ClimbStage.DEPLOY_PISTONS;
-        break;
+     case DEPLOY_PISTONS:
+      CommandGroup initiatePistonClimb = new CommandGroup();
+      initiatePistonClimb.addSequential(new MoveArm(Arm.getArmState(LegalState.NEUTRAL), arm));
+      initiatePistonClimb.addSequential(new PistonClimbWithTiltControl(setPoint, climber, sensors));
+      Scheduler.getInstance().add(initiatePistonClimb);
+      Scheduler.getInstance().add(initiatePistonClimb);
+      cg = ClimbStage.ARM_CLIMB;
+      break;
+    case ARM_CLIMB:
+      if (climber.getFrontControllerOnTarget() && climber.getBackControllerOnTarget()) {
+        CommandGroup initiateArmClimb = new CommandGroup();
+        initiateArmClimb.addSequential(new MoveArm(Arm.getArmState(LegalState.READY_TO_CLIMB), arm));
+        initiateArmClimb.addSequential(new ArmClimb(arm, climber));
+        Scheduler.getInstance().add(initiateArmClimb);
       }
+      if (!ArmClimb.getUserWishesToStillClimb()) {
+        cg = ClimbStage.RETRACT_FRONT_PISTONS_AND_STOW_ARM;
+      }
+      break;
+    case RETRACT_FRONT_PISTONS_AND_STOW_ARM:
+      Scheduler.getInstance().add(new RetractFrontPistons(climber));
+      if (Robot.climber.getFrontPistonsRetracted()) {
+        cg = ClimbStage.RETRACT_BACK_PISTONS;
+      }
+      break;
+    case RETRACT_BACK_PISTONS:
+      Scheduler.getInstance().add(new RetractBackPistons(climber));
+      cg = ClimbStage.DEPLOY_PISTONS;
+      break;
+    default:
+      Scheduler.getInstance().add(new PistonClimbWithTiltControl(setPoint, climber, sensors));
+      cg = ClimbStage.DEPLOY_PISTONS;
+      break;
     }
+  }
 
   /**
    * An enum to represent the different stages of climbing that the command can

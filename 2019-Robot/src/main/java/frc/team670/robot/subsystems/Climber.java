@@ -37,10 +37,11 @@ public class Climber extends Subsystem {
   private boolean frontPistonRetractionInProgress, backPistonRetractionInProgress;
 
   private int climberEncoderTolerance = 10; //TODO Set this
- 
   
   public static final double MINIMUM_PISTON_POWER = -0.2; //Todo set this
   public static final double MAXIMUM_PISTON_POWER = 0.75; 
+
+  public static final double DISTANCE_BETWEEN_FRONT_AND_BACK_PISTONS_IN_INCHES = 0; //TODO: GET THIS FROM CALEEEEBBBB
 
   private MustangSensors sensors;
 
@@ -137,7 +138,7 @@ public class Climber extends Subsystem {
    * @return The position of the front pistons in inches
    */
   public double getFrontTalonPositionInInches() {
-    return 0; //TODO set these
+    return convertPistonTicksToInches(getFrontTalonPositionInTicks());
   }
 
    /**
@@ -146,7 +147,7 @@ public class Climber extends Subsystem {
    * @return The position of the back pistons in inches
    */
   public double getBackTalonPositionInInches() {
-    return 0; // TODO set these
+    return convertPistonTicksToInches(getBackTalonPositionInTicks());
   }
 
 
@@ -235,6 +236,21 @@ public class Climber extends Subsystem {
    */
   public boolean getBackControllerOnTarget(){
     return backPIDController.onTarget();
+  }
+
+  /**
+   * Returns pitch calculated from the difference in the front and back piston encoders.
+   * Returns negative if front is down and positive if front is up
+   */
+  public double getPitchFromEncoders(){
+    double heightDifferenceFrontBackPistons = getFrontTalonPositionInInches() - getBackTalonPositionInInches();
+    double pitch = Math.toDegrees(Math.asin(heightDifferenceFrontBackPistons / DISTANCE_BETWEEN_FRONT_AND_BACK_PISTONS_IN_INCHES));
+    return pitch;
+  }
+
+  //TODO GET THIS FROM CALEEEEEEEBBBB
+  public static double convertPistonTicksToInches(int ticks){
+    return 0.0;
   }
 
   /**

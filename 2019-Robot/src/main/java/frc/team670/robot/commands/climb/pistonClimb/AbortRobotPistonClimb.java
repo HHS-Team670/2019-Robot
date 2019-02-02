@@ -61,6 +61,5 @@ public class AbortRobotPistonClimb extends InstantCommand {
     Scheduler.getInstance().add(abortPistonClimb);
 
   }
-
-
 }
+
