@@ -38,10 +38,14 @@ public class Climber extends Subsystem {
 
   private int climberEncoderTolerance = 10; //TODO Set this
   
-  public static final double MINIMUM_PISTON_POWER = -0.2; //Todo set this
+  public static final double MINIMUM_PISTON_POWER = -0.2; //TODO: set this
   public static final double MAXIMUM_PISTON_POWER = 0.75; 
 
-  public static final double DISTANCE_BETWEEN_FRONT_AND_BACK_PISTONS_IN_INCHES = 0; //TODO: GET THIS FROM CALEEEEBBBB
+  public static final double WINCH_DIAMETER = 2.0;
+  public static final double GEAR_RATIO = 47;
+  public static final double CLIMBER_TICKS_PER_ROTATION = 4096;
+
+  public static final double DISTANCE_BETWEEN_FRONT_AND_BACK_PISTONS_IN_INCHES = 11.834; 
 
   private MustangSensors sensors;
 
@@ -248,9 +252,9 @@ public class Climber extends Subsystem {
     return pitch;
   }
 
-  //TODO GET THIS FROM CALEEEEEEEBBBB
   public static double convertPistonTicksToInches(int ticks){
-    return 0.0;
+    // Got this from Ben
+    return ((WINCH_DIAMETER * Math.PI) / GEAR_RATIO) * CLIMBER_TICKS_PER_ROTATION;
   }
 
   /**
