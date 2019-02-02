@@ -7,14 +7,14 @@
 
 package frc.team670.robot.commands;
 
+import java.io.FileNotFoundException;
+
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.commands.drive.DriveMotionProfile;
-import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
 import frc.team670.robot.subsystems.Arm.LegalState;
-import jaci.pathfinder.Waypoint;
 
 
 public class BuildAuton extends CommandGroup {
@@ -29,28 +29,42 @@ public class BuildAuton extends CommandGroup {
     String height2 = autonSequence[4];
     String target3 = autonSequence[5];
     String height3 = autonSequence[6];
-    Waypoint[] points = new Waypoint[2];
     ArmState destination; 
+    String fileName = "";
 
-    points[0] = RobotConstants.waypoints.get(start);
-    points[1] = RobotConstants.waypoints.get(target1);
-    destination = Arm.getArmState(LegalState.valueOf(height1)); // TODO change this
-    addSequential(new DriveMotionProfile(points, isReversed));
-    addParallel(new MoveArm(destination, arm));
+    fileName = start + "_" + target1 + ".pf1.csv";
+    destination = Arm.getArmState(LegalState.valueOf("READY_" + height1)); 
+    try {
+        addSequential(new DriveMotionProfile(fileName, isReversed));
+        addParallel(new MoveArm(destination, arm));
+    } catch (FileNotFoundException e) {
+        e.printStackTrace();
+        addSequential(new MoveArm(destination, arm));
+    }
     // addSequential: do appropriate thing with claw
+    // addSequential: turn to proper angle to start next path?
 
-    points[0] = RobotConstants.waypoints.get(target1);
-    points[1] = RobotConstants.waypoints.get(target2);
-    destination = Arm.getArmState(LegalState.GRAB_HATCH_LOADINGSTATION_FORWARD); // TODO change this
-    addSequential(new DriveMotionProfile(points, isReversed));
-    addParallel(new MoveArm(destination, arm));
+    destination = Arm.getArmState(LegalState.valueOf("READY_" + height2)); 
+    fileName = target1 + "_" + target2 + ".pf1.csv";
+    try {
+        addSequential(new DriveMotionProfile(fileName, isReversed));
+        addParallel(new MoveArm(destination, arm));
+    } catch (FileNotFoundException e) {
+        e.printStackTrace();
+        addSequential(new MoveArm(destination, arm));
+    }    
     // addSequential: do appropriate thing with claw
+    // addSequential: turn to proper angle to start next path?
 
-    points[0] = RobotConstants.waypoints.get(target2);
-    points[1] = RobotConstants.waypoints.get(target3);
-    destination = Arm.getArmState(LegalState.valueOf(height3)); // TODO change this
-    addSequential(new DriveMotionProfile(points, isReversed));
-    addParallel(new MoveArm(destination, arm));
+    destination = Arm.getArmState(LegalState.valueOf("READY_" + height3)); 
+    fileName = target2 + "_" + target3 + ".pf1.csv";
+    try {
+        addSequential(new DriveMotionProfile(fileName, isReversed));
+        addParallel(new MoveArm(destination, arm));
+    } catch (FileNotFoundException e) {
+        e.printStackTrace();
+        addSequential(new MoveArm(destination, arm));
+    }
     // addSequential: do appropriate thing with claw
   }
 }
