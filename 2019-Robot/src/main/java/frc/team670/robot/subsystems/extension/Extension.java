@@ -41,6 +41,10 @@ public class Extension extends BaseExtension {
 
   private static final double EXTENSION_POWER = 0.75;
 
+  private static int EXTENSION_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 15000; // TODO set this
+  private static int EXTENSION_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS = 6000; // TODO set this
+
+
   public Extension() {
     extensionMotor = new TalonSRX(RobotMap.ARM_EXTENSION_MOTOR);   
     extensionMotor.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
@@ -48,8 +52,8 @@ public class Extension extends BaseExtension {
 		extensionMotor.config_kP(kSlotMotionMagic, kP, kTimeoutMs);
 		extensionMotor.config_kI(kSlotMotionMagic, kI, kTimeoutMs);
     extensionMotor.config_kD(kSlotMotionMagic, kD, kTimeoutMs);
-    extensionMotor.configMotionCruiseVelocity(RobotConstants.MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
-		extensionMotor.configMotionAcceleration(RobotConstants.MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+    extensionMotor.configMotionCruiseVelocity(EXTENSION_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+		extensionMotor.configMotionAcceleration(EXTENSION_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
  
     // These thresholds stop the motor when limit is reached
     extensionMotor.configForwardSoftLimitThreshold(FORWARD_SOFT_LIMIT);

@@ -9,10 +9,9 @@ package frc.team670.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
-import edu.wpi.first.wpilibj.CounterBase.EncodingType;
-import edu.wpi.first.wpilibj.Encoder;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.utils.functions.MathUtils;
@@ -24,99 +23,96 @@ public class Intake extends BaseIntake {
 
   public static final int INTAKE_ANGLE_IN = 0, INTAKE_ANGLE_DEPLOYED = 90;
 
-  private VictorSPX baseVictor, rollerVictor;
-  private Encoder baseVictorEncoder;
+  private TalonSRX baseTalon;
+  private VictorSPX rollerVictor;
 
   private static final double MAX_BASE_OUTPUT = 0.75;
 
-
-  private static final double kF = 0, kP = 0.1, kI = 0, kD = 0; //TODO figure out what these are
-  private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0; //TODO Set this
+  private static final double kF = 0, kP = 0.1, kI = 0, kD = 0; // TODO figure out what these are
+  private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0; // TODO Set this
   private final int FORWARD_SOFT_LIMIT = 0, REVERSE_SOFT_LIMIT = 0; // TODO figure out the values in rotations
   private static final double RAMP_RATE = 0.1;
 
+  private static int INTAKE_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 15000; // TODO set this
+  private static int INTAKE_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS = 6000; // TODO set this
 
   public Intake() {
-    baseVictor = new VictorSPX(RobotMap.INTAKE_BASE_VICTOR);
+    baseTalon = new TalonSRX(RobotMap.INTAKE_BASE_TALON);
     rollerVictor = new VictorSPX(RobotMap.INTAKE_ROLLER_VICTOR);
-
-    baseVictorEncoder = new Encoder(RobotMap.INTAKE_BASE_ENCODER_CHANNEL_A, RobotMap.INTAKE_BASE_ENCODER_CHANNEL_B, false, EncodingType.k4X);
-
     enableBaseMotionMagic();
   }
 
   // May need to set tolerance
-  private void enableBaseMotionMagic(){
-    baseVictor.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
-		baseVictor.config_kF(kSlotMotionMagic, kF, kTimeoutMs);
-		baseVictor.config_kP(kSlotMotionMagic, kP, kTimeoutMs);
-		baseVictor.config_kI(kSlotMotionMagic, kI, kTimeoutMs);
-    baseVictor.config_kD(kSlotMotionMagic, kD, kTimeoutMs);
-    baseVictor.configMotionCruiseVelocity(RobotConstants.MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
-    baseVictor.configMotionAcceleration(RobotConstants.MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
-    
-    baseVictor.configNominalOutputForward(0, RobotConstants.kTimeoutMs);
-    baseVictor.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
-    baseVictor.configPeakOutputForward(MAX_BASE_OUTPUT, RobotConstants.kTimeoutMs);
-    baseVictor.configPeakOutputReverse(-MAX_BASE_OUTPUT, RobotConstants.kTimeoutMs);
+  private void enableBaseMotionMagic() {
+    baseTalon.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
+    baseTalon.config_kF(kSlotMotionMagic, kF, kTimeoutMs);
+    baseTalon.config_kP(kSlotMotionMagic, kP, kTimeoutMs);
+    baseTalon.config_kI(kSlotMotionMagic, kI, kTimeoutMs);
+    baseTalon.config_kD(kSlotMotionMagic, kD, kTimeoutMs);
+    baseTalon.configMotionCruiseVelocity(INTAKE_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+    baseTalon.configMotionAcceleration(INTAKE_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+
+    baseTalon.configNominalOutputForward(0, RobotConstants.kTimeoutMs);
+    baseTalon.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
+    baseTalon.configPeakOutputForward(MAX_BASE_OUTPUT, RobotConstants.kTimeoutMs);
+    baseTalon.configPeakOutputReverse(-MAX_BASE_OUTPUT, RobotConstants.kTimeoutMs);
 
     // These thresholds stop the motor when limit is reached
-    baseVictor.configForwardSoftLimitThreshold(FORWARD_SOFT_LIMIT);
-    baseVictor.configReverseSoftLimitThreshold(REVERSE_SOFT_LIMIT);
+    baseTalon.configForwardSoftLimitThreshold(FORWARD_SOFT_LIMIT);
+    baseTalon.configReverseSoftLimitThreshold(REVERSE_SOFT_LIMIT);
 
     // Enable Safety Measures
-    baseVictor.configForwardSoftLimitEnable(true);
-    baseVictor.configReverseSoftLimitEnable(true);
+    baseTalon.configForwardSoftLimitEnable(true);
+    baseTalon.configReverseSoftLimitEnable(true);
 
-    baseVictor.setNeutralMode(NeutralMode.Brake);
+    baseTalon.setNeutralMode(NeutralMode.Brake);
     rollerVictor.setNeutralMode(NeutralMode.Coast);
 
-    baseVictor.configClosedloopRamp(RAMP_RATE);
-    baseVictor.configOpenloopRamp(RAMP_RATE);
+    baseTalon.configClosedloopRamp(RAMP_RATE);
+    baseTalon.configOpenloopRamp(RAMP_RATE);
   }
 
   /**
    * Should set the setpoint for the Motion Magic on the intake
    */
-  public void setMotionMagicSetpoint(double intakeTicks) {  
-    baseVictor.set(ControlMode.MotionMagic, intakeTicks);
+  public void setMotionMagicSetpoint(double intakeTicks) {
+    baseTalon.set(ControlMode.MotionMagic, intakeTicks);
   }
 
   /**
    * Should return the setpoint for the motion magic on the base motor
    */
-  public double getMotionMagicSetpoint(){
-    return baseVictor.getClosedLoopTarget(); 
+  public double getMotionMagicSetpoint() {
+    return baseTalon.getClosedLoopTarget();
   }
 
   public void setRotatorNeutralMode(NeutralMode mode) {
-    baseVictor.setNeutralMode(mode);
+    baseTalon.setNeutralMode(mode);
   }
 
   /**
    * Returns the tick value of the base motor
    */
-  public int getIntakePositionInTicks(){
-    return baseVictorEncoder.get();
+  public int getIntakePositionInTicks() {
+    return baseTalon.getSensorCollection().getQuadraturePosition();
   }
 
   /**
    * Returns the intake angle in degrees
    */
-  public double getIntakeAngleInDegrees(){
-    return MathUtils.convertIntakeTicksToDegrees(baseVictorEncoder.get());
+  public double getIntakeAngleInDegrees() {
+    return MathUtils.convertIntakeTicksToDegrees(getIntakePositionInTicks());
   }
-
 
   /**
    * Runs the intake at a given percent power
    * 
-   * @param percentOutput The desired percent power for the rollers to run at [-1, 1]
+   * @param percentOutput The desired percent power for the rollers to run at [-1,
+   *                      1]
    */
   public void runIntake(double power) {
     rollerVictor.set(ControlMode.PercentOutput, power);
   }
-
 
   @Override
   public void initDefaultCommand() {

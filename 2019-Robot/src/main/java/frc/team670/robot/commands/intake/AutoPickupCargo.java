@@ -29,7 +29,7 @@ public class AutoPickupCargo extends CommandGroup {
     //runIntake will go until the IR in the claw gets tripped or 0.5 seconds after the Intake sensor has been tripped
     addSequential(new RunIntake(intake, sensors));
     addSequential(new PickupBall(claw));
-    addParallel(new TimedRunIntake(5000, intake, sensors));
+    addParallel(new TimedRunIntake(5000, intake));
     addSequential(new WaitCommand(1));
     addSequential(new MoveArm(Arm.getArmState(LegalState.NEUTRAL), arm));
   }

@@ -84,6 +84,22 @@ public class MathUtils {
     }
 
     /**
+    * Converts a tick value taken from a drive base Spark encoder to inches.
+    */
+    public static double convertDriveBaseSparkTicksToInches(double ticks) {
+        double rotations = ticks / RobotConstants.SPARK_TICKS_PER_ROTATION;
+        return rotations * Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER;
+     }
+ 
+     /**
+      * Converts an inch value into drive base Spark Encoder ticks.
+      */
+     public static int convertInchesToDriveBaseSparkTicks(double inches) {
+         double rotations = inches / (Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
+         return (int)(rotations * RobotConstants.SPARK_TICKS_PER_ROTATION);
+     }
+
+    /**
      * Gets inches per rotations of a NEO motor on the drive base since SparkMAX encoders work in rotations.
      */
     public static double convertDriveBaseRotationsToInches(double rotations) {

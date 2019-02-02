@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.constants.RobotConstants;
+import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.LegalState;
 import frc.team670.robot.subsystems.Climber;
@@ -25,10 +26,12 @@ public class AbortRobotPistonClimb extends InstantCommand {
 
   private Climber climber;
   private Arm arm;
+  private MustangSensors sensors;
 
-  public AbortRobotPistonClimb(Climber climber, Arm arm) {
+  public AbortRobotPistonClimb(Climber climber, Arm arm, MustangSensors sensors) {
     this.climber = climber;
     this.arm = arm;
+    this.sensors = sensors;
   }
 
   @Override
@@ -52,7 +55,7 @@ public class AbortRobotPistonClimb extends InstantCommand {
     //  */
     if (!climber.getFrontPistonsRetracted()) {
       // addParallel(new MoveArm()); //TODO: Move arm to stowed state so it doesn't hit anything on the way down
-      abortPistonClimb.addSequential(new PistonClimbWithTiltControl(RobotConstants.PISTON_ENCODER_FLAT, climber));
+      abortPistonClimb.addSequential(new PistonClimbWithTiltControl(RobotConstants.PISTON_ENCODER_FLAT, climber, sensors));
     }
 
     Scheduler.getInstance().add(abortPistonClimb);
