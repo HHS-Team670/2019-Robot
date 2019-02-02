@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.subsystems.BaseIntake;
+import frc.team670.robot.subsystems.Intake;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.functions.MathUtils;
 
@@ -31,7 +32,7 @@ public class MoveIntakeToSetpointAngle extends Command {
   public MoveIntakeToSetpointAngle(int setpointInDegrees, BaseIntake intake) {
     requires(intake);
     this.intake = intake;
-    this.setpointInTicks = MathUtils.convertIntakeDegreesToTicks(setpointInDegrees);
+    this.setpointInTicks = Intake.convertIntakeDegreesToTicks(setpointInDegrees);
   }
 
   // Called just before this Command runs the first time

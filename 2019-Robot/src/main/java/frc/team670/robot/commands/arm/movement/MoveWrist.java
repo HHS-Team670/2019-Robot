@@ -8,7 +8,9 @@
 package frc.team670.robot.commands.arm.movement;
 
 import edu.wpi.first.wpilibj.command.Command;
+
 import frc.team670.robot.subsystems.wrist.BaseWrist;
+import frc.team670.robot.subsystems.wrist.Wrist;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.functions.MathUtils;
 
@@ -34,7 +36,7 @@ public class MoveWrist extends Command {
   public MoveWrist(BaseWrist wrist, double angle) {
     this.wrist = wrist;
     requires(wrist);
-    wristSetpointInTicks = MathUtils.convertWristDegreesToTicks(angle);
+    wristSetpointInTicks = Wrist.convertWristDegreesToTicks(angle);
   }
 
   // Called just before this Command runs the first time

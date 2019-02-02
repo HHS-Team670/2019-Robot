@@ -10,6 +10,7 @@ package frc.team670.robot.commands.drive.straight;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.Robot;
+import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.functions.MathUtils;
 
@@ -20,7 +21,7 @@ public class DIOEncoderDrive extends Command {
 
   public DIOEncoderDrive(int inchesToTravel) {
     requires(Robot.driveBase);
-    ticksToTravel = MathUtils.convertInchesToDriveBaseTicks(inchesToTravel);
+    ticksToTravel = DriveBase.convertInchesToDriveBaseTicks(inchesToTravel);
 
     leftPIDController = new PIDController(P, I, D, FF, Robot.driveBase.getLeftDIOEncoder(),
         Robot.driveBase.getLeftControllers().get(0));

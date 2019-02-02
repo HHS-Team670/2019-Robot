@@ -9,6 +9,7 @@ package frc.team670.robot.commands.arm.movement;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.subsystems.elbow.BaseElbow;
+import frc.team670.robot.subsystems.elbow.Elbow;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.functions.MathUtils;
 
@@ -33,7 +34,7 @@ public class MoveElbow extends Command {
   public MoveElbow(BaseElbow elbow, double angle) {
     this.elbow = elbow;
     requires(elbow);
-    elbowSetpointInTicks = MathUtils.convertElbowDegreesToTicks(angle);
+    elbowSetpointInTicks = Elbow.convertElbowDegreesToTicks(angle);
   }
 
   // Called just before this Command runs the first time

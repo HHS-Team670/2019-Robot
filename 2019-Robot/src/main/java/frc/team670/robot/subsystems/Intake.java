@@ -101,7 +101,7 @@ public class Intake extends BaseIntake {
    * Returns the intake angle in degrees
    */
   public double getIntakeAngleInDegrees() {
-    return MathUtils.convertIntakeTicksToDegrees(getIntakePositionInTicks());
+    return convertIntakeTicksToDegrees(getIntakePositionInTicks());
   }
 
   /**
@@ -112,6 +112,24 @@ public class Intake extends BaseIntake {
    */
   public void runIntake(double power) {
     rollerVictor.set(ControlMode.PercentOutput, power);
+  }
+
+  /**
+   * Converts an intake angle into ticks
+   */
+  public static int convertIntakeDegreesToTicks(double degrees) {
+    //If straight up is 0 and going forward is positive
+    // percentage * half rotation
+    return (int)((degrees / 180) * (0.5 * RobotConstants.INTAKE_TICKS_PER_ROTATION));
+  }
+
+  /**
+   * Converts intake ticks into an angle
+   */
+  public static double convertIntakeTicksToDegrees(double ticks) {
+    //If straight up is 0 and going forward is positive
+    // percentage * half degrees rotation
+    return (ticks / (0.5 * RobotConstants.INTAKE_TICKS_PER_ROTATION) * 180);
   }
 
   @Override
