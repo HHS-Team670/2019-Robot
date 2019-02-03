@@ -161,7 +161,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     Logger.consoleLog("Robot Disabled");
-    autonomousCommand = new DriveMotionProfile("10ft-straight.pf1.csv", false);
+    autonomousCommand = xkeys.getAutonCommand();
   }
 
   @Override

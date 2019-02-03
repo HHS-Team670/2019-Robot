@@ -14,6 +14,7 @@ import frc.team670.robot.utils.Logger;
 public class TimedRunIntake extends Command {
 
   private BaseIntake intake;
+  private boolean runningIn;
 
   private static final double RUNNING_POWER = 1.0; // TODO figure out if we want to run full speed
   private long time;
@@ -24,7 +25,7 @@ public class TimedRunIntake extends Command {
    * 
    * @param millisecondsToRun the time for the intake to run in milliseconds
    */
-  public TimedRunIntake(int millisecondsToRun, BaseIntake intake) {
+  public TimedRunIntake(int millisecondsToRun, BaseIntake intake, boolean runningIn) {
     requires(intake);
     this.intake = intake;
     this.millisecondsToRun = millisecondsToRun;
@@ -40,7 +41,7 @@ public class TimedRunIntake extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    intake.runIntake(RUNNING_POWER);
+    intake.runIntake(RUNNING_POWER, runningIn);
   }
 
   // Make this return true when this Command no longer needs to run execute()
@@ -53,7 +54,7 @@ public class TimedRunIntake extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    intake.runIntake(0);
+    intake.runIntake(0, true);
     Logger.consoleLog();
   }
 
@@ -61,7 +62,7 @@ public class TimedRunIntake extends Command {
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    intake.runIntake(0);
+    intake.runIntake(0, true);
     Logger.consoleLog();
   }
 }
