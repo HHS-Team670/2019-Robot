@@ -20,16 +20,19 @@ public class BuildAuton extends CommandGroup {
   /**
    * Add your docs here.
    */
-  public BuildAuton(String[] autonSequence, Arm arm, boolean isRobotFacingBack) {
-    String start = autonSequence[0];
-    String target1 = autonSequence[1];
-    String height1 = autonSequence[2];
-    String target2 = autonSequence[3];
-    String height2 = autonSequence[4];
-    String target3 = autonSequence[5];
-    String height3 = autonSequence[6];
+  public BuildAuton(String[] autonSequence, Arm arm) {
+    String startDirection = autonSequence[0];
+    String start = autonSequence[1];
+    String target1 = autonSequence[2];
+    String height1 = autonSequence[3];
+    String target2 = autonSequence[4];
+    String height2 = autonSequence[5];
+    String target3 = autonSequence[6];
+    String height3 = autonSequence[7];
     LegalState destination; 
     String fileName = "";
+
+    boolean isRobotFacingBack = startDirection.equals("Backward");
 
     destination = getLegalState(target1, height1, isRobotFacingBack); 
     fileName = start + "_" + target1 + ".pf1.csv";
@@ -38,7 +41,7 @@ public class BuildAuton extends CommandGroup {
     addSequential(new AdvancedVisionPIDDrive());
     if (destination != LegalState.NEUTRAL) addSequential(new PlaceOrGrab(true));
  
-    destination = getLegalState(target2, height2, isRobotFacingBack); 
+    destination = getLegalState(target2, height2, !isRobotFacingBack); 
     fileName = target1 + "_" + target2 + ".pf1.csv";
     addSequential(new DriveMotionProfile(fileName, !isRobotFacingBack));
     addParallel(new MoveArm(Arm.getArmState(destination), arm));
