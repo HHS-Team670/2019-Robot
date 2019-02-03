@@ -14,7 +14,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import frc.team670.robot.commands.arm.joystick.JoystickWrist;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
-import frc.team670.robot.utils.functions.MathUtils;
 
 /**
  * Controls wrist motors
@@ -23,7 +22,9 @@ public class Wrist extends BaseWrist {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
   
+
   private TalonSRX wristRotation;
+  public static double WRIST_START_POS = 6000; //TODO Set this
   public static final double MAX_WRIST_FORWARD = 0; //TODO find this
   public static final double MAX_WRIST_BACK = 0; //TODO find this
   private static final double kF = 0, kP = 0, kI = 0, kD = 0; //TODO figure out what these are
@@ -96,7 +97,7 @@ public class Wrist extends BaseWrist {
   
   @Override
   public double getAngle() {
-    return MathUtils.convertWristTicksToDegrees(getPositionTicks());
+    return convertWristTicksToDegrees(getPositionTicks());
   }
 
   @Override
@@ -125,5 +126,23 @@ public class Wrist extends BaseWrist {
   public void setMotionMagicSetpoint(double wristSetpointInTicks) { 
     wristRotation.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx); 
     wristRotation.set(ControlMode.MotionMagic, wristSetpointInTicks);
+  }
+
+  /**
+   * Converts an angle for the wrist into ticks
+   */
+  public static int convertWristDegreesToTicks(double degrees) {
+    //If straight is 0 and going forward is positive
+    // percentage * half rotation
+    return (int)((degrees / 180) * (0.5 * RobotConstants.WRIST_TICKS_PER_ROTATION));
+  }
+
+  /**
+   * Converts an angle for the wrist into ticks
+   */
+  public static double convertWristTicksToDegrees(int ticks) {
+    //If straight is 0 and going forward is positive
+    // percentage * half degrees rotation
+    return (ticks / (0.5 * RobotConstants.WRIST_TICKS_PER_ROTATION)) * 180;
   }
 }

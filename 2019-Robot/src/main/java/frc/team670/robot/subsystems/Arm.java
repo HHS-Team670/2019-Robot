@@ -28,6 +28,11 @@ import frc.team670.robot.utils.sort.Node;
  */
 public class Arm {
 
+  public static final double ARM_HEIGHT_IN_INCHES = 5;
+  public static final double CLAW_LENGTH_IN_INCHES = 8;
+  public static final int FIXED_ARM_LENGTH_IN_INCHES = 0;
+  public static final double OPERATOR_ARM_CONTROL_SCALAR = 0.5;
+
   // All of the states
   private static HashMap<LegalState, ArmState> states;
   private static ArmState currentState;
@@ -147,9 +152,8 @@ public class Arm {
    * of the arm.
    */
   public static Point2D.Double getCoordPosition(double elbowAngle, double wristAngle, double extensionLength) {
-    double x = (extensionLength + RobotConstants.FIXED_ARM_LENGTH_IN_INCHES) * Math.sin(elbowAngle) + RobotConstants.CLAW_LENGTH_IN_INCHES * Math.sin(wristAngle);
-    double y = (extensionLength + RobotConstants.FIXED_ARM_LENGTH_IN_INCHES) * Math.cos(elbowAngle) + RobotConstants.CLAW_LENGTH_IN_INCHES * Math.cos(wristAngle)
-        + RobotConstants.ARM_HEIGHT_IN_INCHES;
+    double x = (extensionLength + FIXED_ARM_LENGTH_IN_INCHES) * Math.sin(elbowAngle) + CLAW_LENGTH_IN_INCHES * Math.sin(wristAngle);
+    double y = (extensionLength + FIXED_ARM_LENGTH_IN_INCHES) * Math.cos(elbowAngle) + CLAW_LENGTH_IN_INCHES * Math.cos(wristAngle) + ARM_HEIGHT_IN_INCHES;
     return new Point2D.Double(x, y);
   }
 

@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import frc.team670.robot.constants.RobotConstants;
+import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.utils.functions.MathUtils;
 
 /**
@@ -51,9 +52,9 @@ public class MustangDriveBaseEncoder implements PIDSource {
      */
     public double getPositionInches() {
         if (isDIOEncoder) {
-            return MathUtils.convertDriveBaseTicksToInches(dioEncoder.get());
+            return DriveBase.convertDriveBaseTicksToInches(dioEncoder.get());
         }
-        return MathUtils.convertDriveBaseSparkTicksToInches((sparkEncoder.getPosition() / RobotConstants.SPARK_TICKS_PER_ROTATION));
+        return DriveBase.convertDriveBaseTicksToInches((sparkEncoder.getPosition() / RobotConstants.SPARK_TICKS_PER_ROTATION));
     }
 
 
@@ -64,7 +65,7 @@ public class MustangDriveBaseEncoder implements PIDSource {
         if (isDIOEncoder) {
             return dioEncoder.getRate();
         }
-        return (MathUtils.convertDriveBaseTicksToInches(sparkEncoder.getVelocity() / RobotConstants.SPARK_TICKS_PER_ROTATION) / 60);
+        return (DriveBase.convertDriveBaseTicksToInches(sparkEncoder.getVelocity() / RobotConstants.SPARK_TICKS_PER_ROTATION) / 60);
     }
 
      /**
@@ -72,7 +73,7 @@ public class MustangDriveBaseEncoder implements PIDSource {
      */
     public double getVelocityTicks() {
         if (isDIOEncoder) {
-            return MathUtils.convertInchesToDriveBaseTicks(dioEncoder.getRate());
+            return DriveBase.convertInchesToDriveBaseTicks(dioEncoder.getRate());
         }
         return (sparkEncoder.getVelocity() / RobotConstants.SPARK_TICKS_PER_ROTATION / 60);
     }

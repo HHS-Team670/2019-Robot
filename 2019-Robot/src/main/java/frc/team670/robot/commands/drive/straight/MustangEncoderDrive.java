@@ -10,8 +10,8 @@ package frc.team670.robot.commands.drive.straight;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.Robot;
+import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.utils.Logger;
-import frc.team670.robot.utils.functions.MathUtils;
 
 public class MustangEncoderDrive extends Command {
   private PIDController leftPIDController;
@@ -20,7 +20,7 @@ public class MustangEncoderDrive extends Command {
 
   public MustangEncoderDrive(int inchesToTravel) {
     requires(Robot.driveBase);
-    ticksToTravel = MathUtils.convertInchesToDriveBaseTicks(inchesToTravel);
+    ticksToTravel = DriveBase.convertInchesToDriveBaseTicks(inchesToTravel);
 
     leftPIDController = new PIDController(P, I, D, FF, Robot.driveBase.getLeftMustangDriveBaseEncoder(), Robot.driveBase.getLeftControllers().get(0));
     rightPIDController = new PIDController(P, I, D, FF, Robot.driveBase.getRightMustangDriveBaseEncoder(), Robot.driveBase.getRightControllers().get(0));

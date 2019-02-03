@@ -15,7 +15,6 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import frc.team670.robot.commands.arm.joystick.JoystickElbow;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
-import frc.team670.robot.utils.functions.MathUtils;
 
 /**
  * Controls motors for elbow movement
@@ -24,8 +23,10 @@ public class Elbow extends BaseElbow {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
 
+
   private TalonSRX elbowRotationMain;
   private VictorSPX elbowRotationSlave;
+  public static double ELBOW_START_POS = 6000; // TODO Set this
   public static final double MAX_ELBOW_BACK = 0; //TODO find what is this number
   public static final double MAX_ELBOW_FORWARD = 0; //TODO also find this
   private static final double kF = 0, kP = 0, kI = 0, kD = 0; //TODO figure out what these are
@@ -115,7 +116,7 @@ public class Elbow extends BaseElbow {
   
   @Override
   public double getAngle() {
-    return MathUtils.convertElbowTicksToDegrees(getPositionTicks());
+    return convertElbowTicksToDegrees(getPositionTicks());
   }
 
   @Override
@@ -156,6 +157,18 @@ public class Elbow extends BaseElbow {
     elbowRotationMain.selectProfileSlot(CURRENT_CONTROL_SLOT, 0);
     elbowRotationMain.set(ControlMode.Current, current);
   }
+
+  public static int convertElbowDegreesToTicks(double degrees) {
+    // If straight up is 0 and going forward is positive
+    // percentage * half rotation
+    return (int)((degrees / 180) * (0.5 * RobotConstants.ELBOW_TICKS_PER_ROTATION));
+}
+
+public static double convertElbowTicksToDegrees(double ticks) {
+   //If straight up is 0 and going forward is positive
+   // percentage * half degrees rotation
+    return (ticks / (0.5 * RobotConstants.ELBOW_TICKS_PER_ROTATION)) * 180;
+}
 
 //  /**
 //    * Should create a closed loop for the current to hold the elbow down

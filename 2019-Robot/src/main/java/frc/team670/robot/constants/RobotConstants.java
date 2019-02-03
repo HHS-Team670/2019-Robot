@@ -45,13 +45,6 @@ public class RobotConstants {
     public static final double INTEGRAL = 0;//0.05*KU/TU;
     public static final double DERIVATIVE = 5*KU*TU/40;
     public static final double WHEEL_BASE = 25.662; //measured 1/26/19
-    
-    // Arm Constants
-    // TODO Set these
-    public static final double ARM_HEIGHT_IN_INCHES = 5;
-    public static final double CLAW_LENGTH_IN_INCHES = 8;
-    public static final int FIXED_ARM_LENGTH_IN_INCHES = 0;
-    public static final double OPERATOR_ARM_CONTROL_SCALAR = 0.5;
 
     //Elbow constants
     public static final int PEAK_AMPS = 0; // check the peak limit and set again
@@ -74,23 +67,5 @@ public class RobotConstants {
 
     // Different values/encoder positions to set arm to
     public static int ARM_RESET_TIMEOUTMS = 0;
-    public static double ELBOW_START_POS = 6000;
-    public static double ELBOW_FULL_FORWARD_POS = 12000;
-    public static double ELBOW_FULL_BACKWARD_POS = -12000;
 
-    public static double WRIST_START_POS = 6000;
-    public static double WRIST_FULL_FORWARD_POS = 12000;
-    public static double WRIST_FULL_BACKWARD_POS = -12000;
-
-    public static double EXTENSION_IN_POS = 0;
-    public static double EXTENSION_OUT_POS = 12000;
-
-    // Climber Constants
-    public static final int PISTON_ENCODER_FLAT = 0; // TODO set these
-    public static final int PISTON_ENCODER_LEVEL_TWO = 0;
-    public static final int PISTON_ENCODER_LEVEL_THREE = 0;
-
-    //Intake constants
-    /** Intake will have an absolute Mag Encoder */
-    public static double INTAKE_TICKS_PER_ROTATION = 4096; // Still needs to be set
 }

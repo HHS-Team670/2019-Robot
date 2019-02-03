@@ -68,60 +68,6 @@ public class MathUtils {
     }
 
     /**
-     * Converts a tick value taken from a drive base DIO encoder to inches.
-     */
-    public static double convertDriveBaseTicksToInches(double ticks) {
-       double rotations = ticks / RobotConstants.DIO_TICKS_PER_ROTATION;
-       return rotations * Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER;
-    }
-
-    /**
-     * Converts an inch value into drive base DIO Encoder ticks.
-     */
-    public static int convertInchesToDriveBaseTicks(double inches) {
-        double rotations = inches / (Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
-        return (int)(rotations * RobotConstants.DIO_TICKS_PER_ROTATION);
-    }
-
-    /**
-    * Converts a tick value taken from a drive base Spark encoder to inches.
-    */
-    public static double convertDriveBaseSparkTicksToInches(double ticks) {
-        double rotations = ticks / RobotConstants.SPARK_TICKS_PER_ROTATION;
-        return rotations * Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER;
-     }
- 
-     /**
-      * Converts an inch value into drive base Spark Encoder ticks.
-      */
-     public static int convertInchesToDriveBaseSparkTicks(double inches) {
-         double rotations = inches / (Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
-         return (int)(rotations * RobotConstants.SPARK_TICKS_PER_ROTATION);
-     }
-
-    /**
-     * Gets inches per rotations of a NEO motor on the drive base since SparkMAX encoders work in rotations.
-     */
-    public static double convertDriveBaseRotationsToInches(double rotations) {
-        return RobotConstants.DRIVEBASE_INCHES_PER_ROTATION * rotations;
-    }
-
-    /**
-     * Gets rotations of a NEO motor on the drive base per a value in inches ince SparkMAX encoders work in rotations.
-     */
-    public static double convertInchesToDriveBaseRotations(double inches) {
-        return inches / RobotConstants.DRIVEBASE_INCHES_PER_ROTATION;
-    }
-
-    /**
-     * Converts a value of per second of the DriveBase Rounds Per Minute
-     */
-    public static double convertInchesPerSecondToDriveBaseRoundsPerMinute(double inchesPerSecond) {
-        // (Inches/seconds) * (60 seconds/1 minute) * ((2 * Diameter inches)/Rotation)
-        return inchesPerSecond * 60 / (Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
-    }
-
-    /**
      * Returns the distance (always positive) between two points in a coordinate system.
      * @param x1 The x-coord of point 1
      * @param y1 The y-coord of point 1
@@ -130,52 +76,6 @@ public class MathUtils {
      */
     public static double findDistance(double x1, double y1, double x2, double y2) {
         return Math.sqrt(Math.pow((x1-x2), 2) + Math.pow(y2-y1, 2));
-    }
-
-    public static int convertElbowDegreesToTicks(double degrees) {
-        // If straight up is 0 and going forward is positive
-        // percentage * half rotation
-        return (int)((degrees / 180) * (0.5 * RobotConstants.ELBOW_TICKS_PER_ROTATION));
-    }
-
-    public static double convertElbowTicksToDegrees(double ticks) {
-       //If straight up is 0 and going forward is positive
-       // percentage * half degrees rotation
-        return (ticks / (0.5 * RobotConstants.ELBOW_TICKS_PER_ROTATION)) * 180;
-    }
-
-    public static int convertWristDegreesToTicks(double degrees) {
-        //If straight is 0 and going forward is positive
-        // percentage * half rotation
-        return (int)((degrees / 180) * (0.5 * RobotConstants.WRIST_TICKS_PER_ROTATION));
-    }
-
-    public static double convertWristTicksToDegrees(int ticks) {
-        //If straight is 0 and going forward is positive
-        // percentage * half degrees rotation
-        return (ticks / (0.5 * RobotConstants.WRIST_TICKS_PER_ROTATION)) * 180;
-    }
-
-    public static int convertExtensionInchesToTicks(double inches) { 
-        //inches * (rotation/inches) * (ticks / rotation)
-        return (int)(inches * RobotConstants.EXTENSION_MOTOR_ROTATIONS_PER_INCH * RobotConstants.EXTENSION_TICKS_PER_MOTOR_ROTATION);
-    }
-
-    public static double convertExtensionTicksToInches(double ticks) {
-        //ticks * (rotations/ticks) * (inches / rotations)
-        return ticks / RobotConstants.EXTENSION_TICKS_PER_MOTOR_ROTATION / RobotConstants.EXTENSION_MOTOR_ROTATIONS_PER_INCH;
-    }
-
-    public static int convertIntakeDegreesToTicks(double degrees) {
-        //If straight up is 0 and going forward is positive
-        // percentage * half rotation
-        return (int)((degrees / 180) * (0.5 * RobotConstants.INTAKE_TICKS_PER_ROTATION));
-    }
-
-    public static double convertIntakeTicksToDegrees(double ticks) {
-        //If straight up is 0 and going forward is positive
-        // percentage * half degrees rotation
-        return (ticks / (0.5 * RobotConstants.INTAKE_TICKS_PER_ROTATION) * 180);
     }
 
     /**

@@ -8,7 +8,6 @@
 package frc.team670.robot.commands.intake;
 
 import edu.wpi.first.wpilibj.command.Command;
-
 import frc.team670.robot.subsystems.Intake;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.functions.MathUtils;
@@ -34,11 +33,11 @@ public class ToggleIntakeUpDown extends Command {
     // If the intake is closer to the up postion, we assume that we want to move it
     // down
     if (Math.abs(intake.getIntakePositionInTicks() - Intake.INTAKE_ANGLE_IN) < Math.abs(intake.getIntakePositionInTicks() - Intake.INTAKE_ANGLE_DEPLOYED)) {
-      intakeSetpointInTicks = MathUtils.convertIntakeDegreesToTicks(Intake.INTAKE_ANGLE_DEPLOYED);
+      intakeSetpointInTicks = Intake.convertIntakeDegreesToTicks(Intake.INTAKE_ANGLE_DEPLOYED);
     } else {
       // If intake is instead closer to the down postion, we assume that we want to
       // move it up
-      intakeSetpointInTicks = MathUtils.convertIntakeDegreesToTicks(Intake.INTAKE_ANGLE_IN);
+      intakeSetpointInTicks = Intake.convertIntakeDegreesToTicks(Intake.INTAKE_ANGLE_IN);
     }
 
     intake.setMotionMagicSetpoint(intakeSetpointInTicks);

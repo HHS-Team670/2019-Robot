@@ -9,6 +9,7 @@ package frc.team670.robot.commands.drive.vision;
 
 import java.util.ArrayList;
 
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
@@ -18,6 +19,7 @@ import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangPi.VisionValues;
 import frc.team670.robot.dataCollection.NullPIDOutput;
 import frc.team670.robot.dataCollection.Pose;
+import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.dataCollection.sensors.MustangDriveBaseEncoder;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.functions.MathUtils;
@@ -159,7 +161,7 @@ public class AdvancedVisionPIDDrive extends Command {
    * @param angle    The angle in degrees [-30, 30]
    */
   private void setSetpoints(double distance, double angle) {
-    distanceController.setSetpoint(MathUtils.convertInchesToDriveBaseTicks(distance + CAMERA_OFFSET));
+    distanceController.setSetpoint(DriveBase.convertInchesToDriveBaseTicks(distance + CAMERA_OFFSET));
     headingController.setSetpoint(angle);
   }
 
@@ -185,12 +187,9 @@ public class AdvancedVisionPIDDrive extends Command {
 
     @Override
     public double pidGet() {
-      double displacementLeft = 0;
-      double displacementRight = 0;
-
-      displacementLeft = leftEncoder.getPositionTicks() - initialLeft;
-      displacementRight = rightEncoder.getPositionTicks() - initialRight;
-      return MathUtils.convertDriveBaseTicksToInches((displacementLeft + displacementRight) / 2);
+      double displacementLeft = leftEncoder.pidGet() - initialLeft;
+      double displacementRight = rightEncoder.pidGet() - initialRight;
+      return DriveBase.convertDriveBaseTicksToInches((displacementLeft + displacementRight) / 2);
     }
 
     @Override

@@ -10,6 +10,7 @@ package frc.team670.robot.commands.arm.movement;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import frc.team670.robot.subsystems.BaseIntake;
+import frc.team670.robot.subsystems.Intake;
 import frc.team670.robot.utils.functions.MathUtils;
 
 /**
@@ -54,7 +55,7 @@ public class TestIntake extends BaseIntake {
      * Returns the intake angle in degrees
      */
     public double getIntakeAngleInDegrees() {
-        return MathUtils.convertIntakeTicksToDegrees(intakeTicks);
+        return Intake.convertIntakeTicksToDegrees(intakeTicks);
     }
 
 

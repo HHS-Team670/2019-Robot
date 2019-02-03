@@ -8,7 +8,6 @@
 package frc.team670.robot.commands.climb.pistonClimb;
 
 import edu.wpi.first.wpilibj.command.Command;
-import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.subsystems.Climber;
 import frc.team670.robot.utils.Logger;
 
@@ -27,7 +26,7 @@ public class RetractBackPistons extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    climber.setBackPIDControllerSetpoint(RobotConstants.PISTON_ENCODER_FLAT);
+    climber.setBackPIDControllerSetpoint(Climber.PISTON_ENCODER_FLAT);
     climber.setBackPistonsRetractionInProgress(true);
     Logger.consoleLog("startBackPistonPosition:%s", climber.getBackTalonPositionInTicks());
   }

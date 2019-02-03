@@ -27,7 +27,6 @@ import frc.team670.robot.commands.drive.teleop.XboxRocketLeagueDrive;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.dataCollection.sensors.MustangDriveBaseEncoder;
-import frc.team670.robot.utils.functions.MathUtils;
 
 /**
  * Represents a tank drive base.
@@ -243,6 +242,21 @@ public class DriveBase extends Subsystem {
   }
 
   /**
+   * Returns the left DIO Encoder
+   */
+  public Encoder getLeftDIOEncoder(){
+    return leftDIOEncoder;
+  }
+
+
+  /**
+   * Returns the right DIO Encoder
+   */
+  public Encoder getRightDIOEncoder(){
+    return rightDIOEncoder;
+  }
+
+  /**
    * Sets the PIDControllers setpoints for the left and right side motors to the
    * given positions in ticks forward.
    * 
@@ -263,10 +277,8 @@ public class DriveBase extends Subsystem {
    * @param rightVel Velocity for right motors in inches/sec
    */
   public void setSparkVelocityControl(double leftVel, double rightVel) {
-    leftVel = MathUtils
-        .convertInchesPerSecondToDriveBaseRoundsPerMinute(MathUtils.convertInchesToDriveBaseTicks(leftVel));
-    rightVel = MathUtils
-        .convertInchesPerSecondToDriveBaseRoundsPerMinute(MathUtils.convertInchesToDriveBaseTicks(rightVel));
+    leftVel = convertInchesPerSecondToDriveBaseRoundsPerMinute(convertInchesToDriveBaseTicks(leftVel));
+    rightVel = convertInchesPerSecondToDriveBaseRoundsPerMinute(convertInchesToDriveBaseTicks(rightVel));
     left1.getPIDController().setReference(leftVel, ControlType.kVelocity, VELOCITY_PID_SLOT);
     right1.getPIDController().setReference(rightVel, ControlType.kVelocity, VELOCITY_PID_SLOT);
   }
@@ -283,6 +295,20 @@ public class DriveBase extends Subsystem {
    */
   public int getRightSparkEncoderPosition() {
     return (int) (right1.getEncoder().getPosition() / RobotConstants.SPARK_TICKS_PER_ROTATION);
+  }
+
+  /**
+   * Gets the encoder position of the front left motor in ticks.
+   */
+  public int getLeftDIOEncoderPosition() {
+    return leftDIOEncoder.get();
+  }
+
+  /**
+   * Gets the tick count of the right encoder
+   */
+  public int getRightDIOEncoderPosition() {
+    return rightDIOEncoder.get();
   }
 
   /**
@@ -428,76 +454,12 @@ public class DriveBase extends Subsystem {
     setDefaultCommand(new XboxRocketLeagueDrive());
   }
 
-  public Encoder getLeftDIOEncoder() {
-    return leftDIOEncoder;
-  }
-
-  public Encoder getRightDIOEncoder() {
-    return rightDIOEncoder;
-  }
-
-  /**
-   * Gets the tick count of the left encoder
-   */
-  public int getLeftDIOEncoderPosition() {
-    return leftDIOEncoder.get();
-  }
-
-
-  /**
-   * Returns the velocity of the left side of the drivebase in inches/second from
-   * the DIO Encoder
-   */
-  public double getLeftDIOEncoderVelocityInches() {
-    return leftDIOEncoder.getRate();
-  }
-
-   /**
-   * Returns the velocity of the left side of the drivebase in ticks/second from
-   * the DIO Encoder
-   */
-  public double getLeftDIOEncoderVelocityTicks() {
-    return MathUtils.convertInchesToDriveBaseTicks(leftDIOEncoder.getRate());
-  }
-
-  /**
-   * Returns the velocity of the right side of the drivebase in inches/second from
-   * the DIO Encoder
-   */
-  public double getRightDIOEncoderVelocityInches() {
-    return rightDIOEncoder.getRate();
-  }
-
-  /**
-   * Returns the velocity of the right side of the drivebase in ticks/second from
-   * the DIO Encoder
-   */
-  public double getRightDIOEncoderVelocityTicks() {
-    return MathUtils.convertInchesToDriveBaseTicks(rightDIOEncoder.getRate());
-  }
-
-  /**
-   * Returns the velocity of the left side of the drivebase in inches/second from
-   * the Spark Encoder
-   */
-  public double getLeftSparkEncoderVelocityInches() {
-    return (MathUtils.convertDriveBaseTicksToInches(left1.getEncoder().getVelocity() / RobotConstants.SPARK_TICKS_PER_ROTATION) / 60);
-  }
-
-   /**
-   * Returns the velocity of the left side of the drivebase in ticks/second from
-   * the Spark Encoder
-   */
-  public double getLeftSparkEncoderVelocityTicks() {
-    return (left1.getEncoder().getVelocity() / RobotConstants.SPARK_TICKS_PER_ROTATION / 60);
-  }
-
   /**
    * Returns the velocity of the right side of the drivebase in inches/second from
    * the Spark Encoder
    */
   public double getRightSparkEncoderVelocityInches() {
-    return (MathUtils.convertDriveBaseTicksToInches(right1.getEncoder().getVelocity() / RobotConstants.SPARK_TICKS_PER_ROTATION) / 60);
+    return (DriveBase.convertDriveBaseTicksToInches(right1.getEncoder().getVelocity() / RobotConstants.SPARK_TICKS_PER_ROTATION) / 60);
   }
 
   /**
@@ -517,13 +479,6 @@ public class DriveBase extends Subsystem {
     return rightDIOEncoder.getDistance();
   }
 
-  /**
-   * Gets the tick count of the right encoder
-   */
-  public int getRightDIOEncoderPosition() {
-    return rightDIOEncoder.get();
-  }
-
   public List<CANSparkMax> getLeftControllers() {
     return leftControllers;
   }
@@ -539,6 +494,44 @@ public class DriveBase extends Subsystem {
     for (CANSparkMax m : motors) {
       m.setRampRate(rampRate);
     }
+  }
+
+  /**
+  * Converts a tick value taken from a drive base DIO encoder to inches.
+  */
+  public static double convertDriveBaseTicksToInches(double ticks) {
+      double rotations = ticks / RobotConstants.DIO_TICKS_PER_ROTATION;
+      return rotations * Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER;
+   }
+
+  /**
+  * Converts an inch value into drive base DIO Encoder ticks.
+  */
+  public static int convertInchesToDriveBaseTicks(double inches) {
+      double rotations = inches / (Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
+      return (int)(rotations * RobotConstants.DIO_TICKS_PER_ROTATION);
+  }
+
+  /**
+   * Gets inches per rotations of a NEO motor on the drive base since SparkMAX encoders work in rotations.
+   */
+  public static double convertDriveBaseRotationsToInches(double rotations) {
+      return RobotConstants.DRIVEBASE_INCHES_PER_ROTATION * rotations;
+  }
+
+  /**
+   * Gets rotations of a NEO motor on the drive base per a value in inches ince SparkMAX encoders work in rotations.
+   */
+  public static double convertInchesToDriveBaseRotations(double inches) {
+      return inches / RobotConstants.DRIVEBASE_INCHES_PER_ROTATION;
+  }
+
+  /**
+   * Converts a value of per second of the DriveBase Rounds Per Minute
+   */
+  public static double convertInchesPerSecondToDriveBaseRoundsPerMinute(double inchesPerSecond) {
+      // (Inches/seconds) * (60 seconds/1 minute) * ((2 * Diameter inches)/Rotation)
+      return inchesPerSecond * 60 / (Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
   }
 
   /**
