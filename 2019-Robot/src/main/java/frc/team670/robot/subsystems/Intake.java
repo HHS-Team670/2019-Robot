@@ -35,6 +35,16 @@ public class Intake extends BaseIntake {
   
   private Point2D.Double intakeCoord;
 
+  public static double TICKS_PER_ROTATION = 4096; // Still needs to be set
+
+
+  private static final double MAX_BASE_OUTPUT = 0.75;
+
+  private static final double kF = 0, kP = 0.1, kI = 0, kD = 0; // TODO figure out what these are
+  private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0; // TODO Set this
+  private final int FORWARD_SOFT_LIMIT = 0, REVERSE_SOFT_LIMIT = 0; // TODO figure out the values in rotations
+  private static final double RAMP_RATE = 0.1;
+
   private static int INTAKE_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 15000; // TODO set this
   private static int INTAKE_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS = 6000; // TODO set this
 
@@ -78,7 +88,7 @@ public class Intake extends BaseIntake {
   /**
    * Should set the setpoint for the Motion Magic on the intake
    */
-  public void setMotionMagicSetpoint(double intakeTicks) {
+  public void setMotionMagicSetpoint(double intakess) {
     baseTalon.set(ControlMode.MotionMagic, intakeTicks);
   }
 
@@ -142,7 +152,7 @@ public class Intake extends BaseIntake {
   public static int convertIntakeDegreesToTicks(double degrees) {
     //If straight up is 0 and going forward is positive
     // percentage * half rotation
-    return (int)((degrees / 180) * (0.5 * RobotConstants.INTAKE_TICKS_PER_ROTATION));
+    return (int)((degrees / 180) * (0.5 * TICKS_PER_ROTATION));
   }
 
   /**
@@ -151,7 +161,7 @@ public class Intake extends BaseIntake {
   public static double convertIntakeTicksToDegrees(double ticks) {
     //If straight up is 0 and going forward is positive
     // percentage * half degrees rotation
-    return (ticks / (0.5 * RobotConstants.INTAKE_TICKS_PER_ROTATION) * 180);
+    return (ticks / (0.5 * TICKS_PER_ROTATION) * 180);
   }
 
   @Override

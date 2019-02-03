@@ -14,7 +14,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import frc.team670.robot.commands.arm.joystick.JoystickWrist;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
-import frc.team670.robot.utils.functions.MathUtils;
 
 /**
  * Controls wrist motors
@@ -23,7 +22,9 @@ public class Wrist extends BaseWrist {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
   
+
   private TalonSRX wristRotation;
+  public static double WRIST_START_POS = 6000; //TODO Set this
   public static final double MAX_WRIST_FORWARD = 0; //TODO find this
   public static final double MAX_WRIST_BACK = 0; //TODO find this
   private static final double kF = 0, kP = 0, kI = 0, kD = 0; //TODO figure out what these are

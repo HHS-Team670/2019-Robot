@@ -15,7 +15,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import frc.team670.robot.commands.arm.joystick.JoystickExtension;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
-import frc.team670.robot.utils.functions.MathUtils;
 import frc.team670.robot.utils.functions.SettingUtils;
 
 /**
@@ -25,7 +24,10 @@ public class Extension extends BaseExtension {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
   private TalonSRX extensionMotor;
-  private double extensionLength;
+
+  public static int EXTENSION_IN_POS = 0; // TODO Set These
+  public static int EXTENSION_OUT_POS = 12000;
+
   public static final double MAX_EXTENSION_BACK = 0; //TODO find this
   public static final double MAX_EXTENSION_FORWARD = 0; //TODO find this
   private static final double kF = 0, kP = 0, kI = 0, kD = 0; //TODO figure out what these are
@@ -34,7 +36,7 @@ public class Extension extends BaseExtension {
   // Also need to add pull gains slots
   private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0;
 
-  private final int FORWARD_SOFT_LIMIT = 0, REVERSE_SOFT_LIMIT = 0; // TODO figure out the values in rotations
+  private final int FORWARD_SOFT_LIMIT = EXTENSION_IN_POS - 100, REVERSE_SOFT_LIMIT = EXTENSION_OUT_POS + 100; // TODO figure out the values in rotations
   public static final int EXTENSION_ENCODER_OUT = 0;
 
   private final int CONTINUOUS_CURRENT_LIMIT = 20, PEAK_CURRENT_LIMIT = 0; // TODO set current limit in Amps

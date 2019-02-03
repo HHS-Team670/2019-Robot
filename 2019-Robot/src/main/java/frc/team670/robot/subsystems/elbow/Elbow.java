@@ -15,7 +15,6 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import frc.team670.robot.commands.arm.joystick.JoystickElbow;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
-import frc.team670.robot.utils.functions.MathUtils;
 
 /**
  * Controls motors for elbow movement
@@ -24,8 +23,10 @@ public class Elbow extends BaseElbow {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
 
+
   private TalonSRX elbowRotationMain;
   private VictorSPX elbowRotationSlave;
+  public static double ELBOW_START_POS = 6000; // TODO Set this
   public static final double MAX_ELBOW_BACK = 0; //TODO find what is this number
   public static final double MAX_ELBOW_FORWARD = 0; //TODO also find this
   private static final double kF = 0, kP = 0, kI = 0, kD = 0; //TODO figure out what these are

@@ -55,7 +55,7 @@ public class ArmClimb extends Command {
 
     extension.enableExtensionPIDController();
 
-    heightInInches = climber.getFrontTalonPositionInInches() + RobotConstants.ARM_HEIGHT_IN_INCHES + RobotConstants.DRIVEBASE_TO_GROUND; // TODO get the actual method
+    heightInInches = climber.getFrontTalonPositionInInches() + Arm.ARM_HEIGHT_IN_INCHES + RobotConstants.DRIVEBASE_TO_GROUND; // TODO get the actual method
 
     holdElbowDownWithCurrentLimit(CLIMB_CURRENT); // Brings arm down
 
@@ -66,7 +66,7 @@ public class ArmClimb extends Command {
   @Override
   protected void execute() {
 
-    double deltaSetPointInInches = (heightInInches/(Math.cos(Math.toDegrees(elbow.getAngle())))) - RobotConstants.FIXED_ARM_LENGTH_IN_INCHES;
+    double deltaSetPointInInches = (heightInInches/(Math.cos(Math.toDegrees(elbow.getAngle())))) - Arm.FIXED_ARM_LENGTH_IN_INCHES;
 
     int deltaSetPointInTicks = Extension.convertExtensionInchesToTicks(deltaSetPointInInches);
 
