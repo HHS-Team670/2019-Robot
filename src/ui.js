@@ -40,7 +40,8 @@ document.addEventListener("keyup", function(event) {
   allKeys += pressed;
   var split = allKeys.split(" ");
   var result = split[split.length - 1];
-  var state = getArmState(result);
+  var state = getAction(result);
+  // var state = getActionAlternate(result);
   if (state != null) {
     counter++;
     document.getElementById('test').innerHTML = state;
@@ -53,40 +54,72 @@ document.addEventListener("keyup", function(event) {
   document.getElementById('test2').innerHTML = armStates.length;
 });
 
-function getArmState(key) {
+// naming convention: UPPER_CASE for preset arm states, lower_case for other commands
+function getAction(key) { // mapping is more aligned with arm position on robot
   if (key === "x06") return "backspace";
   if (key === "x3e") return "enter";
 
+  if (key === "x0a") return "READY_TO_CLIMB";
+  if (key === "x03") return "next_step_climb";
+  if (key === "x0b") return "cancel_arm_climb";
+
+  if (key === "x33") return "run_intake_in";
+  if (key === "x3b") return "run_intake_out";
+
+  if (key === "x2e") return "place";
+  if (key === "x26") return "grab";
+
+  if (key === "x12") return "READY_PLACE_HATCH_ROCKET_MIDDLE_BACK";
+  if (key === "x1a") return "READY_PLACE_BALL_ROCKET_MIDDLE_BACK";  
+  if (key === "x22") return "READY_PLACE_BALL_ROCKET_MIDDLE_FORWARD";
+  if (key === "x2a") return "READY_PLACE_HATCH_ROCKET_MIDDLE_FORWARD";
+
+  if (key === "x13") return "READY_GRAB_BALL_LOADINGSTATION_BACK";
+  if (key === "x1b") return "PLACE_BALL_CARGOSHIP_BACK";
+  if (key === "x23") return "PLACE_BALL_CARGOSHIP_FORWARD";
+  if (key === "x2b") return "READY_GRAB_BALL_LOADINGSTATION_FORWARD";
+
+  if (key === "x14") return "READY_LOW_HATCH_BACK";
+  if (key === "x1c") return "READY_PLACE_BALL_ROCKET_LOW_BACK";
+  if (key === "x24") return "READY_PLACE_BALL_ROCKET_LOW_FORWARD";
+  if (key === "x2c") return "READY_LOW_HATCH_FORWARD";
+
+  if (key === "x1d") return "GRAB_BALL_GROUND_BACK";
+  if (key === "x25") return "GRAB_BALL_INTAKE";
+}
+
+// naming convention: UPPER_CASE for preset arm states, lower_case for other commands
+function getActionAlternate(key) {
+  if (key === "x06") return "backspace";
+  if (key === "x3e") return "enter";
+
+  if (key === "x0a") return "READY_TO_CLIMB";
+  if (key === "x03") return "next_step_climb";
+  if (key === "x0b") return "cancel_arm_climb";
+
+  if (key === "x33") return "run_intake_in";
+  if (key === "x3b") return "run_intake_out";
+
   if (key === "x12") return "READY_LOW_HATCH_BACK";
   if (key === "x13") return "READY_PLACE_BALL_ROCKET_LOW_BACK";
-  if (key === "x14") return "GRAB_BALL_GROUND_BACK";
-  // if (key === "x15") return "";
-  // if (key === "x16") return "";
+  
+  if (key === "x15") return "GRAB_BALL_GROUND_BACK";
+  
   if (key === "x1a") return "READY_PLACE_HATCH_ROCKET_MIDDLE_BACK";
   if (key === "x1b") return "READY_PLACE_BALL_ROCKET_MIDDLE_BACK";
-  if (key === "x1c") return "READY_GRAB_BALL_LOADINGSTATION_BACK";
-  // if (key === "x1d") return "";
-  // if (key === "x1e") return "";
+  if (key === "x1c") return "PLACE_BALL_CARGOSHIP_BACK";
+  if (key === "x1d") return "READY_GRAB_BALL_LOADINGSTATION_BACK";
+  
   if (key === "x22") return "READY_PLACE_HATCH_ROCKET_MIDDLE_FORWARD";
   if (key === "x23") return "READY_PLACE_BALL_ROCKET_MIDDLE_FORWARD";
-  if (key === "x24") return "READY_GRAB_BALL_LOADINGSTATION_FORWARD";
-  // if (key === "x25") return "";
-  // if (key === "x26") return "";
+  if (key === "x24") return "PLACE_BALL_CARGOSHIP_FORWARD";
+  if (key === "x25") return "READY_GRAB_BALL_LOADINGSTATION_FORWARD";
+  if (key === "x26") return "grab";
   if (key === "x2a") return "READY_LOW_HATCH_FORWARD";
   if (key === "x2b") return "READY_PLACE_BALL_ROCKET_LOW_FORWARD";
-  if (key === "x2c") return "GRAB_BALL_INTAKE";
-  // if (key === "x2d") return "";
-  if (key === "x2e") return "DO_THE_THING";
-  // if (key === "x32") return "";
-  // if (key === "x33") return "";
-  // if (key === "x34") return "";
-  // if (key === "x35") return "";
-  // if (key === "x36") return "";
-  // if (key === "x3a") return "";
-  // if (key === "x3b") return "";
-  // if (key === "x3c") return "";
-  // if (key === "x3d") return "";
-  // if (key === "x3e") return "";
+  
+  if (key === "x2d") return "GRAB_BALL_INTAKE";
+  if (key === "x2e") return "place";
   return null;
 }
 
