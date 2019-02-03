@@ -8,6 +8,7 @@
 package frc.team670.robot.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import frc.team670.robot.commands.arm.BuildArmSequence;
 import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.commands.arm.movement.PlaceOrGrab;
 import frc.team670.robot.commands.drive.DriveMotionProfile;
@@ -33,22 +34,19 @@ public class BuildAuton extends CommandGroup {
     destination = getLegalState(target1, height1); 
     fileName = start + "_" + target1 + ".pf1.csv";
     addSequential(new DriveMotionProfile(fileName, isReversed));
-    addParallel(new MoveArm(Arm.getArmState(destination), arm));
-    addSequential(new PlaceOrGrab(destination, true));
+    addParallel(new BuildArmSequence(new String[] {destination.toString(), "place"}, arm));
     // addSequential: turn to proper angle to start next path?
  
     destination = getLegalState(target2, height2); 
     fileName = target1 + "_" + target2 + ".pf1.csv";
     addSequential(new DriveMotionProfile(fileName, isReversed));
-    addParallel(new MoveArm(Arm.getArmState(destination), arm));
-    addSequential(new PlaceOrGrab(destination, false));
+    addParallel(new BuildArmSequence(new String[] {destination.toString(), "grab"}, arm));
     // addSequential: turn to proper angle to start next path?
 
     destination = getLegalState(target3, height3); 
     fileName = target2 + "_" + target3 + ".pf1.csv";
     addSequential(new DriveMotionProfile(fileName, isReversed));
-    addParallel(new MoveArm(Arm.getArmState(destination), arm));
-    addSequential(new PlaceOrGrab(destination, true));
+    addParallel(new BuildArmSequence(new String[] {destination.toString(), "place"}, arm));
   }
 
   // TODO account for direction (FRONT or BACK)

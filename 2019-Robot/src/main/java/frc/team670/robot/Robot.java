@@ -7,8 +7,6 @@
 
 package frc.team670.robot;
 
-import java.io.FileNotFoundException;
-
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -16,12 +14,11 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team670.robot.commands.BuildAuton;
-import frc.team670.robot.commands.arm.BuildArmSequence;
 import frc.team670.robot.commands.drive.DriveMotionProfile;
 import frc.team670.robot.dataCollection.MustangPi;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.dataCollection.Pose;
+import frc.team670.robot.dataCollection.XKeys;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Claw;
 import frc.team670.robot.subsystems.Climber;
@@ -66,6 +63,7 @@ public class Robot extends TimedRobot {
 
   private NetworkTableInstance instance;
   private NetworkTable table;
+  private XKeys xkeys;
 
   public Robot() {
 
@@ -80,6 +78,7 @@ public class Robot extends TimedRobot {
     Logger.consoleLog();
     instance = NetworkTableInstance.getDefault();
     table = instance.getTable("SmartDashboard");    
+    xkeys = new XKeys();
   }
 
   /**
@@ -111,9 +110,6 @@ public class Robot extends TimedRobot {
     autonomousCommand = new DriveMotionProfile("10ft-straight.pf1.csv", false);
 
     // autonomousCommand = new MeasureTrackwidth();
-
-    String[] autonSequence = table.getEntry("autonSequence").getStringArray(new String[1]);
-    Scheduler.getInstance().add(new BuildAuton(autonSequence, arm, false));
   }
 
   /**
@@ -146,7 +142,8 @@ public class Robot extends TimedRobot {
     // if(periodCount % 10 == 0) {
     //   Logger.consoleLog("NavXYawReset: %s, NavXYawFieldCentric: %s", sensors.getYawDouble(), sensors.getFieldCentricYaw());
     // }
-      SmartDashboard.putNumber("NavX Yaw", sensors.getYawDouble());
+    SmartDashboard.putNumber("NavX Yaw", sensors.getYawDouble());
+    table.getEntry("gyro").setNumber((int) sensors.getAngle() % 360);
 
     periodCount++;
     leds.setClimbingData(true);//we climb
@@ -238,11 +235,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    String[] armSequence = table.getEntry("armSequence").getStringArray(new String[1]);
-    if (armSequence != null) {
-      Scheduler.getInstance().add(new BuildArmSequence(armSequence, arm));
-      table.getEntry("armSequence").setString(null);
-    }
     Scheduler.getInstance().run();
   }
 
