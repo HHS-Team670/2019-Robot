@@ -8,8 +8,8 @@ import java.util.List;
 
 import org.junit.Test;
 
-import frc.team670.robot.utils.Sort.AStarSearch;
-import frc.team670.robot.utils.Sort.Edge;
+import frc.team670.robot.utils.sort.AStarSearch;
+import frc.team670.robot.utils.sort.Edge;
 
 
 

@@ -18,7 +18,7 @@ import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.subsystems.elbow.BaseElbow;
 import frc.team670.robot.subsystems.extension.BaseExtension;
 import frc.team670.robot.subsystems.wrist.BaseWrist;
-import frc.team670.robot.utils.Sort.Node;
+import frc.team670.robot.utils.sort.Node;
 
 /**
  * Stores possible arm states. Does arm-related math Represents the arm

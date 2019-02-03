@@ -1,4 +1,4 @@
-package frc.team670.robot.utils.Sort;
+package frc.team670.robot.utils.sort;
 
 import java.util.ArrayList;
 import java.util.Collections;

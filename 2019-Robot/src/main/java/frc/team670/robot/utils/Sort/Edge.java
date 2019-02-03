@@ -1,4 +1,4 @@
-package frc.team670.robot.utils.Sort;
+package frc.team670.robot.utils.sort;
 
 /**
  * Represents an edge that connects nodes. 
