@@ -191,8 +191,12 @@ body.login #login {
     width: 50vw;
     height: 65vh;
 }
+#start-direction {
+    position: absolute;
+}
 #start-position {
     position: absolute;
+    transform: translate(0px, 50px);
 }
 #target-1 {
     position: absolute;

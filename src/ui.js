@@ -30,41 +30,34 @@ NetworkTables.addKeyListener('/SmartDashboard/teleopState', (key, value) => {
 });
 
 var keys = [];
-var armStates = [];
-var auton = new Array(7);
 
 var allKeys = '';
-var counter = 0;
 document.addEventListener("keyup", function(event) {
   var pressed = event.key.replace("Enter", "");
   allKeys += pressed;
   var split = allKeys.split(" ");
   var result = split[split.length - 1];
-  var state = getAction(result);
-  // var state = getActionAlternate(result);
-  if (state != null) {
-    counter++;
-    document.getElementById('test').innerHTML = state;
-    if (state === "backspace") armStates.pop();
-    else if (state === "enter") finalize();
-    else armStates.push(state);
-
-    if (counter % 2 == 1 && state !== "backspace") armStates.pop();
+  var nextTask = getFromMap(result);
+  if (nextTask != null) {
+    document.getElementById('test').innerHTML = nextTask;
+    if (nextTask.toUpperCase() === nextTask) NetworkTables.putValue("xkeys-armstates", nextTask);
+    else if (nextTask === "place" || nextTask === "grab") NetworkTables.putValue("xkeys-placing", nextTask);
+    else if (nextTask.includes("run_intake")) NetworkTables.putValue("xkeys-intake", nextTask);
+    else if (nextTask === "auto_pickup_ball") NetworkTables.putValue("xkeys-autopickup", nextTask);
+    else if (nextTask.includes("climb")) NetworkTables.putValue("xkeys-climber", nextTask);
   }
   document.getElementById('test2').innerHTML = armStates.length;
 });
 
 // naming convention: UPPER_CASE for preset arm states, lower_case for other commands
-function getAction(key) { // mapping is more aligned with arm position on robot
-  if (key === "x06") return "backspace";
-  if (key === "x3e") return "enter";
-
+function getFromMap(key) { // mapping is more aligned with arm position on robot
   if (key === "x0a") return "READY_TO_CLIMB";
   if (key === "x03") return "next_step_climb";
   if (key === "x0b") return "cancel_arm_climb";
 
   if (key === "x33") return "run_intake_in";
   if (key === "x3b") return "run_intake_out";
+  if (key === "x34") return "auto_pickup_ball";
 
   if (key === "x2e") return "place";
   if (key === "x26") return "grab";
@@ -128,52 +121,59 @@ function finalize() {
 }
 
 function readRadioButtons() {
+  var startDirection = document.forms['auto-chooser'].elements['start-direction'];
+  for (var i = 0, len = startChooser.length; i < len; i++) {
+    if (startChooser[i].checked) {
+      auton[0] = startDirection[i].value;
+      break;
+    }
+  }
   var startChooser = document.forms['auto-chooser'].elements['start'];
   for (var i = 0, len = startChooser.length; i < len; i++) {
     if (startChooser[i].checked) {
-      auton[0] = startChooser[i].value;
+      auton[1] = startChooser[i].value;
       break;
     }
   }
   var target1 = document.forms['auto-chooser'].elements['target1'];
   for (var i = 0, len = target1.length; i < len; i++) {
     if (target1[i].checked) {
-      auton[1] = target1[i].value;
+      auton[2] = target1[i].value;
       break;
     }
   }
   var height1 = document.forms['auto-chooser'].elements['height1'];
   for (var i = 0, len = height1.length; i < len; i++) {
     if (height1[i].checked) {
-      auton[2] = height1[i].value;
+      auton[3] = height1[i].value;
       break;
     }
   }
   var target2 = document.forms['auto-chooser'].elements['target2'];
   for (var i = 0, len = target2.length; i < len; i++) {
     if (target2[i].checked) {
-      auton[3] = target2[i].value;
+      auton[4] = target2[i].value;
       break;
     }
   }
   var height2 = document.forms['auto-chooser'].elements['height1'];
   for (var i = 0, len = height2.length; i < len; i++) {
     if (height2[i].checked) {
-      auton[4] = height2[i].value;
+      auton[5] = height2[i].value;
       break;
     }
   }
   var target3 = document.forms['auto-chooser'].elements['target2'];
   for (var i = 0, len = target3.length; i < len; i++) {
     if (target3[i].checked) {
-      auton[5] = target3[i].value;
+      auton[6] = target3[i].value;
       break;
     }
   }
   var height3 = document.forms['auto-chooser'].elements['height1'];
   for (var i = 0, len = height3.length; i < len; i++) {
     if (height3[i].checked) {
-      auton[6] = height3[i].value;
+      auton[7] = height3[i].value;
       break;
     }
   }
