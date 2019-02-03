@@ -101,7 +101,16 @@ public class Intake extends BaseIntake {
    * Returns the intake angle in degrees
    */
   public double getIntakeAngleInDegrees() {
-    return MathUtils.convertIntakeTicksToDegrees(getIntakePositionInTicks());
+    return 0;
+    // return MathUtils.convertIntakeTicksToDegrees(getIntakePositionInTicks());
+  }
+
+  public static int convertIntakeDegreesToTicks(int degrees) {
+    return 0;
+  }
+
+  public static int convertIntakeTicksToDegrees(int ticks) {
+    return 0;
   }
 
   /**
