@@ -40,7 +40,7 @@ public class CommonTransition extends ArmTransition {
     ArmState dest = getDest();
 
     //Should get the current desired position in ticks (so should either be at deployed or down tick value)
-    double setpointInDegrees = MathUtils.convertIntakeTicksToDegrees(intake.getMotionMagicSetpoint());
+    double setpointInDegrees = Intake.convertIntakeTicksToDegrees(intake.getMotionMagicSetpoint());
 
     double intakeHighPoint = Intake.INTAKE_FIXED_LENGTH_IN_INCHES + Intake.INTAKE_ROTATING_LENGTH_IN_INCHES;
     double intakeQuarterPoint = Intake.INTAKE_FIXED_LENGTH_IN_INCHES + Intake.INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(Math.toRadians(45));

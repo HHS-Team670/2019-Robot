@@ -16,7 +16,6 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
-import frc.team670.robot.utils.functions.MathUtils;
 
 /**
  * Represents the Intake mechanism of the robot.
@@ -36,20 +35,13 @@ public class Intake extends BaseIntake {
   
   private Point2D.Double intakeCoord;
 
-  private static final double MAX_BASE_OUTPUT = 0.75;
-
-  private static final double kF = 0, kP = 0.1, kI = 0, kD = 0; // TODO figure out what these are
-  private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0; // TODO Set this
-  private final int FORWARD_SOFT_LIMIT = 0, REVERSE_SOFT_LIMIT = 0; // TODO figure out the values in rotations
-  private static final double RAMP_RATE = 0.1;
-
   private static int INTAKE_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 15000; // TODO set this
   private static int INTAKE_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS = 6000; // TODO set this
 
   public Intake() {
     baseTalon = new TalonSRX(RobotMap.INTAKE_BASE_TALON);
     rollerVictor = new VictorSPX(RobotMap.INTAKE_ROLLER_VICTOR);
-    intkakeCoord = new Point2D.Double();
+    intakeCoord = new Point2D.Double();
     enableBaseMotionMagic();
   }
 
@@ -101,8 +93,8 @@ public class Intake extends BaseIntake {
    * Should return the setpoint for the motion magic on the base motor
    */
   public Point2D.Double getMotionMagicDestinationCoordinates(){
-    double x = INTAKE_ROTATING_LENGTH_IN_INCHES * Math.cos(MathUtils.convertIntakeTicksToDegrees(getMotionMagicSetpoint()));
-    double y = INTAKE_FIXED_LENGTH_IN_INCHES + INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(MathUtils.convertIntakeTicksToDegrees(getMotionMagicSetpoint()));
+    double x = INTAKE_ROTATING_LENGTH_IN_INCHES * Math.cos(convertIntakeTicksToDegrees(getMotionMagicSetpoint()));
+    double y = INTAKE_FIXED_LENGTH_IN_INCHES + INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(convertIntakeTicksToDegrees(getMotionMagicSetpoint()));
     return new Point2D.Double(x, y);
   }
 
