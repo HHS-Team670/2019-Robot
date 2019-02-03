@@ -1,5 +1,7 @@
 package frc.team670.robot.utils.sort;
-import frc.team670.robot.utils.sort.Node;
+
+import frc.team670.robot.utils.Sort.Node;
+import frc.team670.robot.utils.Sort.Edge;
 
 public class TestNode implements Node{
 

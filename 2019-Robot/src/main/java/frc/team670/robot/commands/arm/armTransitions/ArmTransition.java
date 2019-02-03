@@ -18,7 +18,7 @@ import frc.team670.robot.subsystems.elbow.BaseElbow;
 import frc.team670.robot.subsystems.extension.BaseExtension;
 import frc.team670.robot.subsystems.wrist.BaseWrist;
 import frc.team670.robot.utils.functions.MathUtils;
-import frc.team670.robot.utils.sort.Edge;
+import frc.team670.robot.utils.Sort.Edge;
 
   /**
    * The base for arm transitions. All iterations of this class should be made so that they can be rerun each time initialize is called.

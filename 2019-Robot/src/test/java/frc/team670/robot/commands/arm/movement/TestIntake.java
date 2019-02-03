@@ -83,8 +83,8 @@ public class TestIntake extends BaseIntake {
      * Should return the setpoint coordinates for the motion magic on the base motor
      */
     public Point2D.Double getMotionMagicDestinationCoordinates(){
-        double x = Intake.INTAKE_ROTATING_LENGTH_IN_INCHES * Math.cos(MathUtils.convertIntakeTicksToDegrees(getMotionMagicSetpoint()));
-        double y = Intake.INTAKE_FIXED_LENGTH_IN_INCHES + Intake.INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(MathUtils.convertIntakeTicksToDegrees(getMotionMagicSetpoint()));
+        double x = Intake.INTAKE_ROTATING_LENGTH_IN_INCHES * Math.cos(Intake.convertIntakeTicksToDegrees(getMotionMagicSetpoint()));
+        double y = Intake.INTAKE_FIXED_LENGTH_IN_INCHES + Intake.INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(Intake.convertIntakeTicksToDegrees(getMotionMagicSetpoint()));
         return new Point2D.Double(x, y);
     }
 

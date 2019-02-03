@@ -16,7 +16,6 @@ import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.BaseIntake;
 import frc.team670.robot.subsystems.Arm.ArmState;
 import frc.team670.robot.subsystems.Arm.LegalState;
-import frc.team670.robot.utils.functions.MathUtils;
 import frc.team670.robot.subsystems.Intake;
 
 /**
@@ -81,7 +80,7 @@ public class CommonTransition extends ArmTransition {
         }
     }
    
-    //Redundant code most likely, will run here if boolean says to not run second
+    // Redundant code most likely, will run here if boolean says to not run second
     if (!moveIntakeSecond) {
       if (intakeMovementsAddedSequential) {
         if (dest.isIntakeDeployed()) {
@@ -104,21 +103,12 @@ public class CommonTransition extends ArmTransition {
     addSequential(new WaitForChildren());
 
      //Redundant code most likely, will run here if boolean says to run second
-    if (moveIntakeSecond) {
       if (intakeMovementsAddedSequential) {
         if (dest.isIntakeDeployed()) {
           addSequential(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_DEPLOYED, intake));
         } else {
           addSequential(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_IN, intake));
         }
-      } else {
-        if (dest.isIntakeDeployed()) {
-          addParallel(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_DEPLOYED, intake));
-        } else {
-          addParallel(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_IN, intake));
-        }
-      }
-    }
+      } 
   }
-
 }

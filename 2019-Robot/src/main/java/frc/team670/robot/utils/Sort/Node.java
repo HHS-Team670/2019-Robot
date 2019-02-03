@@ -1,4 +1,4 @@
-package frc.team670.robot.utils.sort;
+package frc.team670.robot.utils.Sort;
 
 /**
 * Models a node on a graph. Needed for A* sort 

@@ -50,6 +50,7 @@ public class ToggleIntakeUpDown extends Command {
     
     if(intakeHighPoint >= lowestPointOnClaw && (Arm.getCurrentState().getCoordPosition().getX() > 0)){
       super.cancel();
+      return;
     }
     intake.setMotionMagicSetpoint(intakeSetpointInTicks);
     Logger.consoleLog("startIntakePosition:%s, intakeSetpointInTicks", intake.getIntakePositionInTicks(), intakeSetpointInTicks);
