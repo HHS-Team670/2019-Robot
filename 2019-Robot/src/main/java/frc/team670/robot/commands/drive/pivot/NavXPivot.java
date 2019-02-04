@@ -30,6 +30,7 @@ public class NavXPivot extends Command {
   public NavXPivot(double angle) {
 	if(Robot.sensors.isNavXNull()){
 		super.cancel();
+		return;
 	}
 
 	this.angle = angle;

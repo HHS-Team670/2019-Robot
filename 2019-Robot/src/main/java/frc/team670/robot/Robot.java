@@ -52,8 +52,9 @@ public class Robot extends TimedRobot {
   private static Wrist wrist = new Wrist();
   private static Extension extension = new Extension();
   public static Intake intake = new Intake();
-  public static Arm arm = new Arm(elbow, wrist, extension, intake);
   public static Claw claw = new Claw();
+  public static Arm arm = new Arm(elbow, wrist, extension, intake, claw);
+
   public static Climber climber = new Climber(sensors);
 
   private long periodCount = 0;

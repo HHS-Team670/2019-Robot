@@ -7,6 +7,8 @@
 
 package frc.team670.robot.subsystems;
 
+import java.awt.geom.Point2D;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -21,19 +23,20 @@ import frc.team670.robot.constants.RobotMap;
 public class Intake extends BaseIntake {
 
   public static final int INTAKE_ANGLE_IN = 0, INTAKE_ANGLE_DEPLOYED = 90;
+  public static final double INTAKE_FIXED_LENGTH_IN_INCHES = 0, INTAKE_ROTATING_LENGTH_IN_INCHES = 0; //TODO set actual value
+  private static final double MAX_BASE_OUTPUT = 0.75;
+  private static final double kF = 0, kP = 0.1, kI = 0, kD = 0; //TODO figure out what these are
+  private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0; //TODO Set this
+  private static final int FORWARD_SOFT_LIMIT = 0, REVERSE_SOFT_LIMIT = 0; // TODO figure out the values in rotations
+  private static final double RAMP_RATE = 0.1;
 
   private TalonSRX baseTalon;
   private VictorSPX rollerVictor;
+  
+  private Point2D.Double intakeCoord;
 
   public static double TICKS_PER_ROTATION = 4096; // Still needs to be set
 
-
-  private static final double MAX_BASE_OUTPUT = 0.75;
-
-  private static final double kF = 0, kP = 0.1, kI = 0, kD = 0; // TODO figure out what these are
-  private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0; // TODO Set this
-  private final int FORWARD_SOFT_LIMIT = 0, REVERSE_SOFT_LIMIT = 0; // TODO figure out the values in rotations
-  private static final double RAMP_RATE = 0.1;
 
   private static int INTAKE_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 15000; // TODO set this
   private static int INTAKE_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS = 6000; // TODO set this
@@ -41,6 +44,7 @@ public class Intake extends BaseIntake {
   public Intake() {
     baseTalon = new TalonSRX(RobotMap.INTAKE_BASE_TALON);
     rollerVictor = new VictorSPX(RobotMap.INTAKE_ROLLER_VICTOR);
+    intakeCoord = new Point2D.Double();
     enableBaseMotionMagic();
   }
 
@@ -88,6 +92,15 @@ public class Intake extends BaseIntake {
     return baseTalon.getClosedLoopTarget();
   }
 
+  /**
+   * Should return the setpoint for the motion magic on the base motor
+   */
+  public Point2D.Double getMotionMagicDestinationCoordinates(){
+    double x = INTAKE_ROTATING_LENGTH_IN_INCHES * Math.cos(convertIntakeTicksToDegrees(getMotionMagicSetpoint()));
+    double y = INTAKE_FIXED_LENGTH_IN_INCHES + INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(convertIntakeTicksToDegrees(getMotionMagicSetpoint()));
+    return new Point2D.Double(x, y);
+  }
+
   public void setRotatorNeutralMode(NeutralMode mode) {
     baseTalon.setNeutralMode(mode);
   }
@@ -104,6 +117,16 @@ public class Intake extends BaseIntake {
    */
   public double getIntakeAngleInDegrees() {
     return convertIntakeTicksToDegrees(getIntakePositionInTicks());
+  }
+
+  /**
+   * Returns the x, y coordinates of the top of the intake
+   */
+  public Point2D.Double getIntakeCoordinates(){
+    double x = INTAKE_ROTATING_LENGTH_IN_INCHES * Math.cos(getIntakeAngleInDegrees());
+    double y = INTAKE_FIXED_LENGTH_IN_INCHES + INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(getIntakeAngleInDegrees());
+    intakeCoord.setLocation(x, y);
+    return intakeCoord;
   }
 
   /**

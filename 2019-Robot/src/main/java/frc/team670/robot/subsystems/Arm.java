@@ -43,12 +43,14 @@ public class Arm {
   private BaseElbow elbow;
   private BaseWrist wrist;
   private BaseExtension extension;
+  private Claw claw;
 
-  public Arm(BaseElbow elbow, BaseWrist wrist, BaseExtension extension, BaseIntake intake) {
+  public Arm(BaseElbow elbow, BaseWrist wrist, BaseExtension extension, BaseIntake intake, Claw claw) {
 
     this.elbow = elbow;
     this.wrist = wrist;
     this.extension = extension;
+    this.claw = claw;
 
     // State Setup
     states = new HashMap<LegalState, ArmState>();
@@ -257,6 +259,27 @@ public class Arm {
 
     public Point2D.Double getCoordPosition() {
       return new Point2D.Double(coord.x, coord.y);
+    }
+
+    /**
+     * Returns the lowest point on the claw/arm which should be the place the intake is most likely to hit
+     */
+    public double getMaximumLowestPointOnClaw(){
+      double extraClearanceInInches = 2;
+      // If wrist angle is at 0, this should be the lowest point on the claw. If the
+      // wrist is angled up, that does not change this calculation.
+      // This should be relatively safe. It should not hit the pistons on the claw
+      // either.
+      double lowestPoint = getCoordPosition().getY() - Claw.MAX_CLAW_OPEN_DIAMETER / 2;
+      // If the wrist is angled forward, the center point that we are using to get arm
+      // coordinates will be closer to the ends of the claw so we shouldn't need to
+      // add in claw diameter. The cosine function brings that addition down to 0.
+      if (wrist.getAngle() > 0) {
+        lowestPoint = getCoordPosition().getY() -  (Claw.MAX_CLAW_OPEN_DIAMETER / 2) * Math.abs(Math.cos(Math.toRadians(wrist.getAngle())));
+      }
+      //To be more safe, there is an extra buffer
+      lowestPoint += extraClearanceInInches;
+      return lowestPoint;
     }
 
     /**
