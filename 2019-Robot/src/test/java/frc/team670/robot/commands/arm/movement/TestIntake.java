@@ -44,20 +44,22 @@ public class TestIntake extends BaseIntake {
 
     }
 
+    @Override
+    public void runIntake(double power, boolean runningIn) {
+        
+    }
+
+    @Override
+    public double getIntakeAngleInDegrees() {
+        return 0; // TODO update this
+    }
+
     /**
      * Returns the tick value of the base motor
      */
     public int getIntakePositionInTicks() {
         return (int) intakeTicks;
     }
-
-    /**
-     * Returns the intake angle in degrees
-     */
-    public double getIntakeAngleInDegrees() {
-        return Intake.convertIntakeTicksToDegrees(intakeTicks);
-    }
-
 
     /**
      * Runs the intake at a given percent power
