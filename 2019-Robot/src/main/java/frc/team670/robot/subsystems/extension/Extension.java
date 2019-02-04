@@ -64,7 +64,7 @@ public class Extension extends BaseExtension {
 
     extensionMotor.setNeutralMode(NeutralMode.Brake);
 
-    extensionMotor.configClosedloopRamp(RAMP_RATE);
+    extensionMotor.configClosedloopRamp(0);
     extensionMotor.configOpenloopRamp(RAMP_RATE);
 
     // Enable Safety Measures

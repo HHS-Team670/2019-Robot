@@ -67,7 +67,7 @@ public class Wrist extends BaseWrist {
 
     wristRotation.setNeutralMode(NeutralMode.Brake);
 
-    wristRotation.configClosedloopRamp(RAMP_RATE);
+    wristRotation.configClosedloopRamp(0);
     wristRotation.configOpenloopRamp(RAMP_RATE);
 
     // Sets the Quadrature Position based on the pulse width to work as an absolute encoder
