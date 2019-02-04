@@ -17,11 +17,14 @@ import frc.team670.robot.commands.BuildAuton;
 import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.commands.arm.movement.PlaceOrGrab;
 import frc.team670.robot.commands.climb.armClimb.CancelArmClimb;
+import frc.team670.robot.commands.climb.controlClimb.CycleClimb;
+import frc.team670.robot.commands.climb.pistonClimb.PistonClimbWithTiltControl;
 import frc.team670.robot.commands.intake.AutoPickupCargo;
 import frc.team670.robot.commands.intake.RunIntake;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
 import frc.team670.robot.subsystems.Arm.LegalState;
+import frc.team670.robot.subsystems.Climber;
 
 
 /**
@@ -32,10 +35,13 @@ public class XKeys {
     private NetworkTableInstance instance;
     private NetworkTable table;
     private Command autonCommand;
+    private ClimbHeight height;
 
     public XKeys() {
         instance = NetworkTableInstance.getDefault();
         table = instance.getTable("SmartDashboard");
+        height = ClimbHeight.FLAT;
+
         table.addEntryListener("autonSequence", (table2, key2, entry, value, flags) -> {
             autonCommand = new BuildAuton(value.getStringArray(), Robot.arm);
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
@@ -54,8 +60,13 @@ public class XKeys {
             autoPickupBall();
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-climber", (table2, key2, entry, value, flags) -> {
-            if (value.toString().equals("next_step_climb")) nextStepArmClimb();
-            else if (value.toString().equals("cancel_arm_climb")) cancelArmClimb();
+            if (value.toString().equals("set_climb_flat")) height = ClimbHeight.FLAT;
+            else if (value.toString().equals("set_climb_2")) height = ClimbHeight.LEVEL2;
+            else if (value.toString().equals("set_climb_3")) height = ClimbHeight.LEVEL3;
+            
+            if (value.toString().equals("cancel_arm_climb")) cancelArmClimb();
+            if (value.toString().contains("cycle_climb")) nextStepArmClimb(height);
+            if (value.toString().equals("piston_climb")) pistonClimb(height);
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
     }
 
@@ -79,11 +90,25 @@ public class XKeys {
         Scheduler.getInstance().add(new AutoPickupCargo(Robot.arm, Robot.intake, Robot.claw, Robot.sensors));
     }
 
-    private void nextStepArmClimb() {
+    private void nextStepArmClimb(ClimbHeight height) {
+        if (height == ClimbHeight.FLAT) Scheduler.getInstance().add(new CycleClimb(Robot.arm, Robot.climber, Robot.sensors, Climber.PISTON_ENCODER_FLAT));
+        else if (height == ClimbHeight.LEVEL2) Scheduler.getInstance().add(new CycleClimb(Robot.arm, Robot.climber, Robot.sensors, Climber.PISTON_ENCODER_LEVEL_TWO));
+        else if (height == ClimbHeight.LEVEL3) Scheduler.getInstance().add(new CycleClimb(Robot.arm, Robot.climber, Robot.sensors, Climber.PISTON_ENCODER_LEVEL_THREE));
+    }
 
+    private void pistonClimb(ClimbHeight height) {
+        int setpoint = 0;
+        if (height == ClimbHeight.FLAT) setpoint = Climber.PISTON_ENCODER_FLAT;
+        if (height == ClimbHeight.LEVEL2) setpoint = Climber.PISTON_ENCODER_LEVEL_TWO;
+        if (height == ClimbHeight.LEVEL3) setpoint = Climber.PISTON_ENCODER_LEVEL_THREE;
+        Scheduler.getInstance().add(new PistonClimbWithTiltControl(setpoint, Robot.climber, Robot.sensors));
     }
 
     private void cancelArmClimb() {
         Scheduler.getInstance().add(new CancelArmClimb(Robot.arm));
+    }
+
+    private enum ClimbHeight {
+        FLAT, LEVEL2, LEVEL3;
     }
 }

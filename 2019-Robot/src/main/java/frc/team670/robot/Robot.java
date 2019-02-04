@@ -185,6 +185,7 @@ public class Robot extends TimedRobot {
     sensors.resetNavX(); // Reset NavX completely, zero the field centric based on how robot faces from start of game.
     fieldCentricPose = new Pose();
     Logger.consoleLog("Auton Started");
+    table.getEntry("robotState").setString("autonomousInit()");
     // try{ 
     //   autonomousCommand = new DriveMotionProfile("/output/2ft-straight.pf1.csv", false);
     // }
