@@ -34,7 +34,18 @@ public class ArmPathGenerator {
   public static CommandGroup getPath(ArmState destination, Arm arm) {
     ArmState currentState = Arm.getCurrentState();
     Logger.consoleLog("currentState: %s, destinationState: %s", currentState.getClass().getName(), destination.getClass().getName());
-    CommandGroup movements = new CommandGroup();
+    CommandGroup movements = new CommandGroup() {
+      @Override
+      protected void end() { // The created path will set the Arm's state to wherever it moved after finishing
+        Arm.setState(destination);
+      }
+
+      @Override
+        protected void interrupted() {
+          end();
+          Logger.consoleLog("Interrupted");
+        }
+    };
     // List<ArmTransition> transitions = searched.get(currentState);
     List<ArmTransition> transitions = null;
     try {
@@ -52,7 +63,6 @@ public class ArmPathGenerator {
     // searched.put(currentState, transitions); //Stores current path in instance variable
     }
     for (ArmTransition t : transitions) {
-      Logger.consoleLog("TransitionName: %s", t.getClass().getName());
       movements.addSequential(t);
     }
 

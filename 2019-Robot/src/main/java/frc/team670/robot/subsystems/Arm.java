@@ -126,9 +126,9 @@ public class Arm {
    * Sets the current state of the arm.
    */
   public static void setState(ArmState state) {
-    for (ArmTransition transition : state.getEdges()) {
-      System.out.println("Transition Destination: " + transition.getDest().getClass().getName());
-    }
+    // for (ArmTransition transition : state.getEdges()) {
+      // System.out.println("Transition Destination: " + transition.getDest().getClass().getName());
+    // }
     currentState = state;
   }
 
