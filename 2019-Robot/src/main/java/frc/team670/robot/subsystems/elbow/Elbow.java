@@ -71,7 +71,7 @@ public class Elbow extends BaseElbow {
     elbowRotationMain.setNeutralMode(NeutralMode.Brake);
     elbowRotationSlave.setNeutralMode(NeutralMode.Brake);
 
-    elbowRotationMain.configClosedloopRamp(RAMP_RATE);
+    elbowRotationMain.configClosedloopRamp(0);
     elbowRotationMain.configOpenloopRamp(RAMP_RATE);
 
     // These thresholds stop the motor when limit is reached

@@ -29,7 +29,7 @@ public class AStarSearch {
      */
     public static List<Edge> search(Node start, Node destination) {
         
-        System.out.println("StartNode: " + start.getClass().getName() + ", DestNode: " + destination.getClass().getName());
+        // System.out.println("StartNode: " + start.getClass().getName() + ", DestNode: " + destination.getClass().getName());
         
         if (start.equals(destination)) {
             return new ArrayList<Edge>();
@@ -71,7 +71,7 @@ public class AStarSearch {
             current = openList.first();
 
             if (current.equals(destination)) {
-                System.out.println("CURRENT EQUALS DESTINATION");
+                // System.out.println("CURRENT EQUALS DESTINATION");
                 end = true;
             }
 
@@ -81,10 +81,10 @@ public class AStarSearch {
 
                 for (Edge e : current.getEdges()) {
                     Node child = e.getDest();
-                    System.out.println("Edge: " + e.getClass().getName() +", Edge SourceNode: " + e.getSource().getClass().getName() + ", DestinationNode: " + child.getClass().getName());
+                    // System.out.println("Edge: " + e.getClass().getName() +", Edge SourceNode: " + e.getSource().getClass().getName() + ", DestinationNode: " + child.getClass().getName());
 
                     if (child.equals(destination)) {
-                        System.out.println("CURRENT EQUALS DESTINATION IN EDGE LOOP");
+                        // System.out.println("CURRENT EQUALS DESTINATION IN EDGE LOOP");
                         // end = true;
                     }
                     // if(child.equals(destination)) {
@@ -109,7 +109,7 @@ public class AStarSearch {
                     cameFrom.put(child, e);
                     gValues.put(child, tempG);
                 }
-                System.out.println("OpenListLength: " + openList.size());
+                // System.out.println("OpenListLength: " + openList.size());
             }
         }
 

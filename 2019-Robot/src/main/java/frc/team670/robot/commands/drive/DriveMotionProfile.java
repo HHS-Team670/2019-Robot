@@ -151,6 +151,7 @@ public class DriveMotionProfile extends Command {
     } catch (FileNotFoundException ex) {
       DriverStation.reportError("Error reading in File for DriveMotionProfile" + ex.getMessage(), true);
       super.cancel();
+      return;
     }
   }
 

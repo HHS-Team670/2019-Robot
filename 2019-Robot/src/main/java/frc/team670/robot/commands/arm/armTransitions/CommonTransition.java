@@ -35,17 +35,80 @@ public class CommonTransition extends ArmTransition {
 
   @Override
   public void initTransition() {
-
+    ArmState source = getSource();
     ArmState dest = getDest();
-    if(dest.isIntakeDeployed()) {
-      addParallel(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_DEPLOYED, intake));
-    } else {
-      addParallel(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_IN, intake));
+
+    //Should get the current desired position in ticks (so should either be at deployed or down tick value)
+    double setpointInDegrees = Intake.convertIntakeTicksToDegrees(intake.getMotionMagicSetpoint());
+
+    double intakeHighPoint = Intake.INTAKE_FIXED_LENGTH_IN_INCHES + Intake.INTAKE_ROTATING_LENGTH_IN_INCHES;
+    double intakeQuarterPoint = Intake.INTAKE_FIXED_LENGTH_IN_INCHES + Intake.INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(Math.toRadians(45));
+
+    double intakeSourceY = intake.getIntakeCoordinates().getY();
+    double intakeDestY = (dest.isIntakeDeployed()) ? (Intake.INTAKE_FIXED_LENGTH_IN_INCHES + Intake.INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(Intake.INTAKE_ANGLE_DEPLOYED)) : (Intake.INTAKE_FIXED_LENGTH_IN_INCHES + Intake.INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(Intake.INTAKE_ANGLE_IN));
+    double sourceY = source.getMaximumLowestPointOnClaw();
+    double destY = dest.getMaximumLowestPointOnClaw();
+    double sourceX = source.getCoordPosition().getX();
+    double destX = dest.getCoordPosition().getX();
+
+    boolean moveIntakeSecond = false;
+    boolean intakeMovementsAddedSequential = false;
+
+    //Only reason why intake would have to move second is if the movement of the intake would hit the arm
+
+    //If intake has to move from in to deployed or from deployed to in
+    if (Double.compare(setpointInDegrees, Intake.INTAKE_ANGLE_DEPLOYED) != 0 || Double.compare(setpointInDegrees, Intake.INTAKE_ANGLE_DEPLOYED) != 0) {
+      //If a point along the intake's trajectory is in between the Y coordinates of the arm's start and end
+      if ((intakeSourceY > destY && intakeSourceY < sourceY) || 
+            (intakeHighPoint > destY && intakeHighPoint < sourceY) || 
+              (intakeQuarterPoint > destY && intakeQuarterPoint < sourceY) ||
+               (intakeDestY > destY && intakeDestY < sourceY)){
+                moveIntakeSecond = true;
+         }
+
+    //If a point along the intake's trajectory is in between the Y coordinates of the arm's start and end
+      if ((intakeSourceY > sourceY && intakeSourceY < destY) || 
+         (intakeHighPoint > sourceY && intakeHighPoint < destY) || 
+           (intakeQuarterPoint > sourceY && intakeQuarterPoint < destY) ||
+            (intakeDestY > sourceY && intakeDestY < destY)){
+             moveIntakeSecond = true;
+      }
+
+        //If arm doesn't even come near the intake, then there's no point adding the command sequentially
+        if((intakeHighPoint >= destY && intakeHighPoint <= sourceY) || (intakeHighPoint >= sourceY && intakeHighPoint <= destY) && (sourceX > 0 || destX > 0)){
+          intakeMovementsAddedSequential = true;
+        }
     }
+   
+    // Redundant code most likely, will run here if boolean says to not run second
+    if (!moveIntakeSecond) {
+      if (intakeMovementsAddedSequential) {
+        if (dest.isIntakeDeployed()) {
+          addSequential(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_DEPLOYED, intake));
+        } else {
+          addSequential(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_IN, intake));
+        }
+      } else {
+        if (dest.isIntakeDeployed()) {
+          addParallel(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_DEPLOYED, intake));
+        } else {
+          addParallel(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_IN, intake));
+        }
+      }
+    }
+
     addParallel(new MoveWrist(wrist, dest.getWristAngle()));
     addParallel(new MoveExtension(extension, dest.getExtensionLength()));
     addSequential(new MoveElbow(elbow, dest.getElbowAngle()));
     addSequential(new WaitForChildren());
-  }
 
+     //Redundant code most likely, will run here if boolean says to run second
+      if (intakeMovementsAddedSequential) {
+        if (dest.isIntakeDeployed()) {
+          addSequential(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_DEPLOYED, intake));
+        } else {
+          addSequential(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_IN, intake));
+        }
+      } 
+  }
 }

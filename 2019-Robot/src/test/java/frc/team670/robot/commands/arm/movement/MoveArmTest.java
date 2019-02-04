@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
 import frc.team670.robot.subsystems.Arm.LegalState;
+import frc.team670.robot.subsystems.Claw;
 import frc.team670.robot.subsystems.Intake;
 import frc.team670.robot.utils.functions.MathUtils;
 
@@ -33,7 +34,8 @@ public class MoveArmTest {
         TestWrist wrist = new TestWrist();
         TestExtension extension = new TestExtension();
         TestIntake intake = new TestIntake();
-        Arm arm = new Arm(elbow, wrist, extension, intake);
+        Claw claw = new Claw();
+        Arm arm = new Arm(elbow, wrist, extension, intake, claw);
         Arm.setState(Arm.getArmState(LegalState.NEUTRAL));
         ArmState dest = Arm.getArmState(LegalState.LOW_HATCH_FORWARD);
 

@@ -7,6 +7,8 @@
 
 package frc.team670.robot.subsystems;
 
+import java.awt.geom.Point2D;
+
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -26,6 +28,11 @@ public abstract class BaseIntake extends Subsystem {
    */
   public abstract double getMotionMagicSetpoint();
 
+  /**
+   * Should return the setpoint coordinates for the motion magic on the base motor
+   */
+  public abstract Point2D.Double getMotionMagicDestinationCoordinates();
+
   public abstract void setRotatorNeutralMode(NeutralMode mode);
 
   /**
@@ -37,6 +44,11 @@ public abstract class BaseIntake extends Subsystem {
    * Returns the intake angle in degrees
    */
   public abstract double getIntakeAngleInDegrees();
+
+  /** 
+   * Returns the x, y coordinates of the top of the intake
+   */
+  public abstract Point2D.Double getIntakeCoordinates();
 
 
   /**

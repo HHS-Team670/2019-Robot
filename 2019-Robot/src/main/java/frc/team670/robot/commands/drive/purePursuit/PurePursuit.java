@@ -24,6 +24,7 @@ public class PurePursuit extends Command {
 
   public PurePursuit(Path path, DriveBase driveBase, MustangSensors sensors) {
    this.driveBase = driveBase;
+   this.sensors = sensors;
    poseEstimator = new PoseEstimator(driveBase, sensors);
    purePursuitTracker = new PurePursuitTracker(poseEstimator);
    purePursuitTracker.setPath(path, LOOKAHEAD_DISTANCE);

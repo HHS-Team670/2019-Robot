@@ -1,3 +1,4 @@
+
 /*----------------------------------------------------------------------------*/
 /* Copyright (c) 2018 FIRST. All Rights Reserved.                             */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
@@ -6,6 +7,8 @@
 /*----------------------------------------------------------------------------*/
 
 package frc.team670.robot.commands.arm.movement;
+
+import java.awt.geom.Point2D;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
@@ -44,16 +47,6 @@ public class TestIntake extends BaseIntake {
 
     }
 
-    @Override
-    public void runIntake(double power, boolean runningIn) {
-        
-    }
-
-    @Override
-    public double getIntakeAngleInDegrees() {
-        return 0; // TODO update this
-    }
-
     /**
      * Returns the tick value of the base motor
      */
@@ -62,12 +55,38 @@ public class TestIntake extends BaseIntake {
     }
 
     /**
+     * Returns the intake angle in degrees
+     */
+    public double getIntakeAngleInDegrees() {
+        return Intake.convertIntakeTicksToDegrees(intakeTicks);
+    }
+
+
+    /**
      * Runs the intake at a given percent power
      * 
      * @param percentOutput The desired percent power for the rollers to run at [-1, 1]
      */
     public void runIntake(double power) {
 
+    }
+
+    /** 
+     * Returns the x, y coordinates of the top of the intake
+     */
+    public Point2D.Double getIntakeCoordinates(){
+        double x = Intake.INTAKE_ROTATING_LENGTH_IN_INCHES * Math.cos(getIntakeAngleInDegrees());
+        double y = Intake.INTAKE_FIXED_LENGTH_IN_INCHES + Intake.INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(getIntakeAngleInDegrees());
+        return new Point2D.Double(x, y);
+    }
+
+    /**
+     * Should return the setpoint coordinates for the motion magic on the base motor
+     */
+    public Point2D.Double getMotionMagicDestinationCoordinates(){
+        double x = Intake.INTAKE_ROTATING_LENGTH_IN_INCHES * Math.cos(Intake.convertIntakeTicksToDegrees(getMotionMagicSetpoint()));
+        double y = Intake.INTAKE_FIXED_LENGTH_IN_INCHES + Intake.INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(Intake.convertIntakeTicksToDegrees(getMotionMagicSetpoint()));
+        return new Point2D.Double(x, y);
     }
 
 }
