@@ -25,8 +25,8 @@ NetworkTables.addKeyListener('/SmartDashboard/cameraSource', (key, value) => {
   NetworkTables.putValue('/SmartDashboard/cameraSource', '');
 });
 
-NetworkTables.addKeyListener('/SmartDashboard/teleopState', (key, value) => {
-  document.getElementById('auton-chooser').style.display = "none";
+NetworkTables.addKeyListener('/SmartDashboard/robotState', (key, value) => {
+  if (value === "autonomousInit()") document.getElementById('auton-chooser').style.display = "none";
 });
 
 var keys = [];
@@ -52,8 +52,12 @@ document.addEventListener("keyup", function(event) {
 // naming convention: UPPER_CASE for preset arm states, lower_case for other commands
 function getFromMap(key) { // mapping is more aligned with arm position on robot
   if (key === "x0a") return "READY_TO_CLIMB";
-  if (key === "x03") return "next_step_climb";
-  if (key === "x0b") return "cancel_arm_climb";
+  if (key === "x03") return "set_climb_3";
+  if (key === "x04") return "set_climb_2";
+  if (key === "x05") return "set_climb_flat";
+  if (key === "x0b") return "cycle_climb";
+  if (key === "x0c") return "piston_climb";
+  if (key === "x0d") return "cancel_arm_climb";
 
   if (key === "x33") return "run_intake_in";
   if (key === "x3b") return "run_intake_out";

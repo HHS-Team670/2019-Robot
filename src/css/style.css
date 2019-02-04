@@ -49,16 +49,6 @@ body > * {
     overflow: scroll;
     background: #222;
 }
-#timer {
-    font-family: monospace;
-    display: block;
-    height: 20vh;
-    width: 30vw;
-    top: 0;
-    left: 0;
-    font-size: 20vh;
-    line-height: .8;
-}
 header {
     width: 20vw;
     height: 20vh;
@@ -71,8 +61,8 @@ header {
     position: absolute;
     bottom: 0vh;
     left: 10;
-    width: 50%;
-    height: 80%;
+    width: 60%;
+    height: 100%;
     object-fit: fill;
     overflow: hidden;
     background-color: #333;
@@ -130,64 +120,20 @@ body.login #login {
 }
 #robot-info {
   position: absolute;
-  transform: translate(50vw, 10vh);
+  transform: translate(90vw, 70vh);
   font-size: 12pt;
-}
-#navx {
-  position: absolute;
-  transform: translate(70vw);
-}
-#arm {
-  position: absolute;
-  transform: translate(81vw);
-}
-#turret {
-  position: absolute;
-  transform: translate(85vw);
 }
 #status-lights {
   position: absolute;
-  transform: translate(0vw, 3vh);
+  transform: translate(70vw, 80vh);
 }
-.bottom-tick {
-  transform-origin: top center;
-  transform: rotate(180deg);
-}
-.right-tick {
-  transform-origin: left center;
-  transform: rotate(180deg);
-}
-.needle {
-  transform-origin: bottom center;
-}
-.right-rocket {
-  transform-origin: top left;
-  transform: rotate(90deg);
-}
-#left-cargo-1 {
-  transform: translate(-40px);
-}
-#left-cargo-2 {
-  transform: translate(-40px);
-}
-#left-cargo-3 {
-  transform: translate(-40px);
-}
-#left-cargo-4 {
-  transform: translate(-30px);
-}
-#right-cargo-1 {
-  transform: translate(10px);
-}
-#right-cargo-2 {
-  transform: translate(10px);
-}
-#right-cargo-3 {
-  transform: translate(10px);
+#status-info {
+    position: absolute;
+    transform: translate(60vw, 70vh);
 }
 #auton-chooser {
     position: relative;
-    transform: translate(50vw, 30vh);
+    transform: translate(60vw, 0vh);
     width: 50vw;
     height: 65vh;
 }
