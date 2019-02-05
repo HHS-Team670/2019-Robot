@@ -16,7 +16,6 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
-import frc.team670.robot.utils.functions.MathUtils;
 
 /**
  * Represents the Intake mechanism of the robot.
@@ -154,10 +153,6 @@ public class Intake extends BaseIntake {
   public static int convertIntakeDegreesToTicks(double degrees) {
     //If straight up is 0 and going forward is positive
     // percentage * half rotation
-
-    // TODO - Fix this. This is not going to make 0 at the top if the absolute encoder is not zero there.
-    // Offset the quadrature readings accordingly in the constructor?
-    // Also why are you multiplying by 0.5, it is not half ticks per rotation
     return (int)((degrees / 180) * (0.5 * TICKS_PER_ROTATION));
   }
 
@@ -167,10 +162,6 @@ public class Intake extends BaseIntake {
   public static double convertIntakeTicksToDegrees(double ticks) {
     //If straight up is 0 and going forward is positive
     // percentage * half degrees rotation
-
-     // TODO - Fix this. This is not going to make 0 at the top if the absolute encoder is not zero there.
-    // Offset the quadrature readings accordingly in the constructor?
-    // Also why are you multiplying by 0.5, it is not half ticks per rotation
     return (ticks / (0.5 * TICKS_PER_ROTATION) * 180);
   }
 

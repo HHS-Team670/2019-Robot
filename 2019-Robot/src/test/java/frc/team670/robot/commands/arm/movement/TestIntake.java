@@ -61,6 +61,10 @@ public class TestIntake extends BaseIntake {
         return Intake.convertIntakeTicksToDegrees(intakeTicks);
     }
 
+    @Override
+    public void runIntake(double power, boolean runningIn) {
+        
+    }
 
     /**
      * Runs the intake at a given percent power

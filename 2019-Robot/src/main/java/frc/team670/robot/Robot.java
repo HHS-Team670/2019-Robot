@@ -45,7 +45,6 @@ public class Robot extends TimedRobot {
   private MustangLEDs_2019 leds = new MustangLEDs_2019();
   public static Pose fieldCentricPose = new Pose();
 
-  private long savedTime=0;
 
   private static Elbow elbow = new Elbow();
   private static Wrist wrist = new Wrist();
@@ -56,7 +55,6 @@ public class Robot extends TimedRobot {
 
   public static Climber climber = new Climber(sensors);
 
-  private long periodCount = 0;
 
   Command autonomousCommand;
   SendableChooser<Command> auton_chooser = new SendableChooser<>();
@@ -92,7 +90,6 @@ public class Robot extends TimedRobot {
     // chooser.addObject("My Auto", new MyAutoCommand());
     SmartDashboard.putData("Auto mode", auton_chooser);
     Logger.consoleLog();
-    savedTime = System.currentTimeMillis();
     System.out.println("Robot init");
 
     leds.socketSetup(5801);
@@ -123,33 +120,12 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    // if(System.currentTimeMillis() > savedTime + 1000) {
-    //   leds.updateClimbingBoolean(true);
-    // }
-    // else if(System.currentTimeMillis() > savedTime + 2000) {
-    //   leds.updateForwardDrive(true);
-    // }
-    // else if(System.currentTimeMillis() > savedTime + 3000) {
-    //   leds.updateReverseDrive(true);
-    // }
-    // else if(System.currentTimeMillis() > savedTime + 4000) {
-    //   leds.updateVisionData(true);
-    //   savedTime = System.currentTimeMillis();
-    // }  
-      
-    // Logger.consoleLog("LeftEncoderPos: %s, RightEncoderPos: %s", driveBase.getLeftDIOEncoderPosition(), driveBase.getRightDIOEncoderPosition());
-    // Logger.consoleLog("LeftEncoderVel: %s, RightEncoderVel: %s", driveBase.getLeftDIOEncoderVelocityInches(), driveBase.getRightDIOEncoderVelocityInches());
-      
-    // if(periodCount % 10 == 0) {
-    //   Logger.consoleLog("NavXYawReset: %s, NavXYawFieldCentric: %s", sensors.getYawDouble(), sensors.getFieldCentricYaw());
-    // }
+ 
     SmartDashboard.putNumber("NavX Yaw", sensors.getYawDouble());
     table.getEntry("gyro").setNumber((int) sensors.getAngle() % 360);
 
-    periodCount++;
     leds.setClimbingData(true);//we climb
 
-    // System.out.println("Voltage: "+(irSensor.getVoltage()));
     fieldCentricPose.update(); // Update our field centric Pose to the new robot position. Commented out to avoid null-pointers until sensors hooked up.
  
   }
@@ -187,19 +163,6 @@ public class Robot extends TimedRobot {
     fieldCentricPose = new Pose();
     Logger.consoleLog("Auton Started");
     table.getEntry("robotState").setString("autonomousInit()");
-    // try{ 
-    //   autonomousCommand = new DriveMotionProfile("/output/2ft-straight.pf1.csv", false);
-    // }
-    // catch (FileNotFoundException e) {
-    //   e.printStackTrace();
-    // }
-
-    /*
-     * String autoSelected = SmartDashboard.getString("Auto Selector",
-     * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
-     * = new MyAutoCommand(); break; case "Default Auto": default:
-     * autonomousCommand = new ExampleCommand(); break; }
-     */
 
     // schedule the autonomous command (example)
     if (autonomousCommand != null) {
