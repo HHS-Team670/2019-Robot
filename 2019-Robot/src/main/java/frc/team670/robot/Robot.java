@@ -28,6 +28,7 @@ import frc.team670.robot.subsystems.elbow.Elbow;
 import frc.team670.robot.subsystems.extension.Extension;
 import frc.team670.robot.subsystems.wrist.Wrist;
 import frc.team670.robot.utils.Logger;
+import frc.team670.robot.utils.MustangController.DPadState;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -245,19 +246,19 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
-    if (Robot.oi.getDriverController().getLeftBumper()) {
+    if (Robot.oi.getDriverController().getDPadState() == DPadState.UP) {
       Scheduler.getInstance().add(new ResetEncoder(elbow));
     }
 
-    if (Robot.oi.getDriverController().getRightBumper()) {
+    if (Robot.oi.getDriverController().getDPadState() == DPadState.RIGHT) {
       Scheduler.getInstance().add(new ResetEncoder(wrist));
     }
 
-    if (Robot.oi.getDriverController().getAButton()) {
+    if (Robot.oi.getDriverController().getDPadState() == DPadState.DOWN) {
       Scheduler.getInstance().add(new ResetEncoder(extension));
     }
 
-    if (Robot.oi.getDriverController().getLeftBumper()) {
+    if (Robot.oi.getDriverController().getDPadState() == DPadState.LEFT) {
       Scheduler.getInstance().add(new ResetEncoder(intake));
     }
 
