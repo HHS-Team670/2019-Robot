@@ -17,7 +17,7 @@ Adafruit_NeoPixel strip =                           //Defines an Adafruit Neopix
 Adafruit_NeoPixel(60, 5, NEO_GRB + NEO_KHZ800); 
 
 Adafruit_NeoPixel strip2 =                           //Defines an Adafruit Neopixel strip, containing 120 LEDs, using 
-Adafruit_NeoPixel(15, 7, NEO_GRB + NEO_KHZ800);//Arduino pin #6, and using the GRB format at 800KHZ bitstream
+Adafruit_NeoPixel(60, 5, NEO_GRB + NEO_KHZ800);//Arduino pin #6, and using the GRB format at 800KHZ bitstream
 
 EthernetClient robotClient;                         //Defines a client to be used to connect to the Robo Rio
 byte mac[] =                                        //Creates a mac address for use in defining an Ethernet instance
@@ -260,7 +260,7 @@ void BouncingBalls() {
   byte red  = 255;
   byte blue = 255;
   byte green = 0;
-  int ballCount = 10;
+  int ballCount = 25;
   float Gravity = -9.81;
   int StartHeight = 1;
   
@@ -305,6 +305,65 @@ void BouncingBalls() {
     strip.show();
     setStripColor(0,0,0);
   }
+}
+void meteorRain() {  
+  
+  byte red = 0;
+  byte blue = 0;
+  byte green = 255;
+
+ int meteorSize = 10;
+ int meteorTrailDecay = 30;
+ boolean meteorRandomDecay = true;
+ int speedDelay = 30;
+
+  
+  setStripColor(0,0,0);
+  
+  for(int i = 0; i < 2*(strip.numPixels()); i++) {
+    
+    
+    // fade brightness all LEDs one step
+    for(int j=0; j<strip.numPixels(); j++) {
+      if( (!meteorRandomDecay) || (random(10)>5) ) {
+        fadeToBlack(j, meteorTrailDecay );        
+      }
+    }
+    
+    // draw meteor
+    for(int j = 0; j < meteorSize; j++) {
+      if( ( i-j <strip.numPixels()) && (i-j>=0) ) {
+        strip.setPixelColor(i-j, red, green, blue);
+      } 
+    }
+   
+    strip.show();
+    delay(speedDelay);
+  }
+}
+
+void fadeToBlack(int ledNo, byte fadeValue) {
+ #ifdef ADAFRUIT_NEOPIXEL_H 
+    // NeoPixel
+    uint32_t oldColor;
+    uint8_t r, g, b;
+    int value;
+    
+    oldColor = strip.getPixelColor(ledNo);
+    r = (oldColor & 0x00ff0000UL) >> 16;
+    g = (oldColor & 0x0000ff00UL) >> 8;
+    b = (oldColor & 0x000000ffUL);
+
+    r=(r<=10)? 0 : (int) r-(r*fadeValue/256);
+    g=(g<=10)? 0 : (int) g-(g*fadeValue/256);
+    b=(b<=10)? 0 : (int) b-(b*fadeValue/256);
+    
+    strip.setPixelColor(ledNo, r,g,b);
+ #endif
+ #ifndef ADAFRUIT_NEOPIXEL_H
+   // FastLED
+   leds[ledNo].fadeToBlackBy( fadeValue );
+ #endif  
 }
 void displayLightShow(){
     if(lightShowData=="0L"){
@@ -423,9 +482,9 @@ void setup()
 
 void loop()
 {                                                   //Ran indefinitly after setup()
-  BouncingBalls();
+  setRandomStrobe();
   parseData();
- strip2.setBrightness(100); 
+ strip2.setBrightness(255); 
 if(stateData==stillDrive){
   displayLightShow();
 } else if(stateData==forwardDrive){
