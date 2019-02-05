@@ -8,6 +8,7 @@
 package frc.team670.robot.commands.tuning;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
+import frc.team670.robot.subsystems.RotatingSubsystem;
 
 public class ResetEncoder extends InstantCommand {
   private RotatingSubsystem rotatingSubsystem;
@@ -20,7 +21,7 @@ public class ResetEncoder extends InstantCommand {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    rotatingSubsystem.rotatorTalon.getSensorCollection().setPulseWidthPosition(0, 0);
+    rotatingSubsystem.getTalon().getSensorCollection().setPulseWidthPosition(0, 0);
   }
 
 

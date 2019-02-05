@@ -9,6 +9,7 @@ package frc.team670.robot.commands.tuning;
 
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team670.robot.subsystems.RotatingSubsystem;
 
 public class MeasureArbitraryFeedforward extends Command {
 
@@ -17,7 +18,7 @@ public class MeasureArbitraryFeedforward extends Command {
 
   public MeasureArbitraryFeedforward(RotatingSubsystem rotatingSubsystem) {
     this.rotatingSubsystem = rotatingSubsystem;
-    if (rotatingSubsystem.timeout)
+    if (rotatingSubsystem.getTimeout())
       setTimeout(0.35);
   }
 
@@ -37,7 +38,7 @@ public class MeasureArbitraryFeedforward extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    if (rotatingSubsystem.timeout)
+    if (rotatingSubsystem.getTimeout())
       return isTimedOut();
     else 
       return false;

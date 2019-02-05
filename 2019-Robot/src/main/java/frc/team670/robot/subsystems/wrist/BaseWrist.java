@@ -7,7 +7,7 @@
 
 package frc.team670.robot.subsystems.wrist;
 
-import frc.team670.robot.commands.tuning.RotatingSubsystem;
+import frc.team670.robot.subsystems.RotatingSubsystem;
 
 /**
  * Add your docs here.

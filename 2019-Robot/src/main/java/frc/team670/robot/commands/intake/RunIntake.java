@@ -17,7 +17,7 @@ public class RunIntake extends Command {
   private BaseIntake intake;
   private MustangSensors sensors;
 
-  private static final double RUNNING_POWER = 1.0; // TODO figure out if we want to run full speed
+  private static final double RUNNING_POWER = 0.75; // TODO figure out if we want to run full speed
   private boolean hasBeenTriggered;
   private long timeSinceIRSensorTripped, timeSinceInitialized;
 

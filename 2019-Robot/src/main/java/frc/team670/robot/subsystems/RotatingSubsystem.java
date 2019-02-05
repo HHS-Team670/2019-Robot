@@ -5,9 +5,10 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.commands.tuning;
+package frc.team670.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -20,7 +21,6 @@ public abstract class RotatingSubsystem extends Subsystem {
     protected TalonSRX rotatorTalon;
     protected int setpoint;
     protected boolean timeout;
-    public static final int QUAD_ENCODER_MAX = 890, QUAD_ENCODER_MIN = -1158;
     public double ARBITRARY_FEEDFORWARD_CONSTANT = 0.3; // original 0.22 for one clamp
     public final int FORWARD_SOFT_LIMIT = 0, REVERSE_SOFT_LIMIT = 0; // TODO figure out the values in rotations
 
@@ -30,7 +30,13 @@ public abstract class RotatingSubsystem extends Subsystem {
         this.rotatorTalon = rotatorTalon;
     }
 
-    public abstract void updateArbitraryFeedForward();
+    public TalonSRX getTalon(){
+        return rotatorTalon;
+    }
+
+    public boolean getTimeout(){
+        return timeout;
+    }
 
     public void enablePercentOutput() {
         rotatorTalon.set(ControlMode.PercentOutput, 0);
@@ -44,14 +50,19 @@ public abstract class RotatingSubsystem extends Subsystem {
         rotatorTalon.set(ControlMode.PercentOutput, output);
     }
 
-    public double getAngle() {
-        return (rotatorTalon.getSensorCollection().getQuadraturePosition() / 360) * TICKS_PER_ROTATION;
+    public void updateArbitraryFeedForward(){
+        if(setpoint != NO_SETPOINT) {
+            double value = getAbsoluteAngleMultiplier() * ARBITRARY_FEEDFORWARD_CONSTANT;
+            rotatorTalon.set(ControlMode.MotionMagic, setpoint, DemandType.ArbitraryFeedForward, value);
+          }
     }
 
+    public abstract double getAbsoluteAngleMultiplier();
 
     public abstract int getPositionTicks();
 
     public abstract void setMotionMagicSetpointTicks(int ticks);
+
 
     @Override
     protected void initDefaultCommand() {

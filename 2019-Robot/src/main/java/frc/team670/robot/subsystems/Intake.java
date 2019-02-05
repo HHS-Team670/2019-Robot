@@ -10,12 +10,10 @@ package frc.team670.robot.subsystems;
 import java.awt.geom.Point2D;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
-import frc.team670.robot.commands.tuning.RotatingSubsystem;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
 
@@ -24,13 +22,14 @@ import frc.team670.robot.constants.RobotMap;
  */
 public class Intake extends BaseIntake {
 
-  public static final int INTAKE_ANGLE_IN = 0, INTAKE_ANGLE_DEPLOYED = 90;
+  public static final int INTAKE_ANGLE_IN = -90, INTAKE_ANGLE_DEPLOYED = 90;
   public static final double INTAKE_FIXED_LENGTH_IN_INCHES = 0, INTAKE_ROTATING_LENGTH_IN_INCHES = 0; //TODO set actual value
   private static final double MAX_BASE_OUTPUT = 0.75;
   private static final double kF = 0, kP = 0.1, kI = 0, kD = 0; //TODO figure out what these are
   private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0; //TODO Set this
   private static final int FORWARD_SOFT_LIMIT = 0, REVERSE_SOFT_LIMIT = 0; // TODO figure out the values in rotations
   private static final double RAMP_RATE = 0.1;
+  public static final int QUAD_ENCODER_MAX = 890, QUAD_ENCODER_MIN = -1158;
 
   private TalonSRX baseTalon;
   private VictorSPX rollerVictor;
@@ -63,7 +62,7 @@ public class Intake extends BaseIntake {
       pulseWidthPos -= 4096;
     }
 
-    timeout = false;
+    timeout = true;
 
     baseTalon.getSensorCollection().setQuadraturePosition(pulseWidthPos, 0);
 
@@ -196,11 +195,8 @@ public class Intake extends BaseIntake {
   }
 
   @Override
-  public void updateArbitraryFeedForward() {
-    if(setpoint != RotatingSubsystem.NO_SETPOINT) {
-      double value = -1.0 * Math.cos(Math.toRadians(getIntakeAngleInDegrees())) * ARBITRARY_FEEDFORWARD_CONSTANT;
-      baseTalon.set(ControlMode.MotionMagic, setpoint, DemandType.ArbitraryFeedForward, value);
-    }
+  public double getAbsoluteAngleMultiplier() {
+    return (-1.0 * Math.cos(Math.toRadians(getIntakeAngleInDegrees())));
   }
 
   public void setMotionMagicSetpointTicks(int ticks) {

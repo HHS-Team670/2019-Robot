@@ -11,8 +11,6 @@ import java.awt.geom.Point2D;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 
-import frc.team670.robot.commands.tuning.RotatingSubsystem;
-
 public abstract class BaseIntake extends RotatingSubsystem {
 
   @Override

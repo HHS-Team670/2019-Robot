@@ -32,6 +32,8 @@ public class Wrist extends BaseWrist {
   private static final double kF = 0, kP = 0, kI = 0, kD = 0; //TODO figure out what these are
   private static final double RAMP_RATE = 0.1;
 
+  public static final int QUAD_ENCODER_MAX = 890, QUAD_ENCODER_MIN = -1158; //TODO Set these values
+
   // Also need to add pull gains slots
   private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0;
 
@@ -175,14 +177,11 @@ public class Wrist extends BaseWrist {
   }
 
   @Override
-  public void updateArbitraryFeedForward() {
-    if (setpoint != NO_SETPOINT) {
-        double value = -1.0 * Math.cos(Math.toRadians(getAngle() + Arm.getCurrentState().getElbowAngle())) * super.ARBITRARY_FEEDFORWARD_CONSTANT;
-        rotatorTalon.set(ControlMode.MotionMagic, setpoint, DemandType.ArbitraryFeedForward, value);
-    }
-}
+  public double getAbsoluteAngleMultiplier() {
+    return (-1.0 * Math.cos(Math.toRadians(getAngle() + Arm.getCurrentState().getElbowAngle())));
+  }
 
-  public int getWristPulseWidth() {  
+  public int getWristPulseWidth() {
     return wristRotation.getSensorCollection().getPulseWidthPosition();
   }
 }

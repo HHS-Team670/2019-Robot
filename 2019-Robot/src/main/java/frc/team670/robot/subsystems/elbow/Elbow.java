@@ -46,6 +46,8 @@ public class Elbow extends BaseElbow {
   private static int ELBOW_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 15000; // TODO set this
   private static int ELBOW_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS = 6000; // TODO set this
 
+  public static final int QUAD_ENCODER_MAX = 890, QUAD_ENCODER_MIN = -1158; //TODO Set these values
+
   public Elbow() {
     elbowRotationMain = new TalonSRX(RobotMap.ARM_ELBOW_ROTATION_MOTOR_TALON);
     super.setTalon(elbowRotationMain);
@@ -184,33 +186,29 @@ public class Elbow extends BaseElbow {
   public static int convertElbowDegreesToTicks(double degrees) {
     // If straight up is 0 and going forward is positive
     // percentage * half rotation
-    return (int)((degrees / 180) * (0.5 * RobotConstants.ELBOW_TICKS_PER_ROTATION));
-}
-
-public static double convertElbowTicksToDegrees(double ticks) {
-   //If straight up is 0 and going forward is positive
-   // percentage * half degrees rotation
-    return (ticks / (0.5 * RobotConstants.ELBOW_TICKS_PER_ROTATION)) * 180;
-}
-
-@Override
-public void setMotionMagicSetpoint(double elbowAngle) {
-  int ticks = (int) convertElbowDegreesToTicks(elbowAngle);
-  elbowRotationMain.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
-  elbowRotationMain.set(ControlMode.MotionMagic, ticks);
-}
-
-@Override
-public void updateArbitraryFeedForward() {
-  if(setpoint != NO_SETPOINT) {
-    double value = -1.0 * Math.cos(Math.toRadians(getAngle())) * ARBITRARY_FEEDFORWARD_CONSTANT;
-    elbowRotationMain.set(ControlMode.MotionMagic, setpoint, DemandType.ArbitraryFeedForward, value);
+    return (int) ((degrees / 180) * (0.5 * RobotConstants.ELBOW_TICKS_PER_ROTATION));
   }
-}
 
-public int getElbowPulseWidth() {  
-  return elbowRotationMain.getSensorCollection().getPulseWidthPosition();
-}
+  public static double convertElbowTicksToDegrees(double ticks) {
+    // If straight up is 0 and going forward is positive
+    // percentage * half degrees rotation
+    return (ticks / (0.5 * RobotConstants.ELBOW_TICKS_PER_ROTATION)) * 180;
+  }
 
+  @Override
+  public void setMotionMagicSetpoint(double elbowAngle) {
+    int ticks = (int) convertElbowDegreesToTicks(elbowAngle);
+    elbowRotationMain.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
+    elbowRotationMain.set(ControlMode.MotionMagic, ticks);
+  }
+
+  @Override
+  public double getAbsoluteAngleMultiplier() {
+    return (-1.0 * Math.cos(Math.toRadians(getAngle())));
+  }
+
+  public int getElbowPulseWidth() {
+    return elbowRotationMain.getSensorCollection().getPulseWidthPosition();
+  }
 
 }

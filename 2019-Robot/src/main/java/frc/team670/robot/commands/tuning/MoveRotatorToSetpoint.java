@@ -8,6 +8,7 @@
 package frc.team670.robot.commands.tuning;
 
 import edu.wpi.first.wpilibj.command.Command;
+import frc.team670.robot.subsystems.RotatingSubsystem;
 import frc.team670.robot.utils.functions.MathUtils;
 
 public class MoveRotatorToSetpoint extends Command {

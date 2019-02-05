@@ -48,6 +48,8 @@ public class Extension extends BaseExtension {
   private static int EXTENSION_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 15000; // TODO set this
   private static int EXTENSION_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS = 6000; // TODO set this
 
+  public static final int QUAD_ENCODER_MAX = 890, QUAD_ENCODER_MIN = -1158; //TODO Set these values
+
 
   public Extension() {
     extensionMotor = new TalonSRX(RobotMap.ARM_EXTENSION_MOTOR);   
@@ -206,11 +208,8 @@ public class Extension extends BaseExtension {
   }
 
   @Override
-  public void updateArbitraryFeedForward() {
-    if(setpoint != NO_SETPOINT) {
-      double value = -1.0 * Math.sin(Math.toRadians(Arm.getCurrentState().getElbowAngle())) * ARBITRARY_FEEDFORWARD_CONSTANT;
-      extensionMotor.set(ControlMode.MotionMagic, setpoint, DemandType.ArbitraryFeedForward, value);
-    }
+  public double getAbsoluteAngleMultiplier() {
+    return (-1.0 * Math.sin(Math.toRadians(Arm.getCurrentState().getElbowAngle())));
   }
 
   public int getExtensionPulseWidth() {  
