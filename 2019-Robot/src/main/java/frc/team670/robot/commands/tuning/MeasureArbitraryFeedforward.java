@@ -12,37 +12,41 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class MeasureArbitraryFeedforward extends Command {
 
-  private RotatingSubsystem tuningInterface;
+  private RotatingSubsystem rotatingSubsystem;
   public static double output;
 
-  public MeasureArbitraryFeedforward(RotatingSubsystem tuningInterface) {
-    this.tuningInterface = tuningInterface;
-    setTimeout(0.35);
+  public MeasureArbitraryFeedforward(RotatingSubsystem rotatingSubsystem) {
+    this.rotatingSubsystem = rotatingSubsystem;
+    if (rotatingSubsystem.timeout)
+      setTimeout(0.35);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    tuningInterface.enablePercentOutput();
+    rotatingSubsystem.enablePercentOutput();
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    tuningInterface.rotatePercentOutput(output); 
+    rotatingSubsystem.rotatePercentOutput(output); 
     SmartDashboard.putNumber("Intake Movement Output", output);
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return isTimedOut();
+    if (rotatingSubsystem.timeout)
+      return isTimedOut();
+    else 
+      return false;
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    tuningInterface.enablePercentOutput();
+    rotatingSubsystem.enablePercentOutput();
   }
 
   // Called when another command which requires one or more of the same

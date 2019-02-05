@@ -99,6 +99,8 @@ public class Extension extends BaseExtension {
     extensionMotor.configPeakCurrentLimit(0);
     extensionMotor.enableCurrentLimit(true);
 
+    timeout = false;
+
     enablePercentOutput();
   }
 

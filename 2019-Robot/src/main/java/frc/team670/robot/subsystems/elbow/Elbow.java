@@ -105,6 +105,8 @@ public class Elbow extends BaseElbow {
     elbowRotationMain.configPeakCurrentLimit(0);
     elbowRotationMain.enableCurrentLimit(true);
 
+    timeout = false;
+
     enablePercentOutput();
  
   }

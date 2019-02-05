@@ -19,6 +19,7 @@ public abstract class RotatingSubsystem extends Subsystem {
     public static final int NO_SETPOINT = 99999;
     protected TalonSRX rotatorTalon;
     protected int setpoint;
+    protected boolean timeout;
     public static final int QUAD_ENCODER_MAX = 890, QUAD_ENCODER_MIN = -1158;
     public double ARBITRARY_FEEDFORWARD_CONSTANT = 0.3; // original 0.22 for one clamp
     public final int FORWARD_SOFT_LIMIT = 0, REVERSE_SOFT_LIMIT = 0; // TODO figure out the values in rotations

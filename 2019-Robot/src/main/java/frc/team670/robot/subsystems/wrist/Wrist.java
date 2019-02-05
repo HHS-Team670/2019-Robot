@@ -91,6 +91,8 @@ public class Wrist extends BaseWrist {
     wristRotation.configPeakCurrentLimit(0);
     wristRotation.enableCurrentLimit(true);
 
+    timeout = false;
+
     enablePercentOutput();
   }
   

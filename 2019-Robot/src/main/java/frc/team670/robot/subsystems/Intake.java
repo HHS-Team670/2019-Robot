@@ -63,6 +63,8 @@ public class Intake extends BaseIntake {
       pulseWidthPos -= 4096;
     }
 
+    timeout = false;
+
     baseTalon.getSensorCollection().setQuadraturePosition(pulseWidthPos, 0);
 
     baseTalon.configContinuousCurrentLimit(ROTATOR_CURRENT_LIMIT);
