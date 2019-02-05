@@ -31,7 +31,7 @@ import frc.team670.robot.subsystems.Climber;
 /**
  * Listens on network tables to keys sent over by the XKeys keyboard and calls the corresponding commands
  * 
- * Link to XKeys bindings: https://docs.google.com/document/d/1YqzzS2fjRQaKPHrhg9LRFU9DjvAQIYEo59956lDqMho/edit?usp=sharing
+ * Link to XKeys bindings: https://docs.google.com/spreadsheets/d/1Y1cZvWabaVvush9LvfwKdRgCdmRTlztb67nWk5D-5x4/edit?usp=sharing
  * Link to Dashboard where XKeys are read in and values are sent over networktables: https://github.com/HHS-Team670/FRCDashboard 
  */
 public class XKeys {
