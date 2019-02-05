@@ -138,22 +138,6 @@ public class Intake extends BaseIntake {
   }
 
   /**
-   * Returns the intake angle in degrees
-   */
-  public double getIntakeAngleInDegrees() {
-    return 0;
-    // return MathUtils.convertIntakeTicksToDegrees(getIntakePositionInTicks());
-  }
-
-  public static int convertIntakeDegreesToTicks(int degrees) {
-    return 0;
-  }
-
-  public static int convertIntakeTicksToDegrees(int ticks) {
-    return 0;
-  }
-
-  /**
    * Returns the x, y coordinates of the top of the intake
    */
   public Point2D.Double getIntakeCoordinates(){
@@ -219,5 +203,10 @@ public class Intake extends BaseIntake {
   @Override
   public void initDefaultCommand() {
 
+  }
+
+  @Override
+  public double getIntakeAngleInDegrees() {
+    return convertIntakeTicksToDegrees(getPositionTicks());
   }
 }
