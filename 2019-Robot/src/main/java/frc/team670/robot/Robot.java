@@ -7,12 +7,14 @@
 
 package frc.team670.robot;
 
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.drive.DriveMotionProfile;
+import frc.team670.robot.commands.tuning.ResetEncoder;
 import frc.team670.robot.dataCollection.MustangPi;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.dataCollection.Pose;
@@ -23,8 +25,8 @@ import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.subsystems.Intake;
 import frc.team670.robot.subsystems.MustangLEDs_2019;
 import frc.team670.robot.subsystems.elbow.Elbow;
-import frc.team670.robot.subsystems.wrist.Wrist;
 import frc.team670.robot.subsystems.extension.Extension;
+import frc.team670.robot.subsystems.wrist.Wrist;
 import frc.team670.robot.utils.Logger;
 
 /**
@@ -52,6 +54,8 @@ public class Robot extends TimedRobot {
   public static Arm arm = new Arm(elbow, wrist, extension, intake, claw);
 
   public static Climber climber = new Climber(sensors);
+  private Notifier updateArbitraryFeedForwards;
+
 
   private long periodCount = 0;
 
@@ -99,6 +103,17 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("KA", 0);
 
     autonomousCommand = new DriveMotionProfile("10ft-straight.pf1.csv", false);
+
+    updateArbitraryFeedForwards = new Notifier(new Runnable() {
+      public void run() {
+        wrist.updateArbitraryFeedForward();
+        elbow.updateArbitraryFeedForward();
+        extension.updateArbitraryFeedForward();
+        intake.updateArbitraryFeedForward();
+      }
+    });
+
+    updateArbitraryFeedForwards.startPeriodic(0.01);
 
     // autonomousCommand = new MeasureTrackwidth();
   }
@@ -230,7 +245,23 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
+    if (Robot.oi.getDriverController().getAButton()) {
+        Scheduler.getInstance().add(new ResetEncoder(elbow));
+    }
 
+    // RotatingSubsystem currentTestRotator = elbow;
+    // if (Robot.oi.getDriverController().getAButton()) {
+    //   Scheduler.getInstance().add(new MoveRotatorToSetpoint(currentTestRotator, currentTestRotator.REVERSE_SOFT_LIMIT));
+    // }
+    // if (Robot.oi.getDriverController().getBButton()) {    
+    //   Scheduler.getInstance().add(new MoveRotatorToSetpoint(currentTestRotator, currentTestRotator.FORWARD_SOFT_LIMIT));
+    // }
+    // if(Robot.oi.getDriverController().getXButton()) {
+    //   Scheduler.getInstance().add(new MeasureArbitraryFeedforward(currentTestRotator));
+    // }
+    // if (Robot.oi.getDriverController().getYButton()) {    
+    //   currentTestRotator.enablePercentOutput();
+    // }
   }
 
 }
