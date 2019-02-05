@@ -246,7 +246,19 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {
     if (Robot.oi.getDriverController().getLeftBumper()) {
-        Scheduler.getInstance().add(new ResetEncoder(elbow));
+      Scheduler.getInstance().add(new ResetEncoder(elbow));
+    }
+
+    if (Robot.oi.getDriverController().getRightBumper()) {
+      Scheduler.getInstance().add(new ResetEncoder(wrist));
+    }
+
+    if (Robot.oi.getDriverController().getAButton()) {
+      Scheduler.getInstance().add(new ResetEncoder(extension));
+    }
+
+    if (Robot.oi.getDriverController().getLeftBumper()) {
+      Scheduler.getInstance().add(new ResetEncoder(intake));
     }
 
     // RotatingSubsystem currentTestRotator = elbow;
