@@ -245,7 +245,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
-    if (Robot.oi.getDriverController().getAButton()) {
+    if (Robot.oi.getDriverController().getLeftBumper()) {
         Scheduler.getInstance().add(new ResetEncoder(elbow));
     }
 
