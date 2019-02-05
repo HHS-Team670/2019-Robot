@@ -2,6 +2,7 @@ package frc.team670.robot.dataCollection;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.dataCollection.sensors.NavX;
 import frc.team670.robot.dataCollection.sensors.NavX.NavX_Pitch_PIDSource;
@@ -27,7 +28,8 @@ public class MustangSensors {
       navXMicro = new NavX(RobotMap.NAVX_PORT); 
       isNavXNull = false;
     } catch (RuntimeException ex) {
-			DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
+      DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
+      SmartDashboard.putString("sensor-error", "Error instantiating navX-MXP");
       navXMicro = null;
       isNavXNull = true;
     }
@@ -36,6 +38,7 @@ public class MustangSensors {
       intakeIRSensor = new DigitalInput(RobotMap.INTAKE_IR_DIO_PORT);
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error instantiating intakeIRSensor: " + ex.getMessage(), true);
+      SmartDashboard.putString("sensor-error", "Error instantiating intakeIRSensor");
       intakeIRSensor = null;
     }
 
@@ -43,6 +46,7 @@ public class MustangSensors {
       clawIRSensor = new DigitalInput(RobotMap.CLAW_IR_DIO_PORT);
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error instantiating clawIRSensor: " + ex.getMessage(), true);
+      SmartDashboard.putString("sensor-error", "Error instantiating clawIRSensor");
       clawIRSensor = null;
     }
   }

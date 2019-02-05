@@ -13,7 +13,6 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import frc.team670.robot.subsystems.BaseIntake;
 import frc.team670.robot.subsystems.Intake;
-import frc.team670.robot.utils.functions.MathUtils;
 
 /**
  * Add your docs here.
@@ -60,13 +59,13 @@ public class TestIntake extends BaseIntake {
         return Intake.convertIntakeTicksToDegrees(intakeTicks);
     }
 
-
+    @Override
     /**
      * Runs the intake at a given percent power
      * 
      * @param percentOutput The desired percent power for the rollers to run at [-1, 1]
      */
-    public void runIntake(double power) {
+    public void runIntake(double power, boolean i) {
 
     }
 

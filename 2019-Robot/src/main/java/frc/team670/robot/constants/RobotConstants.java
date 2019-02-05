@@ -1,6 +1,9 @@
 package frc.team670.robot.constants;
 
+import java.util.HashMap;
+
 import frc.team254.lib.util.control.Lookahead;
+import jaci.pathfinder.Waypoint;
 
 public class RobotConstants {
 
