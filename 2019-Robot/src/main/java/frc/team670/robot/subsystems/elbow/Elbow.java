@@ -8,6 +8,7 @@
 package frc.team670.robot.subsystems.elbow;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
@@ -15,6 +16,7 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import frc.team670.robot.commands.arm.joystick.JoystickElbow;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
+import frc.team670.robot.utils.functions.MathUtils;
 
 /**
  * Controls motors for elbow movement
@@ -46,6 +48,7 @@ public class Elbow extends BaseElbow {
 
   public Elbow() {
     elbowRotationMain = new TalonSRX(RobotMap.ARM_ELBOW_ROTATION_MOTOR_TALON);
+    super.setTalon(elbowRotationMain);
     elbowRotationSlave = new VictorSPX(RobotMap.ARM_ELBOW_ROTATION_MOTOR_VICTOR);
     elbowRotationSlave.set(ControlMode.Follower, elbowRotationMain.getDeviceID());  
 
@@ -85,8 +88,27 @@ public class Elbow extends BaseElbow {
     elbowRotationMain.enableCurrentLimit(true);
     elbowRotationMain.configPeakCurrentLimit(PEAK_CURRENT_LIMIT);
 
-    // Sets the Quadrature Position based on the pulse width to work as an absolute encoder 
-    elbowRotationMain.getSensorCollection().setQuadraturePosition(elbowRotationMain.getSensorCollection().getPulseWidthPosition() * 4, 0); // Times 4 since Quadrature is out of 4096 while Pulse Width is 1024
+    setpoint = NO_SETPOINT;
+
+    int pulseWidthPos = getElbowPulseWidth()&4095;
+
+    if (pulseWidthPos < QUAD_ENCODER_MIN) {
+      pulseWidthPos += 4096;
+    } 
+    if (pulseWidthPos > QUAD_ENCODER_MAX) {
+      pulseWidthPos -= 4096;
+    }
+
+    elbowRotationMain.getSensorCollection().setQuadraturePosition(pulseWidthPos, 0);
+
+    elbowRotationMain.configContinuousCurrentLimit(NORMAL_CONTINUOUS_CURRENT_LIMIT);
+    elbowRotationMain.configPeakCurrentLimit(0);
+    elbowRotationMain.enableCurrentLimit(true);
+
+    timeout = false;
+
+    enablePercentOutput();
+ 
   }
 
   @Override
@@ -147,7 +169,8 @@ public class Elbow extends BaseElbow {
   }
 
   @Override
-  public void setMotionMagicSetpoint(double elbowSetpointInTicks) {
+  public void setMotionMagicSetpointTicks(int elbowSetpointInTicks) {
+    super.setpoint = elbowSetpointInTicks;
     elbowRotationMain.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
     elbowRotationMain.set(ControlMode.MotionMagic, elbowSetpointInTicks);
   }
@@ -170,31 +193,24 @@ public static double convertElbowTicksToDegrees(double ticks) {
     return (ticks / (0.5 * RobotConstants.ELBOW_TICKS_PER_ROTATION)) * 180;
 }
 
-//  /**
-//    * Should create a closed loop for the current to hold the elbow down
-//    */
-//   public void setCurrentClosedLoopToHoldElbowDown() {
-//     /* Factory default hardware to prevent unexpected behaviour */
-//     elbowRotationMain.configFactoryDefault();
+@Override
+public void setMotionMagicSetpoint(double elbowAngle) {
+  int ticks = (int) convertElbowDegreesToTicks(elbowAngle);
+  elbowRotationMain.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
+  elbowRotationMain.set(ControlMode.MotionMagic, ticks);
+}
 
-//     /* Config the peak and nominal outputs ([-1, 1] represents [-100, 100]%) */
-//     elbowRotationMain.configNominalOutputForward(0, RobotConstants.kTimeoutMs);
-//     elbowRotationMain.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
-//     elbowRotationMain.configPeakOutputForward(1, RobotConstants.kTimeoutMs);
-//     elbowRotationMain.configPeakOutputReverse(-1, RobotConstants.kTimeoutMs);
+@Override
+public void updateArbitraryFeedForward() {
+  if(setpoint != NO_SETPOINT) {
+    double value = -1.0 * Math.cos(Math.toRadians(getAngle())) * ARBITRARY_FEEDFORWARD_CONSTANT;
+    elbowRotationMain.set(ControlMode.MotionMagic, setpoint, DemandType.ArbitraryFeedForward, value);
+  }
+}
 
-//     /**
-//      * Config the allowable closed-loop error, Closed-Loop output will be neutral
-//      * within this range. See Table here for units to use:
-//      * https://github.com/CrossTheRoadElec/Phoenix-Documentation#what-are-the-units-of-my-sensor
-//      */
-//     elbowRotationMain.configAllowableClosedloopError(0,CURRENT_CONTROL_SLOT, RobotConstants.kTimeoutMs);
+public int getElbowPulseWidth() {  
+  return elbowRotationMain.getSensorCollection().getPulseWidthPosition();
+}
 
-//     /* Config closed loop gains for Primary closed loop (Current) */
-//     elbowRotationMain.config_kP(CURRENT_CONTROL_SLOT, currentP, RobotConstants.kTimeoutMs);
-//     elbowRotationMain.config_kI(CURRENT_CONTROL_SLOT, currentI, RobotConstants.kTimeoutMs);
-//     elbowRotationMain.config_kD(CURRENT_CONTROL_SLOT, currentD, RobotConstants.kTimeoutMs);
-//     elbowRotationMain.config_kF(CURRENT_CONTROL_SLOT, currentF, RobotConstants.kTimeoutMs);
-//   }
 
 }

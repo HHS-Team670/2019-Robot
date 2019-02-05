@@ -8,12 +8,14 @@
 package frc.team670.robot.subsystems.wrist;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import frc.team670.robot.commands.arm.joystick.JoystickWrist;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
+import frc.team670.robot.subsystems.Arm;
 
 /**
  * Controls wrist motors
@@ -41,6 +43,7 @@ public class Wrist extends BaseWrist {
 
   public Wrist() {
     wristRotation = new TalonSRX(RobotMap.ARM_WRIST_ROTATION); 
+    super.setTalon(wristRotation);
     wristRotation.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
 		wristRotation.config_kF(kSlotMotionMagic, kF, kTimeoutMs);
 		wristRotation.config_kP(kSlotMotionMagic, kP, kTimeoutMs);
@@ -70,9 +73,27 @@ public class Wrist extends BaseWrist {
     wristRotation.configClosedloopRamp(0);
     wristRotation.configOpenloopRamp(RAMP_RATE);
 
-    // Sets the Quadrature Position based on the pulse width to work as an absolute encoder
-    wristRotation.getSensorCollection().setQuadraturePosition(wristRotation.getSensorCollection().getPulseWidthPosition() * 4, 0); // Times 4 since Quadrature is out of 4096 while Pulse Width is 1024
+    //Tuning stuff
+    super.setpoint = NO_SETPOINT;
 
+    int pulseWidthPos = getWristPulseWidth()&4095;
+
+    if (pulseWidthPos < QUAD_ENCODER_MIN) {
+      pulseWidthPos += 4096;
+    } 
+    if (pulseWidthPos > QUAD_ENCODER_MAX) {
+      pulseWidthPos -= 4096;
+    }
+
+    wristRotation.getSensorCollection().setQuadraturePosition(pulseWidthPos, 0);
+
+    wristRotation.configContinuousCurrentLimit(CONTINUOUS_CURRENT_LIMIT);
+    wristRotation.configPeakCurrentLimit(0);
+    wristRotation.enableCurrentLimit(true);
+
+    timeout = false;
+
+    enablePercentOutput();
   }
   
   @Override
@@ -144,5 +165,24 @@ public class Wrist extends BaseWrist {
     //If straight is 0 and going forward is positive
     // percentage * half degrees rotation
     return (ticks / (0.5 * RobotConstants.WRIST_TICKS_PER_ROTATION)) * 180;
+  }
+
+  @Override
+  public void setMotionMagicSetpointTicks(int ticks) { 
+    super.setpoint = ticks;
+    wristRotation.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx); 
+    wristRotation.set(ControlMode.MotionMagic, ticks);
+  }
+
+  @Override
+  public void updateArbitraryFeedForward() {
+    if (setpoint != NO_SETPOINT) {
+        double value = -1.0 * Math.cos(Math.toRadians(getAngle() + Arm.getCurrentState().getElbowAngle())) * super.ARBITRARY_FEEDFORWARD_CONSTANT;
+        rotatorTalon.set(ControlMode.MotionMagic, setpoint, DemandType.ArbitraryFeedForward, value);
+    }
+}
+
+  public int getWristPulseWidth() {  
+    return wristRotation.getSensorCollection().getPulseWidthPosition();
   }
 }

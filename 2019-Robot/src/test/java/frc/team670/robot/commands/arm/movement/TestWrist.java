@@ -68,4 +68,14 @@ public class TestWrist extends BaseWrist{
     public void zero(double encoderValue) {
     }
 
+    @Override
+    public void updateArbitraryFeedForward() {
+
+    }
+
+    @Override
+    public void setMotionMagicSetpointTicks(int ticks) {
+
+    }
+
 }

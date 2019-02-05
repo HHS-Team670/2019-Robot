@@ -5,20 +5,25 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.subsystems.extension;
+package frc.team670.robot.commands.tuning;
 
-import frc.team670.robot.commands.tuning.RotatingSubsystem;
+import edu.wpi.first.wpilibj.command.InstantCommand;
 
 /**
  * Add your docs here.
  */
-public abstract class BaseExtension extends RotatingSubsystem implements ExtensionInterface {
-  // Put methods for controlling this subsystem
-  // here. Call these from Commands.
-
-  @Override
-  public void initDefaultCommand() {
-    // Set the default command for a subsystem here.
-    // setDefaultCommand(new MySpecialCommand());
+public class IncreaseMeasurementOutput extends InstantCommand {
+  /**
+   * Add your docs here.
+   */
+  public IncreaseMeasurementOutput() {
+    super();
   }
+
+  // Called once when the command executes
+  @Override
+  protected void initialize() {
+    MeasureArbitraryFeedforward.output += 0.025;
+  }
+
 }

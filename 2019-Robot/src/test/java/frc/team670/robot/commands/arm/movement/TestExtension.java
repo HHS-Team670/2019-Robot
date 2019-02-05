@@ -74,4 +74,19 @@ public class TestExtension extends BaseExtension {
     public void zero(double encoderValue) {
     }
 
+  @Override
+  public void updateArbitraryFeedForward() {
+
+  }
+
+  @Override
+  public int getPositionTicks() {
+    return 0;
+  }
+
+  @Override
+  public void setMotionMagicSetpointTicks(int ticks) {
+
+  }
+
 }

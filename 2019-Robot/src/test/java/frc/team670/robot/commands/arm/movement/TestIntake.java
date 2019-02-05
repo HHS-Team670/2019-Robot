@@ -1,4 +1,3 @@
-
 /*----------------------------------------------------------------------------*/
 /* Copyright (c) 2018 FIRST. All Rights Reserved.                             */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
@@ -61,10 +60,6 @@ public class TestIntake extends BaseIntake {
         return Intake.convertIntakeTicksToDegrees(intakeTicks);
     }
 
-    @Override
-    public void runIntake(double power, boolean runningIn) {
-        
-    }
 
     /**
      * Runs the intake at a given percent power
@@ -91,6 +86,21 @@ public class TestIntake extends BaseIntake {
         double x = Intake.INTAKE_ROTATING_LENGTH_IN_INCHES * Math.cos(Intake.convertIntakeTicksToDegrees(getMotionMagicSetpoint()));
         double y = Intake.INTAKE_FIXED_LENGTH_IN_INCHES + Intake.INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(Intake.convertIntakeTicksToDegrees(getMotionMagicSetpoint()));
         return new Point2D.Double(x, y);
+    }
+
+    @Override
+    public void updateArbitraryFeedForward() {
+
+    }
+
+    @Override
+    public int getPositionTicks() {
+        return 0;
+    }
+
+    @Override
+    public void setMotionMagicSetpointTicks(int ticks) {
+
     }
 
 }
