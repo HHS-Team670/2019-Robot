@@ -20,7 +20,7 @@ public class ResetEncoder extends InstantCommand {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    rotatingSubsystem.rotatorTalon.getSensorCollection().setQuadraturePosition(0, 10);
+    rotatingSubsystem.rotatorTalon.getSensorCollection().setPulseWidthPosition(0, 0);
   }
 
 
