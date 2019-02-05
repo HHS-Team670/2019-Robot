@@ -25,7 +25,7 @@ public class MustangPi {
     // The keys for the NetworkTable entries that the raspberry pi is putting up. Ensure that these are placed on the raspi also. Maybe make a shared config file
     private static final String[] RASPI_KEYS = new String[] {"reflect_tape_vision_data"};
     // The name of the subtable set on the raspberry pi
-    private static final String TABLE_NAME = "raspberryPi";
+    private static final String TABLE_NAME = "SmartDashboard";
 
     // TODO Literally all of this code below needs a review from someone who knows what they're talking about - Shaylan
 

@@ -54,6 +54,6 @@ public abstract class BaseIntake extends RotatingSubsystem {
    * 
    * @param percentOutput The desired percent power for the rollers to run at [-1, 1]
    */
-  public abstract void runIntake(double power);
+  public abstract void runIntake(double power, boolean runningIn);
 
 }

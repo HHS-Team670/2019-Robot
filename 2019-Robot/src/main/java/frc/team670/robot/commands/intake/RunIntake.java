@@ -16,15 +16,17 @@ public class RunIntake extends Command {
 
   private BaseIntake intake;
   private MustangSensors sensors;
+  private boolean runningIn;
 
   private static final double RUNNING_POWER = 0.75; // TODO figure out if we want to run full speed
   private boolean hasBeenTriggered;
   private long timeSinceIRSensorTripped, timeSinceInitialized;
 
-  public RunIntake(BaseIntake intake, MustangSensors sensors) {
+  public RunIntake(BaseIntake intake, MustangSensors sensors, boolean runningIn) {
     requires(intake);
     this.intake = intake;
     this.sensors = sensors;
+    this.runningIn = runningIn;
   }
 
   // Called just before this Command runs the first time
@@ -37,7 +39,7 @@ public class RunIntake extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    intake.runIntake(RUNNING_POWER);
+    intake.runIntake(RUNNING_POWER, runningIn);
 
       // If the IR sensor has been tripped and it is for the first time
       if (sensors.getIntakeIRSensor() != null && sensors.getIntakeIROutput() && !hasBeenTriggered) {
@@ -60,7 +62,7 @@ public class RunIntake extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    intake.runIntake(0);
+    intake.runIntake(0, true);
     Logger.consoleLog();
   }
 
@@ -68,7 +70,7 @@ public class RunIntake extends Command {
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    intake.runIntake(0);
+    intake.runIntake(0, true);
     Logger.consoleLog();
   }
 }

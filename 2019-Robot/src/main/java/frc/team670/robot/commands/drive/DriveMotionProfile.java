@@ -77,8 +77,13 @@ public class DriveMotionProfile extends Command {
     rightTrajectory = modifier.getRightTrajectory();
 
      // TODO In the future maybe do this in initialize so when the Command is rerun it starts over for testing purposes
-    left = new EncoderFollower(leftTrajectory);
-    right= new EncoderFollower(rightTrajectory);
+     if (isReversed) {
+      left = new EncoderFollower(leftTrajectory);
+      right = new EncoderFollower(rightTrajectory);
+    } else {
+      left = new EncoderFollower(rightTrajectory);
+      right = new EncoderFollower(leftTrajectory);
+    }
   }
 
 

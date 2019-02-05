@@ -35,7 +35,6 @@ public class Intake extends BaseIntake {
   private VictorSPX rollerVictor;
   
   private Point2D.Double intakeCoord;
-
   public static double TICKS_PER_ROTATION = 4096; // Still needs to be set
 
   private static final int ROTATOR_CURRENT_LIMIT = 20;
@@ -142,7 +141,16 @@ public class Intake extends BaseIntake {
    * Returns the intake angle in degrees
    */
   public double getIntakeAngleInDegrees() {
-    return convertIntakeTicksToDegrees(getIntakePositionInTicks());
+    return 0;
+    // return MathUtils.convertIntakeTicksToDegrees(getIntakePositionInTicks());
+  }
+
+  public static int convertIntakeDegreesToTicks(int degrees) {
+    return 0;
+  }
+
+  public static int convertIntakeTicksToDegrees(int ticks) {
+    return 0;
   }
 
   /**
@@ -167,17 +175,16 @@ public class Intake extends BaseIntake {
    * @param percentOutput The desired percent power for the rollers to run at [-1,
    *                      1]
    */
-  public void runIntake(double power) {
+  public void runIntake(double power, boolean runningIn) {
+    power *= runningIn ? 1 : -1;
     rollerVictor.set(ControlMode.PercentOutput, power);
   }
-
   /**
    * Converts an intake angle into ticks
    */
   public static int convertIntakeDegreesToTicks(double degrees) {
     //If straight up is 0 and going forward is positive
     // percentage * half rotation
-
     // TODO - Fix this. This is not going to make 0 at the top if the absolute encoder is not zero there.
     // Offset the quadrature readings accordingly in the constructor?
     return (int)((degrees / 360) * TICKS_PER_ROTATION);
@@ -188,8 +195,7 @@ public class Intake extends BaseIntake {
    */
   public static double convertIntakeTicksToDegrees(double ticks) {
     //If straight up is 0 and going forward is positive
-
-     // TODO - Fix this. This is not going to make 0 at the top if the absolute encoder is not zero there.
+    // TODO - Fix this. This is not going to make 0 at the top if the absolute encoder is not zero there.
     // Offset the quadrature readings accordingly in the constructor?
     return ((360 * ticks) / TICKS_PER_ROTATION);
   }
