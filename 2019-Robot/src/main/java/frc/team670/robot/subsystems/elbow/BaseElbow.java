@@ -7,12 +7,12 @@
 
 package frc.team670.robot.subsystems.elbow;
 
-import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.team670.robot.commands.tuning.RotatingSubsystem;
 
 /**
  * Add your docs here.
  */
-public abstract class BaseElbow extends Subsystem implements ElbowInterface {
+public abstract class BaseElbow extends RotatingSubsystem implements ElbowInterface {
 
   @Override
   protected void initDefaultCommand() {

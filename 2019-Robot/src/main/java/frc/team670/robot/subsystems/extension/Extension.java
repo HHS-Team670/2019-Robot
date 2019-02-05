@@ -8,6 +8,7 @@
 package frc.team670.robot.subsystems.extension;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -15,6 +16,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import frc.team670.robot.commands.arm.joystick.JoystickExtension;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
+import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.utils.functions.SettingUtils;
 
 /**
@@ -49,6 +51,7 @@ public class Extension extends BaseExtension {
 
   public Extension() {
     extensionMotor = new TalonSRX(RobotMap.ARM_EXTENSION_MOTOR);   
+    super.setTalon(extensionMotor);
     extensionMotor.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
 		extensionMotor.config_kF(kSlotMotionMagic, kF, kTimeoutMs);
 		extensionMotor.config_kP(kSlotMotionMagic, kP, kTimeoutMs);
@@ -77,6 +80,26 @@ public class Extension extends BaseExtension {
     extensionMotor.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
     extensionMotor.configPeakOutputForward(1, RobotConstants.kTimeoutMs);
     extensionMotor.configPeakOutputReverse(-1, RobotConstants.kTimeoutMs);
+
+    //Tuning stuff
+    setpoint = NO_SETPOINT;
+
+    int pulseWidthPos = getExtensionPulseWidth()&4095;
+
+    if (pulseWidthPos < QUAD_ENCODER_MIN) {
+      pulseWidthPos += 4096;
+    } 
+    if (pulseWidthPos > QUAD_ENCODER_MAX) {
+      pulseWidthPos -= 4096;
+    }
+
+    extensionMotor.getSensorCollection().setQuadraturePosition(pulseWidthPos, 0);
+
+    extensionMotor.configContinuousCurrentLimit(CONTINUOUS_CURRENT_LIMIT);
+    extensionMotor.configPeakCurrentLimit(0);
+    extensionMotor.enableCurrentLimit(true);
+
+    enablePercentOutput();
   }
 
   @Override
@@ -167,6 +190,29 @@ public class Extension extends BaseExtension {
   public static double convertExtensionTicksToInches(double ticks) {
     //ticks * (rotations/ticks) * (inches / rotations)
     return ticks / RobotConstants.EXTENSION_TICKS_PER_MOTOR_ROTATION / RobotConstants.EXTENSION_MOTOR_ROTATIONS_PER_INCH;
+  }
+
+  @Override
+  public void setMotionMagicSetpointTicks(int ticks) {
+    super.setpoint = ticks;
+    extensionMotor.set(ControlMode.MotionMagic, ticks);
+  }
+
+  @Override
+  public int getPositionTicks(){
+    return getLengthTicks();
+  }
+
+  @Override
+  public void updateArbitraryFeedForward() {
+    if(setpoint != NO_SETPOINT) {
+      double value = -1.0 * Math.sin(Math.toRadians(Arm.getCurrentState().getElbowAngle())) * ARBITRARY_FEEDFORWARD_CONSTANT;
+      extensionMotor.set(ControlMode.MotionMagic, setpoint, DemandType.ArbitraryFeedForward, value);
+    }
+  }
+
+  public int getExtensionPulseWidth() {  
+    return extensionMotor.getSensorCollection().getPulseWidthPosition();
   }
 
 }

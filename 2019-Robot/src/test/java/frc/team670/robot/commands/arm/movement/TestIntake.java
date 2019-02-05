@@ -88,4 +88,19 @@ public class TestIntake extends BaseIntake {
         return new Point2D.Double(x, y);
     }
 
+    @Override
+    public void updateArbitraryFeedForward() {
+
+    }
+
+    @Override
+    public int getPositionTicks() {
+        return 0;
+    }
+
+    @Override
+    public void setMotionMagicSetpointTicks(int ticks) {
+
+    }
+
 }

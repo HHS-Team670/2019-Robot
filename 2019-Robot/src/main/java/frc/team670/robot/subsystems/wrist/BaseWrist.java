@@ -7,12 +7,12 @@
 
 package frc.team670.robot.subsystems.wrist;
 
-import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.team670.robot.commands.tuning.RotatingSubsystem;
 
 /**
  * Add your docs here.
  */
-public abstract class BaseWrist extends Subsystem implements WristInterface {
+public abstract class BaseWrist extends RotatingSubsystem implements WristInterface {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
 
