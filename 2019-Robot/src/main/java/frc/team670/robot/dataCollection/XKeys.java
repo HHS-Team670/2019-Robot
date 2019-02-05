@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team670.robot.Robot;
 import frc.team670.robot.commands.BuildAuton;
+import frc.team670.robot.commands.XKeysTest;
 import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.commands.arm.movement.PlaceOrGrab;
 import frc.team670.robot.commands.climb.armClimb.CancelArmClimb;
@@ -28,7 +29,10 @@ import frc.team670.robot.subsystems.Climber;
 
 
 /**
- * Add your docs here.
+ * Listens on network tables to keys sent over by the XKeys keyboard and calls the corresponding commands
+ * 
+ * Link to XKeys bindings: https://docs.google.com/document/d/1YqzzS2fjRQaKPHrhg9LRFU9DjvAQIYEo59956lDqMho/edit?usp=sharing
+ * Link to Dashboard where XKeys are read in and values are sent over networktables: https://github.com/HHS-Team670/FRCDashboard 
  */
 public class XKeys {
 
