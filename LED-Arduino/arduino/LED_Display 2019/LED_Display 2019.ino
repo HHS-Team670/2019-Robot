@@ -14,7 +14,7 @@
 #include <Adafruit_NeoPixel.h>                      //Adafruit library for led methods
 
 Adafruit_NeoPixel strip =                           //Defines an Adafruit Neopixel strip, containing 120 LEDs, using 
-Adafruit_NeoPixel(15, 5, NEO_GRB + NEO_KHZ800); 
+Adafruit_NeoPixel(60, 5, NEO_GRB + NEO_KHZ800); 
 
 Adafruit_NeoPixel strip2 =                           //Defines an Adafruit Neopixel strip, containing 120 LEDs, using 
 Adafruit_NeoPixel(15, 7, NEO_GRB + NEO_KHZ800);//Arduino pin #6, and using the GRB format at 800KHZ bitstream
@@ -221,39 +221,90 @@ int returnDelay=10;
   
   delay(returnDelay);
 }
-void setCylonBounce(){
-  byte red=255;
-  byte green=0;
-  byte blue=0;
+void CylonBounce(){
 
-  int eyeSize=3;
-  int speedDelay=10;
-  int returnDelay=10;
-  for(int i = 0; i < strip2.numPixels()-eyeSize-2; i++) {
-    reset();
-    strip2.setPixelColor(i, red/10, green/10, blue/10);
-    for(int j = 1; j <= eyeSize; j++) {
-      strip2.setPixelColor(i+j, red, green, blue); 
+byte red = 0;
+byte green = 0;
+byte blue  = 255;
+int EyeSize = 5;
+int SpeedDelay = 10;
+int ReturnDelay = 10;
+  for(int i = 0; i < strip.numPixels()-EyeSize-2; i++) {
+    setStripColor(0,0,0);
+    strip.setPixelColor(i, red/10, green/10, blue/10);
+    for(int j = 1; j <= EyeSize; j++) {
+      strip.setPixelColor(i+j, red, green, blue); 
     }
-    strip2.setPixelColor(i+eyeSize+1, red/10, green/10, blue/10);
-    strip2.show();
-    delay(speedDelay);
+    strip.setPixelColor(i+EyeSize+1, red/10, green/10, blue/10);
+    strip.show();
+    delay(SpeedDelay);
   }
 
-  delay(returnDelay);
+  delay(ReturnDelay);
 
-  for(int i = strip2.numPixels()-eyeSize-2; i > 0; i--) {
-    reset();
-    strip2.setPixelColor(i, red/10, green/10, blue/10);
-    for(int j = 1; j <= eyeSize; j++) {
-      strip2.setPixelColor(i+j, red, green, blue); 
+  for(int i = strip.numPixels()-EyeSize-2; i > 0; i--) {
+    setStripColor(0,0,0);
+    strip.setPixelColor(i, red/10, green/10, blue/10);
+    for(int j = 1; j <= EyeSize; j++) {
+      strip.setPixelColor(i+j, red, green, blue); 
     }
-    strip2.setPixelColor(i+eyeSize+1, red/10, green/10, blue/10);
-    strip2.show();;
-    delay(speedDelay);
+    strip.setPixelColor(i+EyeSize+1, red/10, green/10, blue/10);
+    strip.show();
+    delay(SpeedDelay);
   }
   
-  delay(returnDelay);
+  delay(ReturnDelay);
+}
+void BouncingBalls() {
+  
+  byte red  = 255;
+  byte blue = 255;
+  byte green = 0;
+  int ballCount = 10;
+  float Gravity = -9.81;
+  int StartHeight = 1;
+  
+  float Height[ballCount];
+  float ImpactVelocityStart = sqrt( -2 * Gravity * StartHeight );
+  float ImpactVelocity[ballCount];
+  float TimeSinceLastBounce[ballCount];
+  int   Position[ballCount];
+  long  ClockTimeSinceLastBounce[ballCount];
+  float Dampening[ballCount];
+  
+  for (int i = 0 ; i < ballCount ; i++) {   
+    ClockTimeSinceLastBounce[i] = millis();
+    Height[i] = StartHeight;
+    Position[i] = 0; 
+    ImpactVelocity[i] = ImpactVelocityStart;
+    TimeSinceLastBounce[i] = 0;
+    Dampening[i] = 0.90 - float(i)/pow(ballCount,2); 
+  }
+
+  while (true) {
+    for (int i = 0 ; i < ballCount ; i++) {
+      TimeSinceLastBounce[i] =  millis() - ClockTimeSinceLastBounce[i];
+      Height[i] = 0.5 * Gravity * pow( TimeSinceLastBounce[i]/1000 , 2.0 ) + ImpactVelocity[i] * TimeSinceLastBounce[i]/1000;
+  
+      if ( Height[i] < 0 ) {                      
+        Height[i] = 0;
+        ImpactVelocity[i] = Dampening[i] * ImpactVelocity[i];
+        ClockTimeSinceLastBounce[i] = millis();
+  
+        if ( ImpactVelocity[i] < 0.01 ) {
+          ImpactVelocity[i] = ImpactVelocityStart;
+        }
+      }
+      Position[i] = round( Height[i] * (strip.numPixels()- 1) / StartHeight);
+    }
+  
+    for (int i = 0 ; i < ballCount ; i++) {
+      strip.setPixelColor(Position[i],red,green,blue);
+    }
+    
+    strip.show();
+    setStripColor(0,0,0);
+  }
 }
 void displayLightShow(){
     if(lightShowData=="0L"){
@@ -273,7 +324,7 @@ void displayLightShow(){
     }else if(lightShowData=="7L"){
       setBounceBackground();
     }else if(lightShowData=="8L"){
-      setCylonBounce();
+      CylonBounce();
     }else if(lightShowData=="9L"){
       setRainbow();
     }
@@ -372,7 +423,7 @@ void setup()
 
 void loop()
 {                                                   //Ran indefinitly after setup()
-  
+  BouncingBalls();
   parseData();
  strip2.setBrightness(100); 
 if(stateData==stillDrive){
