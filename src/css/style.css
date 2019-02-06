@@ -125,16 +125,37 @@ body.login #login {
 }
 #status-lights {
   position: absolute;
-  transform: translate(70vw, 80vh);
+  transform: translate(70vw, 70vh);
+  z-index: 1;
 }
 #status-info {
     position: absolute;
-    transform: translate(60vw, 70vh);
+    transform: translate(60vw, 80vh);
+    width: 10vw;
+    height: 20vh;
+    z-index: 1;
+}
+#robot-diagram {
+    position: absolute;
+    transform: translate(70vw, 10vh);
+    width: 20vw;
+    height: 40vh;
+}
+#claw {
+    position: absolute;
+}
+#arm-base {
+    transform-origin: top center;
+    transform: rotate(180deg);
+}
+#arm {
+    transform-origin: bottom center;
+    /* transform: rotate(180deg); */
 }
 #auton-chooser {
     position: relative;
     transform: translate(60vw, 0vh);
-    width: 50vw;
+    width: 40vw;
     height: 65vh;
 }
 #start-direction {
@@ -168,7 +189,17 @@ body.login #login {
     position: absolute;
     transform: translate(calc(90px + 125px + 130px), 275px);
 }
-#test-button {
+#confirm-button {
     position: absolute;
-    transform: translate(90vw, 50vh);
+    transform: translate(calc(90px + 125px + 130px + 100px), 275px);
+}
+#vline {
+    position: absolute;
+    transform: translate(0vw, 0vh);
+    stroke-width: 0.25px;
+}
+#hline {
+    position: absolute;
+    transform: translate(0vw, 0vh);
+    stroke-width: 0.25px;
 }

@@ -29,6 +29,29 @@ NetworkTables.addKeyListener('/SmartDashboard/robotState', (key, value) => {
   if (value === "autonomousInit()") document.getElementById('auton-chooser').style.display = "none";
 });
 
+document.getElementById('auton-chooser').style.display = "none";
+document.getElementById('robot-diagram').style.display = "inline";
+
+NetworkTables.addKeyListener('/SmartDashboard/sensor-error', (key, value) => {
+  document.getElementById('warnings').innerHTML += (value + "\n");
+});
+
+NetworkTables.addKeyListener('/SmartDashboard/current-command', (key, value) => {
+  document.getElementById('current-command').innerHTML = value;
+});
+
+NetworkTables.addKeyListener('/SmartDashboard/crosshairs-target', (key, value) => {
+  document.getElementById('vline').setAttribute('x', value[0]*100+'%');
+  document.getElementById('hline').setAttribute('y', value[1]*100+'%');
+});
+
+var angle = -135;
+document.getElementById('arm').style = "transform: rotate(" + angle + "deg)";
+document.getElementById('claw').style = "transform: translate(" + Math.sin(angle * Math.PI / 180) * 50 + "px, " + -1 * Math.cos(angle * Math.PI / 180) * 50 + "px)";
+
+document.getElementById('vline').setAttribute('x', 50+'%');
+document.getElementById('hline').setAttribute('y', 50+'%');
+
 var keys = [];
 
 var allKeys = '';
@@ -39,12 +62,12 @@ document.addEventListener("keyup", function(event) {
   var result = split[split.length - 1];
   var nextTask = getFromMap(result);
   if (nextTask != null) {
-    document.getElementById('test').innerHTML = nextTask;
-    if (nextTask.toUpperCase() === nextTask) NetworkTables.putValue("xkeys-armstates", nextTask);
-    else if (nextTask === "place" || nextTask === "grab") NetworkTables.putValue("xkeys-placing", nextTask);
-    else if (nextTask.includes("run_intake")) NetworkTables.putValue("xkeys-intake", nextTask);
-    else if (nextTask === "auto_pickup_ball") NetworkTables.putValue("xkeys-autopickup", nextTask);
-    else if (nextTask.includes("climb")) NetworkTables.putValue("xkeys-climber", nextTask);
+    document.getElementById('warnings').innerHTML = nextTask;
+    if (nextTask.toUpperCase() === nextTask) NetworkTables.putValue('/SmartDashboard/xkeys-armstates', nextTask);
+    else if (nextTask === "place" || nextTask === "grab") NetworkTables.putValue('/SmartDashboard/xkeys-placing', nextTask);
+    else if (nextTask.includes("run_intake")) NetworkTables.putValue('/SmartDashboard/xkeys-intake', nextTask);
+    else if (nextTask === "auto_pickup_ball") NetworkTables.putValue('/SmartDashboard/xkeys-autopickup', nextTask);
+    else if (nextTask.includes("climb")) NetworkTables.putValue('/SmartDashboard/xkeys-climber', nextTask);
   }
   document.getElementById('test2').innerHTML = armStates.length;
 });
@@ -183,8 +206,10 @@ function readRadioButtons() {
   }
 }
 
-document.getElementById('test-button').onclick = function () {
+document.getElementById('confirm-button').onclick = function () {
   readRadioButtons();
   document.getElementById('test').innerHTML = auton;
   NetworkTables.putValue("autonSequence", auton);
 }
+
+document.getElementById('claw-status').setAttribute("fill", "red");

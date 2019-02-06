@@ -19,6 +19,11 @@
 
     <div id="camera"></div>
 
+    <svg id="crosshairs" width="60vw" height="100vh">
+      <rect id="vline" width="0.05" height="100%"/>
+      <rect id="hline" width="100%" height="0.05"/>
+    </svg>
+
     <svg id="status-lights" width="300" height="60">
       <circle id="vision-status" cx="20%" cy="50%" r="5"/>
       <text x="20%" y="25%" style="text-anchor: middle">Vision</text>
@@ -35,11 +40,21 @@
         <button id="connect" disabled>Connecting</button>
     </div>
 
-    <button id="test-button">Button</button>
-
     <svg id="status-info">
-      <text id="arm-state" style="text-anchor: middle">Arm State</text>
-      <text id="warnings" style="text-anchor: middle">Warnings</text>
+      <text id="arm-state" x="50%" y="0%" style="text-anchor: middle">Arm State</text>
+      <text id="current-command" x="50%" y="33%" style="text-anchor: middle">Current Command</text>
+      <text id="warnings" x="50%" y="66%" style="text-anchor: middle">Warnings</text>
+    </svg>
+
+    <svg id="robot-diagram">
+      <rect x="0%" y="0%" width="100%" height="100%"/>
+      <rect x="10%" y="80%" width="80%" height="15%"/>
+      <rect id="arm-base" x="20%" y="80%" width="3" height="30%"/>
+      <rect id="arm" x="20%" y="25%" width="1" height="50px"/>
+      <circle id="claw" cx="20%" cy="50%" r="5%"/>
+      <path d="A 10 10 0 0 1 20 20" />
+      <circle cx="25%" cy="95%" r="7%"/>
+      <circle cx="75%" cy="95%" r="7%"/>
     </svg>
 
     <div id="auton-chooser">
@@ -104,6 +119,7 @@
         <input type="radio" name="height3" value="Middle"> Middle</input> <br>
       </fieldset>
       </form>
+      <button id="confirm-button">OK</button>
     </div>
 
     <script src="networktables/networktables.js"></script>
