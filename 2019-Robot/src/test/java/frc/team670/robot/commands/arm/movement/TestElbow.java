@@ -10,7 +10,6 @@ package frc.team670.robot.commands.arm.movement;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import frc.team670.robot.subsystems.elbow.BaseElbow;
-import frc.team670.robot.subsystems.elbow.Elbow;
 
 /**
  * Add your docs here.

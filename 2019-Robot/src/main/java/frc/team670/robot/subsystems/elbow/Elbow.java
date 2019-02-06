@@ -33,9 +33,6 @@ public class Elbow extends BaseElbow {
   // Also need to add pull gains slots
   private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0;
 
-  private static final double RAMP_RATE = 0.1;
-
-  private final int FORWARD_SOFT_LIMIT = 0, REVERSE_SOFT_LIMIT = 0; // TODO figure out the values in encoder rotations
   private static final int CURRENT_CONTROL_SLOT = 0; // TODO Set this
   private final int CLIMBING_CONTINUOUS_CURRENT_LIMIT = 35, NORMAL_CONTINUOUS_CURRENT_LIMIT = 33, PEAK_CURRENT_LIMIT = 0; // TODO set current limit in Amps
 
@@ -47,7 +44,7 @@ public class Elbow extends BaseElbow {
   public static final int QUAD_ENCODER_MAX = 890, QUAD_ENCODER_MIN = -1158; //TODO Set these values
 
   public Elbow() {
-    super(new TalonSRX(RobotMap.ARM_ELBOW_ROTATION_MOTOR_TALON),  0.0, 0, 0, false, 0, 0, 20, 0);
+    super(new TalonSRX(RobotMap.ARM_ELBOW_ROTATION_MOTOR_TALON),  0.0, 0, 0, false, 0, 0, 33, 0);
     elbowRotationSlave = new VictorSPX(RobotMap.ARM_ELBOW_ROTATION_MOTOR_VICTOR);
     elbowRotationSlave.set(ControlMode.Follower, rotatorTalon.getDeviceID());  
 
