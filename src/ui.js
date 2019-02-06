@@ -12,12 +12,6 @@ var ui = {
     }
 };
 
-NetworkTables.addKeyListener('/SmartDashboard/gyro', (key, value) => {
-  var angle = value % 360;
-  ui.navx.number.innerHTML = angle + 'º';
-  ui.navx.arm.style.transform = `rotate(${angle}deg)`;
-});
-
 NetworkTables.addKeyListener('/SmartDashboard/cameraSource', (key, value) => {
   if (value == 'next') {
     window.webContents.reload();
@@ -45,12 +39,11 @@ NetworkTables.addKeyListener('/SmartDashboard/crosshairs-target', (key, value) =
   document.getElementById('hline').setAttribute('y', value[1]*100+'%');
 });
 
-var angle = -135;
-document.getElementById('arm').style = "transform: rotate(" + angle + "deg)";
-document.getElementById('claw').style = "transform: translate(" + Math.sin(angle * Math.PI / 180) * 50 + "px, " + -1 * Math.cos(angle * Math.PI / 180) * 50 + "px)";
-
-document.getElementById('vline').setAttribute('x', 50+'%');
-document.getElementById('hline').setAttribute('y', 50+'%');
+NetworkTables.addKeyListener('/SmartDashboard/elbow-angle', (key, value) => {
+  var angle = value;
+  document.getElementById('arm').style = "transform: rotate(" + angle + "deg)";
+  document.getElementById('claw').style = "transform: translate(" + Math.sin(angle * Math.PI / 180) * 50 + "px, " + -1 * Math.cos(angle * Math.PI / 180) * 50 + "px)";
+});
 
 var keys = [];
 
