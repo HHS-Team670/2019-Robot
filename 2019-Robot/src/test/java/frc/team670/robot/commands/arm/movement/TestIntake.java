@@ -102,4 +102,9 @@ public class TestIntake extends BaseIntake {
 
     }
 
+    @Override
+    public double getAbsoluteAngleMultiplier() {
+        return 0;
+    }
+
 }

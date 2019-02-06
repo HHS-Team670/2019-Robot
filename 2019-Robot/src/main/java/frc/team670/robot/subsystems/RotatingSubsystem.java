@@ -14,7 +14,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 /**
- * Add your docs here.
+ * Superclass for intake, elbow, wrist, and extension
  */
 public abstract class RotatingSubsystem extends Subsystem {
     public static final int NO_SETPOINT = 99999;
@@ -26,30 +26,53 @@ public abstract class RotatingSubsystem extends Subsystem {
 
     private static final int TICKS_PER_ROTATION = 4096;
 
+    /**
+     * Sets the main talon for this subsystem
+     */
     public void setTalon(TalonSRX rotatorTalon) {
         this.rotatorTalon = rotatorTalon;
     }
 
+    /**
+     * Returns the main talon for this subsystem
+     */
     public TalonSRX getTalon(){
         return rotatorTalon;
     }
 
+
+    /**
+     * Gets the boolean to decide whether or not to pulse or stall the motor
+     */
     public boolean getTimeout(){
         return timeout;
     }
 
+    /**
+     * Enbales the main talon to percent output mode
+     */
     public void enablePercentOutput() {
         rotatorTalon.set(ControlMode.PercentOutput, 0);
     }
 
+    /**
+     * Removes the setpoint for the talon on this subsystem
+     */
     public void clearSetpoint() {
         setpoint = NO_SETPOINT;
     }
 
+
+    /**
+     * Rotates the talon at a certain percent output
+     */
     public void rotatePercentOutput(double output) {
         rotatorTalon.set(ControlMode.PercentOutput, output);
     }
 
+    /**
+     * Updates the arbitrary feed forward on this subsystem
+     */
     public void updateArbitraryFeedForward(){
         if(setpoint != NO_SETPOINT) {
             double value = getAbsoluteAngleMultiplier() * ARBITRARY_FEEDFORWARD_CONSTANT;
@@ -57,10 +80,19 @@ public abstract class RotatingSubsystem extends Subsystem {
           }
     }
 
+    /**
+     * Gets the multiplier for updating the arbitrary feed forward based on angle and subsystem
+     */
     public abstract double getAbsoluteAngleMultiplier();
 
+    /**
+     * Returns the position of this subsystem in ticks
+     */
     public abstract int getPositionTicks();
 
+    /**
+     * Sets the setpoint for motion magic (in ticks)
+     */
     public abstract void setMotionMagicSetpointTicks(int ticks);
 
 

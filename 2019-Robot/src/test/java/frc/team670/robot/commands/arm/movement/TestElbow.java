@@ -94,5 +94,10 @@ public class TestElbow extends BaseElbow {
 
     }
 
+    @Override
+    public double getAbsoluteAngleMultiplier() {
+        return 0;
+    }
+
 
 }

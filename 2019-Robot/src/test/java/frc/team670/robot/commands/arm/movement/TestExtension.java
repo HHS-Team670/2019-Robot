@@ -89,4 +89,9 @@ public class TestExtension extends BaseExtension {
 
   }
 
+  @Override
+  public double getAbsoluteAngleMultiplier() {
+    return 0;
+  }
+
 }

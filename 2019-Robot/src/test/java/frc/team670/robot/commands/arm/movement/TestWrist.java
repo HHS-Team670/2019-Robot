@@ -78,4 +78,9 @@ public class TestWrist extends BaseWrist{
 
     }
 
+    @Override
+    public double getAbsoluteAngleMultiplier() {
+        return 0;
+    }
+
 }
