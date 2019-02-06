@@ -63,9 +63,10 @@ String lightShowData = runningAllianceColors;
 //sets the entire strip to a specified color
 void setStripColor(int r, int g, int b, Adafruit_NeoPixel *stripptr)
 {
-  for (int i = 0; i <= stripptr->numPixels(); i++)
+  for (int i = 0; i <= 15; i++)
   {
     stripptr->setPixelColor(i, r, g, b);
+  
   }
   stripptr->show();
 }
@@ -107,12 +108,26 @@ void setRunningAllianceColors(Adafruit_NeoPixel *stripptr) //to be used when the
     }
     else if (allianceData == redAlliance)
     {
-      setRunningLights(stripptr);
+      setRunningLights(&strip);
     }
   }
 }
 
-
+void quarterTest(Adafruit_NeoPixel *stripptr){
+  for(int i=0;i<=15;i++){
+    stripptr->setPixelColor(i,255,0,0);
+  }
+  for(int i=16;i<=30;i++){
+    stripptr->setPixelColor(i,0,255,0);
+  }
+  for(int i=31;i<45;i++){
+    stripptr->setPixelColor(i,0,0,255);
+  }
+  for(int i=46;i<=60;i++){
+    setRainbow(stripptr);
+  }
+  stripptr-> show();
+}
 void setSolidGreen(Adafruit_NeoPixel *stripptr) //to be used when the robot is moving forward, will display solid green
 {
   setStripColor(0, 255, 0, stripptr);
@@ -441,7 +456,7 @@ void displayLightShow(Adafruit_NeoPixel *stripptr)
 }
 
 
-void setRainbow(Adafruit_NeoPixel *stripptr) 
+void setRainbow(int qudrant, Adafruit_NeoPixel *stripptr) 
 {
   byte *c;
   int speedDelay = 10;
@@ -449,7 +464,7 @@ void setRainbow(Adafruit_NeoPixel *stripptr)
   {   
     for (int q = 0; q < 3; q++) 
     {
-      for (int i = 0; i < stripptr->numPixels(); i = i + 3) 
+      for (int i = (1-quadrant); i < stripptr->numPixels(); i = i + 3) 
       {
         c = Wheel( (i + j) % 255);
         stripptr->setPixelColor(i + q, *c, *(c + 1), *(c + 2)); //turn every third pixel on
@@ -544,9 +559,9 @@ void setup()
 
 void loop()
 { //Ran indefinitly after setup()
-  setRainbow(&strip);
-  setSolidRed(&strip2);
-  
+//  setRainbow(&strip);
+//  setSolidRed(&strip2);
+  quarterTest(&strip);
   parseData();
   
   strip.setBrightness(255);
