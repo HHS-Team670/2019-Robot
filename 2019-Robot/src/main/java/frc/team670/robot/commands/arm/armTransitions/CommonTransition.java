@@ -38,9 +38,6 @@ public class CommonTransition extends ArmTransition {
     ArmState source = getSource();
     ArmState dest = getDest();
 
-    //Should get the current desired position in ticks (so should either be at deployed or down tick value)
-    double setpointInDegrees = Intake.convertIntakeTicksToDegrees(intake.getMotionMagicSetpoint());
-
     double intakeHighPoint = Intake.INTAKE_FIXED_LENGTH_IN_INCHES + Intake.INTAKE_ROTATING_LENGTH_IN_INCHES;
     double intakeQuarterPoint = Intake.INTAKE_FIXED_LENGTH_IN_INCHES + Intake.INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(Math.toRadians(45));
 
@@ -57,7 +54,7 @@ public class CommonTransition extends ArmTransition {
     //Only reason why intake would have to move second is if the movement of the intake would hit the arm
 
     //If intake has to move from in to deployed or from deployed to in
-    if (Double.compare(setpointInDegrees, Intake.INTAKE_ANGLE_DEPLOYED) != 0 || Double.compare(setpointInDegrees, Intake.INTAKE_ANGLE_DEPLOYED) != 0) {
+    if (source.isIntakeDeployed() != dest.isIntakeDeployed()) {
       //If a point along the intake's trajectory is in between the Y coordinates of the arm's start and end
       if ((intakeSourceY > destY && intakeSourceY < sourceY) || 
             (intakeHighPoint > destY && intakeHighPoint < sourceY) || 

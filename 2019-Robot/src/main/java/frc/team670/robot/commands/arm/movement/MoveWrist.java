@@ -21,9 +21,9 @@ public class MoveWrist extends Command {
 
   private BaseWrist wrist;
 
-  private static final double TICK_TOLERANCE = 10;
+  private static final double DEGREE_TOLERANCE = 1;
 
-  private int wristSetpointInTicks;
+  private double wristSetpointAngle;
 
   private long executeCount;
 
@@ -35,16 +35,16 @@ public class MoveWrist extends Command {
    */
   public MoveWrist(BaseWrist wrist, double angle) {
     this.wrist = wrist;
+    wristSetpointAngle = angle;
     requires(wrist);
-    wristSetpointInTicks = Wrist.convertWristDegreesToTicks(angle);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    wrist.setMotionMagicSetpoint(wristSetpointInTicks);
+    wrist.setMotionMagicSetpointAngle(wristSetpointAngle);
     executeCount = 0;
-    Logger.consoleLog("tickSetpoint: %s", wristSetpointInTicks);
+    Logger.consoleLog("angleSetpoint: %s", wristSetpointAngle);
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -57,13 +57,13 @@ public class MoveWrist extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return MathUtils.isWithinTolerance(wrist.getPositionTicks(), wristSetpointInTicks, TICK_TOLERANCE);
+    return MathUtils.isWithinTolerance(wrist.getAngleInDegrees(), wristSetpointAngle, DEGREE_TOLERANCE);
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Logger.consoleLog("targetTickValue: %s, endingTickValue: %s", wristSetpointInTicks, wrist.getPositionTicks());
+    Logger.consoleLog("targetAngleValue: %s, endingAngleValue: %s", wristSetpointAngle, wrist.getAngleInDegrees());
   }
 
   // Called when another command which requires one or more of the same

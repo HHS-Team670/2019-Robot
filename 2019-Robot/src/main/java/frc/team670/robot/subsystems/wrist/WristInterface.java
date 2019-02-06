@@ -7,10 +7,8 @@ public interface WristInterface {
       public void disableCurrentLimit();
     
       public void setOutput(double output);
-    
-      public int getPositionTicks();
       
-      public double getAngle();
+      public double getAngleInDegrees();
     
       public void initDefaultCommand();
     
@@ -23,16 +21,10 @@ public interface WristInterface {
        * @return true if the forward limit switch is closed, false if open
        */
       public boolean isReverseLimitPressed();
-      
-    
     
       /**
       * Sets the SensorCollection encoder value to encoderValue (use this to reset the encoder when at a known position)
       */
-      public void zero(double encoderValue);
+      public void setQuadratureEncoder(double encoderValue);
     
-      /**
-       * Setup for movement and Motion Magic
-       */
-      public void setMotionMagicSetpoint(double wristSetpointInTicks);
 }

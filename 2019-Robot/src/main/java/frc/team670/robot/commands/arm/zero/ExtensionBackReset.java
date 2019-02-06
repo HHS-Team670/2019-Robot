@@ -45,7 +45,7 @@ public class ExtensionBackReset extends Command {
    */
   @Override
   protected void end() {
-    extension.zero(Extension.MAX_EXTENSION_BACK);
+    extension.setQuadratureEncoder(Extension.MAX_EXTENSION_BACK);
     extension.setOutput(0);
     Logger.consoleLog();
   }

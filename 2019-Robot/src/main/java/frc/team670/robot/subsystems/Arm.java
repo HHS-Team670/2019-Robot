@@ -274,8 +274,8 @@ public class Arm {
       // If the wrist is angled forward, the center point that we are using to get arm
       // coordinates will be closer to the ends of the claw so we shouldn't need to
       // add in claw diameter. The cosine function brings that addition down to 0.
-      if (wrist.getAngle() > 0) {
-        lowestPoint = getCoordPosition().getY() -  (Claw.MAX_CLAW_OPEN_DIAMETER / 2) * Math.abs(Math.cos(Math.toRadians(wrist.getAngle())));
+      if (wrist.getAngleInDegrees() > 0) {
+        lowestPoint = getCoordPosition().getY() -  (Claw.MAX_CLAW_OPEN_DIAMETER / 2) * Math.abs(Math.cos(Math.toRadians(wrist.getAngleInDegrees())));
       }
       //To be more safe, there is an extra buffer
       lowestPoint += extraClearanceInInches;

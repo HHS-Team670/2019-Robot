@@ -29,45 +29,19 @@ public class Intake extends BaseIntake {
   private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0; //TODO Set this
   private static final int FORWARD_SOFT_LIMIT = 0, REVERSE_SOFT_LIMIT = 0; // TODO figure out the values in rotations
   private static final double RAMP_RATE = 0.1;
-  public static final int QUAD_ENCODER_MAX = 890, QUAD_ENCODER_MIN = -1158;
 
-  private TalonSRX baseTalon;
   private VictorSPX rollerVictor;
   
   private Point2D.Double intakeCoord;
-  public static double TICKS_PER_ROTATION = 4096; // Still needs to be set
 
-  private static final int ROTATOR_CURRENT_LIMIT = 20;
+  private final static int INTAKE_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 15000,  INTAKE_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_SECOND = 6000;
 
-
-  private static int INTAKE_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 15000; // TODO set this
-  private static int INTAKE_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS = 6000; // TODO set this
 
   public Intake() {
-    baseTalon = new TalonSRX(RobotMap.INTAKE_BASE_TALON);
-    super.setTalon(baseTalon);
+    super(new TalonSRX(RobotMap.INTAKE_BASE_TALON), 0.0, 0, 0, true, 0, 0, 20, 0);
+    
     rollerVictor = new VictorSPX(RobotMap.INTAKE_ROLLER_VICTOR);
     intakeCoord = new Point2D.Double();
-
-    setpoint = RotatingSubsystem.NO_SETPOINT;
-
-    //baseVictorEncoder = new Encoder(RobotMap.INTAKE_BASE_ENCODER_CHANNEL_A, RobotMap.INTAKE_BASE_ENCODER_CHANNEL_B, false, EncodingType.k4X);
-    int pulseWidthPos = getIntakePulseWidth()&4095;
-
-    if (pulseWidthPos < QUAD_ENCODER_MIN) {
-      pulseWidthPos += 4096;
-    } 
-    if (pulseWidthPos > QUAD_ENCODER_MAX) {
-      pulseWidthPos -= 4096;
-    }
-
-    timeout = true;
-
-    baseTalon.getSensorCollection().setQuadraturePosition(pulseWidthPos, 0);
-
-    baseTalon.configContinuousCurrentLimit(ROTATOR_CURRENT_LIMIT);
-    baseTalon.configPeakCurrentLimit(0);
-    baseTalon.enableCurrentLimit(true);
 
     enablePercentOutput();
     enableBaseMotionMagic();
@@ -75,81 +49,51 @@ public class Intake extends BaseIntake {
 
   // May need to set tolerance
   private void enableBaseMotionMagic() {
-    baseTalon.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
-    baseTalon.config_kF(kSlotMotionMagic, kF, kTimeoutMs);
-    baseTalon.config_kP(kSlotMotionMagic, kP, kTimeoutMs);
-    baseTalon.config_kI(kSlotMotionMagic, kI, kTimeoutMs);
-    baseTalon.config_kD(kSlotMotionMagic, kD, kTimeoutMs);
-    baseTalon.configMotionCruiseVelocity(INTAKE_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
-    baseTalon.configMotionAcceleration(INTAKE_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+    rotatorTalon.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
+    rotatorTalon.config_kF(kSlotMotionMagic, kF, kTimeoutMs);
+    rotatorTalon.config_kP(kSlotMotionMagic, kP, kTimeoutMs);
+    rotatorTalon.config_kI(kSlotMotionMagic, kI, kTimeoutMs);
+    rotatorTalon.config_kD(kSlotMotionMagic, kD, kTimeoutMs);
+    rotatorTalon.configMotionCruiseVelocity(INTAKE_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+    rotatorTalon.configMotionAcceleration(INTAKE_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_SECOND, kTimeoutMs);
 
-    baseTalon.configNominalOutputForward(0, RobotConstants.kTimeoutMs);
-    baseTalon.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
-    baseTalon.configPeakOutputForward(MAX_BASE_OUTPUT, RobotConstants.kTimeoutMs);
-    baseTalon.configPeakOutputReverse(-MAX_BASE_OUTPUT, RobotConstants.kTimeoutMs);
+    rotatorTalon.configNominalOutputForward(0, RobotConstants.kTimeoutMs);
+    rotatorTalon.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
+    rotatorTalon.configPeakOutputForward(MAX_BASE_OUTPUT, RobotConstants.kTimeoutMs);
+    rotatorTalon.configPeakOutputReverse(-MAX_BASE_OUTPUT, RobotConstants.kTimeoutMs);
 
-    // These thresholds stop the motor when limit is reached
-    baseTalon.configForwardSoftLimitThreshold(FORWARD_SOFT_LIMIT);
-    baseTalon.configReverseSoftLimitThreshold(REVERSE_SOFT_LIMIT);
-
-    // Enable Safety Measures
-    baseTalon.configForwardSoftLimitEnable(true);
-    baseTalon.configReverseSoftLimitEnable(true);
-
-    baseTalon.setNeutralMode(NeutralMode.Brake);
+    rotatorTalon.setNeutralMode(NeutralMode.Brake);
     rollerVictor.setNeutralMode(NeutralMode.Coast);
-
-    baseTalon.configClosedloopRamp(RAMP_RATE);
-    baseTalon.configOpenloopRamp(RAMP_RATE);
   }
 
   /**
    * Should set the setpoint for the Motion Magic on the intake
    */
-  public void setMotionMagicSetpoint(double intakeTicks) {
-    baseTalon.set(ControlMode.MotionMagic, intakeTicks);
-  }
-
-  /**
-   * Should return the setpoint for the motion magic on the base motor
-   */
-  public double getMotionMagicSetpoint() {
-    return baseTalon.getClosedLoopTarget();
+  public void setMotionMagicSetpointAngle(double intakeAngle) {
+    setpoint = convertIntakeDegreesToTicks(intakeAngle);
+    rotatorTalon.set(ControlMode.MotionMagic, setpoint);
   }
 
   /**
    * Should return the setpoint for the motion magic on the base motor
    */
   public Point2D.Double getMotionMagicDestinationCoordinates(){
-    double x = INTAKE_ROTATING_LENGTH_IN_INCHES * Math.cos(convertIntakeTicksToDegrees(getMotionMagicSetpoint()));
-    double y = INTAKE_FIXED_LENGTH_IN_INCHES + INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(convertIntakeTicksToDegrees(getMotionMagicSetpoint()));
+    double x = INTAKE_ROTATING_LENGTH_IN_INCHES * Math.cos(Math.toRadians(getMotionMagicSetpoint()));
+    double y = INTAKE_FIXED_LENGTH_IN_INCHES + INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(getMotionMagicSetpoint());
     return new Point2D.Double(x, y);
   }
 
   public void setRotatorNeutralMode(NeutralMode mode) {
-    baseTalon.setNeutralMode(mode);
+    rotatorTalon.setNeutralMode(mode);
   }
-
-  /**
-   * Returns the tick value of the base motor
-   */
-  public int getIntakePositionInTicks() {
-    return baseTalon.getSensorCollection().getQuadraturePosition();
-  }
-
   /**
    * Returns the x, y coordinates of the top of the intake
    */
   public Point2D.Double getIntakeCoordinates(){
-    double x = INTAKE_ROTATING_LENGTH_IN_INCHES * Math.cos(getIntakeAngleInDegrees());
-    double y = INTAKE_FIXED_LENGTH_IN_INCHES + INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(getIntakeAngleInDegrees());
+    double x = INTAKE_ROTATING_LENGTH_IN_INCHES * Math.cos(getAngleInDegrees());
+    double y = INTAKE_FIXED_LENGTH_IN_INCHES + INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(getAngleInDegrees());
     intakeCoord.setLocation(x, y);
     return intakeCoord;
-  }
-
-
-  public int getIntakePulseWidth() {  
-    return baseTalon.getSensorCollection().getPulseWidthPosition();
   }
 
 
@@ -166,7 +110,7 @@ public class Intake extends BaseIntake {
   /**
    * Converts an intake angle into ticks
    */
-  public static int convertIntakeDegreesToTicks(double degrees) {
+  private static int convertIntakeDegreesToTicks(double degrees) {
     //If straight up is 0 and going forward is positive
     // percentage * half rotation
     // TODO - Fix this. This is not going to make 0 at the top if the absolute encoder is not zero there.
@@ -177,7 +121,7 @@ public class Intake extends BaseIntake {
   /**
    * Converts intake ticks into an angle
    */
-  public static double convertIntakeTicksToDegrees(double ticks) {
+  private static double convertIntakeTicksToDegrees(double ticks) {
     //If straight up is 0 and going forward is positive
     // TODO - Fix this. This is not going to make 0 at the top if the absolute encoder is not zero there.
     // Offset the quadrature readings accordingly in the constructor?
@@ -185,20 +129,9 @@ public class Intake extends BaseIntake {
   }
 
   @Override
-  public double getAbsoluteAngleMultiplier() {
-    return (-1.0 * Math.cos(Math.toRadians(getIntakeAngleInDegrees())));
+  public double getArbitraryFeedForwardAngleMultiplier() {
+    return (-1.0 * Math.cos(Math.toRadians(getAngleInDegrees())));
   }
-
-  public void setMotionMagicSetpointTicks(int ticks) {
-    this.setpoint = ticks;
-    baseTalon.set(ControlMode.MotionMagic, ticks);
-  }
-
-  @Override
-  public int getPositionTicks(){
-    return getPositionTicks();
-  }
-
 
   @Override
   public void initDefaultCommand() {
@@ -206,7 +139,7 @@ public class Intake extends BaseIntake {
   }
 
   @Override
-  public double getIntakeAngleInDegrees() {
+  public double getAngleInDegrees() {
     return convertIntakeTicksToDegrees(getPositionTicks());
   }
 }
