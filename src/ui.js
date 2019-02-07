@@ -15,6 +15,17 @@ var ui = {
 var date = new Date();
 document.getElementById('big-warning').style.display = "none";
 
+NetworkTables.addKeyListener('/SmartDashboard/robotTime', (key, value) => {
+  var minutes = ~~(value / 60); // converts to integer
+  var seconds = (value - 60*minutes) % 60;
+  seconds = (seconds < 10) ? '0'+seconds : seconds;
+  ui.timer.style.color = `rgb(0, 200, 0)`;
+  if (value < 135) ui.timer.style.color = `rgb(255, 255, 255)`;
+  if (value < 45) ui.timer.style.color = `rgb(244,215,66)`
+  if (value < 30) ui.timer.style.color = `rgb(200, 0, 0)`;
+  ui.timer.innerHTML = minutes + ':' + seconds;
+});
+
 NetworkTables.addKeyListener('/SmartDashboard/cameraSource', (key, value) => {
   if (value == 'next') {
     window.webContents.reload();

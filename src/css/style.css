@@ -49,6 +49,16 @@ body > * {
     overflow: scroll;
     background: #222;
 }
+#timer {
+    font-family: monospace;
+    display: block;
+    height: 12vh;
+    width: 14vw;
+    top: 0;
+    right: 0;
+    font-size: 12vh;
+    line-height: .8;
+}
 header {
     width: 20vw;
     height: 20vh;
