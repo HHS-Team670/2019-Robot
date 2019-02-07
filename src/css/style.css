@@ -215,7 +215,7 @@ body.login #login {
     position: absolute;
     background: red;
     transform: translate(70vw, 10vh);
-    width: 20vw;
+    width: 30vw;
     height: 20vh;
     z-index: 3;
 }

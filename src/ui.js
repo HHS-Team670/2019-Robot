@@ -37,7 +37,7 @@ NetworkTables.addKeyListener('/SmartDashboard/sensor-error', (key, value) => {
    timeSinceWarningFlashed = date.getTime();
 });
 
-
+//Time is stored with prompt from Network Tables Listener, and disappears after a second
 if(date.getTime() - timeSinceWarningFlashed > 1000){
   document.getElementById('big-warning').style.display = "none";
 }
