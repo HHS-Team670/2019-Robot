@@ -228,14 +228,14 @@ body.login #login {
     transform: translate(72vw, 62vh);
     width: 15vw;
     height: 7vh;
-    z-index: 3;
+    z-index: 1;
 }
 #climb-level {
     position: absolute;
     transform: translate(72vw, 69vh);
     width: 15vw;
     height: 7vh;
-    z-index: 3;
+    z-index: 1;
 }
 
 #big-warning {

@@ -21,7 +21,7 @@ NetworkTables.addKeyListener('/SmartDashboard/robotTime', (key, value) => {
   seconds = (seconds < 10) ? '0'+seconds : seconds;
   ui.timer.style.color = `rgb(0, 200, 0)`;
   if (value < 135) ui.timer.style.color = `rgb(255, 255, 255)`;
-  if (value < 45) ui.timer.style.color = `rgb(244,215,66)`
+  if (value < 45) ui.timer.style.color = `rgb(244,215,66)`;
   if (value < 30) ui.timer.style.color = `rgb(200, 0, 0)`;
   ui.timer.innerHTML = minutes + ':' + seconds;
 });
@@ -65,20 +65,27 @@ NetworkTables.addKeyListener('/SmartDashboard/climb-level', (key, value) => {
   document.getElementById('current-command').innerHTML = value;
 });
 
-NetworkTables.addKeyListener('/SmartDashboard/crosshairs-target', (key, value) => {
-  document.getElementById('vline').setAttribute('x', value[0]*100+'%');
-  document.getElementById('hline').setAttribute('y', value[1]*100+'%');
-});
-
-NetworkTables.addKeyListener('/SmartDashboard/arm-state', (key, value) => {
-
-});
-
 NetworkTables.addKeyListener('/SmartDashboard/elbow-angle', (key, value) => {
   var angle = value;
   document.getElementById('arm').style = "transform: rotate(" + angle + "deg)";
   document.getElementById('claw').style = "transform: translate(" + Math.sin(angle * Math.PI / 180) * 50 + "px, " + -1 * Math.cos(angle * Math.PI / 180) * 50 + "px)";
+
+  var height = 0;
+  if (angle >= 225 && angle < 315) {
+    height = Math.sin((angle-225)*2 * Math.PI / 180) * 100;
+  } else if (angle >= 45 && angle < 135) {
+    height = 0;
+  } else if (angle < 45 && angle >= 315) {
+
+  } else if (angle >= 135 && angle < 225) {
+    height = 100;
+  }
+  document.getElementById('hline').setAttribute('y', height+'%');
 });
+
+var angle = 270;
+var height = Math.sin((angle-225)*0.5) * 100;
+document.getElementById('hline').setAttribute('y', height+'%');
 
 NetworkTables.addKeyListener('/SmartDashboard/claw-ir-sensor', (key, value) => {
   if (value === 'holding-hatch') {
