@@ -149,7 +149,7 @@ body.login #login {
     position: absolute;
     transform: translate(70vw, 10vh);
     width: 20vw;
-    height: 40vh;
+    height: 45vh;
 }
 #claw {
     position: absolute;
@@ -161,6 +161,9 @@ body.login #login {
 #arm {
     transform-origin: bottom center;
     /* transform: rotate(180deg); */
+}
+#intake {
+    transform-origin: center left;
 }
 #auton-chooser {
     position: relative;
@@ -215,9 +218,9 @@ body.login #login {
 }
 #current-command {
     position: absolute;
-    transform: translate(73vw, 52vh);
+    transform: translate(73vw, 56vh);
     width: 13vw;
-    height: 5vh;
+    height: 8vh;
     z-index: 1;
 }
 

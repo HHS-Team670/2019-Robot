@@ -104,6 +104,10 @@ NetworkTables.addKeyListener('/SmartDashboard/intake-status', (key, value) => {
   }
 });
 
+NetworkTables.addKeyListener('/SmartDashboard/intake-angle', (key, value) => {
+  document.getElementById('intake').style = "transform: rotate(" + -1 * value + "deg)";
+});
+
 NetworkTables.addKeyListener('/SmartDashboard/vision-status', (key, value) => {
   if (value === 'engaged') {
     document.getElementById('vision-status').style.fill = "rgb(0,255,0)";
@@ -127,9 +131,11 @@ NetworkTables.addKeyListener('/SmartDashboard/auton-status', (key, value) => {
   }
 });
 
-var angle = 45;
+var angle = 135;
 document.getElementById('arm').style = "transform: rotate(" + angle + "deg)";
-document.getElementById('claw').style = "transform: translate(" + Math.sin(angle * Math.PI / 180) * 50 + "px, " + -1 * Math.cos(angle * Math.PI / 180) * 50 + "px)";
+document.getElementById('claw').style = "transform: translate(" + Math.sin(angle * Math.PI / 180) * 60 + "px, " + -1 * Math.cos(angle * Math.PI / 180) * 60 + "px)";
+
+document.getElementById('intake').style = "transform: rotate(" + 0 + "deg)";
 
 document.getElementById('claw-status').style.fill = "rgb(65, 169, 244)";
 document.getElementById('claw-status').style.stroke = "rgb(65, 169, 244)";
