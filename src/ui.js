@@ -46,6 +46,10 @@ NetworkTables.addKeyListener('/SmartDashboard/current-command', (key, value) => 
   document.getElementById('current-command').innerHTML = value;
 });
 
+NetworkTables.addKeyListener('/SmartDashboard/climb-state', (key, value) => {
+  document.getElementById('current-command').innerHTML = value;
+});
+
 NetworkTables.addKeyListener('/SmartDashboard/crosshairs-target', (key, value) => {
   document.getElementById('vline').setAttribute('x', value[0]*100+'%');
   document.getElementById('hline').setAttribute('y', value[1]*100+'%');
