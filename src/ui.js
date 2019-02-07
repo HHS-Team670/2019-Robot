@@ -70,6 +70,10 @@ NetworkTables.addKeyListener('/SmartDashboard/crosshairs-target', (key, value) =
   document.getElementById('hline').setAttribute('y', value[1]*100+'%');
 });
 
+NetworkTables.addKeyListener('/SmartDashboard/arm-state', (key, value) => {
+
+});
+
 NetworkTables.addKeyListener('/SmartDashboard/elbow-angle', (key, value) => {
   var angle = value;
   document.getElementById('arm').style = "transform: rotate(" + angle + "deg)";

@@ -223,16 +223,6 @@ body.login #login {
     height: 8vh;
     z-index: 1;
 }
-
-#big-warning {
-    position: absolute;
-    background: red;
-    transform: translate(70vw, 10vh);
-    width: 30vw;
-    height: 20vh;
-    z-index: 3;
-}
-
 #climb-state {
     position: absolute;
     transform: translate(72vw, 62vh);
@@ -240,11 +230,19 @@ body.login #login {
     height: 6vh;
     z-index: 3;
 }
-
 #climb-level {
     position: absolute;
-    transform: translate(72vw, 68vh);
+    transform: translate(72vw, 69vh);
     width: 15vw;
     height: 6vh;
+    z-index: 3;
+}
+
+#big-warning {
+    position: absolute;
+    background: red;
+    transform: translate(70vw, 10vh);
+    width: 30vw;
+    height: 20vh;
     z-index: 3;
 }
