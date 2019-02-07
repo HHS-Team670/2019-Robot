@@ -232,3 +232,19 @@ body.login #login {
     height: 20vh;
     z-index: 3;
 }
+
+#climb-state {
+    position: absolute;
+    transform: translate(72vw, 58vh);
+    width: 15vw;
+    height: 7vh;
+    z-index: 3;
+}
+
+#climb-level {
+    position: absolute;
+    transform: translate(72vw, 65vh);
+    width: 15vw;
+    height: 7vh;
+    z-index: 3;
+}
