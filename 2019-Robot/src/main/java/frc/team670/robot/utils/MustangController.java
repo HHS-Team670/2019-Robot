@@ -3,7 +3,7 @@ package frc.team670.robot.utils;
 import edu.wpi.first.wpilibj.Joystick;
 
 public class MustangController extends Joystick {
-
+ 
    public enum DPadState {
         NEUTRAl, UP, UP_RIGHT, RIGHT, DOWN_RIGHT, DOWN, DOWN_LEFT, LEFT, UP_LEFT;
    }
@@ -122,6 +122,16 @@ public class MustangController extends Joystick {
 
     public int getPOVValue() {
         return super.getPOV();
+    }
+
+    /**
+     * Sets the rumble on the controller
+     * 
+     * @param power the desired power of the rumble [0, 1]
+     */
+    public void setRumble(double power){
+        super.setRumble(RumbleType.kLeftRumble, power);
+        super.setRumble(RumbleType.kRightRumble, power);
     }
 
     // gets angle of the DPad on the XBox controller pressed with increments of 45 degree angle. 
