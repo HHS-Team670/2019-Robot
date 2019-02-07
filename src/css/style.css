@@ -138,7 +138,7 @@ body.login #login {
   transform: translate(70vw, 70vh);
   z-index: 1;
 }
-#status-info {
+#warning-info {
     position: absolute;
     transform: translate(60vw, 80vh);
     width: 10vw;
@@ -235,16 +235,16 @@ body.login #login {
 
 #climb-state {
     position: absolute;
-    transform: translate(72vw, 58vh);
+    transform: translate(72vw, 62vh);
     width: 15vw;
-    height: 7vh;
+    height: 6vh;
     z-index: 3;
 }
 
 #climb-level {
     position: absolute;
-    transform: translate(72vw, 65vh);
+    transform: translate(72vw, 68vh);
     width: 15vw;
-    height: 7vh;
+    height: 6vh;
     z-index: 3;
 }
