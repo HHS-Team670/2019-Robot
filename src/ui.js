@@ -54,7 +54,6 @@ NetworkTables.addKeyListener('/SmartDashboard/robotState', (key, value) => {
 });
 
 document.getElementById('auton-chooser').style.display = "none";
-document.getElementById('robot-diagram').style.display = "inline";
 
 var timeSinceWarningFlashed = 0;
 
