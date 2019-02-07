@@ -46,27 +46,71 @@ NetworkTables.addKeyListener('/SmartDashboard/elbow-angle', (key, value) => {
 });
 
 NetworkTables.addKeyListener('/SmartDashboard/claw-ir-sensor', (key, value) => {
-  var strokeColor, fillColor;
-  if (value) {
-    document.getElementById('claw').style.stroke = "rgb(0,255,0)";
-    document.getElementById('claw-status').style.fill = "rgb(0,255,0)";
+  if (value === 'holding-hatch') {
+    document.getElementById('claw').style.stroke = "rgb(65, 169, 244)";
+    document.getElementById('claw-status').style.fill = "rgb(65, 169, 244)";
+    document.getElementById('claw-status').style.stroke = "rgb(65, 169, 244)";
+  } else if (value === 'open') {
+    document.getElementById('claw').style.stroke = "rgb(255,255,255)";
+    document.getElementById('claw-status').style.fill = "none";
+    document.getElementById('claw-status').style.stroke = "rgb(255,255,255)";
+  } else if (value === 'holding-ball') {
+    document.getElementById('claw').style.stroke = "rgb(244, 151, 65)";
+    document.getElementById('claw-status').style.fill = "rgb(244, 151, 65)";
+    document.getElementById('claw-status').style.stroke = "rgb(244, 151, 65)";
+  } else if (value === 'closed') {
+    document.getElementById('claw').style.stroke = "rgb(65, 169, 244)";
+    document.getElementById('claw-status').style.fill = "rgb(65, 169, 244)";
+    document.getElementById('claw-status').style.stroke = "rgb(65, 169, 244)";
   }
-  else {
-    fillColor = "rgb(255,255,255)";
-  }
-  document.getElementById('claw').style.stroke = color;
-  document.getElementById('claw-status').style.fill = color;
-})
+});
 
-var angle = 135;
+NetworkTables.addKeyListener('/SmartDashboard/intake-status', (key, value) => {
+  if (value === 'running-in') {
+    document.getElementById('intake-status').style.fill = "rgb(0,255,0)";
+    document.getElementById('intake-status').style.stroke = "rgb(0,255,0)";
+  } else if (value === 'running-out') {
+    document.getElementById('intake-status').style.fill = "rgb(255,0,0)";
+    document.getElementById('intake-status').style.stroke = "rgb(255,0,0)";
+  } else if (value === 'intake-ir-triggered') {
+    document.getElementById('intake-status').style.fill = "rgb(244, 160, 65)";
+    document.getElementById('intake-status').style.stroke = "rgb(244, 160, 65)";
+  } else {
+    document.getElementById('intake-status').style.fill = "none";
+    document.getElementById('intake-status').style.stroke = "rgb(255,255,255)";
+  }
+});
+
+NetworkTables.addKeyListener('/SmartDashboard/vision-status', (key, value) => {
+  if (value === 'engaged') {
+    document.getElementById('vision-status').style.fill = "rgb(0,255,0)";
+    document.getElementById('vision-status').style.stroke = "rgb(0,255,0)";
+  } else if (value === 'error') {
+    document.getElementById('vision-status').style.fill = "rgb(255,0,0)";
+    document.getElementById('vision-status').style.stroke = "rgb(255,0,0)";
+  } else {
+    document.getElementById('vision-status').style.fill = "none";
+    document.getElementById('vision-status').style.stroke = "rgb(255,255,255)";
+  }
+});
+
+NetworkTables.addKeyListener('/SmartDashboard/auton-status', (key, value) => {
+  if (value === 'running') {
+    document.getElementById('auton-status').style.fill = "rgb(0,255,0)";
+    document.getElementById('auton-status').style.stroke = "rgb(0,255,0)";
+  } else {
+    document.getElementById('auton-status').style.fill = "none";
+    document.getElementById('auton-status').style.stroke = "rgb(255,255,255)";
+  }
+});
+
+var angle = 45;
 document.getElementById('arm').style = "transform: rotate(" + angle + "deg)";
 document.getElementById('claw').style = "transform: translate(" + Math.sin(angle * Math.PI / 180) * 50 + "px, " + -1 * Math.cos(angle * Math.PI / 180) * 50 + "px)";
 
-var color = "rgb(255,255,255)";
-document.getElementById('claw').style.stroke = color;
-document.getElementById('claw-status').style.fill = "none";
-document.getElementById('claw-status').style.stroke = color;
-
+document.getElementById('claw-status').style.fill = "rgb(65, 169, 244)";
+document.getElementById('claw-status').style.stroke = "rgb(65, 169, 244)";
+document.getElementById('claw').style.stroke = "rgb(65, 169, 244)";
 
 var keys = [];
 
