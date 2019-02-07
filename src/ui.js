@@ -12,6 +12,9 @@ var ui = {
     }
 };
 
+var date = new Date();
+document.getElementById('big-warning').style.display = "none";
+
 NetworkTables.addKeyListener('/SmartDashboard/cameraSource', (key, value) => {
   if (value == 'next') {
     window.webContents.reload();
@@ -26,9 +29,18 @@ NetworkTables.addKeyListener('/SmartDashboard/robotState', (key, value) => {
 document.getElementById('auton-chooser').style.display = "none";
 document.getElementById('robot-diagram').style.display = "inline";
 
+var timeSinceWarningFlashed = 0;
+
 NetworkTables.addKeyListener('/SmartDashboard/sensor-error', (key, value) => {
+  document.getElementById('big-warning').style.display = "inline";
   document.getElementById('warnings').innerHTML += (value + "\n");
+   timeSinceWarningFlashed = date.getTime();
 });
+
+
+if(date.getTime() - timeSinceWarningFlashed > 1000){
+  document.getElementById('big-warning').style.display = "none";
+}
 
 NetworkTables.addKeyListener('/SmartDashboard/current-command', (key, value) => {
   document.getElementById('current-command').innerHTML = value;
