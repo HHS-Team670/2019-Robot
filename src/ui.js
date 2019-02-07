@@ -42,7 +42,7 @@ document.getElementById('robot-diagram').style.display = "inline";
 
 var timeSinceWarningFlashed = 0;
 
-NetworkTables.addKeyListener('/SmartDashboard/sensor-error', (key, value) => {
+NetworkTables.addKeyListener('/SmartDashboard/warning', (key, value) => {
   document.getElementById('big-warning').style.display = "inline";
   document.getElementById('warnings').innerHTML += (value + "\n");
    timeSinceWarningFlashed = date.getTime();
