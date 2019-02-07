@@ -60,7 +60,7 @@ var timeSinceWarningFlashed = 0;
 NetworkTables.addKeyListener('/SmartDashboard/warning', (key, value) => {
   document.getElementById('big-warning').style.display = "inline";
   document.getElementById('warnings').innerHTML += (value + "\n");
-   timeSinceWarningFlashed = date.getTime();
+  timeSinceWarningFlashed = date.getTime();
 });
 
 //Time is stored with prompt from Network Tables Listener, and disappears after a second
@@ -73,11 +73,11 @@ NetworkTables.addKeyListener('/SmartDashboard/current-command', (key, value) => 
 });
 
 NetworkTables.addKeyListener('/SmartDashboard/climb-state', (key, value) => {
-  document.getElementById('current-command').innerHTML = value;
+  document.getElementById('climb-state-text').innerHTML = value;
 });
 
 NetworkTables.addKeyListener('/SmartDashboard/climb-level', (key, value) => {
-  document.getElementById('current-command').innerHTML = value;
+  document.getElementById('climb-level-text').innerHTML = value;
 });
 
 NetworkTables.addKeyListener('/SmartDashboard/elbow-angle', (key, value) => {
