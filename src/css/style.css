@@ -140,16 +140,16 @@ body.login #login {
 }
 #warning-info {
     position: absolute;
-    transform: translate(60vw, 85vh);
-    width: 10vw;
-    height: 20vh;
+    transform: translate(60vw, 90vh);
+    width: 40vw;
+    height: 10vh;
     z-index: 1;
 }
 #robot-diagram {
     position: absolute;
     transform: translate(75vw, 10vh);
     width: 25vw;
-    height: 60vh;
+    height: 55vh;
 }
 #claw {
     position: absolute;
@@ -218,7 +218,7 @@ body.login #login {
 }
 #current-command {
     position: absolute;
-    transform: translate(81vw, 73vh);
+    transform: translate(81vw, 68vh);
     width: 13vw;
     height: 6vh;
     z-index: 1;
