@@ -41,9 +41,13 @@
     </div>
 
     <svg id="status-info">
-      <text id="arm-state" x="50%" y="0%" style="text-anchor: middle">Arm State</text>
+      <text id="arm-state" x="50%" y="20%" style="text-anchor: middle">Arm State</text>
       <text id="current-command" x="50%" y="33%" style="text-anchor: middle">Current Command</text>
       <text id="warnings" x="50%" y="66%" style="text-anchor: middle">Warnings</text>
+    </svg>
+
+    <svg id="big-warning">
+      <text id="big-warning-text" x="50%" y="50%" style="text-anchor: middle; font:bold 60px sans-serif">WARNING!</text>
     </svg>
 
     <svg id="robot-diagram">
@@ -58,6 +62,12 @@
       <circle cx="75%" cy="95%" r="7%"/>
     </svg>
 
+    <svg id="current-command">
+      <text id="current-command-text" x="50%" y="10%" style="text-anchor: middle">Current Command </text>
+    </svg>
+
+
+    
     <div id="auton-chooser">
       <form id="auto-chooser">
       <fieldset id="start-direction">
@@ -127,6 +137,8 @@
     <script src="connection.js"></script>
     <script src="ui.js"></script>
     <script src="components/multicamera.js"></script>
+
+
 
 </body>
 

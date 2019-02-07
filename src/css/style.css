@@ -203,3 +203,19 @@ body.login #login {
     transform: translate(0vw, 0vh);
     stroke-width: 0.25px;
 }
+#current-command {
+    position: absolute;
+    transform: translate(73vw, 52vh);
+    width: 13vw;
+    height: 5vh;
+    z-index: 1;
+}
+
+#big-warning {
+    position: absolute;
+    background: red;
+    transform: translate(70vw, 10vh);
+    width: 30vw;
+    height: 20vh;
+    z-index: 3;
+}
