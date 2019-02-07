@@ -45,6 +45,29 @@ NetworkTables.addKeyListener('/SmartDashboard/elbow-angle', (key, value) => {
   document.getElementById('claw').style = "transform: translate(" + Math.sin(angle * Math.PI / 180) * 50 + "px, " + -1 * Math.cos(angle * Math.PI / 180) * 50 + "px)";
 });
 
+NetworkTables.addKeyListener('/SmartDashboard/claw-ir-sensor', (key, value) => {
+  var strokeColor, fillColor;
+  if (value) {
+    document.getElementById('claw').style.stroke = "rgb(0,255,0)";
+    document.getElementById('claw-status').style.fill = "rgb(0,255,0)";
+  }
+  else {
+    fillColor = "rgb(255,255,255)";
+  }
+  document.getElementById('claw').style.stroke = color;
+  document.getElementById('claw-status').style.fill = color;
+})
+
+var angle = 135;
+document.getElementById('arm').style = "transform: rotate(" + angle + "deg)";
+document.getElementById('claw').style = "transform: translate(" + Math.sin(angle * Math.PI / 180) * 50 + "px, " + -1 * Math.cos(angle * Math.PI / 180) * 50 + "px)";
+
+var color = "rgb(255,255,255)";
+document.getElementById('claw').style.stroke = color;
+document.getElementById('claw-status').style.fill = "none";
+document.getElementById('claw-status').style.stroke = color;
+
+
 var keys = [];
 
 var allKeys = '';
