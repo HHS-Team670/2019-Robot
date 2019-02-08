@@ -14,8 +14,15 @@ var ui = {
 
 var date = new Date();
 document.getElementById('big-warning').style.display = "none";
+
 document.getElementById('climb-state-text').style.stroke = `rgb(90, 90, 90)`;
 document.getElementById('climb-level-text').style.stroke = `rgb(90, 90, 90)`;
+
+var angle = 70;
+document.getElementById('arm').style = "transform: rotate(" + angle + "deg)";
+document.getElementById('claw').style = "transform: translate(" + Math.sin(angle * Math.PI / 180) * 60 + "px, " + -1 * Math.cos(angle * Math.PI / 180) * 60 + "px)";
+document.getElementById('intake').style = "transform: rotate(" + 0 + "deg)";
+
 
 NetworkTables.addKeyListener('/SmartDashboard/robotTime', (key, value) => {
   var minutes = ~~(value / 60); // converts to integer
@@ -49,14 +56,13 @@ NetworkTables.addKeyListener('/SmartDashboard/robotState', (key, value) => {
 });
 
 document.getElementById('auton-chooser').style.display = "none";
-document.getElementById('robot-diagram').style.display = "inline";
 
 var timeSinceWarningFlashed = 0;
 
 NetworkTables.addKeyListener('/SmartDashboard/warning', (key, value) => {
   document.getElementById('big-warning').style.display = "inline";
   document.getElementById('warnings').innerHTML += (value + "\n");
-   timeSinceWarningFlashed = date.getTime();
+  timeSinceWarningFlashed = date.getTime();
 });
 
 //Time is stored with prompt from Network Tables Listener, and disappears after a second
@@ -69,11 +75,11 @@ NetworkTables.addKeyListener('/SmartDashboard/current-command', (key, value) => 
 });
 
 NetworkTables.addKeyListener('/SmartDashboard/climb-state', (key, value) => {
-  document.getElementById('current-command').innerHTML = value;
+  document.getElementById('climb-state-text').innerHTML = value;
 });
 
 NetworkTables.addKeyListener('/SmartDashboard/climb-level', (key, value) => {
-  document.getElementById('current-command').innerHTML = value;
+  document.getElementById('climb-level-text').innerHTML = value;
 });
 
 NetworkTables.addKeyListener('/SmartDashboard/elbow-angle', (key, value) => {
@@ -83,20 +89,16 @@ NetworkTables.addKeyListener('/SmartDashboard/elbow-angle', (key, value) => {
 
   var height = 0;
   if (angle >= 225 && angle < 315) {
-    height = Math.sin((angle-225)*2 * Math.PI / 180) * 100;
+    var height = 50 + Math.cos((angle-225)*2 * Math.PI / 180) * 50;
   } else if (angle >= 45 && angle < 135) {
     height = 0;
   } else if (angle < 45 && angle >= 315) {
-
+    var height = 50 - Math.cos((angle-45)*2 * Math.PI / 180) * 50;
   } else if (angle >= 135 && angle < 225) {
     height = 100;
   }
   document.getElementById('hline').setAttribute('y', height+'%');
 });
-
-var angle = 270;
-var height = Math.sin((angle-225)*0.5) * 100;
-document.getElementById('hline').setAttribute('y', height+'%');
 
 NetworkTables.addKeyListener('/SmartDashboard/claw-ir-sensor', (key, value) => {
   if (value === 'holding-hatch') {
@@ -160,16 +162,6 @@ NetworkTables.addKeyListener('/SmartDashboard/auton-status', (key, value) => {
     document.getElementById('auton-status').style.stroke = "rgb(255,255,255)";
   }
 });
-
-var angle = 135;
-document.getElementById('arm').style = "transform: rotate(" + angle + "deg)";
-document.getElementById('claw').style = "transform: translate(" + Math.sin(angle * Math.PI / 180) * 60 + "px, " + -1 * Math.cos(angle * Math.PI / 180) * 60 + "px)";
-
-document.getElementById('intake').style = "transform: rotate(" + 0 + "deg)";
-
-document.getElementById('claw-status').style.fill = "rgb(65, 169, 244)";
-document.getElementById('claw-status').style.stroke = "rgb(65, 169, 244)";
-document.getElementById('claw').style.stroke = "rgb(65, 169, 244)";
 
 var keys = [];
 
