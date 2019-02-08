@@ -332,7 +332,7 @@ public class Arm {
   // NONE OF THESE CAN HAVE THE SAME COORDINATES OR EVERYTHING BREAKS IN THE A STAR SEARCH
   private class Neutral extends ArmState {
     private Neutral(Arm arm, BaseIntake intake) {
-      super(0, 0, 0, false, new ArmTransition[] {
+      super(140.067, 50.067, 0, false, new ArmTransition[] {
       new CommonTransition(LegalState.NEUTRAL, LegalState.START_BALL, arm, intake),
       new CommonTransition(LegalState.NEUTRAL, LegalState.START_HATCH, arm, intake),
       new CommonTransition(LegalState.NEUTRAL, LegalState.START_EMPTY, arm, intake),
@@ -376,7 +376,7 @@ public class Arm {
 
   private class GrabBallGroundBack extends ArmState {
     private GrabBallGroundBack(Arm arm, BaseIntake intake) {
-      super(0, 6, 0, false, new ArmTransition[] { new CommonTransition(LegalState.GRAB_BALL_GROUND_BACK, LegalState.NEUTRAL, arm, intake)});
+      super(-119.492, -29.492, 0, false, new ArmTransition[] { new CommonTransition(LegalState.GRAB_BALL_GROUND_BACK, LegalState.NEUTRAL, arm, intake)});
     }
   }
 
