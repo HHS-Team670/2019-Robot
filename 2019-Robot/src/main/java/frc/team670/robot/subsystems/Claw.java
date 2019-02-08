@@ -22,7 +22,10 @@ import frc.team670.robot.constants.RobotMap;
  */
 public class Claw extends Subsystem {
 
-  private static double PULSE_DURATION = 0.4; // In seconds
+  /** The amount of time to delay to allow the pneumatics to move in seconds */
+  public static final double TIME_TO_MOVE = 0.15;
+
+  private static final double PULSE_DURATION = 0.4; // In seconds
   public static final double MAX_CLAW_OPEN_DIAMETER = 19.5; //Set distance
   public static final double CLAW_CLOSED_DISTANCE = 0; //Set distance
   // Used to find lowest point on arm (so that intake doesn't crash into it). If claw is angled up, the extension tip is lowest point.

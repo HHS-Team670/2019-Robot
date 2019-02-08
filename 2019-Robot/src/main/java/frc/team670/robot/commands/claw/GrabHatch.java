@@ -7,19 +7,19 @@
 
 package frc.team670.robot.commands.claw;
 
-import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj.command.TimedCommand;
 import frc.team670.robot.subsystems.Claw;
 import frc.team670.robot.utils.Logger;
 
 /**
  * Grabs the hatch by opening the intake hard.
  */
-public class GrabHatch extends InstantCommand {
+public class GrabHatch extends TimedCommand {
   
   private Claw claw;
 
   public GrabHatch(Claw claw) {
-    super();
+    super(Claw.TIME_TO_MOVE);
     this.claw = claw;
     requires(claw);
   }
@@ -29,6 +29,11 @@ public class GrabHatch extends InstantCommand {
   protected void initialize() {
     claw.openClaw(false);
     Logger.consoleLog();
+  }
+
+  @Override
+  protected boolean isFinished() {
+    return super.isFinished();
   }
 
 }
