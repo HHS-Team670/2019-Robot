@@ -14,8 +14,8 @@ var ui = {
 
 var date = new Date();
 document.getElementById('big-warning').style.display = "none";
-document.getElementById('climb-state-text').style.stroke = `rgb(60, 60, 60)`;
-document.getElementById('climb-level-text').style.stroke = `rgb(60, 60, 60)`;
+document.getElementById('climb-state-text').style.stroke = `rgb(90, 90, 90)`;
+document.getElementById('climb-level-text').style.stroke = `rgb(90, 90, 90)`;
 
 NetworkTables.addKeyListener('/SmartDashboard/robotTime', (key, value) => {
   var minutes = ~~(value / 60); // converts to integer
