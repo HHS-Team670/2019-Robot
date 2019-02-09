@@ -44,11 +44,11 @@ public class Intake extends BaseIntake {
     intakeCoord = new Point2D.Double();
 
     enablePercentOutput();
-    enableBaseMotionMagic();
+    setMotionMagicPIDValues();
   }
 
   // May need to set tolerance
-  private void enableBaseMotionMagic() {
+  private void setMotionMagicPIDValues() {
     rotatorTalon.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
     rotatorTalon.config_kF(kSlotMotionMagic, kF, kTimeoutMs);
     rotatorTalon.config_kP(kSlotMotionMagic, kP, kTimeoutMs);

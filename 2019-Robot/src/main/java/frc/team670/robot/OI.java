@@ -13,6 +13,8 @@ import frc.team670.robot.commands.arm.joystick.FlipJoystickArmControl;
 import frc.team670.robot.commands.cameras.FlipCamera;
 import frc.team670.robot.commands.drive.teleop.FlipDriveDirection;
 import frc.team670.robot.commands.sensors.ZeroNavX;
+import frc.team670.robot.commands.tuning.DecreaseMeasurementOutput;
+import frc.team670.robot.commands.tuning.IncreaseMeasurementOutput;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.utils.MustangController;
 import frc.team670.robot.utils.MustangController.XboxButtons;
@@ -60,18 +62,24 @@ public class OI {
   private JoystickButton flipCameras;
   private JoystickButton flipArmDriverControlState;
 
+  private JoystickButton incFeedForward, decFeedForward, measureFeedForward;
+
 
   public OI() {
-    driverController = new MustangController(RobotMap.DRIVER_CONTROLLER_PORT);
-    operatorController = new MustangController(RobotMap.OPERATOR_CONTROLLER_PORT);
-    toggleReverseDrive = new JoystickButton(driverController, XboxButtons.LEFT_BUMPER);
-    toggleReverseDrive.whenPressed(new FlipDriveDirection());
-    flipCameras = new JoystickButton(driverController, XboxButtons.B);
-    flipCameras.whenPressed(new FlipCamera());
-    flipArmDriverControlState = new JoystickButton(operatorController, XboxButtons.RIGHT_JOYSTICK_BUTTON);
-    flipArmDriverControlState.whenPressed(new FlipJoystickArmControl());
-    resetNavX = new JoystickButton(driverController, XboxButtons.A);
-    resetNavX.whenPressed(new ZeroNavX());
+    // driverController = new MustangController(RobotMap.DRIVER_CONTROLLER_PORT);
+    // operatorController = new MustangController(RobotMap.OPERATOR_CONTROLLER_PORT);
+    // toggleReverseDrive = new JoystickButton(driverController, XboxButtons.LEFT_BUMPER);
+    // toggleReverseDrive.whenPressed(new FlipDriveDirection());
+    // flipCameras = new JoystickButton(driverController, XboxButtons.B);
+    // flipCameras.whenPressed(new FlipCamera());
+    // flipArmDriverControlState = new JoystickButton(operatorController, XboxButtons.RIGHT_JOYSTICK_BUTTON);
+    // flipArmDriverControlState.whenPressed(new FlipJoystickArmControl());
+    // resetNavX = new JoystickButton(driverController, XboxButtons.A);
+    // resetNavX.whenPressed(new ZeroNavX());
+    incFeedForward = new JoystickButton(driverController, XboxButtons.START);
+    incFeedForward.whenPressed(new IncreaseMeasurementOutput());
+    decFeedForward = new JoystickButton(driverController, XboxButtons.BACK);
+    decFeedForward.whenPressed(new DecreaseMeasurementOutput());
   }
 
   public MustangController getDriverController() {
