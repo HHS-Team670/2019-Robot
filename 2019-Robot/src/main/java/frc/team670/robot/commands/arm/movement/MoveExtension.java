@@ -19,10 +19,10 @@ import frc.team670.robot.subsystems.extension.Extension;
  */
 public class MoveExtension extends Command {
 
-  private static final double DISTANCE_TOLERANCE = 10;
+  private static final double DISTANCE_TOLERANCE = 0.5;
 
   private BaseExtension extension;
-  private double extensionSetpointInTicks;
+  private double extensionSetpointInInches;
   private long executeCount;
   
 
@@ -31,18 +31,18 @@ public class MoveExtension extends Command {
    * @param wrist The Wrist to move. This could be the actual wrist from Robot, or a TestWrist
    * @param distance The absolute distance to move to [0, farthest extension possible] moving outwards with 0 at no extension.
    */
-  public MoveExtension(BaseExtension extension, double distance) {
+  public MoveExtension(BaseExtension extension, double extensionSetpointInInches) {
     this.extension = extension;
+    this.extensionSetpointInInches = extensionSetpointInInches;
     requires(extension);
-    extensionSetpointInTicks = Extension.convertExtensionInchesToTicks(distance);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    extension.setMotionMagicSetpoint(extensionSetpointInTicks);
+    extension.setMotionMagicSetpointInInches(extensionSetpointInInches);
     executeCount = 0;
-    Logger.consoleLog("extensionSetpointInTicks: %s", extensionSetpointInTicks);
+    Logger.consoleLog("extensionSetpointInInches: %s", extensionSetpointInInches);
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -54,13 +54,13 @@ public class MoveExtension extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return MathUtils.isWithinTolerance(extension.getLengthTicks(), extensionSetpointInTicks, DISTANCE_TOLERANCE);
+    return MathUtils.isWithinTolerance(extension.getLengthInches(), extensionSetpointInInches, DISTANCE_TOLERANCE);
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Logger.consoleLog("extensionSetpointInTicks: %s, endingPositionInTicks: %s", extensionSetpointInTicks, extension.getLengthTicks());
+    Logger.consoleLog("extensionSetpointInInches: %s, endingPositionInInches: %s", extensionSetpointInInches, extension.getLengthInches());
   }
 
   // Called when another command which requires one or more of the same

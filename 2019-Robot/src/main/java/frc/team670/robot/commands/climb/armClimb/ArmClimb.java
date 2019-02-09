@@ -34,6 +34,7 @@ public class ArmClimb extends Command {
   private Arm arm;
 
   public static final int CLIMB_CURRENT = 10; // TODO figure required limited current
+  public static final double LEVEL_THREE_PLATFORM_HEIGHT_IN_INCHES = 19;
 
   /**
    * Prepares the ArmClimb method allowing the arm to drag the robot forward.
@@ -55,25 +56,23 @@ public class ArmClimb extends Command {
 
     extension.enableExtensionPIDController();
 
-    heightInInches = climber.getFrontTalonPositionInInches() + Arm.ARM_HEIGHT_IN_INCHES + RobotConstants.DRIVEBASE_TO_GROUND; // TODO get the actual method
+    heightInInches = climber.getFrontTalonPositionInInches() + Arm.ARM_HEIGHT_IN_INCHES + RobotConstants.DRIVEBASE_TO_GROUND - LEVEL_THREE_PLATFORM_HEIGHT_IN_INCHES;
 
     holdElbowDownWithCurrentLimit(CLIMB_CURRENT); // Brings arm down
 
-    Logger.consoleLog("startHeightOfRobot%s, startAngleOfElbow%s ", heightInInches, elbow.getAngle());
+    Logger.consoleLog("startHeightOfRobot%s, startAngleOfElbow%s ", heightInInches, elbow.getAngleInDegrees());
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
 
-    double deltaSetPointInInches = (heightInInches/(Math.cos(Math.toDegrees(elbow.getAngle())))) - Arm.FIXED_ARM_LENGTH_IN_INCHES;
-
-    int deltaSetPointInTicks = Extension.convertExtensionInchesToTicks(deltaSetPointInInches);
+    double deltaSetPointInInches = (heightInInches/(Math.cos(Math.toRadians(elbow.getAngleInDegrees())))) - Arm.FIXED_ARM_LENGTH_IN_INCHES;
 
     // TODO make EXTENSION_ENCODER_OUT the actual extension value of Extension at the ReadyToClimb ArmState
-    extension.setPIDControllerSetpoint(Extension.EXTENSION_ENCODER_OUT - deltaSetPointInTicks); // Changes the
+    extension.setPIDControllerSetpointInInches(Extension.EXTENSION_OUT_IN_INCHES - deltaSetPointInInches); // Changes the
                                                                                                     // setpoint
-    Logger.consoleLog("heightOfRobot%s, angleOfElbow%s, extensionSetpoint%s ", heightInInches, elbow.getAngle(), Extension.EXTENSION_ENCODER_OUT - deltaSetPointInTicks);
+    Logger.consoleLog("heightOfRobot%s, angleOfElbow%s, extensionSetpoint%s ", heightInInches, elbow.getAngleInDegrees(),Extension.EXTENSION_OUT_IN_INCHES - deltaSetPointInInches);
 
     loggingIterationCounter++;
   }
@@ -86,7 +85,7 @@ public class ArmClimb extends Command {
       return true;
 
     // If arm pulls in too much and no longer makes contact with surface
-    if (extension.getLengthTicks() < (Math.cos(elbow.getAngle() / heightInInches))) {
+    if (extension.getLengthInches() < (heightInInches / (Math.cos(Math.toRadians((elbow.getAngleInDegrees())))))) {
       return true;
     }
 
@@ -97,7 +96,7 @@ public class ArmClimb extends Command {
   @Override
   protected void end() {
     releaseElbow();
-    Logger.consoleLog("endHeightOfRobot%s, endAngleOfElbow%s ", heightInInches, elbow.getAngle());
+    Logger.consoleLog("endHeightOfRobot%s, endAngleOfElbow%s ", heightInInches, elbow.getAngleInDegrees());
   }
 
   // Called when another command which requires one or more of the same

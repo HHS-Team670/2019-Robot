@@ -7,19 +7,19 @@
 
 package frc.team670.robot.commands.claw;
 
-import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj.command.TimedCommand;
 import frc.team670.robot.subsystems.Claw;
 import frc.team670.robot.utils.Logger;
 
 /**
  * Picks up the ball using soft close
  */
-public class PickupBall extends InstantCommand {
+public class PickupBall extends TimedCommand {
  
   private Claw claw;
 
   public PickupBall(Claw claw) {
-    super();
+    super(Claw.TIME_TO_MOVE);
     this.claw = claw;
     requires(claw);
   }
@@ -29,6 +29,11 @@ public class PickupBall extends InstantCommand {
   protected void initialize() {
     claw.closeClaw(true);
     Logger.consoleLog();
+  }
+
+  @Override
+  protected boolean isFinished() {
+    return super.isFinished();
   }
 
 }

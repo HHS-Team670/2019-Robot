@@ -46,7 +46,7 @@ public class ElbowForwardReset extends Command {
    */
   @Override
   protected void end() {
-    elbow.zero(Elbow.MAX_ELBOW_FORWARD);
+    elbow.setQuadratureEncoder(Elbow.MAX_ELBOW_FORWARD);
     elbow.setOutput(0);
     Logger.consoleLog();
   }

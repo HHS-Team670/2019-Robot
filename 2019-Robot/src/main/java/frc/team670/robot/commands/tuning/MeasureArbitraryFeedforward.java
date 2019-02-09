@@ -10,35 +10,36 @@ package frc.team670.robot.commands.tuning;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.subsystems.RotatingSubsystem;
+import frc.team670.robot.subsystems.TunableSubsystem;
 
 public class MeasureArbitraryFeedforward extends Command {
 
-  private RotatingSubsystem rotatingSubsystem;
+  private TunableSubsystem tunableSubsystem;
   public static double output;
 
-  public MeasureArbitraryFeedforward(RotatingSubsystem rotatingSubsystem) {
-    this.rotatingSubsystem = rotatingSubsystem;
-    if (rotatingSubsystem.getTimeout())
+  public MeasureArbitraryFeedforward(TunableSubsystem tunableSubsystem) {
+    this.tunableSubsystem = tunableSubsystem;
+    if (tunableSubsystem.getTimeout())
       setTimeout(0.35);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    rotatingSubsystem.enablePercentOutput();
+    tunableSubsystem.enablePercentOutput();
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    rotatingSubsystem.rotatePercentOutput(output); 
+    tunableSubsystem.rotatePercentOutput(output); 
     SmartDashboard.putNumber("Intake Movement Output", output);
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    if (rotatingSubsystem.getTimeout())
+    if (tunableSubsystem.getTimeout())
       return isTimedOut();
     else 
       return false;
@@ -47,7 +48,7 @@ public class MeasureArbitraryFeedforward extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    rotatingSubsystem.enablePercentOutput();
+    tunableSubsystem.enablePercentOutput();
   }
 
   // Called when another command which requires one or more of the same

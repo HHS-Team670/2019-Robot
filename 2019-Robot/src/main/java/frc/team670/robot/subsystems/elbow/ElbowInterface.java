@@ -5,9 +5,9 @@ package frc.team670.robot.subsystems.elbow;
  */
 public interface ElbowInterface {
 
-    public void setMotionMagicSetpoint(double elbowSetpointInTicks);
+    public void setMotionMagicSetpointAngle(double elbowSetpointAngle);
 
-    public double getAngle();
+    public double getAngleInDegrees();
 
 /**
    * Sets the output for the elbow motor 
@@ -31,8 +31,6 @@ public interface ElbowInterface {
    * Resets the currnet limit to its normal value
    */
   public void setNormalCurrentLimit();
-
-  public int getPositionTicks();
   
   /**
    * Sets the SensorCollection encoder value to encoderValue (use this to reset the encoder when at a known position
@@ -47,12 +45,7 @@ public interface ElbowInterface {
   /**
    * Sets the SensorCollection encoder value to encoderValue (use this to reset the encoder when at a known position)
    */
-  public void zero(double encoderValue);
-
-  /**
-   * @return the current encoder value of the main elbow motor
-   */
-  public double getEncoderValue();
+  public void setQuadratureEncoder(double encoderValue);
 
   /**
    * Sets the elbow to Current-based PID Control

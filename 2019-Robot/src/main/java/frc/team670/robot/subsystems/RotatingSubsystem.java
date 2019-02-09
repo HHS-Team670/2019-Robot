@@ -9,6 +9,7 @@ package frc.team670.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
+import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -16,30 +17,54 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 /**
  * Superclass for intake, elbow, wrist, and extension
  */
-public abstract class RotatingSubsystem extends Subsystem {
-    public static final int NO_SETPOINT = 99999;
+public abstract class RotatingSubsystem extends Subsystem implements TunableSubsystem {
+    protected static final int NO_SETPOINT = 99999;
     protected TalonSRX rotatorTalon;
     protected int setpoint;
     protected boolean timeout;
-    public double ARBITRARY_FEEDFORWARD_CONSTANT = 0.3; // original 0.22 for one clamp
-    public final int FORWARD_SOFT_LIMIT = 0, REVERSE_SOFT_LIMIT = 0; // TODO figure out the values in rotations
+    protected double ARBITRARY_FEEDFORWARD_CONSTANT;
 
-    private static final int TICKS_PER_ROTATION = 4096;
+    protected SensorCollection rotatorSensorCollection;
+    protected static final int TICKS_PER_ROTATION = 4096;
 
-    /**
-     * Sets the main talon for this subsystem
-     */
-    public void setTalon(TalonSRX rotatorTalon) {
-        this.rotatorTalon = rotatorTalon;
+    public RotatingSubsystem(TalonSRX rotatorTalon, double arbitrary_feedforward_constant, int forward_soft_limit, int reverse_soft_limit, boolean timeout, int QUAD_ENCODER_MIN, int QUAD_ENCODER_MAX, int continuous_current_limit, int peak_current_limit) {
+        // For testing purposes
+        if (rotatorTalon != null) {
+            this.rotatorTalon = rotatorTalon;
+            this.rotatorSensorCollection = rotatorTalon.getSensorCollection();
+            ARBITRARY_FEEDFORWARD_CONSTANT = arbitrary_feedforward_constant;
+            this.timeout = timeout;
+
+            setpoint = RotatingSubsystem.NO_SETPOINT;
+
+            int pulseWidthPos = getRotatorPulseWidth() & 4095;
+
+            if (pulseWidthPos < QUAD_ENCODER_MIN) {
+                pulseWidthPos += 4096;
+            }
+            if (pulseWidthPos > QUAD_ENCODER_MAX) {
+                pulseWidthPos -= 4096;
+            }
+
+            rotatorSensorCollection.setQuadraturePosition(pulseWidthPos, 0);
+
+            rotatorTalon.configContinuousCurrentLimit(continuous_current_limit);
+            rotatorTalon.configPeakCurrentLimit(peak_current_limit);
+            rotatorTalon.enableCurrentLimit(true);
+
+            // These thresholds stop the motor when limit is reached
+            rotatorTalon.configForwardSoftLimitThreshold(forward_soft_limit);
+            rotatorTalon.configReverseSoftLimitThreshold(reverse_soft_limit);
+
+            // Enable Safety Measures
+            rotatorTalon.configForwardSoftLimitEnable(true);
+            rotatorTalon.configReverseSoftLimitEnable(true);
+        }
     }
 
-    /**
-     * Returns the main talon for this subsystem
-     */
-    public TalonSRX getTalon(){
-        return rotatorTalon;
+    public void zeroPulseWidthEncoder() {
+        rotatorSensorCollection.setPulseWidthPosition(0, 0);
     }
-
 
     /**
      * Gets the boolean to decide whether or not to pulse or stall the motor
@@ -75,30 +100,34 @@ public abstract class RotatingSubsystem extends Subsystem {
      */
     public void updateArbitraryFeedForward(){
         if(setpoint != NO_SETPOINT) {
-            double value = getAbsoluteAngleMultiplier() * ARBITRARY_FEEDFORWARD_CONSTANT;
+            double value = getArbitraryFeedForwardAngleMultiplier() * ARBITRARY_FEEDFORWARD_CONSTANT;
             rotatorTalon.set(ControlMode.MotionMagic, setpoint, DemandType.ArbitraryFeedForward, value);
           }
+    }
+
+    private int getRotatorPulseWidth(){
+        return rotatorSensorCollection.getPulseWidthPosition();
+    }
+
+    protected double getMotionMagicSetpoint(){
+        return rotatorTalon.getClosedLoopTarget();
+    }
+
+    protected int getPositionTicks(){
+        return rotatorSensorCollection.getQuadraturePosition();
     }
 
     /**
      * Gets the multiplier for updating the arbitrary feed forward based on angle and subsystem
      */
-    public abstract double getAbsoluteAngleMultiplier();
+    protected abstract double getArbitraryFeedForwardAngleMultiplier();
 
-    /**
-     * Returns the position of this subsystem in ticks
-     */
-    public abstract int getPositionTicks();
-
-    /**
+     /**
      * Sets the setpoint for motion magic (in ticks)
      */
-    public abstract void setMotionMagicSetpointTicks(int ticks);
+    public abstract void setMotionMagicSetpointAngle(double angle);
 
+    public abstract double getAngleInDegrees();
 
-    @Override
-    protected void initDefaultCommand() {
-
-    }
 
 }

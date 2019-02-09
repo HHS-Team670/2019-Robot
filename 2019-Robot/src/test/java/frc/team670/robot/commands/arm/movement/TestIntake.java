@@ -19,10 +19,10 @@ import frc.team670.robot.subsystems.Intake;
  */
 public class TestIntake extends BaseIntake {
 
-    private double intakeTicks;
+    private double intakeAngle;
 
     public TestIntake() {
-        super();
+        super(null, 0.0, 0, 0, true, 0, 0, 0, 0);
     }
 
     @Override
@@ -30,15 +30,15 @@ public class TestIntake extends BaseIntake {
 
     }
 
-    public void setMotionMagicSetpoint(double intakeTicks) {
-        this.intakeTicks = intakeTicks;
+    public void setMotionMagicSetpointAngle(double intakeAngle) {
+        this.intakeAngle = intakeAngle;
     }
 
     /**
      * Should return the setpoint for the motion magic on the base motor
      */
     public double getMotionMagicSetpoint() {
-        return intakeTicks;
+        return intakeAngle;
     }
 
     public void setRotatorNeutralMode(NeutralMode mode) {
@@ -46,17 +46,10 @@ public class TestIntake extends BaseIntake {
     }
 
     /**
-     * Returns the tick value of the base motor
-     */
-    public int getIntakePositionInTicks() {
-        return (int) intakeTicks;
-    }
-
-    /**
      * Returns the intake angle in degrees
      */
-    public double getIntakeAngleInDegrees() {
-        return Intake.convertIntakeTicksToDegrees(intakeTicks);
+    public double getAngleInDegrees() {
+        return intakeAngle;
     }
 
     @Override
@@ -69,12 +62,12 @@ public class TestIntake extends BaseIntake {
 
     }
 
-    /** 
+    /**
      * Returns the x, y coordinates of the top of the intake
      */
-    public Point2D.Double getIntakeCoordinates(){
-        double x = Intake.INTAKE_ROTATING_LENGTH_IN_INCHES * Math.cos(getIntakeAngleInDegrees());
-        double y = Intake.INTAKE_FIXED_LENGTH_IN_INCHES + Intake.INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(getIntakeAngleInDegrees());
+    public Point2D.Double getIntakeCoordinates() {
+        double x = Intake.INTAKE_ROTATING_LENGTH_IN_INCHES * Math.cos(Math.toRadians(getAngleInDegrees()));
+        double y = Intake.INTAKE_FIXED_LENGTH_IN_INCHES + Intake.INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(Math.toRadians(getAngleInDegrees()));
         return new Point2D.Double(x, y);
     }
 
@@ -82,9 +75,7 @@ public class TestIntake extends BaseIntake {
      * Should return the setpoint coordinates for the motion magic on the base motor
      */
     public Point2D.Double getMotionMagicDestinationCoordinates(){
-        double x = Intake.INTAKE_ROTATING_LENGTH_IN_INCHES * Math.cos(Intake.convertIntakeTicksToDegrees(getMotionMagicSetpoint()));
-        double y = Intake.INTAKE_FIXED_LENGTH_IN_INCHES + Intake.INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(Intake.convertIntakeTicksToDegrees(getMotionMagicSetpoint()));
-        return new Point2D.Double(x, y);
+        return null;
     }
 
     @Override
@@ -97,13 +88,9 @@ public class TestIntake extends BaseIntake {
         return 0;
     }
 
-    @Override
-    public void setMotionMagicSetpointTicks(int ticks) {
-
-    }
 
     @Override
-    public double getAbsoluteAngleMultiplier() {
+    public double getArbitraryFeedForwardAngleMultiplier() {
         return 0;
     }
 

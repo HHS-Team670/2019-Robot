@@ -13,10 +13,10 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import frc.team670.robot.Robot;
 import frc.team670.robot.commands.arm.joystick.JoystickExtension;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
-import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.utils.functions.SettingUtils;
 
 /**
@@ -39,21 +39,25 @@ public class Extension extends BaseExtension {
   private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0;
 
   private final int FORWARD_SOFT_LIMIT = EXTENSION_IN_POS - 100, REVERSE_SOFT_LIMIT = EXTENSION_OUT_POS + 100; // TODO figure out the values in rotations
-  public static final int EXTENSION_ENCODER_OUT = 0;
-
-  private final int CONTINUOUS_CURRENT_LIMIT = 20, PEAK_CURRENT_LIMIT = 0; // TODO set current limit in Amps
+  public static final int EXTENSION_OUT_IN_INCHES = 0; //TODO set this
 
   private static final double EXTENSION_POWER = 0.75;
+
+  private static final int CONTINUOUS_CURRENT_LIMIT = 20, PEAK_CURRENT_LIMIT = 0;
 
   private static int EXTENSION_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 15000; // TODO set this
   private static int EXTENSION_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS = 6000; // TODO set this
 
   public static final int QUAD_ENCODER_MAX = 890, QUAD_ENCODER_MIN = -1158; //TODO Set these values
 
+  private static final double ARBITRARY_FEEDFORWARD_CONSTANT = 0.3;
+
+  private double setpoint;
+  private static final double NO_SETPOINT = 99999;
+
 
   public Extension() {
     extensionMotor = new TalonSRX(RobotMap.ARM_EXTENSION_MOTOR);   
-    super.setTalon(extensionMotor);
     extensionMotor.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
 		extensionMotor.config_kF(kSlotMotionMagic, kF, kTimeoutMs);
 		extensionMotor.config_kP(kSlotMotionMagic, kP, kTimeoutMs);
@@ -66,17 +70,14 @@ public class Extension extends BaseExtension {
     extensionMotor.configForwardSoftLimitThreshold(FORWARD_SOFT_LIMIT);
     extensionMotor.configReverseSoftLimitThreshold(REVERSE_SOFT_LIMIT);
     extensionMotor.configContinuousCurrentLimit(CONTINUOUS_CURRENT_LIMIT);
+    extensionMotor.configPeakCurrentLimit(PEAK_CURRENT_LIMIT);
 
     extensionMotor.setNeutralMode(NeutralMode.Brake);
-
-    extensionMotor.configClosedloopRamp(0);
-    extensionMotor.configOpenloopRamp(RAMP_RATE);
 
     // Enable Safety Measures
     extensionMotor.configForwardSoftLimitEnable(true);
     extensionMotor.configReverseSoftLimitEnable(true);
     extensionMotor.enableCurrentLimit(true);
-    extensionMotor.configPeakCurrentLimit(PEAK_CURRENT_LIMIT);
 
     extensionMotor.configNominalOutputForward(0, RobotConstants.kTimeoutMs);
     extensionMotor.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
@@ -96,13 +97,6 @@ public class Extension extends BaseExtension {
     }
 
     extensionMotor.getSensorCollection().setQuadraturePosition(pulseWidthPos, 0);
-
-    extensionMotor.configContinuousCurrentLimit(CONTINUOUS_CURRENT_LIMIT);
-    extensionMotor.configPeakCurrentLimit(0);
-    extensionMotor.enableCurrentLimit(true);
-
-    timeout = false;
-
     enablePercentOutput();
   }
 
@@ -128,14 +122,13 @@ public class Extension extends BaseExtension {
     extensionMotor.set(ControlMode.PercentOutput, output);
   }
 
-  @Override
-  public int getLengthTicks() {
+  private int getPositionTicks() {
     return extensionMotor.getSensorCollection().getQuadraturePosition();
   }
   
   @Override
   public double getLengthInches() {
-    return convertExtensionTicksToInches(getLengthTicks());
+    return convertExtensionTicksToInches(getPositionTicks());
   }
 
   @Override
@@ -146,7 +139,8 @@ public class Extension extends BaseExtension {
   }
 
   @Override
-  public void setPIDControllerSetpoint(int setpoint) {
+  public void setPIDControllerSetpointInInches(double setpointInInches) {
+    setpoint = convertExtensionInchesToTicks(setpointInInches);
     extensionMotor.set(ControlMode.Position, setpoint);
   }
 
@@ -170,20 +164,26 @@ public class Extension extends BaseExtension {
   }
   
   @Override
-  public void zero(double encoderValue) {
+  public void setQuadratureEncoder(double encoderValue) {
     extensionMotor.getSensorCollection().setQuadraturePosition((int)encoderValue, RobotConstants.ARM_RESET_TIMEOUTMS);
   }
 
   @Override
-  public void setMotionMagicSetpoint(double extensionTicks) {
+  public void zeroPulseWidthEncoder() {
+    extensionMotor.getSensorCollection().setPulseWidthPosition(0, RobotConstants.ARM_RESET_TIMEOUTMS);
+  }
+
+  @Override
+  public void setMotionMagicSetpointInInches(double extensionSetpointInInches) {
     extensionMotor.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
-    extensionMotor.set(ControlMode.MotionMagic, extensionTicks);
+    setpoint = convertExtensionInchesToTicks(extensionSetpointInInches);
+    extensionMotor.set(ControlMode.MotionMagic, setpoint);
   }
 
   /**
    * Converts inches for the intake into ticks
    */
-  public static int convertExtensionInchesToTicks(double inches) { 
+  private static int convertExtensionInchesToTicks(double inches) { 
     //inches * (rotation/inches) * (ticks / rotation)
     return (int)(inches * RobotConstants.EXTENSION_MOTOR_ROTATIONS_PER_INCH * RobotConstants.EXTENSION_TICKS_PER_MOTOR_ROTATION);
   }
@@ -191,29 +191,43 @@ public class Extension extends BaseExtension {
   /**
    * Converts ticks for the intake into inches
    */
-  public static double convertExtensionTicksToInches(double ticks) {
+  private static double convertExtensionTicksToInches(double ticks) {
     //ticks * (rotations/ticks) * (inches / rotations)
     return ticks / RobotConstants.EXTENSION_TICKS_PER_MOTOR_ROTATION / RobotConstants.EXTENSION_MOTOR_ROTATIONS_PER_INCH;
   }
 
-  @Override
-  public void setMotionMagicSetpointTicks(int ticks) {
-    super.setpoint = ticks;
-    extensionMotor.set(ControlMode.MotionMagic, ticks);
+
+  /**
+   * Updates the arbitrary feed forward on this subsystem
+   */
+  public void updateArbitraryFeedForward() {
+    if (setpoint != NO_SETPOINT) {
+      double value = getArbitraryFeedForwardAngleMultiplier() * ARBITRARY_FEEDFORWARD_CONSTANT;
+      extensionMotor.set(ControlMode.MotionMagic, setpoint, DemandType.ArbitraryFeedForward, value);
+    }
   }
 
-  @Override
-  public int getPositionTicks(){
-    return getLengthTicks();
+  private double getArbitraryFeedForwardAngleMultiplier() {
+    return (-1.0 * Math.sin(Math.toRadians(Robot.arm.getElbow().getAngleInDegrees())));
   }
 
-  @Override
-  public double getAbsoluteAngleMultiplier() {
-    return (-1.0 * Math.sin(Math.toRadians(Arm.getCurrentState().getElbowAngle())));
-  }
-
-  public int getExtensionPulseWidth() {  
+  private int getExtensionPulseWidth() {  
     return extensionMotor.getSensorCollection().getPulseWidthPosition();
+  }
+
+  @Override
+  public boolean getTimeout() {
+    return false;
+  }
+
+  @Override
+  public void enablePercentOutput() {
+    extensionMotor.set(ControlMode.PercentOutput, 0);
+  }
+
+  @Override
+  public void rotatePercentOutput(double output) {
+    extensionMotor.set(ControlMode.PercentOutput, output);
   }
 
 }

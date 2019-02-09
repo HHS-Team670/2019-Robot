@@ -45,7 +45,7 @@ public class WristBackReset extends Command {
    */
   @Override
   protected void end() {
-    wrist.zero(Wrist.MAX_WRIST_BACK);
+    wrist.setQuadratureEncoder(Wrist.MAX_WRIST_BACK);
     wrist.setOutput(0);
     Logger.consoleLog();
   }

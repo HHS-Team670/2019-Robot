@@ -7,8 +7,9 @@
 
 package frc.team670.robot.commands.arm.movement;
 
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
 import frc.team670.robot.subsystems.elbow.BaseElbow;
-import frc.team670.robot.subsystems.elbow.Elbow;
 
 /**
  * Add your docs here.
@@ -16,23 +17,15 @@ import frc.team670.robot.subsystems.elbow.Elbow;
 public class TestElbow extends BaseElbow {
 
 
-    private double elbowTicks;
+    private double elbowAngle;
 
-    public TestElbow() {
-
-    }
-
-    /**
-     * Doesn't actually set MotionMagicSetpoint, instead moves the angle to that point.
-     */
-    @Override
-    public void setMotionMagicSetpoint(double elbowTicks) {
-        this.elbowTicks = elbowTicks;
+    public TestElbow(TalonSRX rotatorTalon, double arbitrary_feedforward_constant, int forward_soft_limit, int reverse_soft_limit, boolean timeout, int QUAD_ENCODER_MIN, int QUAD_ENCODER_MAX, int CONTINUOUS_CURRENT_LIMIT, int PEAK_CURRENT_LIMIT){
+        super(rotatorTalon, arbitrary_feedforward_constant, forward_soft_limit, reverse_soft_limit, timeout, QUAD_ENCODER_MIN, QUAD_ENCODER_MAX, CONTINUOUS_CURRENT_LIMIT, PEAK_CURRENT_LIMIT);
     }
 
     @Override
-    public double getAngle() {
-        return Elbow.convertElbowTicksToDegrees(elbowTicks);
+    public double getAngleInDegrees() {
+        return elbowAngle;
     }
 
     @Override
@@ -56,11 +49,6 @@ public class TestElbow extends BaseElbow {
     }
 
     @Override
-    public int getPositionTicks() {
-        return (int)elbowTicks;
-    }
-
-    @Override
     public boolean isForwardLimitPressed() {
         return false;
     }
@@ -68,16 +56,6 @@ public class TestElbow extends BaseElbow {
     @Override
     public boolean isReverseLmitPressed() {
         return false;
-    }
-    
-    @Override
-    public void zero(double encoderValue) {
-
-    }
-
-    @Override
-    public double getEncoderValue() {
-        return 0;
     }
 
     @Override
@@ -90,14 +68,18 @@ public class TestElbow extends BaseElbow {
     }
 
     @Override
-    public void setMotionMagicSetpointTicks(int ticks) {
+    public double getArbitraryFeedForwardAngleMultiplier() {
+        return 0;
+    }
+
+    @Override
+    public void setQuadratureEncoder(double encoderValue) {
 
     }
 
     @Override
-    public double getAbsoluteAngleMultiplier() {
-        return 0;
+    public void setMotionMagicSetpointAngle(double angle) {
+        elbowAngle = angle;
     }
-
 
 }
