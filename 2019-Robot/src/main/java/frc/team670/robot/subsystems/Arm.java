@@ -60,6 +60,9 @@ public class Arm {
     states.put(LegalState.START_HATCH, new StartHatch(this, intake));
     states.put(LegalState.START_EMPTY, new StartEmpty(this, intake));
   
+    states.put(LegalState.GRAB_HATCH_GROUND_BACK, new GrabHatchGroundBack(this, intake));
+    states.put(LegalState.READY_GRAB_HATCH_GROUND_BACK, new ReadyGrabHatchGroundBack(this, intake));
+
     states.put(LegalState.GRAB_BALL_GROUND_BACK, new GrabBallGroundBack(this, intake));
 
     states.put(LegalState.GRAB_BALL_INTAKE, new GrabBallIntake(this, intake));
@@ -170,6 +173,9 @@ public class Arm {
     START_HATCH(2),
     START_EMPTY(3),
     
+    READY_GRAB_HATCH_GROUND_BACK(30), // Hatch from the ground at the back
+    GRAB_HATCH_GROUND_BACK(31),
+
     GRAB_BALL_GROUND_BACK(4), // Ball from the ground at the back
     
     GRAB_BALL_INTAKE(5), // Ball from Intake
@@ -336,6 +342,7 @@ public class Arm {
       new CommonTransition(LegalState.NEUTRAL, LegalState.START_BALL, arm, intake),
       new CommonTransition(LegalState.NEUTRAL, LegalState.START_HATCH, arm, intake),
       new CommonTransition(LegalState.NEUTRAL, LegalState.START_EMPTY, arm, intake),
+      new CommonTransition(LegalState.NEUTRAL, LegalState.READY_GRAB_HATCH_GROUND_BACK, arm, intake),
       new CommonTransition(LegalState.NEUTRAL, LegalState.GRAB_BALL_GROUND_BACK, arm, intake),
       new CommonTransition(LegalState.NEUTRAL, LegalState.GRAB_BALL_INTAKE, arm, intake),
       new CommonTransition(LegalState.NEUTRAL, LegalState.READY_LOW_HATCH_FORWARD, arm, intake), 
@@ -371,6 +378,19 @@ public class Arm {
   private class StartEmpty extends ArmState {
     private StartEmpty(Arm arm, BaseIntake intake) {
       super(0, 5, 0, false, new ArmTransition[] { new CommonTransition(LegalState.START_EMPTY, LegalState.NEUTRAL, arm, intake)});
+    }
+  }
+
+  private class ReadyGrabHatchGroundBack extends ArmState {
+    private ReadyGrabHatchGroundBack(Arm arm, BaseIntake intake) {
+      super(-126, -54, 0, false, new ArmTransition[] { new CommonTransition(LegalState.READY_GRAB_HATCH_GROUND_BACK, LegalState.GRAB_HATCH_GROUND_BACK, arm, intake), 
+        new CommonTransition(LegalState.READY_GRAB_HATCH_GROUND_BACK, LegalState.NEUTRAL, arm, intake)});
+    }
+  }
+
+  private class GrabHatchGroundBack extends ArmState {
+    private GrabHatchGroundBack(Arm arm, BaseIntake intake) {
+      super(-130.8, -49.2, 1.2488, false, new ArmTransition[] { new CommonTransition(LegalState.GRAB_HATCH_GROUND_BACK, LegalState.READY_GRAB_HATCH_GROUND_BACK, arm, intake)});
     }
   }
 
