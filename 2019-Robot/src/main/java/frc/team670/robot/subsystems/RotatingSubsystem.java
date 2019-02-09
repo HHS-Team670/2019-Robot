@@ -22,39 +22,39 @@ public abstract class RotatingSubsystem extends Subsystem implements TunableSubs
     protected TalonSRX rotatorTalon;
     protected int setpoint;
     protected boolean timeout;
-    protected double ARBITRARY_FEEDFORWARD_CONSTANT;
+    protected double arbitraryFeedForwardConstant;
 
     protected SensorCollection rotatorSensorCollection;
     protected static final int TICKS_PER_ROTATION = 4096;
 
-    public RotatingSubsystem(TalonSRX rotatorTalon, double arbitrary_feedforward_constant, int forward_soft_limit, int reverse_soft_limit, boolean timeout, int QUAD_ENCODER_MIN, int QUAD_ENCODER_MAX, int continuous_current_limit, int peak_current_limit) {
+    public RotatingSubsystem(TalonSRX rotatorTalon, double arbitraryFeedForwardConstant, int forwardSoftLimit, int reverseSoftLimit, boolean timeout, int quadEncoderMin, int quadEncoderMax, int continuousCurrentLimit, int peakCurrentLimit) {
         // For testing purposes
         if (rotatorTalon != null) {
             this.rotatorTalon = rotatorTalon;
             this.rotatorSensorCollection = rotatorTalon.getSensorCollection();
-            ARBITRARY_FEEDFORWARD_CONSTANT = arbitrary_feedforward_constant;
+            this.arbitraryFeedForwardConstant = arbitraryFeedForwardConstant;
             this.timeout = timeout;
 
             setpoint = RotatingSubsystem.NO_SETPOINT;
 
             int pulseWidthPos = getRotatorPulseWidth() & 4095;
 
-            if (pulseWidthPos < QUAD_ENCODER_MIN) {
+            if (pulseWidthPos < quadEncoderMin) {
                 pulseWidthPos += 4096;
             }
-            if (pulseWidthPos > QUAD_ENCODER_MAX) {
+            if (pulseWidthPos > quadEncoderMax) {
                 pulseWidthPos -= 4096;
             }
 
             rotatorSensorCollection.setQuadraturePosition(pulseWidthPos, 0);
 
-            rotatorTalon.configContinuousCurrentLimit(continuous_current_limit);
-            rotatorTalon.configPeakCurrentLimit(peak_current_limit);
+            rotatorTalon.configContinuousCurrentLimit(continuousCurrentLimit);
+            rotatorTalon.configPeakCurrentLimit(peakCurrentLimit);
             rotatorTalon.enableCurrentLimit(true);
 
             // These thresholds stop the motor when limit is reached
-            rotatorTalon.configForwardSoftLimitThreshold(forward_soft_limit);
-            rotatorTalon.configReverseSoftLimitThreshold(reverse_soft_limit);
+            rotatorTalon.configForwardSoftLimitThreshold(forwardSoftLimit);
+            rotatorTalon.configReverseSoftLimitThreshold(reverseSoftLimit);
 
             // Enable Safety Measures
             rotatorTalon.configForwardSoftLimitEnable(true);
@@ -100,7 +100,7 @@ public abstract class RotatingSubsystem extends Subsystem implements TunableSubs
      */
     public void updateArbitraryFeedForward(){
         if(setpoint != NO_SETPOINT) {
-            double value = getArbitraryFeedForwardAngleMultiplier() * ARBITRARY_FEEDFORWARD_CONSTANT;
+            double value = getArbitraryFeedForwardAngleMultiplier() * arbitraryFeedForwardConstant;
             rotatorTalon.set(ControlMode.MotionMagic, setpoint, DemandType.ArbitraryFeedForward, value);
           }
     }
