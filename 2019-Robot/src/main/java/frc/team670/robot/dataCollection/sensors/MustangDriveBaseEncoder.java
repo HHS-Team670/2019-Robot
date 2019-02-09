@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.subsystems.DriveBase;
-import frc.team670.robot.utils.functions.MathUtils;
 
 /**
  * A Mustang Encoder holds both a DIOEncoder and a Spark Encoder. The Spark Encoder will only be used if
@@ -41,20 +40,30 @@ public class MustangDriveBaseEncoder implements PIDSource {
      * Returns the position determined by the encoder in ticks
      */
     public int getPositionTicks() {
-        if (isDIOEncoder) {
-            return dioEncoder.get();
+        try {
+            if (isDIOEncoder) {
+                return dioEncoder.get();
+            }
+            return (int) (sparkEncoder.getPosition() / RobotConstants.SPARK_TICKS_PER_ROTATION);
         }
-        return (int) (sparkEncoder.getPosition() / RobotConstants.SPARK_TICKS_PER_ROTATION);
+        catch(RuntimeException e) {
+            return 0;
+        }
     }
 
     /**
      * Returns the position determined by the encoder in inches
      */
     public double getPositionInches() {
-        if (isDIOEncoder) {
-            return DriveBase.convertDriveBaseTicksToInches(dioEncoder.get());
+        try {
+            if (isDIOEncoder) {
+                return DriveBase.convertDriveBaseTicksToInches(dioEncoder.get());
+            }
+            return DriveBase.convertDriveBaseTicksToInches((sparkEncoder.getPosition() / RobotConstants.SPARK_TICKS_PER_ROTATION));
         }
-        return DriveBase.convertDriveBaseTicksToInches((sparkEncoder.getPosition() / RobotConstants.SPARK_TICKS_PER_ROTATION));
+        catch(RuntimeException e) {
+            return 0;
+        }
     }
 
 
@@ -62,20 +71,30 @@ public class MustangDriveBaseEncoder implements PIDSource {
      * Returns the velocity determined by the encoder in inches/second
      */
     public double getVelocityInches() {
-        if (isDIOEncoder) {
-            return dioEncoder.getRate();
+        try {
+            if (isDIOEncoder) {
+                return dioEncoder.getRate();
+            }
+            return (DriveBase.convertDriveBaseTicksToInches(sparkEncoder.getVelocity() / RobotConstants.SPARK_TICKS_PER_ROTATION) / 60);
         }
-        return (DriveBase.convertDriveBaseTicksToInches(sparkEncoder.getVelocity() / RobotConstants.SPARK_TICKS_PER_ROTATION) / 60);
+        catch(RuntimeException e) {
+            return 0;
+        }
     }
 
      /**
      * Returns the velocity determined by the encoder in ticks/second
      */
     public double getVelocityTicks() {
-        if (isDIOEncoder) {
-            return DriveBase.convertInchesToDriveBaseTicks(dioEncoder.getRate());
+        try {
+            if (isDIOEncoder) {
+                return DriveBase.convertInchesToDriveBaseTicks(dioEncoder.getRate());
+            }
+            return (sparkEncoder.getVelocity() / RobotConstants.SPARK_TICKS_PER_ROTATION / 60);
         }
-        return (sparkEncoder.getVelocity() / RobotConstants.SPARK_TICKS_PER_ROTATION / 60);
+        catch(RuntimeException e) {
+            return 0;
+        }
     }
 
     @Override
