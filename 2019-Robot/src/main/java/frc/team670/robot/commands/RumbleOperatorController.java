@@ -5,29 +5,34 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.commands.drive.teleop;
+package frc.team670.robot.commands;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
-import frc.team670.robot.commands.drive.teleop.XboxRocketLeagueDrive;
-import frc.team670.robot.utils.Logger;
-import frc.team670.robot.Robot;
+import frc.team670.robot.OI;
 
 /**
- * Flips the direction of the drive: forward or reversed.
+ * Sets the rumble on the driver and operator controllers
  */
-public class FlipDriveDirection extends InstantCommand {
+public class RumbleOperatorController extends InstantCommand {
+  
+  private OI oi;
+  private double power, time;
 
-  public FlipDriveDirection() {
+    /**
+     * @param power The desired power of the rumble [0, 1]
+     * @param time The time to rumble for in seconds
+     */
+  public RumbleOperatorController(OI oi, double power, double time) {
     super();
+    this.oi = oi;
+    this.power = power;
+    this.time = time;
   }
 
   // Called once when the command executes
   @Override
   protected void initialize() {
-    boolean isReversed = XboxRocketLeagueDrive.isDriveReversed();
-    XboxRocketLeagueDrive.setDriveReversed(!isReversed);
-    Robot.oi.rumbleDriverController(0.4, 0.1);
-    Logger.consoleLog("Flipped Drive: %s", (!isReversed));
+    oi.rumbleOperatorController(power, time);
   }
 
 }

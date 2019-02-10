@@ -10,11 +10,13 @@ package frc.team670.robot.commands.arm.movement;
 import java.util.List;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import frc.team670.robot.commands.RumbleOperatorController;
 import frc.team670.robot.commands.arm.armTransitions.ArmTransition;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.sort.AStarSearch;
+import frc.team670.robot.Robot;
 
 /**
  * Move the arm if it is at a known ArmState by finding a path and using it to travel along ArmTransitions between ArmStates.
@@ -66,13 +68,9 @@ public class ArmPathGenerator {
       movements.addSequential(t);
     }
 
+    // movements.addSequential(new RumbleOperatorController(Robot.oi, 0.5, 0.25));
+
     return movements;
   }
-
-  // // Called once after isFinished returns true
-  // @Override
-  // protected void end() {
-  //   Arm.setState(destination);
-  // }
 
 }
