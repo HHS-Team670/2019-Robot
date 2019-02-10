@@ -9,11 +9,13 @@ package frc.team670.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.commands.intake.MoveIntakeToSetpointAngle;
 import frc.team670.robot.commands.tuning.DecreaseMeasurementOutput;
 import frc.team670.robot.commands.tuning.IncreaseMeasurementOutput;
 import frc.team670.robot.commands.tuning.MeasureArbitraryFeedforward;
 import frc.team670.robot.constants.RobotMap;
+import frc.team670.robot.dataCollection.XKeys;
 import frc.team670.robot.utils.MustangController;
 import frc.team670.robot.utils.MustangController.XboxButtons;
 
@@ -53,7 +55,8 @@ public class OI {
   // Controllers/Joysticks
   private Joystick rightStick, arcadeButtons;
   private MustangController driverController, operatorController;
-  private JoystickButton resetNavX;
+
+  private XKeys xkeys;
 
   // Buttons
   private JoystickButton toggleReverseDrive;
@@ -66,6 +69,7 @@ public class OI {
   public OI() {
     driverController = new MustangController(RobotMap.DRIVER_CONTROLLER_PORT);
     operatorController = new MustangController(RobotMap.OPERATOR_CONTROLLER_PORT);
+    xkeys = new XKeys();
     
     // toggleReverseDrive = new JoystickButton(driverController, XboxButtons.LEFT_BUMPER);
     // toggleReverseDrive.whenPressed(new FlipDriveDirection());
@@ -73,8 +77,6 @@ public class OI {
     // flipCameras.whenPressed(new FlipCamera());
     // flipArmDriverControlState = new JoystickButton(operatorController, XboxButtons.RIGHT_JOYSTICK_BUTTON);
     // flipArmDriverControlState.whenPressed(new FlipJoystickArmControl());
-    // resetNavX = new JoystickButton(driverController, XboxButtons.A);
-    // resetNavX.whenPressed(new ZeroNavX());
 
     incFeedForward = new JoystickButton(driverController, XboxButtons.START);
     incFeedForward.whenPressed(new IncreaseMeasurementOutput());
@@ -99,5 +101,9 @@ public class OI {
 
   public boolean isQuickTurnPressed() {
     return driverController.getRightBumper();
+  }
+
+  public Command getSelectedAutonCommand() {
+    return xkeys.getAutonCommand();
   }
 }
