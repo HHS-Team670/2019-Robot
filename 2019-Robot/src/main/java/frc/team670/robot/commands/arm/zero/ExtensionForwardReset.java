@@ -45,7 +45,7 @@ public class ExtensionForwardReset extends Command {
    */
   @Override
   protected void end() {
-    extension.setQuadratureEncoder(Extension.MAX_EXTENSION_FORWARD);
+    extension.setQuadratureEncoder(Extension.FORWARD_SOFT_LIMIT);
     extension.setOutput(0);
     Logger.consoleLog();
   }

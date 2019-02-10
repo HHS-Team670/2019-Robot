@@ -45,7 +45,7 @@ public class ElbowBackReset extends Command {
    */
   @Override
   protected void end() {
-    elbow.setQuadratureEncoder(Elbow.MAX_ELBOW_BACK);
+    elbow.setQuadratureEncoder(Elbow.REVERSE_SOFT_LIMIT);
     elbow.setOutput(0);
     Logger.consoleLog();
   }

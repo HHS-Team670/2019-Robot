@@ -15,7 +15,6 @@ import frc.team670.robot.subsystems.elbow.BaseElbow;
 import frc.team670.robot.subsystems.extension.BaseExtension;
 import frc.team670.robot.subsystems.extension.Extension;
 import frc.team670.robot.utils.Logger;
-import frc.team670.robot.utils.functions.MathUtils;
 
 /**
  * Command to run the "dragging forward motion" of the arm to get it onto the
@@ -69,10 +68,10 @@ public class ArmClimb extends Command {
 
     double deltaSetPointInInches = (heightInInches/(Math.cos(Math.toRadians(elbow.getAngleInDegrees())))) - Arm.FIXED_ARM_LENGTH_IN_INCHES;
 
-    // TODO make EXTENSION_ENCODER_OUT the actual extension value of Extension at the ReadyToClimb ArmState
-    extension.setPIDControllerSetpointInInches(Extension.EXTENSION_OUT_IN_INCHES - deltaSetPointInInches); // Changes the
-                                                                                                    // setpoint
-    Logger.consoleLog("heightOfRobot%s, angleOfElbow%s, extensionSetpoint%s ", heightInInches, elbow.getAngleInDegrees(),Extension.EXTENSION_OUT_IN_INCHES - deltaSetPointInInches);
+    extension.setPIDControllerSetpointInInches(Extension.EXTENSION_OUT_IN_INCHES - deltaSetPointInInches); // Changes the setpoint
+    
+    if(loggingIterationCounter % 5 == 0)
+      Logger.consoleLog("heightOfRobot%s, angleOfElbow%s, extensionSetpoint%s ", heightInInches, elbow.getAngleInDegrees(),Extension.EXTENSION_OUT_IN_INCHES - deltaSetPointInInches);
 
     loggingIterationCounter++;
   }

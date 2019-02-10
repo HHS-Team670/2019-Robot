@@ -14,7 +14,6 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import frc.team670.robot.Robot;
-import frc.team670.robot.commands.arm.joystick.JoystickExtension;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.utils.functions.SettingUtils;
@@ -23,32 +22,25 @@ import frc.team670.robot.utils.functions.SettingUtils;
  * Controls motors for motion of extension
  */
 public class Extension extends BaseExtension {
-  // Put methods for controlling this subsystem
-  // here. Call these from Commands.
+
   private TalonSRX extensionMotor;
 
-  public static int EXTENSION_IN_POS = 0; // TODO Set These
-  public static int EXTENSION_OUT_POS = 12000;
-
-  public static final double MAX_EXTENSION_BACK = 0; //TODO find this
-  public static final double MAX_EXTENSION_FORWARD = 0; //TODO find this
-  private static final double kF = 0, kP = 0, kI = 0, kD = 0; //TODO figure out what these are
-  private static final int POSITION_SLOT = 0;
-  private final double P = 0.1, I = 0.0, D = 0.0, F = 0.0, RAMP_RATE = 0.1;
-  // Also need to add pull gains slots
-  private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0;
-
-  private final int FORWARD_SOFT_LIMIT = EXTENSION_IN_POS - 100, REVERSE_SOFT_LIMIT = EXTENSION_OUT_POS + 100; // TODO figure out the values in rotations
-  public static final int EXTENSION_OUT_IN_INCHES = 0; //TODO set this
-
-  private static final double EXTENSION_POWER = 0.75;
-
+  // Position PID control constants when doing Arm Climb 
+  private static final int POSITION_SLOT = 1;
+  private final double P_P = 0.1, P_I = 0.0, P_D = 0.0, P_F = 0.0, RAMP_RATE = 0.1;
+  private static final double EXTENSION_POWER = 0.75; // TODO set this for Extension movement when climbing
   private static final int CONTINUOUS_CURRENT_LIMIT = 20, PEAK_CURRENT_LIMIT = 0;
 
-  private static int EXTENSION_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 15000; // TODO set this
-  private static int EXTENSION_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS = 6000; // TODO set this
-
-  public static final int QUAD_ENCODER_MAX = 890, QUAD_ENCODER_MIN = -1158; //TODO Set these values
+  // Motion Magic
+  private static final int kPIDLoopIdx = 0, MOTION_MAGIC_SLOT = 0, kTimeoutMs = 0;
+  public static final int EXTENSION_IN_POS = 0; // TODO Set These
+  public static final int EXTENSION_OUT_POS = 12000; // TODO Set this in ticks
+  public static final double EXTENSION_OUT_IN_INCHES = convertExtensionTicksToInches(EXTENSION_OUT_POS); //TODO set this
+  public static final int FORWARD_SOFT_LIMIT = EXTENSION_IN_POS - 100, REVERSE_SOFT_LIMIT = EXTENSION_OUT_POS + 100; // TODO figure out the values in rotations
+  private static final double MM_F = 0, MM_P = 0, MM_I = 0, MM_D = 0; //TODO figure out what these are. Motion Magic Constants
+  private static final int MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 90; // TODO set this
+  private static final int EXTMOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS = 400; // TODO set this
+  public static final int QUAD_ENCODER_MAX = FORWARD_SOFT_LIMIT + 200, QUAD_ENCODER_MIN = REVERSE_SOFT_LIMIT - 200; //TODO Set these values based on forward and back soft limits (especially the addition/subtraction)
 
   private static final double ARBITRARY_FEEDFORWARD_CONSTANT = 0.3;
 
@@ -57,14 +49,18 @@ public class Extension extends BaseExtension {
 
 
   public Extension() {
-    extensionMotor = new TalonSRX(RobotMap.ARM_EXTENSION_MOTOR);   
-    extensionMotor.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
-		extensionMotor.config_kF(kSlotMotionMagic, kF, kTimeoutMs);
-		extensionMotor.config_kP(kSlotMotionMagic, kP, kTimeoutMs);
-		extensionMotor.config_kI(kSlotMotionMagic, kI, kTimeoutMs);
-    extensionMotor.config_kD(kSlotMotionMagic, kD, kTimeoutMs);
-    extensionMotor.configMotionCruiseVelocity(EXTENSION_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
-		extensionMotor.configMotionAcceleration(EXTENSION_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+    extensionMotor = new TalonSRX(RobotMap.ARM_EXTENSION_MOTOR); 
+    
+    extensionMotor.configFactoryDefault();
+    extensionMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+    
+    extensionMotor.selectProfileSlot(MOTION_MAGIC_SLOT, kPIDLoopIdx);
+		extensionMotor.config_kF(MOTION_MAGIC_SLOT, MM_F, kTimeoutMs);
+		extensionMotor.config_kP(MOTION_MAGIC_SLOT, MM_P, kTimeoutMs);
+		extensionMotor.config_kI(MOTION_MAGIC_SLOT, MM_I, kTimeoutMs);
+    extensionMotor.config_kD(MOTION_MAGIC_SLOT, MM_D, kTimeoutMs);
+    extensionMotor.configMotionCruiseVelocity(MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+		extensionMotor.configMotionAcceleration(EXTMOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
  
     // These thresholds stop the motor when limit is reached
     extensionMotor.configForwardSoftLimitThreshold(FORWARD_SOFT_LIMIT);
@@ -132,14 +128,14 @@ public class Extension extends BaseExtension {
   }
 
   @Override
-  public void enableExtensionPIDController() {
-    SettingUtils.initTalonPID(extensionMotor, POSITION_SLOT, P, I, D, F, -EXTENSION_POWER,
+  public synchronized void enableExtensionPIDController() {
+    SettingUtils.initTalonPID(extensionMotor, POSITION_SLOT, P_P, P_I, P_D, P_F, -EXTENSION_POWER,
                               EXTENSION_POWER, FeedbackDevice.CTRE_MagEncoder_Relative, RAMP_RATE);
     extensionMotor.selectProfileSlot(POSITION_SLOT, 0);
   }
 
   @Override
-  public void setPIDControllerSetpointInInches(double setpointInInches) {
+  public synchronized void setPIDControllerSetpointInInches(double setpointInInches) {
     setpoint = convertExtensionInchesToTicks(setpointInInches);
     extensionMotor.set(ControlMode.Position, setpoint);
   }
@@ -169,8 +165,8 @@ public class Extension extends BaseExtension {
   }
 
   @Override
-  public void setMotionMagicSetpointInInches(double extensionSetpointInInches) {
-    extensionMotor.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
+  public synchronized void setMotionMagicSetpointInInches(double extensionSetpointInInches) {
+    extensionMotor.selectProfileSlot(MOTION_MAGIC_SLOT, kPIDLoopIdx);
     setpoint = convertExtensionInchesToTicks(extensionSetpointInInches);
     extensionMotor.set(ControlMode.MotionMagic, setpoint);
   }
@@ -195,7 +191,7 @@ public class Extension extends BaseExtension {
   /**
    * Updates the arbitrary feed forward on this subsystem
    */
-  public void updateArbitraryFeedForward() {
+  public synchronized void updateArbitraryFeedForward() {
     if (setpoint != NO_SETPOINT) {
       double value = getArbitraryFeedForwardAngleMultiplier() * ARBITRARY_FEEDFORWARD_CONSTANT;
       extensionMotor.set(ControlMode.MotionMagic, setpoint, DemandType.ArbitraryFeedForward, value);
@@ -226,12 +222,12 @@ public class Extension extends BaseExtension {
   }
 
   @Override
-  public void enablePercentOutput() {
+  public synchronized void enablePercentOutput() {
     extensionMotor.set(ControlMode.PercentOutput, 0);
   }
 
   @Override
-  public void rotatePercentOutput(double output) {
+  public synchronized void rotatePercentOutput(double output) {
     extensionMotor.set(ControlMode.PercentOutput, output);
   }
 

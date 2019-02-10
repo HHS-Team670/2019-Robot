@@ -27,26 +27,27 @@ public class Intake extends BaseIntake {
   public static final double INTAKE_FIXED_LENGTH_IN_INCHES = 0, INTAKE_ROTATING_LENGTH_IN_INCHES = 0; //TODO set actual value
   private static final double MAX_BASE_OUTPUT = 0.75;
   private static final double kF = 0, kP = 0.35, kI = 0, kD = 0;
-  private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0;
+
+  // Motion Magic
+  private static final int kPIDLoopIdx = 0, MOTION_MAGIC_SLOT = 0, kTimeoutMs = 0;
   private static final int OFFSET_FROM_ENCODER_ZERO = 623;
   private static final int FORWARD_SOFT_LIMIT = 850, REVERSE_SOFT_LIMIT = -940;
-  private static final double RAMP_RATE = 0.1;
   private static final int CONTINUOUS_CURRENT_LIMIT = 20, PEAK_CURRENT_LIMIT = 0;
   private final static int INTAKE_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 120,  INTAKE_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_SECOND = 400;
-  private static final int QUAD_ENCODER_MIN = FORWARD_SOFT_LIMIT + 800, QUAD_ENCODER_MAX = REVERSE_SOFT_LIMIT - 800;
+  private static final int QUAD_ENCODER_MAX = FORWARD_SOFT_LIMIT + 200, QUAD_ENCODER_MIN = REVERSE_SOFT_LIMIT - 200;
 
   private static final double ARBITRARY_FEED_FORWARD = 0.175;
 
-  // private VictorSPX rollerVictor;
-  private TalonSRX rollerVictor;
+  private VictorSPX rollerVictor;
+  // private TalonSRX rollerVictor;
   
   private Point2D.Double intakeCoord;
 
   public Intake() {
     super(new TalonSRX(RobotMap.INTAKE_BASE_TALON), ARBITRARY_FEED_FORWARD, FORWARD_SOFT_LIMIT, REVERSE_SOFT_LIMIT, true, QUAD_ENCODER_MIN, QUAD_ENCODER_MAX, CONTINUOUS_CURRENT_LIMIT, PEAK_CURRENT_LIMIT, OFFSET_FROM_ENCODER_ZERO);
     
-    // rollerVictor = new VictorSPX(RobotMap.INTAKE_ROLLER_VICTOR);
-    rollerVictor = new TalonSRX(RobotMap.INTAKE_ROLLER_VICTOR);
+    rollerVictor = new VictorSPX(RobotMap.INTAKE_ROLLER_VICTOR);
+    // rollerVictor = new TalonSRX(RobotMap.INTAKE_ROLLER_VICTOR);
 
     rollerVictor.setInverted(true);
     rollerVictor.setNeutralMode(NeutralMode.Coast);
@@ -62,11 +63,11 @@ public class Intake extends BaseIntake {
 
   // May need to set tolerance
   private void setMotionMagicPIDValues() {
-    rotatorTalon.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
-    rotatorTalon.config_kF(kSlotMotionMagic, kF, kTimeoutMs);
-    rotatorTalon.config_kP(kSlotMotionMagic, kP, kTimeoutMs);
-    rotatorTalon.config_kI(kSlotMotionMagic, kI, kTimeoutMs);
-    rotatorTalon.config_kD(kSlotMotionMagic, kD, kTimeoutMs);
+    rotatorTalon.selectProfileSlot(MOTION_MAGIC_SLOT, kPIDLoopIdx);
+    rotatorTalon.config_kF(MOTION_MAGIC_SLOT, kF, kTimeoutMs);
+    rotatorTalon.config_kP(MOTION_MAGIC_SLOT, kP, kTimeoutMs);
+    rotatorTalon.config_kI(MOTION_MAGIC_SLOT, kI, kTimeoutMs);
+    rotatorTalon.config_kD(MOTION_MAGIC_SLOT, kD, kTimeoutMs);
     rotatorTalon.configMotionCruiseVelocity(INTAKE_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
     rotatorTalon.configMotionAcceleration(INTAKE_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_SECOND, kTimeoutMs);
 
