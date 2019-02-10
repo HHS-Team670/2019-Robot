@@ -22,7 +22,7 @@ public class ResetPulseWidthEncoder extends InstantCommand {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    tunableSubsystem.zeroPulseWidthEncoder();
+    // tunableSubsystem.zeroPulseWidthEncoder();
   }
 
 

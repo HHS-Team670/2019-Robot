@@ -27,6 +27,7 @@ public class Wrist extends BaseWrist {
   public static final double MAX_WRIST_FORWARD = 0; //TODO find this
   public static final double MAX_WRIST_BACK = 0; //TODO find this
   private static final double kF = 0, kP = 0, kI = 0, kD = 0; //TODO figure out what these are
+  private static final int OFFSET_FROM_ENCODER_ZERO = 0;
 
   public static final int QUAD_ENCODER_MAX = 890, QUAD_ENCODER_MIN = -1158; //TODO Set these values
 
@@ -37,7 +38,7 @@ public class Wrist extends BaseWrist {
   private static int WRIST_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS = 6000; // TODO set this
 
   public Wrist() {
-    super(new TalonSRX(RobotMap.ARM_WRIST_ROTATION), 0.0, 0, 0, false, 0, 0, 20, 0);
+    super(new TalonSRX(RobotMap.ARM_WRIST_ROTATION), 0.0, 0, 0, false, 0, 0, 20, 0, OFFSET_FROM_ENCODER_ZERO);
     rotatorTalon.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
 		rotatorTalon.config_kF(kSlotMotionMagic, kF, kTimeoutMs);
 		rotatorTalon.config_kP(kSlotMotionMagic, kP, kTimeoutMs);
@@ -78,7 +79,7 @@ public class Wrist extends BaseWrist {
 
   @Override
   public void initDefaultCommand() {
-    setDefaultCommand(new JoystickWrist(this));
+    // setDefaultCommand(new JoystickWrist(this));
   }
 
   @Override

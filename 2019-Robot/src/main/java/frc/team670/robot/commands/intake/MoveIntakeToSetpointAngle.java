@@ -23,7 +23,7 @@ public class MoveIntakeToSetpointAngle extends Command {
 
   private BaseIntake intake;
   private int loggingIterationCounter, setpointInDegrees;
-  private static final int TOLERANCE_IN_DEGREES = 1;
+  private static final int TOLERANCE_IN_DEGREES = 3;
 
   /**
    * @param setpoint angle in degrees that the intake is moving to
@@ -60,6 +60,7 @@ public class MoveIntakeToSetpointAngle extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    intake.enablePercentOutput();
     intake.setRotatorNeutralMode(NeutralMode.Coast);
     Logger.consoleLog("endIntakeAngle:%s", intake.getAngleInDegrees());
   }

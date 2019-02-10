@@ -19,7 +19,7 @@ public class TestWrist extends BaseWrist{
     private double wristAngle;
 
     public TestWrist() {
-        super(null, 0.0, 0, 0, false, 0, 0, 0, 0);
+        super(null, 0.0, 0, 0, false, 0, 0, 0, 0, 0);
     }
 
     /**

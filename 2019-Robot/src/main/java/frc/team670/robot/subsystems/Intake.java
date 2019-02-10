@@ -14,6 +14,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
 
@@ -25,23 +26,29 @@ public class Intake extends BaseIntake {
   public static final int INTAKE_ANGLE_IN = -90, INTAKE_ANGLE_DEPLOYED = 90;
   public static final double INTAKE_FIXED_LENGTH_IN_INCHES = 0, INTAKE_ROTATING_LENGTH_IN_INCHES = 0; //TODO set actual value
   private static final double MAX_BASE_OUTPUT = 0.75;
-  private static final double kF = 0, kP = 0.1, kI = 0, kD = 0; //TODO figure out what these are
+  private static final double kF = 0, kP = 0.3, kI = 0, kD = 0; //TODO figure out what these are
   private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0; //TODO Set this
-  private static final int FORWARD_SOFT_LIMIT = 0, REVERSE_SOFT_LIMIT = 0; // TODO figure out the values in rotations
+  private static final int FORWARD_SOFT_LIMIT = -1200, REVERSE_SOFT_LIMIT = 1300; // Negative is Forward, positive is backwards
   private static final double RAMP_RATE = 0.1;
+  private static final int OFFSET_FROM_ENCODER_ZERO = 1979;
+  private static final int CONTINUOUS_CURRENT_LIMIT = 20, PEAK_CURRENT_LIMIT = 0;
+  private final static int INTAKE_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 60,  INTAKE_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_SECOND = 400;
+  private static final int QUAD_ENCODER_MIN = FORWARD_SOFT_LIMIT - 100, QUAD_ENCODER_MAX = REVERSE_SOFT_LIMIT + 100;
+
+  private static final double ARBITRARY_FEED_FORWARD = 0.3;
 
   private VictorSPX rollerVictor;
   
   private Point2D.Double intakeCoord;
 
-  private final static int INTAKE_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 15000,  INTAKE_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_SECOND = 6000;
-
-
   public Intake() {
-    super(new TalonSRX(RobotMap.INTAKE_BASE_TALON), 0.0, 0, 0, true, 0, 0, 20, 0);
+    super(new TalonSRX(RobotMap.INTAKE_BASE_TALON), ARBITRARY_FEED_FORWARD, FORWARD_SOFT_LIMIT, REVERSE_SOFT_LIMIT, true, QUAD_ENCODER_MIN, QUAD_ENCODER_MAX, CONTINUOUS_CURRENT_LIMIT, PEAK_CURRENT_LIMIT, OFFSET_FROM_ENCODER_ZERO);
     
     rollerVictor = new VictorSPX(RobotMap.INTAKE_ROLLER_VICTOR);
     intakeCoord = new Point2D.Double();
+
+    rotatorTalon.setSensorPhase(false); // Positive is inwards movement, negative is outward
+    rotatorTalon.setInverted(false);
 
     enablePercentOutput();
     setMotionMagicPIDValues();
@@ -71,6 +78,7 @@ public class Intake extends BaseIntake {
    */
   public void setMotionMagicSetpointAngle(double intakeAngle) {
     setpoint = convertIntakeDegreesToTicks(intakeAngle);
+    SmartDashboard.putNumber("MotionMagicSetpoint", setpoint);
     rotatorTalon.set(ControlMode.MotionMagic, setpoint);
   }
 
@@ -115,7 +123,7 @@ public class Intake extends BaseIntake {
     // percentage * half rotation
     // TODO - Fix this. This is not going to make 0 at the top if the absolute encoder is not zero there.
     // Offset the quadrature readings accordingly in the constructor?
-    return (int)((degrees / 360) * TICKS_PER_ROTATION);
+    return -1 * (int)((degrees / 360) * TICKS_PER_ROTATION); // MULTIPLIED BY NEGATIVE ONE BECAUSE ITS INVERTED
   }
 
   /**
@@ -125,12 +133,20 @@ public class Intake extends BaseIntake {
     //If straight up is 0 and going forward is positive
     // TODO - Fix this. This is not going to make 0 at the top if the absolute encoder is not zero there.
     // Offset the quadrature readings accordingly in the constructor?
-    return ((360 * ticks) / TICKS_PER_ROTATION);
+    return -1 * ((360 * ticks) / TICKS_PER_ROTATION); // MULTIPLIED BY NEGATIVE ONE BECAUSE ITS INVERTED
   }
 
   @Override
   public double getArbitraryFeedForwardAngleMultiplier() {
-    return (-1.0 * Math.cos(Math.toRadians(getAngleInDegrees())));
+    double output = (Math.cos(Math.toRadians(getAngleInDegrees())));
+    // System.out.println("IntakeArbitraryFeedforward: " + output);
+    return output;
+  }
+
+  public void sendDataToDashboard() {
+    SmartDashboard.putNumber("Unadjusted Absolute Ticks", getUnadjustedPulseWidth());
+    SmartDashboard.putNumber("Absolute Ticks", getRotatorPulseWidth());
+    SmartDashboard.putNumber("Quadrature Ticks", getPositionTicks());
   }
 
   @Override

@@ -8,6 +8,7 @@
 package frc.team670.robot.commands.tuning;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * Add your docs here.
@@ -24,6 +25,7 @@ public class IncreaseMeasurementOutput extends InstantCommand {
   @Override
   protected void initialize() {
     MeasureArbitraryFeedforward.output += 0.025;
+    SmartDashboard.putNumber("ArbitraryFeedForwardOutput", MeasureArbitraryFeedforward.output);
   }
 
 }

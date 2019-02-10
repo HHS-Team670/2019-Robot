@@ -148,7 +148,7 @@ public class Extension extends BaseExtension {
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
     // setDefaultCommand(new MySpecialCommand());
-    setDefaultCommand(new JoystickExtension(this));
+    // setDefaultCommand(new JoystickExtension(this));
   }
 
   @Override
@@ -166,11 +166,6 @@ public class Extension extends BaseExtension {
   @Override
   public void setQuadratureEncoder(double encoderValue) {
     extensionMotor.getSensorCollection().setQuadraturePosition((int)encoderValue, RobotConstants.ARM_RESET_TIMEOUTMS);
-  }
-
-  @Override
-  public void zeroPulseWidthEncoder() {
-    extensionMotor.getSensorCollection().setPulseWidthPosition(0, RobotConstants.ARM_RESET_TIMEOUTMS);
   }
 
   @Override

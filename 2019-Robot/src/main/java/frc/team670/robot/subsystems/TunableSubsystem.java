@@ -18,9 +18,4 @@ public interface TunableSubsystem {
 
     public void rotatePercentOutput(double output);
 
-    public void zeroPulseWidthEncoder();
-
-
-
-
 }
