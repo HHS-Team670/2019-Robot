@@ -29,7 +29,7 @@ public abstract class RotatingSubsystem extends Subsystem implements TunableSubs
     protected SensorCollection rotatorSensorCollection;
     protected static final int TICKS_PER_ROTATION = 4096;
 
-    public RotatingSubsystem(TalonSRX rotatorTalon, double arbitraryFeedForwardConstant, int forwardSoftLimit, int reverseSoftLimit, boolean timeout, int quadEncoderMin, int quadEncoderMax, int continuousCurrentLimit, int peakCurrentLimit) {
+    public RotatingSubsystem(TalonSRX rotatorTalon, double arbitraryFeedForwardConstant, int forwardSoftLimit, int reverseSoftLimit, boolean timeout, int quadEncoderMin, int quadEncoderMax, int continuousCurrentLimit, int peakCurrentLimit, int offsetFromEncoderZero) {
         // For testing purposes
         if (rotatorTalon != null) {
             this.rotatorTalon = rotatorTalon;
@@ -46,7 +46,7 @@ public abstract class RotatingSubsystem extends Subsystem implements TunableSubs
             if (rotatorTalon != null) {
                 this.rotatorTalon = rotatorTalon;
                 this.rotatorSensorCollection = rotatorTalon.getSensorCollection();
-                ARBITRARY_FEEDFORWARD_CONSTANT = arbitrary_feedforward_constant;
+                this.arbitraryFeedForwardConstant = arbitraryFeedForwardConstant;
                 this.timeout = timeout;
 
                 setpoint = RotatingSubsystem.NO_SETPOINT;
