@@ -26,16 +26,16 @@ public class Intake extends BaseIntake {
   public static final int INTAKE_ANGLE_IN = -90, INTAKE_ANGLE_DEPLOYED = 90;
   public static final double INTAKE_FIXED_LENGTH_IN_INCHES = 0, INTAKE_ROTATING_LENGTH_IN_INCHES = 0; //TODO set actual value
   private static final double MAX_BASE_OUTPUT = 0.75;
-  private static final double kF = 0, kP = 0.3, kI = 0, kD = 0; //TODO figure out what these are
-  private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0; //TODO Set this
-  private static final int FORWARD_SOFT_LIMIT = 971, REVERSE_SOFT_LIMIT = -910; // Negative is Forward, positive is backwards
+  private static final double kF = 0, kP = 0.35, kI = 0, kD = 0;
+  private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0;
+  private static final int OFFSET_FROM_ENCODER_ZERO = 623;
+  private static final int FORWARD_SOFT_LIMIT = 850, REVERSE_SOFT_LIMIT = -940;
   private static final double RAMP_RATE = 0.1;
-  private static final int OFFSET_FROM_ENCODER_ZERO = 670;
   private static final int CONTINUOUS_CURRENT_LIMIT = 20, PEAK_CURRENT_LIMIT = 0;
   private final static int INTAKE_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 120,  INTAKE_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_SECOND = 400;
-  private static final int QUAD_ENCODER_MIN = FORWARD_SOFT_LIMIT + 200, QUAD_ENCODER_MAX = REVERSE_SOFT_LIMIT - 200;
+  private static final int QUAD_ENCODER_MIN = FORWARD_SOFT_LIMIT + 800, QUAD_ENCODER_MAX = REVERSE_SOFT_LIMIT - 800;
 
-  private static final double ARBITRARY_FEED_FORWARD = 0.15;
+  private static final double ARBITRARY_FEED_FORWARD = 0.175;
 
   private VictorSPX rollerVictor;
   
