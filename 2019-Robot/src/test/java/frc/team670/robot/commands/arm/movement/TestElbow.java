@@ -18,8 +18,8 @@ public class TestElbow extends BaseElbow {
 
     private double elbowAngle;
 
-    public TestElbow(TalonSRX rotatorTalon, double arbitrary_feedforward_constant, int forward_soft_limit, int reverse_soft_limit, boolean timeout, int QUAD_ENCODER_MIN, int QUAD_ENCODER_MAX, int CONTINUOUS_CURRENT_LIMIT, int PEAK_CURRENT_LIMIT){
-        super(rotatorTalon, arbitrary_feedforward_constant, forward_soft_limit, reverse_soft_limit, timeout, QUAD_ENCODER_MIN, QUAD_ENCODER_MAX, CONTINUOUS_CURRENT_LIMIT, PEAK_CURRENT_LIMIT, OFFSET_FROM_ENCODER_ZERO);
+    public TestElbow(){
+        super(null, 0.0, 0, 0, false, 0, 0, 0, 0, 0);
     }
 
     @Override
