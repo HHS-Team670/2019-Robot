@@ -26,7 +26,7 @@ public class Elbow extends BaseElbow {
   // here. Call these from Commands.
 
   private VictorSPX elbowRotationSlave;
-  public static double ELBOW_START_POS = 6000; // TODO Set this
+  public static double elbowStartPos = 6000; // TODO Set this
   public static final double MAX_ELBOW_BACK = 0; //TODO find what is this number
   public static final double MAX_ELBOW_FORWARD = 0; //TODO also find this
   private static final double kF = 0, kP = 0, kI = 0, kD = 0; //TODO figure out what these are
@@ -40,8 +40,8 @@ public class Elbow extends BaseElbow {
 
   private double currentP = 0.2, currentI = 0.0, currentD = 0.0, currentF = 0.0; // TODO Check these constants
 
-  private static int ELBOW_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 15000; // TODO set this
-  private static int ELBOW_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS = 6000; // TODO set this
+  private static int elbowMotionMagicVelocitySensorUnitsPer100MS = 15000; // TODO set this
+  private static int elbowMotionMagicAccelerationSensorUnitsPerSecond = 6000; // TODO set this
 
   public static final int QUAD_ENCODER_MAX = 890, QUAD_ENCODER_MIN = -1158; //TODO Set these values
 
@@ -55,8 +55,8 @@ public class Elbow extends BaseElbow {
 		rotatorTalon.config_kP(kSlotMotionMagic, kP, kTimeoutMs);
 		rotatorTalon.config_kI(kSlotMotionMagic, kI, kTimeoutMs);
     rotatorTalon.config_kD(kSlotMotionMagic, kD, kTimeoutMs);
-    rotatorTalon.configMotionCruiseVelocity(ELBOW_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
-    rotatorTalon.configMotionAcceleration(ELBOW_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+    rotatorTalon.configMotionCruiseVelocity(elbowMotionMagicVelocitySensorUnitsPer100MS, kTimeoutMs);
+    rotatorTalon.configMotionAcceleration(elbowMotionMagicAccelerationSensorUnitsPerSecond, kTimeoutMs);
 
     /* Config closed loop gains for Primary closed loop (Current) */
     rotatorTalon.config_kP(CURRENT_CONTROL_SLOT, currentP, RobotConstants.kTimeoutMs);
