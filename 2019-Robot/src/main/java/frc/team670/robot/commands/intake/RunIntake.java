@@ -18,7 +18,7 @@ public class RunIntake extends Command {
   private MustangSensors sensors;
   private boolean runningIn;
 
-  private static final double RUNNING_POWER = 0.75; // TODO figure out if we want to run full speed
+  private static final double RUNNING_POWER = 0.30;
   private boolean hasBeenTriggered;
 
   public RunIntake(BaseIntake intake, MustangSensors sensors, boolean runningIn) {
@@ -31,6 +31,7 @@ public class RunIntake extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    hasBeenTriggered = false;
     Logger.consoleLog();
   }
 
@@ -40,9 +41,11 @@ public class RunIntake extends Command {
     intake.runIntake(RUNNING_POWER, runningIn);
 
       // If the IR sensor has been tripped and it is for the first time
-      if (sensors.getIntakeIRSensor() != null && sensors.getIntakeIROutput() && !hasBeenTriggered) {
-        hasBeenTriggered = true;
-        setTimeout(0.5 + timeSinceInitialized());
+      if(runningIn) {
+        if (sensors.getIntakeIRSensor() != null && sensors.getIntakeIROutput() && !hasBeenTriggered) {
+          hasBeenTriggered = true;
+          setTimeout(0.5 + timeSinceInitialized());
+        }
       }
   }
 
@@ -50,11 +53,16 @@ public class RunIntake extends Command {
   @Override
   protected boolean isFinished() {
     if(sensors.getIntakeIRSensor() == null || sensors.getClawIRSensor() == null){
-      return (timeSinceInitialized() > 0.5);
+      return false;
     }
     // If 0.5 seconds has passed since the IR sensor was first tripped or if the
     // cargo is already in the claw
-    return (isTimedOut() || sensors.getClawIROutput());
+    if(runningIn) {
+      return (isTimedOut() || sensors.getClawIROutput());
+    }
+    else {
+      return false;
+    }
   }
 
   // Called once after isFinished returns true

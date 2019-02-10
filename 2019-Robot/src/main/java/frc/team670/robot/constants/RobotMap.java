@@ -68,8 +68,8 @@ public class RobotMap {
   public static final int OPERATOR_CONTROLLER_PORT = 1;
 
   //Intake
-  public static final int INTAKE_BASE_TALON = 8; // TODO Set these
-  public static final int INTAKE_ROLLER_VICTOR = 0;
+  public static final int INTAKE_BASE_TALON = 0;//8; // TODO Set these
+  public static final int INTAKE_ROLLER_VICTOR = 8;
 
 
 }

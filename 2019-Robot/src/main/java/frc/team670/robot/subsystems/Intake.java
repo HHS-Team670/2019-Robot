@@ -37,14 +37,20 @@ public class Intake extends BaseIntake {
 
   private static final double ARBITRARY_FEED_FORWARD = 0.175;
 
-  private VictorSPX rollerVictor;
+  // private VictorSPX rollerVictor;
+  private TalonSRX rollerVictor;
   
   private Point2D.Double intakeCoord;
 
   public Intake() {
     super(new TalonSRX(RobotMap.INTAKE_BASE_TALON), ARBITRARY_FEED_FORWARD, FORWARD_SOFT_LIMIT, REVERSE_SOFT_LIMIT, true, QUAD_ENCODER_MIN, QUAD_ENCODER_MAX, CONTINUOUS_CURRENT_LIMIT, PEAK_CURRENT_LIMIT, OFFSET_FROM_ENCODER_ZERO);
     
-    rollerVictor = new VictorSPX(RobotMap.INTAKE_ROLLER_VICTOR);
+    // rollerVictor = new VictorSPX(RobotMap.INTAKE_ROLLER_VICTOR);
+    rollerVictor = new TalonSRX(RobotMap.INTAKE_ROLLER_VICTOR);
+
+    rollerVictor.setInverted(true);
+    rollerVictor.setNeutralMode(NeutralMode.Coast);
+
     intakeCoord = new Point2D.Double();
 
     rotatorTalon.setInverted(true);

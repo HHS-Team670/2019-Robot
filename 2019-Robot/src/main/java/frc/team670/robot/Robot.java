@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.drive.DriveMotionProfile;
+import frc.team670.robot.commands.intake.RunIntake;
 import frc.team670.robot.commands.tuning.ResetPulseWidthEncoder;
 import frc.team670.robot.dataCollection.MustangPi;
 import frc.team670.robot.dataCollection.MustangSensors;
@@ -179,7 +180,8 @@ public class Robot extends TimedRobot {
     Logger.consoleLog("Auton Started");
     table.getEntry("robotState").setString("autonomousInit()");
 
-    autonomousCommand = oi.getSelectedAutonCommand();
+    // autonomousCommand = oi.getSelectedAutonCommand();
+    autonomousCommand = new RunIntake(intake, sensors, true);
     // schedule the autonomous command (example)
     if (autonomousCommand != null) {
       autonomousCommand.start();

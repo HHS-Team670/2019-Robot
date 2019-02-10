@@ -16,7 +16,7 @@ public class TimedRunIntake extends TimedCommand {
   private BaseIntake intake;
   private boolean runningIn;
 
-  private static final double RUNNING_POWER = 0.75; // TODO figure out if we want to run full speed
+  private static final double RUNNING_POWER = 0.30;
 
   /**
    * 
