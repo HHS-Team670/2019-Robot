@@ -1,13 +1,12 @@
-package frc.team254.lib.util.math;
+package frc.team670.robot.utils.math;
 
-import static frc.team254.lib.util.Util.epsilonEquals;
+import static frc.team670.robot.utils.math.Util.epsilonEquals;
 
-import frc.team254.lib.util.Interpolable;
-
+import frc.team670.robot.utils.math.Translation;
 import java.text.DecimalFormat;
 
 /**
- * A rotation in a 2d coordinate frame represented a point on the unit circle (cosine and sine).
+ * Taken from Team 254 2017 Code. A rotation in a 2d coordinate frame represented a point on the unit circle (cosine and sine).
  * 
  * Inspired by Sophus (https://github.com/strasdat/Sophus/tree/master/sophus)
  */

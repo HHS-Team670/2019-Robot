@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.SerialPort;
-import frc.team254.lib.util.math.Rotation2d;
+import frc.team670.robot.utils.math.Rotation2d;
 
 /**
  * Driver for a NavX board. Basically a wrapper for the AHRS class. Much of this was taken from 254's code release.

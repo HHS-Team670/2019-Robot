@@ -1,8 +1,9 @@
-package frc.team254.lib.util;
+package frc.team670.robot.utils.math;
 
 import java.util.List;
 
 /**
+ * Taken from Team 254 2017 Robot Code.
  * Contains basic functions that are used often.
  */
 public class Util {

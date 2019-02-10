@@ -1,6 +1,8 @@
-package frc.team254.lib.util;
+package frc.team670.robot.utils.math;
 
 /**
+ * 
+ * Taken from Team 254 2017 Robot Code.
  * Interpolable is an interface used by an Interpolating Tree as the Value type. Given two end points and an
  * interpolation parameter on [0, 1], it calculates a new Interpolable representing the interpolated value.
  * 

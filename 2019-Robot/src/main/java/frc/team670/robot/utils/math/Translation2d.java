@@ -1,10 +1,9 @@
-package frc.team254.lib.util.math;
-
-import frc.team254.lib.util.Interpolable;
+package frc.team670.robot.utils.math;
 
 import java.text.DecimalFormat;
 
 /**
+ * Taken from Team 254 2017 Robot Code.
  * A translation in a 2d coordinate frame. Translations are simply shifts in an (x, y) plane.
  */
 public class Translation2d implements Interpolable<Translation2d> {
