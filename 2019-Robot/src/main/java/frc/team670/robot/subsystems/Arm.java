@@ -303,7 +303,7 @@ public class Arm {
     }
 
     /**
-     * Gets the absolue Elbow angle in degrees.
+     * Gets the absolute Elbow angle in degrees.
      */
     public double getElbowAngle() {
       return elbowAngle;

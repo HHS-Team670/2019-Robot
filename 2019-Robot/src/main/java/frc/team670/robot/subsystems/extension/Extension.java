@@ -203,7 +203,17 @@ public class Extension extends BaseExtension {
   }
 
   private double getArbitraryFeedForwardAngleMultiplier() {
-    return (-1.0 * Math.sin(Math.toRadians(Robot.arm.getElbow().getAngleInDegrees())));
+
+    double angle = Robot.arm.getElbow().getAngleInDegrees();
+
+    double output = Math.cos(Math.toRadians(angle));
+
+    if(angle > -90 && angle < 90) {
+      output = (output > 0 ? 1 : -1) * output;
+    } else {
+      output = (output < 0 ? 1 : -1) * output;
+    }
+    return output;
   }
 
   private int getExtensionPulseWidth() {  

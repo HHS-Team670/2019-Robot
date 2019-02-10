@@ -11,10 +11,12 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import frc.team670.robot.Robot;
 import frc.team670.robot.commands.arm.joystick.JoystickWrist;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.subsystems.Arm;
+import jaci.pathfinder.Pathfinder;
 
 /**
  * Controls wrist motors
@@ -119,7 +121,12 @@ public class Wrist extends BaseWrist {
 
   @Override
   public double getArbitraryFeedForwardAngleMultiplier() {
-    return (-1.0 * Math.cos(Math.toRadians(getAngleInDegrees() + Arm.getCurrentState().getElbowAngle())));
+
+    double angle = Robot.arm.getElbow().getAngleInDegrees() + Math.toRadians(getAngleInDegrees());
+
+    Pathfinder.boundHalfDegrees(angle); // In case it wraps around after this addition, binds the angle.
+
+    return -1 * Math.sin(Math.toRadians(angle));
   }
 
   public int getWristPulseWidth() {

@@ -150,6 +150,7 @@ public class Elbow extends BaseElbow {
 
   @Override
   protected double getArbitraryFeedForwardAngleMultiplier() {
-    return (-1.0 * Math.cos(Math.toRadians(getAngleInDegrees())));
+    double angle = getAngleInDegrees();
+    return -1 * Math.sin(Math.toRadians(angle)); // Assumes range of (-180,180) where positive input moves the motor towards 180
   }
 }
