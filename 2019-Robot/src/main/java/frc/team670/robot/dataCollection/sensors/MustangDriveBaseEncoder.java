@@ -45,7 +45,7 @@ public class MustangDriveBaseEncoder implements PIDSource {
                 return dioEncoder.get();
             }
             return (int) (sparkEncoder.getPosition() / RobotConstants.SPARK_TICKS_PER_ROTATION);
-        }
+        }  
         catch(RuntimeException e) {
             return 0;
         }

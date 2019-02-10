@@ -85,9 +85,4 @@ public class TestExtension extends BaseExtension {
 
   }
 
-  @Override
-  public void zeroPulseWidthEncoder() {
-
-  }
-
 }

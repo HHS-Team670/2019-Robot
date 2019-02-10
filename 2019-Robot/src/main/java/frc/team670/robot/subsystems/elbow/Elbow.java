@@ -30,6 +30,8 @@ public class Elbow extends BaseElbow {
   public static final double MAX_ELBOW_BACK = 0; //TODO find what is this number
   public static final double MAX_ELBOW_FORWARD = 0; //TODO also find this
   private static final double kF = 0, kP = 0, kI = 0, kD = 0; //TODO figure out what these are
+  private static final int OFFSET_FROM_ENCODER_ZERO = 0;
+
   // Also need to add pull gains slots
   private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0;
 
@@ -44,7 +46,7 @@ public class Elbow extends BaseElbow {
   public static final int QUAD_ENCODER_MAX = 890, QUAD_ENCODER_MIN = -1158; //TODO Set these values
 
   public Elbow() {
-    super(new TalonSRX(RobotMap.ARM_ELBOW_ROTATION_MOTOR_TALON),  0.0, 0, 0, false, 0, 0, 33, 0);
+    super(new TalonSRX(RobotMap.ARM_ELBOW_ROTATION_MOTOR_TALON),  0.0, 0, 0, false, 0, 0, 33, 0, OFFSET_FROM_ENCODER_ZERO);
     elbowRotationSlave = new VictorSPX(RobotMap.ARM_ELBOW_ROTATION_MOTOR_VICTOR);
     elbowRotationSlave.set(ControlMode.Follower, rotatorTalon.getDeviceID());  
 
@@ -101,7 +103,7 @@ public class Elbow extends BaseElbow {
 
   @Override
   public void initDefaultCommand() {
-    setDefaultCommand(new JoystickElbow(this));
+    // setDefaultCommand(new JoystickElbow(this));
   }
 
   @Override

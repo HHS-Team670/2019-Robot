@@ -9,6 +9,7 @@ package frc.team670.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
@@ -23,6 +24,7 @@ public abstract class RotatingSubsystem extends Subsystem implements TunableSubs
     protected int setpoint;
     protected boolean timeout;
     protected double arbitraryFeedForwardConstant;
+    protected int offsetFromEncoderZero;
 
     protected SensorCollection rotatorSensorCollection;
     protected static final int TICKS_PER_ROTATION = 4096;
@@ -35,12 +37,24 @@ public abstract class RotatingSubsystem extends Subsystem implements TunableSubs
             this.arbitraryFeedForwardConstant = arbitraryFeedForwardConstant;
             this.timeout = timeout;
 
-            setpoint = RotatingSubsystem.NO_SETPOINT;
+            this.offsetFromEncoderZero = offsetFromEncoderZero;
 
-            int pulseWidthPos = getRotatorPulseWidth() & 4095;
+            rotatorTalon.configFactoryDefault();
+
+            rotatorTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+
+            if (rotatorTalon != null) {
+                this.rotatorTalon = rotatorTalon;
+                this.rotatorSensorCollection = rotatorTalon.getSensorCollection();
+                ARBITRARY_FEEDFORWARD_CONSTANT = arbitrary_feedforward_constant;
+                this.timeout = timeout;
+
+                setpoint = RotatingSubsystem.NO_SETPOINT;
+
+                int pulseWidthPos = getRotatorPulseWidth() & 4095;
 
             if (pulseWidthPos < quadEncoderMin) {
-                pulseWidthPos += 4096;
+              pulseWidthPos += 4096;
             }
             if (pulseWidthPos > quadEncoderMax) {
                 pulseWidthPos -= 4096;
@@ -59,11 +73,9 @@ public abstract class RotatingSubsystem extends Subsystem implements TunableSubs
             // Enable Safety Measures
             rotatorTalon.configForwardSoftLimitEnable(true);
             rotatorTalon.configReverseSoftLimitEnable(true);
+            
+            }
         }
-    }
-
-    public void zeroPulseWidthEncoder() {
-        rotatorSensorCollection.setPulseWidthPosition(0, 0);
     }
 
     /**
@@ -78,6 +90,7 @@ public abstract class RotatingSubsystem extends Subsystem implements TunableSubs
      */
     public void enablePercentOutput() {
         rotatorTalon.set(ControlMode.PercentOutput, 0);
+        System.out.println("Intake Put in Percent Output");
     }
 
     /**
@@ -105,7 +118,11 @@ public abstract class RotatingSubsystem extends Subsystem implements TunableSubs
           }
     }
 
-    private int getRotatorPulseWidth(){
+    protected int getRotatorPulseWidth(){
+        return getUnadjustedPulseWidth() - offsetFromEncoderZero;
+    }
+
+    protected int getUnadjustedPulseWidth() {
         return rotatorSensorCollection.getPulseWidthPosition();
     }
 
@@ -114,7 +131,7 @@ public abstract class RotatingSubsystem extends Subsystem implements TunableSubs
     }
 
     protected int getPositionTicks(){
-        return rotatorSensorCollection.getQuadraturePosition();
+        return rotatorTalon.getSelectedSensorPosition(0);
     }
 
     /**

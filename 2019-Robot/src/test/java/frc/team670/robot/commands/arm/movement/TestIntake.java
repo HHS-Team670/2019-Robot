@@ -22,7 +22,7 @@ public class TestIntake extends BaseIntake {
     private double intakeAngle;
 
     public TestIntake() {
-        super(null, 0.0, 0, 0, true, 0, 0, 0, 0);
+        super(null, 0.0, 0, 0, true, 0, 0, 0, 0, 0);
     }
 
     @Override
@@ -93,5 +93,11 @@ public class TestIntake extends BaseIntake {
     public double getArbitraryFeedForwardAngleMultiplier() {
         return 0;
     }
+
+    @Override
+    public void enablePercentOutput() {
+        
+    }
+
 
 }

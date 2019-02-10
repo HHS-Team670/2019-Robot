@@ -128,7 +128,7 @@ public class Climber extends Subsystem {
    * @return The position of the front pistons in ticks
    */
   public int getFrontTalonPositionInTicks(){
-    return frontTalon.getSensorCollection().getQuadraturePosition();
+    return frontTalon.getSelectedSensorPosition(0);
   }
 
   /**
@@ -137,7 +137,7 @@ public class Climber extends Subsystem {
    * @return The position of the back pistons in ticks
    */
   public int getBackTalonPositionInTicks(){
-    return backTalon.getSensorCollection().getQuadraturePosition();
+    return backTalon.getSelectedSensorPosition(0);
   }
 
   /**

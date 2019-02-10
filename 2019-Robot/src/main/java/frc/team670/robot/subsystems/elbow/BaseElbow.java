@@ -16,8 +16,8 @@ import frc.team670.robot.subsystems.RotatingSubsystem;
  */
 public abstract class BaseElbow extends RotatingSubsystem implements ElbowInterface {
 
-  public BaseElbow(TalonSRX rotatorTalon, double arbitraryFeedForwardConstant, int forwardSoftLimit, int reverseSoftLimit, boolean timeout, int quadEncoerMin, int quadEncoderMax, int continuousCurrentLimit, int peakCurrentLimit){
-    super(rotatorTalon, arbitraryFeedForwardConstant, forwardSoftLimit, reverseSoftLimit, timeout, quadEncoerMin, quadEncoderMax, continuousCurrentLimit, peakCurrentLimit);
+  public BaseElbow(TalonSRX rotatorTalon, double arbitraryFeedForwardConstant, int forwardSoftLimit, int reverseSoftLimit, boolean timeout, int quadEncoerMin, int quadEncoderMax, int continuousCurrentLimit, int peakCurrentLimit, int offsetFromEncoderZero){
+    super(rotatorTalon, arbitraryFeedForwardConstant, forwardSoftLimit, reverseSoftLimit, timeout, quadEncoerMin, quadEncoderMax, continuousCurrentLimit, peakCurrentLimit, offsetFromEncoderZero);
   }
 
   @Override

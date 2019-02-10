@@ -9,6 +9,7 @@ package frc.team670.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import frc.team670.robot.commands.intake.MoveIntakeToSetpointAngle;
 import frc.team670.robot.commands.tuning.DecreaseMeasurementOutput;
 import frc.team670.robot.commands.tuning.IncreaseMeasurementOutput;
 import frc.team670.robot.commands.tuning.MeasureArbitraryFeedforward;
@@ -82,10 +83,10 @@ public class OI {
     measureFeedForward = new JoystickButton(driverController, XboxButtons.X);
     measureFeedForward.whenPressed(new MeasureArbitraryFeedforward(Robot.intake));
 
-    // runForward = new JoystickButton(driverController, XboxButtons.B);
-    // runForward.whenPressed(new MoveIntakeToSetpointAngle(90, Robot.intake));
-    // runBackward = new JoystickButton(driverController, XboxButtons.A);
-    // runBackward.whenPressed(new MoveIntakeToSetpointAngle(-90, Robot.intake));
+    runForward = new JoystickButton(driverController, XboxButtons.B);
+    runForward.whenPressed(new MoveIntakeToSetpointAngle(80, Robot.intake));
+    runBackward = new JoystickButton(driverController, XboxButtons.A);
+    runBackward.whenPressed(new MoveIntakeToSetpointAngle(-80, Robot.intake));
   }
 
   public MustangController getDriverController() {
