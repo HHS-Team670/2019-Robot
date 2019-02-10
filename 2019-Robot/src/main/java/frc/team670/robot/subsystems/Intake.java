@@ -30,7 +30,7 @@ public class Intake extends BaseIntake {
 
   // Motion Magic
   private static final int kPIDLoopIdx = 0, MOTION_MAGIC_SLOT = 0, kTimeoutMs = 0;
-  private static final int OFFSET_FROM_ENCODER_ZERO = 623;
+  private static final int OFFSET_FROM_ENCODER_ZERO = -260;
   private static final int FORWARD_SOFT_LIMIT = 850, REVERSE_SOFT_LIMIT = -940;
   private static final int CONTINUOUS_CURRENT_LIMIT = 20, PEAK_CURRENT_LIMIT = 0;
   private final static int INTAKE_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 120,  INTAKE_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_SECOND = 400;
