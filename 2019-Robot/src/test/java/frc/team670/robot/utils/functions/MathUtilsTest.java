@@ -54,41 +54,6 @@ public class MathUtilsTest {
         assertEquals(1, MathUtils.findDistance(0, 0, 1, 0), 0.000001);
     }
 
-    @Test
-    public void convertDriveBaseTicksToInchesTest(){
-        assertEquals(9.42, MathUtils.convertDriveBaseTicksToInches(2048), 0.1);
-        assertEquals(13.805, MathUtils.convertDriveBaseTicksToInches(3000), 0.1);
-        assertEquals(8.605, MathUtils.convertDriveBaseTicksToInches(1870), 0.1);
-    }
-
-    @Test
-    public void convertInchesToDriveBaseTicksTest() {
-        assertEquals(10864, MathUtils.convertInchesToDriveBaseTicks(50), 1);
-        assertEquals(17383, MathUtils.convertInchesToDriveBaseTicks(80), 1);
-        assertEquals(21728, MathUtils.convertInchesToDriveBaseTicks(100), 1);
-
-    }
-
-    @Test
-    public void convertDriveBaseRotationsToInchesTest() {
-        assertEquals(11.14, MathUtils.convertDriveBaseRotationsToInches(5), 0.1);
-        assertEquals(22.29, MathUtils.convertDriveBaseRotationsToInches(10), 0.1);
-        assertEquals(44.59, MathUtils.convertDriveBaseRotationsToInches(20), 0.1);
-    }
-
-    @Test
-    public void convertInchesToDriveBaseRotationsTest() {
-        assertEquals(22.425, MathUtils.convertInchesToDriveBaseRotations(50), 0.1);
-        assertEquals(18.83, MathUtils.convertInchesToDriveBaseRotations(42), 0.1);
-        assertEquals(5.37, MathUtils.convertInchesToDriveBaseRotations(12), 0.1);
-    }
-
-    @Test
-    public void convertInchesPerSecondToDriveBaseRoundsPerMinuteTest() {
-        assertEquals(159.23, MathUtils.convertInchesPerSecondToDriveBaseRoundsPerMinute(50), 0.1);    
-        assertEquals(111.41, MathUtils.convertInchesPerSecondToDriveBaseRoundsPerMinute(35), 0.1);   
-        assertEquals(238.73, MathUtils.convertInchesPerSecondToDriveBaseRoundsPerMinute(75), 0.1);
-    }
     /*
      * Add in more tests for all Util methods here.
      */ 

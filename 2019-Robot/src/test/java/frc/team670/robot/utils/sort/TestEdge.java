@@ -1,5 +1,7 @@
 package frc.team670.robot.utils.sort;
+
 import frc.team670.robot.utils.sort.Edge;
+import frc.team670.robot.utils.sort.Node;
 
 public class TestEdge implements Edge{
 

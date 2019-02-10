@@ -1,33 +1,55 @@
 package frc.team670.robot.dataCollection;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.constants.RobotMap;
-import frc.team670.robot.dataCollection.NavX.ZeroableNavX_PIDSource;
+import frc.team670.robot.dataCollection.sensors.NavX;
+import frc.team670.robot.dataCollection.sensors.NavX.NavX_Pitch_PIDSource;
+import frc.team670.robot.dataCollection.sensors.NavX.ZeroableNavX_Yaw_PIDSource;
+import frc.team670.robot.utils.math.Rotation;
+import jaci.pathfinder.Pathfinder;
 
 /**
  * Instantiates sensor representation objects and contains methods for accessing the sensor data.
  * @author shaylandias
  */
-public class MustangSensors extends Subsystem {
+public class MustangSensors {
 
   // NavX
   private NavX navXMicro = null;
+  private boolean isNavXNull;
+  private DigitalInput intakeIRSensor;
+  private DigitalInput clawIRSensor;
   public static final double NAVX_ERROR_CODE = -40001;
 
 
   public MustangSensors(){
     try {
-			navXMicro = new NavX(RobotMap.NAVX_PORT);
-		} catch (RuntimeException ex) {
-			DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
-			navXMicro = null;
-		}
-  }
+      // navXMicro = new NavX(RobotMap.NAVX_PORT); 
+      // isNavXNull = false;
+    } catch (RuntimeException ex) {
+      // DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
+      // SmartDashboard.putString("sensor-error", "Error instantiating navX-MXP");
+      navXMicro = null;
+      isNavXNull = true;
+    }
+    
+    try {
+      intakeIRSensor = new DigitalInput(RobotMap.INTAKE_IR_DIO_PORT);
+    } catch (RuntimeException ex) {
+      DriverStation.reportError("Error instantiating intakeIRSensor: " + ex.getMessage(), true);
+      SmartDashboard.putString("sensor-error", "Error instantiating intakeIRSensor");
+      intakeIRSensor = null;
+    }
 
-  @Override
-  public void initDefaultCommand() {
-    // No Default Command
+    try {
+      clawIRSensor = new DigitalInput(RobotMap.CLAW_IR_DIO_PORT);
+    } catch (RuntimeException ex) {
+      DriverStation.reportError("Error instantiating clawIRSensor: " + ex.getMessage(), true);
+      SmartDashboard.putString("sensor-error", "Error instantiating clawIRSensor");
+      clawIRSensor = null;
+    }
   }
 
   /**
@@ -45,7 +67,7 @@ public class MustangSensors extends Subsystem {
   public double getYawRateDegreesPerSecond() {
     if(navXMicro != null) {
       return navXMicro.getYawRateDegreesPerSec();
-    } else{
+    } else {
       return NAVX_ERROR_CODE;
     }
   }
@@ -57,7 +79,15 @@ public class MustangSensors extends Subsystem {
   public double getYawDouble(){
     if(navXMicro != null) {
       return navXMicro.getYawDouble();
-    } else{
+    } else {
+      return NAVX_ERROR_CODE;
+    }
+  }
+
+  public double getPitchDouble() {
+    if(navXMicro != null) {
+      return navXMicro.getPitch();
+    } else {
       return NAVX_ERROR_CODE;
     }
   }
@@ -70,6 +100,14 @@ public class MustangSensors extends Subsystem {
    */
   public double getYawDoubleForPathfinder(){
    return -1 * getYawDouble();
+  }
+
+  /**
+   * Gets the Rotation for the Pure Pursuit drive. (-180, 180) with 90 being forward
+   */
+  public Rotation getRotation() {
+    double headingRadians = Pathfinder.boundHalfDegrees(90 - getYawDouble());
+    return Rotation.fromDegrees(headingRadians);
   }
 
   /**
@@ -93,14 +131,89 @@ public class MustangSensors extends Subsystem {
   }
 
   public double getFieldCentricYaw() {
-    return navXMicro.getYawFieldCentric();
+    if (navXMicro != null) {
+      return navXMicro.getYawFieldCentric();
+    } else {
+      return NAVX_ERROR_CODE;
+    }
   }
 
-  public ZeroableNavX_PIDSource getZeroableNavXPIDSource() {
+  public double getAngle() {
+    if (navXMicro != null) {
+      return navXMicro.getAngle();
+    } else {
+      return NAVX_ERROR_CODE;
+    }
+  }
+
+  /**
+   * Returns a PIDSource with the NavX Yaw corresponding to the last zero (not field centric).
+   * @return Zeroable NavX Yaw Source, null if the navX could not be instantiated!
+   */
+  public ZeroableNavX_Yaw_PIDSource getZeroableNavXPIDSource() {
     if(navXMicro != null){
-      return navXMicro.getZeroableNavXPIDSource();
+      return navXMicro.getZeroableNavXYawPIDSource();
     }
     return null;
   }
 
+  /**
+   * Returns a PIDSource with the NavX pitch.
+   * @return NavX Pitch Source, null if the navX could not be instantiated!
+   */
+  public NavX_Pitch_PIDSource getNavXPitchPIDSource() {
+    if(navXMicro != null){
+      return navXMicro.getNavXPitchPIDSource();
+    }
+    return null;
+  }
+
+  /**
+   * Returns true if object is within threshold and false if not
+   */
+  public boolean getIntakeIROutput(){
+    if(intakeIRSensor != null){
+      return intakeIRSensor.get();
+    }
+    return false;
+  }
+
+
+  /**
+   * Returns true if object is within threshold and false if not
+   */
+  public boolean getClawIROutput(){
+    if(clawIRSensor != null){
+      return clawIRSensor.get();
+    }
+    return false;
+  }
+
+  /**
+   * Returns the intake IR sensor
+   */
+  public DigitalInput getIntakeIRSensor(){
+    return intakeIRSensor;
+  }
+
+  /**
+   * Returns the claw IR sensor
+   */
+  public DigitalInput getClawIRSensor(){
+    return clawIRSensor;
+  }
+
+  /**
+   * Returns the navX
+   */
+  // public NavX getNavX(){
+  //   return navXMicro;
+  // }
+
+  /**
+   * @return true if NavX is null (could not be instantiated), false if you can call methods on the NavX
+   */
+  public boolean isNavXNull() {
+    return isNavXNull;
+  }
 }

@@ -8,6 +8,7 @@
 package frc.team670.robot.utils.functions;
 
 import frc.team670.robot.constants.RobotConstants;
+import jaci.pathfinder.Pathfinder;
 
 /**
  * Provides useful math-related functions.
@@ -67,44 +68,6 @@ public class MathUtils {
     }
 
     /**
-     * Converts a tick value taken from a drive base DIO encoder to inches.
-     */
-    public static double convertDriveBaseTicksToInches(double ticks) {
-       double rotations = ticks / RobotConstants.DIO_TICKS_PER_ROTATION;
-       return rotations * Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER;
-    }
-
-    /**
-     * Converts an inch value into drive base DIO Encoder ticks.
-     */
-    public static int convertInchesToDriveBaseTicks(double inches) {
-        double rotations = inches / (Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
-        return (int)(rotations * RobotConstants.DIO_TICKS_PER_ROTATION);
-    }
-
-    /**
-     * Gets inches per rotations of a NEO motor on the drive base since SparkMAX encoders work in rotations.
-     */
-    public static double convertDriveBaseRotationsToInches(double rotations) {
-        return RobotConstants.DRIVEBASE_INCHES_PER_ROTATION * rotations;
-    }
-
-    /**
-     * Gets rotations of a NEO motor on the drive base per a value in inches ince SparkMAX encoders work in rotations.
-     */
-    public static double convertInchesToDriveBaseRotations(double inches) {
-        return inches / RobotConstants.DRIVEBASE_INCHES_PER_ROTATION;
-    }
-
-    /**
-     * Converts a value of per second of the DriveBase Rounds Per Minute
-     */
-    public static double convertInchesPerSecondToDriveBaseRoundsPerMinute(double inchesPerSecond) {
-        // (Inches/seconds) * (60 seconds/1 minute) * ((2 * Diameter inches)/Rotation)
-        return inchesPerSecond * 60 / (Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
-    }
-
-    /**
      * Returns the distance (always positive) between two points in a coordinate system.
      * @param x1 The x-coord of point 1
      * @param y1 The y-coord of point 1
@@ -113,6 +76,24 @@ public class MathUtils {
      */
     public static double findDistance(double x1, double y1, double x2, double y2) {
         return Math.sqrt(Math.pow((x1-x2), 2) + Math.pow(y2-y1, 2));
+    }
+
+    /**
+     * Returns true if the value is within +/- tolerance of target
+     * @param tolerance The tolerance (must be positive)
+     */
+    public static boolean isWithinTolerance(double value, double target, double tolerance) {
+        return (value > target - tolerance && value < target + tolerance);
+    }
+
+    /**
+     * Returns the hypotenuse of a triangle given two legs according to the Pythagorean Theorem
+     * 
+     * @param leg1 The length of the first leg
+     * @param leg2 The length of the second leg
+     */
+    public static double findHypotenuse(double leg1, double leg2) {
+        return Math.sqrt(leg1 * leg1 + leg2 * leg2);
     }
 
     /*

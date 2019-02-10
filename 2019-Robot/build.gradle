@@ -1,6 +1,6 @@
 plugins {
     id "java"
-    id "edu.wpi.first.GradleRIO" version "2019.1.1"
+    id "edu.wpi.first.GradleRIO" version "2019.2.1"
 }
 
 def ROBOT_MAIN_CLASS = "frc.team670.robot.Main"
@@ -41,7 +41,7 @@ def includeDesktopSupport = false
 repositories {
     mavenCentral()
     jcenter()
-    maven { url 'https://jitpack.io' }
+    // maven { url 'https://jitpack.io' }
 }
 
 // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
@@ -51,7 +51,7 @@ dependencies {
     compile wpi.deps.vendor.java()
     nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
     nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
-    compile 'org.ghrobotics:FalconLibrary:2019.1.5'
+    // compile 'org.ghrobotics:FalconLibrary:2019.1.5'
     // compile 'junit:junit:4.12'
     testCompile 'junit:junit:4.12'
     compile fileTree(include: ['*.jar'], dir: 'lib')

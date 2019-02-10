@@ -227,7 +227,7 @@ public class Logger {
     public static void consoleLog(String message, Object... parameters)
     {
         // logs to the console as well as our log file on RR disk.
-        LOGGER.log(Level.INFO, String.format("robot: %s: %s", currentMethod(2), String.format(message, parameters)));
+        LOGGER.log(Level.INFO, String.format("robot: MatchTime:%s: %s: %s", DriverStation.getInstance().getMatchTime(), currentMethod(2), String.format(message, parameters)));
     }
     
     /**
@@ -236,7 +236,7 @@ public class Logger {
     public static void consoleLog()
     {
         // logs to the console as well as our log file on RR disk.
-        LOGGER.log(Level.INFO, String.format("robot: %s", currentMethod(2)));
+        LOGGER.log(Level.INFO, String.format("robot: MatchTime:%s: %s", DriverStation.getInstance().getMatchTime(), currentMethod(2)));
     }
 
     /**
