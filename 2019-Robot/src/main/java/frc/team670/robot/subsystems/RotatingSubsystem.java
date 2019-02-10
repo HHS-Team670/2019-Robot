@@ -88,7 +88,8 @@ public abstract class RotatingSubsystem extends Subsystem implements TunableSubs
     /**
      * Enbales the main talon to percent output mode
      */
-    public void enablePercentOutput() {
+    public synchronized void enablePercentOutput() {
+        clearSetpoint();
         rotatorTalon.set(ControlMode.PercentOutput, 0);
         System.out.println("Intake Put in Percent Output");
     }
@@ -111,7 +112,7 @@ public abstract class RotatingSubsystem extends Subsystem implements TunableSubs
     /**
      * Updates the arbitrary feed forward on this subsystem
      */
-    public void updateArbitraryFeedForward(){
+    public synchronized void updateArbitraryFeedForward(){
         if(setpoint != NO_SETPOINT) {
             double value = getArbitraryFeedForwardAngleMultiplier() * arbitraryFeedForwardConstant;
             rotatorTalon.set(ControlMode.MotionMagic, setpoint, DemandType.ArbitraryFeedForward, value);

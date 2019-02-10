@@ -131,7 +131,8 @@ public class Elbow extends BaseElbow {
   }
 
   @Override
-  public void setCurrentControl(int current) {
+  public synchronized void setCurrentControl(int current) {
+    clearSetpoint();
     rotatorTalon.selectProfileSlot(CURRENT_CONTROL_SLOT, 0);
     rotatorTalon.set(ControlMode.Current, current);
   }

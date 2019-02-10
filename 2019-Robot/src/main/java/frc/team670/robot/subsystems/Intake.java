@@ -104,7 +104,6 @@ public class Intake extends BaseIntake {
     return intakeCoord;
   }
 
-
   /**
    * Runs the intake at a given percent power
    * 
@@ -139,16 +138,8 @@ public class Intake extends BaseIntake {
   @Override
   public double getArbitraryFeedForwardAngleMultiplier() {
     double angleInDegrees = getAngleInDegrees();
-    double output;
-    if(getAngleInDegrees() > 0) {
-      output = -1 * (Math.cos(Math.toRadians(angleInDegrees)));
-    }
-    else {
-      output = (Math.cos(Math.toRadians(angleInDegrees)));
-    }
-
+    return -1 * Math.sin(Math.toRadians(angleInDegrees));
     // System.out.println("IntakeArbitraryFeedforward: " + output);
-    return output;
   }
 
   public void sendDataToDashboard() {
