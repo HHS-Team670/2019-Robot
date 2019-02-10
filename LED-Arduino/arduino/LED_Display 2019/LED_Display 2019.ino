@@ -5,6 +5,11 @@
    in Ethernet port, such as the Leonardo or Yun.
    @author arnav kulkarni, arnuv tandon
 */
+
+//iterate through first quadrant
+//add corrseponding quadrant values (for quadrant 1 add 0, for quadrant 2 add 15, for quadrant 3 add 30, and qudrant 4 add 45)
+//then do strip.show() to show the values
+//basically base off of the first quadrant and then add the multiple of 15
 #include <math.h>                                                   //Imports:
 #include <SPI.h>                                    //SPI interface for interfacing with Ethernet Shield
 #include <Ethernet.h>                               //Ethernet library for creating a client instance
@@ -50,128 +55,106 @@ const String bounceBackground = "7L";
 const String cylonBounce = "8L";
 const String rainbow = "9L";
 
-int trigger=0;
 
 //variables to store data recived from server
 String dataString = "";                             //Used for building a string to then splice into multiple parts to control the LEDs
 String stateData = stillDrive;                      //Sets default values for states
 String allianceData = blueAlliance;
-String lightShowData = runningAllianceColors;
 
 //sets the entire strip to a specified color
-void setStripColorTest(int r, int g, int b, Adafruit_NeoPixel *stripptr, int quadrant)
+void setStripColor(int r, int g, int b, Adafruit_NeoPixel *stripptr, int quadrant)
 {
-  for (int i = (stripptr->numPixels() / 4) * (quadrant - 1); i <= 15 * (stripptr->numPixels() / 4)* quadrant; i++)
+  for (int i = (stripptr->numPixels() / 4) * (quadrant - 1); i < (stripptr->numPixels() / 4) * quadrant; i++)
   {
     stripptr->setPixelColor(i, r, g, b);
-  
+
   }
   stripptr->show();
 }
 
-void RunningLightsTest(Adafruit_NeoPixel *stripptr, int quadrant) 
-{
-  byte red = 255;
-  byte green = 255;
-  byte blue = 0;
-  int waveDelay = 10;
-
-  int Position = 0;
-
-  for (int j = (stripptr->numPixels() / 4) * (quadrant - 1); j < (stripptr->numPixels() / 4) * quadrant * 2; j++)
+void setRunningLights(byte red, byte green, byte blue, int WaveDelay) {
+  byte
+  int Position=0;
+  int i,j;
+  for(j=0,i=45; j<15,i<=60; j++,i++)
   {
-    Position++; // = 0; //Position + Rate;
-    for (int i = (stripptr->numPixels() / 4) * (quadrant - 1); i < (stripptr->numPixels() / 4) * quadrant * 2; i++) 
-    {
-      // sine wave, 3 offset waves make a rainbow!
-      //float level = sin(i+Position) * 127 + 128;
-      //setPixel(i,level,0,0);
-      //float level = sin(i+Position) * 127 + 128;
-      stripptr->setPixelColor(i, ((sin(i + Position) * 127 + 128) / 255)*red,
-                              ((sin(i + Position) * 127 + 128) / 255)*green,
-                              ((sin(i + Position) * 127 + 128) / 255)*blue);
-    }
+      Position++; // = 0; //Position + Rate;
+      for(j=0,i=45;j<15,i<=60,; i++,j++) {
+        // sine wave, 3 offset waves make a rainbow!
+        //float level = sin(i+Position) * 127 + 128;
+        //setPixel(i,level,0,0);
+        //float level = sin(i+Position) * 127 + 128;
+        strip.setPixelColor(i,((sin(i+Position) * 127 + 128)/255)*red,
+                   ((sin(i+Position) * 127 + 128)/255)*green,
+                   ((sin(i+Position) * 127 + 128)/255)*blue);
 
-    stripptr->show();
-    delay(waveDelay);
+        strip.setPixelColor(i,((sin(j+Position) * 127 + 128)/255)*red,
+                   ((sin(j+Position) * 127 + 128)/255)*green,
+                   ((sin(j+Position) * 127 + 128)/255)*blue);
+      }
+      
+      strip.show();
+      delay(10);
   }
 }
 
-void RunningAllianceColorsTest(Adafruit_NeoPixel *stripptr, int quadrant) //to be used when the robot is not moving, will flash alliance color
+void setRunningAllianceColors(Adafruit_NeoPixel *stripptr, int quad1, int quad2) //to be used when the robot is not moving, will flash alliance color
 {
   if (stateData == stillDrive)
   {
-    if (allianceData = blueAlliance)
+    if (allianceData == blueAlliance)
     {
-      RunningLightsTest(stripptr,quadrant);
+      setRunningLights(stripptr, quad1, quad2);
     }
     else if (allianceData == redAlliance)
     {
-      RunningLightsTest(stripptr, quadrant);
+      setRunningLights(stripptr, quad1, quad2);
     }
   }
-}
-
-void quarterTest(Adafruit_NeoPixel *stripptr)
-{
-  for(int i = 0; i <= 15; i++)
-  {
-//     setClimbingGreenLights(stripptr,1);
-
-  }
-  for(int i = 15; i <= 30; i++)
-  {
-    stripptr->setPixelColor(i,0,255,0);
-  }
-  for(int i = 30; i <= 45; i++)
-  {
-//    stripptr->setPixelColor(i,0,0,255);
-  }
-  for(int i = 45; i <= 60; i++){
-//  stripptr->setPixelColor(i,0,255,0);
-
-        stripptr->setPixelColor(i,255,0,0);
-
-  }
-  stripptr-> show();
 }
 
 void setSolidGreen(Adafruit_NeoPixel *stripptr, int quadrant) //to be used when the robot is moving forward, will display solid green
 {
-  setStripColorTest(0, 255, 0, stripptr, quadrant);
+  setStripColor(0, 255, 0, stripptr, quadrant);
 }
 
 //reverse drive indicated by red
 void setSolidRed(Adafruit_NeoPixel *stripptr, int quadrant) //to be used when the robot is moving in reverse, will display solid red
 {
-  setStripColorTest(255, 0, 0, stripptr, quadrant);
+  setStripColor(255, 0, 0, stripptr, quadrant);
 }
 
 //solid blue color indicates vision lock
 void setSolidPurple(Adafruit_NeoPixel *stripptr, int quadrant) //to be used when there is a vision lock, will display solid purple
 {
-  setStripColorTest(255, 0, 255, stripptr, quadrant);
+  setStripColor(255, 0, 255, stripptr, quadrant);
 }
 
 //climbing green LEDs effect
-void setClimbingGreenLights(Adafruit_NeoPixel *stripptr, int quadrant) //to be used when we are climbing, will display climbing green LEDS
+
+//climbing green LEDs effect for 2 quadrants
+void setClimbingGreenLights(Adafruit_NeoPixel *stripptr, int quad1, int quad2) //to be used when we are climbing, will display climbing green LEDS
 {
-  for (int i = (stripptr->numPixels() / 4) * (quadrant - 1); i <= (stripptr->numPixels() / 4) * quadrant; i++)
+  int i, j;
+  for (i = (stripptr->numPixels() / 4) * (quad1 - 1), j = (stripptr->numPixels() / 4) * (quad2 - 1);
+       i < (stripptr->numPixels() / 4) * quad1, j < (stripptr->numPixels() / 4) * quad2; i++, j++)
   {
     stripptr->setPixelColor(i, 0, 255, 0);
+    stripptr->setPixelColor(j, 0, 255, 0);
     stripptr->show();
     delay(40);                              //Slows down the leds so we can see the effects
   }
-  for (int i = (stripptr->numPixels() / 4) * (quadrant - 1); i <= (stripptr->numPixels() / 4) * quadrant; i++) 
+  for (int i = (stripptr->numPixels() / 4) * (quad1 - 1), j = (stripptr->numPixels() / 4) * (quad2 - 1);
+       i < (stripptr->numPixels() / 4) * quad1, j < (stripptr->numPixels() / 4) * quad2; i++, j++)
   {
     stripptr->setPixelColor(i, 0, 0, 0);
+    stripptr->setPixelColor(j, 0, 0, 0);
     stripptr->show();
     delay(40);                            //Slows down the leds so we can see the effects
   }
-
 }
 
-void StrobeTest(Adafruit_NeoPixel *stripptr, int quadrant) 
+void strobe(Adafruit_NeoPixel *stripptr, int quadrant)
 {
   byte red = 0;
   byte green = 0;
@@ -180,27 +163,27 @@ void StrobeTest(Adafruit_NeoPixel *stripptr, int quadrant)
   int strobeCount = 10;
   int flashDelay = 20;
   int endPause = 0;
-  
-  for (int j = 0; j < strobeCount; j++) 
+
+  for (int j = 0; j < strobeCount; j++)
   {
-    setStripColorTest(red, green, blue, stripptr, quadrant);
+    setStripColor(red, green, blue, stripptr, quadrant);
     stripptr->show();
     delay(flashDelay);
-    
+
     reset(stripptr, quadrant);
     stripptr->show();
     delay(flashDelay);
   }
 }
-void RandomStrobeTest(Adafruit_NeoPixel *stripptr, int quadrant) 
+void setRandomStrobe(Adafruit_NeoPixel *stripptr, int quadrant)
 {
   int strobeCount = 10;
   int flashDelay = 10;
   int endPause = 0;
-  
-  for (int j = 0; j < strobeCount; j++) 
+
+  for (int j = 0; j < strobeCount; j++)
   {
-    for (int i = (stripptr->numPixels() / 4) * (quadrant - 1); i <= (stripptr->numPixels() / 4) * quadrant; i++) 
+    for (int i = (stripptr->numPixels() / 4) * (quadrant - 1); i <= (stripptr->numPixels() / 4) * quadrant; i++)
     {
       long randRed = random(1, 255);
       long randGreen = random(1, 255);
@@ -209,13 +192,14 @@ void RandomStrobeTest(Adafruit_NeoPixel *stripptr, int quadrant)
     }
     stripptr->show();
     delay(flashDelay);
-    
-    reset(stripptr,quadrant);
+
+    reset(stripptr, quadrant);
     stripptr->show();
     delay(flashDelay);
   }
 }
-void setBounceBackground(Adafruit_NeoPixel *stripptr, int quadrant) 
+
+void setBounceBackground(Adafruit_NeoPixel *stripptr, int quadrant)
 {
 
   byte red = 255;
@@ -226,12 +210,12 @@ void setBounceBackground(Adafruit_NeoPixel *stripptr, int quadrant)
   int speedDelay = 40;
   int returnDelay = 40;
 
-  for (int i = 0; i < stripptr->numPixels() - eyeSize - 2; i++) 
+  for (int i = 0; i < stripptr->numPixels() - eyeSize - 2; i++)
   {
-    setStripColorTest(255, 255, 255, stripptr, quadrant);
+    setStripColor(255, 255, 255, stripptr, quadrant);
     stripptr->setPixelColor(i, red / 10, green / 10, blue / 10);
-    
-    for (int j = 1; j <= eyeSize; j++) 
+
+    for (int j = 1; j <= eyeSize; j++)
     {
       stripptr->setPixelColor(i + j, red, green, blue);
     }
@@ -242,11 +226,11 @@ void setBounceBackground(Adafruit_NeoPixel *stripptr, int quadrant)
 
   delay(returnDelay);
 
-  for (int i = stripptr->numPixels() - eyeSize - 2; i > 0; i--) 
+  for (int i = stripptr->numPixels() - eyeSize - 2; i > 0; i--)
   {
-    setStripColorTest(255, 255, 255, stripptr, quadrant);
+    setStripColor(255, 255, 255, stripptr, quadrant);
     stripptr->setPixelColor(i, red / 10, green / 10, blue / 10);
-    for (int j = 1; j <= eyeSize; j++) 
+    for (int j = 1; j <= eyeSize; j++)
     {
       stripptr->setPixelColor(i + j, red, green, blue);
     }
@@ -257,7 +241,7 @@ void setBounceBackground(Adafruit_NeoPixel *stripptr, int quadrant)
 
   delay(returnDelay);
 }
-void CylonBounce(Adafruit_NeoPixel *stripptr, int quadrant) 
+void setCylonBounce(Adafruit_NeoPixel *stripptr, int quadrant)
 {
   byte red = 0;
   byte green = 0;
@@ -265,13 +249,13 @@ void CylonBounce(Adafruit_NeoPixel *stripptr, int quadrant)
   int EyeSize = 3;
   int SpeedDelay = 30;
   int ReturnDelay = 30;
-  
-  for (int i = (stripptr->numPixels() / 4) * (quadrant - 1); i < (stripptr->numPixels() / 4) * quadrant - EyeSize - 2; i++) 
+
+  for (int i = (stripptr->numPixels() / 4) * (quadrant - 1); i < (stripptr->numPixels() / 4) * quadrant - EyeSize - 2; i++)
   {
     reset(stripptr, quadrant);
     stripptr->setPixelColor(i, red / 10, green / 10, blue / 10);
-    
-    for (int j = 1; j <= EyeSize; j++) 
+
+    for (int j = 1; j <= EyeSize; j++)
     {
       stripptr->setPixelColor(i + j, red, green, blue);
     }
@@ -282,11 +266,11 @@ void CylonBounce(Adafruit_NeoPixel *stripptr, int quadrant)
 
   delay(ReturnDelay);
 
-  for (int i = (stripptr->numPixels() / 4) * (quadrant - 1) - EyeSize - 2; i > 0; i--) 
+  for (int i = (stripptr->numPixels() / 4) * (quadrant - 1) - EyeSize - 2; i > 0; i--)
   {
     reset(stripptr, quadrant);
     stripptr->setPixelColor(i, red / 10, green / 10, blue / 10);
-    for (int j = 1; j <= EyeSize; j++) 
+    for (int j = 1; j <= EyeSize; j++)
     {
       stripptr->setPixelColor(i + j, red, green, blue);
     }
@@ -297,7 +281,7 @@ void CylonBounce(Adafruit_NeoPixel *stripptr, int quadrant)
 
   delay(ReturnDelay);
 }
-void BouncingBalls(Adafruit_NeoPixel *stripptr, int quadrant) 
+void bouncingBalls(Adafruit_NeoPixel *stripptr, int quadrant)
 {
   byte red  = 255;
   byte blue = 255;
@@ -314,7 +298,7 @@ void BouncingBalls(Adafruit_NeoPixel *stripptr, int quadrant)
   long  ClockTimeSinceLastBounce[ballCount];
   float Dampening[ballCount];
 
-  for (int i = 0 ; i < ballCount ; i++) 
+  for (int i = 0 ; i < ballCount ; i++)
   {
     ClockTimeSinceLastBounce[i] = millis();
     Height[i] = StartHeight;
@@ -324,20 +308,20 @@ void BouncingBalls(Adafruit_NeoPixel *stripptr, int quadrant)
     Dampening[i] = 0.90 - float(i) / pow(ballCount, 2);
   }
 
-  while (true) 
+  while (true)
   {
-    for (int i = 0 ; i < ballCount ; i++) 
+    for (int i = 0 ; i < ballCount ; i++)
     {
       TimeSinceLastBounce[i] =  millis() - ClockTimeSinceLastBounce[i];
       Height[i] = 0.5 * Gravity * pow( TimeSinceLastBounce[i] / 1000 , 2.0 ) + ImpactVelocity[i] * TimeSinceLastBounce[i] / 1000;
 
-      if ( Height[i] < 0 ) 
+      if ( Height[i] < 0 )
       {
         Height[i] = 0;
         ImpactVelocity[i] = Dampening[i] * ImpactVelocity[i];
         ClockTimeSinceLastBounce[i] = millis();
 
-        if ( ImpactVelocity[i] < 0.01 ) 
+        if ( ImpactVelocity[i] < 0.01 )
         {
           ImpactVelocity[i] = ImpactVelocityStart;
         }
@@ -345,7 +329,7 @@ void BouncingBalls(Adafruit_NeoPixel *stripptr, int quadrant)
       Position[i] = round( Height[i] * (stripptr->numPixels() - 1) / StartHeight);
     }
 
-    for (int i = 0 ; i < ballCount ; i++) 
+    for (int i = 0 ; i < ballCount ; i++)
     {
       stripptr->setPixelColor(Position[i], red, green, blue);
     }
@@ -354,7 +338,7 @@ void BouncingBalls(Adafruit_NeoPixel *stripptr, int quadrant)
     reset(stripptr, quadrant);
   }
 }
-void meteorRain(Adafruit_NeoPixel *stripptr, int quadrant) 
+void meteorRain(Adafruit_NeoPixel *stripptr, int quadrant)
 {
 
   byte red = 0;
@@ -369,21 +353,21 @@ void meteorRain(Adafruit_NeoPixel *stripptr, int quadrant)
 
   reset(stripptr, quadrant);
 
-  for (int i = 0; i < 2 * (stripptr->numPixels()); i++) 
+  for (int i = 0; i < 2 * (stripptr->numPixels()); i++)
   {
     // fade brightness all LEDs one step
-    for (int j = 0; j < stripptr->numPixels(); j++) 
+    for (int j = 0; j < stripptr->numPixels(); j++)
     {
-      if ( (!meteorRandomDecay) || (random(10) > 5) ) 
+      if ( (!meteorRandomDecay) || (random(10) > 5) )
       {
-        fadeToBlack(j, meteorTrailDecay,stripptr,quadrant );
+        fadeToBlack(j, meteorTrailDecay, stripptr, quadrant );
       }
     }
 
     // draw meteor
-    for (int j = 0; j < meteorSize; j++) 
+    for (int j = 0; j < meteorSize; j++)
     {
-      if ( ( i - j < stripptr->numPixels()) && (i - j >= 0) ) 
+      if ( ( i - j < stripptr->numPixels()) && (i - j >= 0) )
       {
         stripptr->setPixelColor(i - j, red, green, blue);
       }
@@ -394,9 +378,9 @@ void meteorRain(Adafruit_NeoPixel *stripptr, int quadrant)
   }
 }
 
-void fadeToBlack(int ledNo, byte fadeValue,Adafruit_NeoPixel *stripptr, int quadrant) 
+void fadeToBlack(int ledNo, byte fadeValue, Adafruit_NeoPixel *stripptr, int quadrant)
 {
-  #ifdef ADAFRUIT_NEOPIXEL_H
+#ifdef ADAFRUIT_NEOPIXEL_H
   // NeoPixel
   uint32_t oldColor;
   uint8_t r, g, b;
@@ -412,68 +396,23 @@ void fadeToBlack(int ledNo, byte fadeValue,Adafruit_NeoPixel *stripptr, int quad
   b = (b <= 10) ? 0 : (int) b - (b * fadeValue / 256);
 
   stripptr->setPixelColor(ledNo, r, g, b);
-  #endif
-  #ifndef ADAFRUIT_NEOPIXEL_H
+#endif
+#ifndef ADAFRUIT_NEOPIXEL_H
   // FastLED
   leds[ledNo].fadeToBlackBy( fadeValue );
-  #endif
-}
-
-void displayLightShow(Adafruit_NeoPixel *stripptr, int quadrant) 
-{
-  if (lightShowData == "0L") 
-  {
-    RunningAllianceColorsTest(stripptr, quadrant);
-  } 
-  else if (lightShowData == "1L") 
-  {
-    setSolidGreen(stripptr,quadrant);
-  } 
-  else if (lightShowData == "2L") 
-  {
-    setSolidRed(stripptr,quadrant);
-  } 
-  else if (lightShowData == "3L") 
-  {
-    setSolidPurple(stripptr, quadrant);
-  } 
-  else if (lightShowData == "4L") 
-  {
-    setClimbingGreenLights(stripptr, quadrant);
-  } 
-  else if (lightShowData == "5L") 
-  {
-    StrobeTest(stripptr, quadrant);
-  } 
-  else if (lightShowData == "6L") 
-  {
-    RandomStrobeTest(stripptr, quadrant);
-  } 
-  else if (lightShowData == "7L") 
-  {
-    setBounceBackground(stripptr, quadrant);
-  } 
-  else if (lightShowData == "8L") 
-  {
-    CylonBounce(stripptr, quadrant);
-  } 
-  else if (lightShowData == "9L") 
-  {
-    RainbowTest(stripptr, quadrant);
-  }
+#endif
 }
 
 
-void setRainbow(Adafruit_NeoPixel *stripptr) //make it update every iteration 
+void setRainbow(Adafruit_NeoPixel *stripptr)
 {
-  trigger=trigger+1;
   byte *c;
   int speedDelay = 10;
   for (int j = 0; j < 256; j++)                                 // cycle all 256 colors in the wheel
-  {   
-    for (int q = 0; q < 3; q++) 
+  {
+    for (int q = 0; q < 3; q++)
     {
-      for (int i = 0; i < stripptr->numPixels(); i = i + 3) 
+      for (int i = 15; i <= 45 ; i = i + 3)
       {
         c = Wheel( (i + j) % 255);
         stripptr->setPixelColor(i + q, *c, *(c + 1), *(c + 2)); //turn every third pixel on
@@ -482,59 +421,31 @@ void setRainbow(Adafruit_NeoPixel *stripptr) //make it update every iteration
 
       delay(speedDelay);
 
-      for (int i = 0; i < stripptr->numPixels(); i = i + 3) 
+      for (int i = 15; i < 45; i = i + 3)
       {
         stripptr->setPixelColor(i + q, 0, 0, 0);    //turn every third pixel off
       }
     }
   }
 }
-
-void RainbowTest(Adafruit_NeoPixel *stripptr, int quadrant) 
-{
-     setClimbingGreenLights(&strip,1 );
-
-  byte *c;
-  int speedDelay = 10;
-  for (int j = 0; j < 256; j=j+4)                                 // cycle all 256 colors in the wheel
-  {   
-    for (int q = 0; q < 3; q++) 
-    {
-      for (int i = 15 * (quadrant - 1); i < 15 * quadrant; i = i + 3) 
-      {
-        c = Wheel( (i + j) % 255);
-        stripptr->setPixelColor(i + q, *c, *(c + 1), *(c + 2)); //turn every third pixel on
-      }
-      stripptr->show();
-
-      delay(speedDelay);
-
-      for (int i = 15 * (quadrant - 1); i < 15 * quadrant; i = i + 3) 
-      {
-        stripptr->setPixelColor(i + q, 0, 0, 0);    //turn every third pixel off
-      }
-    }
-  }
-}
-
-byte * Wheel(byte WheelPos) 
+byte * Wheel(byte WheelPos)
 {
   static byte c[3];
 
-  if (WheelPos < 85) 
+  if (WheelPos < 85)
   {
     c[0] = WheelPos * 3;
     c[1] = 255 - WheelPos * 3;
     c[2] = 0;
-  } 
-  else if (WheelPos < 170) 
+  }
+  else if (WheelPos < 170)
   {
     WheelPos -= 85;
     c[0] = 255 - WheelPos * 3;
     c[1] = 0;
     c[2] = WheelPos * 3;
-  } 
-  else 
+  }
+  else
   {
     WheelPos -= 170;
     c[0] = 0;
@@ -546,10 +457,12 @@ byte * Wheel(byte WheelPos)
   return c;
 }
 
+
+
 //Sets the strip to black(no color)
 void reset(Adafruit_NeoPixel *stripptr, int quadrant)
 {
-  setStripColorTest(0, 0, 0,stripptr, quadrant);
+  setStripColor(0, 0, 0, stripptr, quadrant);
   stripptr->show();
 }
 
@@ -569,8 +482,6 @@ void parseData()
   //Parses dataString and receives corresponding values from Java program
   stateData = dataString.substring(0, 2);          //Grabs the expected location of various data, puts it in variables
   allianceData = dataString.substring(2, 4);
-  lightShowData = dataString.substring(4, 6);
-
 }
 
 void resetConnectionTimer()
@@ -595,44 +506,43 @@ void setup()
 
 void loop()
 { //Ran indefinitly after setup()
-//  setRainbow(&strip);
-//  setSolidRed(&strip2);
-//  quarterTest(&strip);
 
-
+  //  setSolidRed(&strip,2);
+  //  setSolidRed(&strip,3);
+  //  setClimbingGreenLights(&strip, 1, 4);
+  allianceData = redAlliance;
+  setRunningAllianceColors(&strip, 1, 4);
 
   parseData();
-//  RainbowTest(&strip,1);
-//  setStripColorTest(0,0,255,&strip,3);
 
-quarterTest(&strip);
-RainbowTest(&strip,3);
-
- 
   strip.setBrightness(255);
   strip2.setBrightness(255);
- 
-  
   //Below here is code to control the LED's from the data obtained above
-  if (stateData == stillDrive) 
+  if (stateData == stillDrive)
   {
-    displayLightShow(&strip, 1);
-  } 
-  else if (stateData == forwardDrive) 
-  {
-    displayLightShow(&strip, 1);
-  } 
-  else if (stateData == reverseDrive) 
-  {
-    displayLightShow(&strip, 1);
-  } 
-  else if (stateData == visionLock) 
-  {
-    displayLightShow(&strip, 1);
-  } 
-  else if (stateData == climbing) 
-  {
-    displayLightShow(&strip, 1);
+    setRunningAllianceColors(&strip, 1, 4);
   }
+  else if (stateData == forwardDrive)
+  {
+    setSolidGreen(&strip, 1);
+    setSolidGreen(&strip, 4);
+  }
+  else if (stateData == reverseDrive)
+  {
+    setSolidRed(&strip, 1);
+    setSolidRed(&strip, 4);
+  }
+  else if (stateData == visionLock)
+  {
+    setSolidPurple(&strip, 1);
+    setSolidPurple(&strip, 4);
+  }
+  else if (stateData == climbing)
+  {
+
+    setClimbingGreenLights(&strip, 1, 4);
+    //setClimbingGreenLights(&strip, 4);
+  }
+
   resetConnectionTimer();
 }

@@ -30,22 +30,22 @@ public class MustangLEDs_2019 {
 	final byte[] reverseDrive = { '1', 'R' };
 	final byte[] stillDrive = { '3', 'R' };
 
-	final byte[] runningAllianceColors = {'0','L'};
-	final byte[] solidGreen = {'1','L'};
-	final byte[] solidRed = {'2','L'};
-	final byte[] solidPurple = {'3','L'};
-	final byte[] climbingGreenLights = {'4','L'};
-	final byte[] Strobe = {'5','L'};
-	final byte[] randomStrobe = {'6','L'};
-	final byte[] bounceBackground = {'7','L'};
-	final byte[] cylonBounce = {'8','L'};
-	final byte[] rainbow = {'9','L'};
+	// final byte[] runningAllianceColors = {'0','L'};
+	// final byte[] solidGreen = {'1','L'};
+	// final byte[] solidRed = {'2','L'};
+	// final byte[] solidPurple = {'3','L'};
+	// final byte[] climbingGreenLights = {'4','L'};
+	// final byte[] Strobe = {'5','L'};
+	// final byte[] randomStrobe = {'6','L'};
+	// final byte[] bounceBackground = {'7','L'};
+	// final byte[] cylonBounce = {'8','L'};
+	// final byte[] rainbow = {'9','L'};
 	
 
 	// variables for data which will be sent over server
 	byte[] stateData = stillDrive;
 	byte[] allianceData = blueAlliance;
-	byte[] lightShowData = runningAllianceColors;
+	// byte[] lightShowData = runningAllianceColors;
 
 	// Socket Init
 	ServerSocket serverSocket = null;
@@ -65,7 +65,7 @@ public class MustangLEDs_2019 {
 
 	}
 
-	public void changeAlliance(boolean b) { // true for blue, false for red
+	public void changeAlliance(boolean b) { //sets alliance data, is the first byte array sent over server
 		if (b) {
 			allianceData = blueAlliance;
 		} else {
@@ -73,103 +73,36 @@ public class MustangLEDs_2019 {
 		}
 
 	}
-
-
-	public void setClimbingData(boolean trigger, int val) { // Updates if we are climbing
-		val = 5;
+	public void setClimbingData(boolean trigger) { // Updates if we are climbing
 		if (trigger == true) {
 			stateData = climbing;
-			lightShowData=climbingGreenLights;
-		}
-		if(val!=0){
-		setLightShow(val);
 		}
 	}
 
-	public void setVisionData(boolean trigger, int val) { // updates if we lock onto a vision target
-		val = 4;
+	public void setVisionData(boolean trigger) { // updates if we lock onto a vision target
 		if (trigger == true) {
 			stateData = visionLock;
-			lightShowData = solidPurple;
-		}
-		if(val!=0){
-			setLightShow(val);
 		}
 	}
 
-	public void setForwardData(boolean trigger, int val) {// updates if we are driving forward
-		val = 2;
+	public void setForwardData(boolean trigger) {// updates if we are driving forward
+
 		if (trigger = true) {
 			stateData = forwardDrive;
-			lightShowData = solidGreen;
-		}
-		if(val!=0){
-			setLightShow(val);
 		}
 	}
 
-	public void setReverseData(boolean trigger, int val) {// updates if we are driving in reverse
-		val = 3;
+	public void setReverseData(boolean trigger) {// updates if we are driving in reverse
 		if (trigger = true) {
 			stateData = reverseDrive;
-			lightShowData = solidRed;
 		}
-		if(val!=0){
-			setLightShow(val);
-		}
-
 	}
 
-	public void setStillDrive(boolean trigger, int val) {// updates it robot is not moving
-		val = 11;
+	public void setStillDrive(boolean trigger) {// updates it robot is not moving
 		if (trigger = true) {
 			stateData = stillDrive;
-			lightShowData = runningAllianceColors;
-		}
-		if(val!=0){
-			setLightShow(val);
 		}
 	}
-	public void setLightShow(int val){
-		switch(val){
-		case 1: //running alliance colors
-			lightShowData = climbingGreenLights;
-			break;
-		case 2:
-			lightShowData = solidGreen;
-			break;
-		case 3:
-			lightShowData = solidRed;
-			break;
-		case 4:
-			lightShowData = solidPurple;
-			break;
-		case 5:
-			lightShowData = climbingGreenLights;
-			break;
-		case 6:
-			lightShowData = Strobe;
-			break;
-		case 7:
-			lightShowData = randomStrobe;
-			break;
-		case 8:
-			lightShowData = bounceBackground;
-			break;
-		case 9:
-			lightShowData = cylonBounce;
-			break;
-		case 10:
-			lightShowData = rainbow;
-			break;
-		case 11:
-			lightShowData = runningAllianceColors;
-		
-
-		}
-	}
-
-
 
 	public class clientManagement extends Thread {
 
@@ -198,13 +131,12 @@ public class MustangLEDs_2019 {
 					}
 				}
 
-				System.out.println(stateData + "" + allianceData+""+lightShowData);
+				System.out.println(allianceData+""+stateData);
 
 				// Sends data to the Arduino/Ethernet Shield
 				try {
-					output.write(stateData);
 					output.write(allianceData);
-					output.write(lightShowData);
+					output.write(stateData);
 					output.flush();
 					output.close();
 				} catch (Exception e) {
