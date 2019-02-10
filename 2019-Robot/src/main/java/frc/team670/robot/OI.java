@@ -10,6 +10,7 @@ package frc.team670.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
+import frc.team670.robot.commands.RumbleDriverController;
 import frc.team670.robot.commands.intake.MoveIntakeToSetpointAngle;
 import frc.team670.robot.commands.tuning.DecreaseMeasurementOutput;
 import frc.team670.robot.commands.tuning.IncreaseMeasurementOutput;
@@ -62,6 +63,30 @@ public class OI {
     runForward.whenPressed(new MoveIntakeToSetpointAngle(80, Robot.intake));
     runBackward = new JoystickButton(driverController, XboxButtons.A);
     runBackward.whenPressed(new MoveIntakeToSetpointAngle(-80, Robot.intake));
+  }
+
+  /**
+   * Sets the rumble on the driver controller
+   * 
+   * @param power The desired power of the rumble [0, 1]
+   * @param time The time to rumble for in seconds
+   */
+  public void rumbleDriverController(double power, double time) {
+    rumbleController(driverController, power, time);
+  }
+
+  /**
+   * Sets the rumble on the operator controller
+   * 
+   * @param power The desired power of the rumble [0, 1]
+   * @param time The time to rumble for in seconds
+   */
+  public void rumbleOperatorController(double power, double time) {
+    rumbleController(operatorController, power, time);
+  }
+
+  private void rumbleController(MustangController controller, double power, double time) {
+    controller.rumble(power, time);
   }
 
   public MustangController getDriverController() {

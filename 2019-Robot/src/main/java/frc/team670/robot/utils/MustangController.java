@@ -1,9 +1,14 @@
 package frc.team670.robot.utils;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Notifier;
 
 public class MustangController extends Joystick {
  
+    private Notifier rumbler;
+    private boolean isRumbling;
+    private long targetRumbleTime;
+
    public enum DPadState {
         NEUTRAl, UP, UP_RIGHT, RIGHT, DOWN_RIGHT, DOWN, DOWN_LEFT, LEFT, UP_LEFT;
    }
@@ -50,6 +55,16 @@ public class MustangController extends Joystick {
 
     public MustangController(int port) {
         super(port);
+        isRumbling = false;
+        targetRumbleTime = System.currentTimeMillis() - 10;
+        rumbler = new Notifier(new Runnable() {
+            public void run() {
+                if(isRumbling) {
+                    checkRumble();
+                }
+            }
+          });
+        rumbler.startPeriodic(0.125);
     }
 
     // helps you get varoius axis and buttons on the XBox controller
@@ -127,11 +142,25 @@ public class MustangController extends Joystick {
     /**
      * Sets the rumble on the controller
      * 
-     * @param power the desired power of the rumble [0, 1]
+     * @param power The desired power of the rumble [0, 1]
+     * @param time The time to rumble for in seconds
      */
-    public void setRumble(double power){
+    public void rumble(double power, double time) {
+        setRumblePower(power);
+        isRumbling = true;
+        targetRumbleTime = System.currentTimeMillis() + (long)(time * 1000);
+    }
+
+    private void setRumblePower(double power) {
         super.setRumble(RumbleType.kLeftRumble, power);
         super.setRumble(RumbleType.kRightRumble, power);
+    }
+
+    private void checkRumble() {
+        if(System.currentTimeMillis() >= targetRumbleTime) {
+            setRumblePower(0);
+            isRumbling = false;
+        }
     }
 
     // gets angle of the DPad on the XBox controller pressed with increments of 45 degree angle. 

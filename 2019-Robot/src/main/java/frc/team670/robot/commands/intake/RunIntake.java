@@ -8,6 +8,7 @@
 package frc.team670.robot.commands.intake;
 
 import edu.wpi.first.wpilibj.command.Command;
+import frc.team670.robot.Robot;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.BaseIntake;
 import frc.team670.robot.utils.Logger;
@@ -68,6 +69,10 @@ public class RunIntake extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    if(runningIn) {
+      Robot.oi.rumbleDriverController(0.3, 0.3);
+      Robot.oi.rumbleOperatorController(0.5, 0.3);
+    }
     intake.runIntake(0, true);
     Logger.consoleLog();
   }
