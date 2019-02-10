@@ -124,7 +124,7 @@ public abstract class RotatingSubsystem extends Subsystem implements TunableSubs
     }
 
     protected int getPositionTicks(){
-        return rotatorSensorCollection.getQuadraturePosition();
+        return rotatorTalon.getSelectedSensorPosition(0);
     }
 
     /**

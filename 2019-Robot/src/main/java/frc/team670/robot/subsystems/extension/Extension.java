@@ -123,7 +123,7 @@ public class Extension extends BaseExtension {
   }
 
   private int getPositionTicks() {
-    return extensionMotor.getSensorCollection().getQuadraturePosition();
+    return extensionMotor.getSelectedSensorPosition(0);
   }
   
   @Override
