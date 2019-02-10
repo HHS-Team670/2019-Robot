@@ -40,13 +40,13 @@ public class RunIntake extends Command {
   protected void execute() {
     intake.runIntake(RUNNING_POWER, runningIn);
 
-      // If the IR sensor has been tripped and it is for the first time
-      if(runningIn) {
-        if (sensors.getIntakeIRSensor() != null && sensors.getIntakeIROutput() && !hasBeenTriggered) {
-          hasBeenTriggered = true;
-          setTimeout(0.5 + timeSinceInitialized());
-        }
+    // If the IR sensor has been tripped and it is for the first time
+    if(runningIn) {
+      if (sensors.getIntakeIRSensor() != null && sensors.getIntakeIROutput() && !hasBeenTriggered) {
+        hasBeenTriggered = true;
+        setTimeout(0.5 + timeSinceInitialized());
       }
+    }
   }
 
   // Make this return true when this Command no longer needs to run execute()

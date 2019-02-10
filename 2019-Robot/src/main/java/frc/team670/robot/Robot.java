@@ -17,10 +17,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.drive.DriveMotionProfile;
 import frc.team670.robot.commands.intake.RunIntake;
-import frc.team670.robot.commands.tuning.ResetPulseWidthEncoder;
 import frc.team670.robot.dataCollection.MustangPi;
 import frc.team670.robot.dataCollection.MustangSensors;
-import frc.team670.robot.dataCollection.Pose;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Claw;
 import frc.team670.robot.subsystems.Climber;
@@ -31,7 +29,6 @@ import frc.team670.robot.subsystems.elbow.Elbow;
 import frc.team670.robot.subsystems.extension.Extension;
 import frc.team670.robot.subsystems.wrist.Wrist;
 import frc.team670.robot.utils.Logger;
-import frc.team670.robot.utils.MustangController.DPadState;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -46,7 +43,6 @@ public class Robot extends TimedRobot {
   public static MustangPi visionPi = new MustangPi();
   public static DriveBase driveBase = new DriveBase();
   private MustangLEDs_2019 leds = new MustangLEDs_2019();
-  // public static Pose fieldCentricPose = new Pose();
 
 
   private static Elbow elbow = new Elbow();
@@ -141,8 +137,6 @@ public class Robot extends TimedRobot {
     intake.sendDataToDashboard();
 
     leds.setClimbingData(true);//we climb
-
-    // fieldCentricPose.update(); // Update our field centric Pose to the new robot position. Commented out to avoid null-pointers until sensors hooked up.
  
   }
 
@@ -176,7 +170,6 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     sensors.resetNavX(); // Reset NavX completely, zero the field centric based on how robot faces from start of game.
-    // fieldCentricPose = new Pose();
     Logger.consoleLog("Auton Started");
     table.getEntry("robotState").setString("autonomousInit()");
 
@@ -230,35 +223,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
-    if (Robot.oi.getDriverController().getDPadState() == DPadState.UP) {
-      Scheduler.getInstance().add(new ResetPulseWidthEncoder(elbow));
-    }
 
-    if (Robot.oi.getDriverController().getDPadState() == DPadState.RIGHT) {
-      Scheduler.getInstance().add(new ResetPulseWidthEncoder(wrist));
-    }
-
-    if (Robot.oi.getDriverController().getDPadState() == DPadState.DOWN) {
-      Scheduler.getInstance().add(new ResetPulseWidthEncoder(extension));
-    }
-
-    if (Robot.oi.getDriverController().getDPadState() == DPadState.LEFT) {
-      Scheduler.getInstance().add(new ResetPulseWidthEncoder(intake));
-    }
-
-    // RotatingSubsystem currentTestRotator = elbow;
-    // if (Robot.oi.getDriverController().getAButton()) {
-    //   Scheduler.getInstance().add(new MoveRotatorToSetpoint(currentTestRotator, currentTestRotator.REVERSE_SOFT_LIMIT));
-    // }
-    // if (Robot.oi.getDriverController().getBButton()) {    
-    //   Scheduler.getInstance().add(new MoveRotatorToSetpoint(currentTestRotator, currentTestRotator.FORWARD_SOFT_LIMIT));
-    // }
-    // if(Robot.oi.getDriverController().getXButton()) {
-    //   Scheduler.getInstance().add(new MeasureArbitraryFeedforward(currentTestRotator));
-    // }
-    // if (Robot.oi.getDriverController().getYButton()) {    
-    //   currentTestRotator.enablePercentOutput();
-    // }
   }
 
 }
