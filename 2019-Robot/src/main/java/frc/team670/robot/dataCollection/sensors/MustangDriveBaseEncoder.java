@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.subsystems.DriveBase;
-import frc.team670.robot.utils.functions.MathUtils;
 
 /**
  * A Mustang Encoder holds both a DIOEncoder and a Spark Encoder. The Spark Encoder will only be used if

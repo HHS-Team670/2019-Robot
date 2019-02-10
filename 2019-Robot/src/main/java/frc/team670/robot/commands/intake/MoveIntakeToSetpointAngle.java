@@ -11,9 +11,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.subsystems.BaseIntake;
-import frc.team670.robot.subsystems.Intake;
 import frc.team670.robot.utils.Logger;
-import frc.team670.robot.utils.functions.MathUtils;
 
 /**
  * Command to move the intake to a certain angle
@@ -23,7 +21,7 @@ public class MoveIntakeToSetpointAngle extends Command {
 
   private BaseIntake intake;
   private int loggingIterationCounter, setpointInDegrees;
-  private static final int TOLERANCE_IN_DEGREES = 1;
+  private static final int TOLERANCE_IN_DEGREES = 5;
 
   /**
    * @param setpoint angle in degrees that the intake is moving to
@@ -54,14 +52,20 @@ public class MoveIntakeToSetpointAngle extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return (MathUtils.isWithinTolerance(intake.getAngleInDegrees(), setpointInDegrees, TOLERANCE_IN_DEGREES));
+    if(setpointInDegrees > 0) {
+      return (intake.getAngleInDegrees() > setpointInDegrees - TOLERANCE_IN_DEGREES);
+    } else {
+      return (intake.getAngleInDegrees() < setpointInDegrees + TOLERANCE_IN_DEGREES);
+    }
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
+    intake.enablePercentOutput();
     intake.setRotatorNeutralMode(NeutralMode.Coast);
-    Logger.consoleLog("endIntakeAngle:%s", intake.getAngleInDegrees());
+    // Logger.consoleLog("endIntakeAngle:%s", intake.getAngleInDegrees());
+    System.out.println("FINISHED MOVE INTAKE");
   }
 
   // Called when another command which requires one or more of the same

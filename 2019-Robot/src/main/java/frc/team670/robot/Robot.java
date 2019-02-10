@@ -140,6 +140,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("NavX Yaw", sensors.getYawDouble());
     table.getEntry("gyro").setNumber((int) sensors.getAngle() % 360);
 
+    intake.sendDataToDashboard();
+
     leds.setClimbingData(true);//we climb
 
     fieldCentricPose.update(); // Update our field centric Pose to the new robot position. Commented out to avoid null-pointers until sensors hooked up.
@@ -155,6 +157,7 @@ public class Robot extends TimedRobot {
   public void disabledInit() {
     Logger.consoleLog("Robot Disabled");
     autonomousCommand = xkeys.getAutonCommand();
+    intake.enablePercentOutput();
   }
 
   @Override
@@ -216,6 +219,10 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
+    if (Robot.oi.getDriverController().getYButton()) {
+      // Scheduler.getInstance().add(new ResetPulseWidthEncoder(intake));
+      // intake.zeroPulseWidthEncoder();
+    }
     Scheduler.getInstance().run();
   }
 

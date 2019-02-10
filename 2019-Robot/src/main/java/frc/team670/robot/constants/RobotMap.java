@@ -45,7 +45,7 @@ public class RobotMap {
   public static final int ARM_EXTENSION_MOTOR = 5;
   public static final int ARM_ELBOW_ROTATION_MOTOR_TALON = 6;
   public static final int ARM_ELBOW_ROTATION_MOTOR_VICTOR = 7;
-  public static final int ARM_WRIST_ROTATION = 8;
+  public static final int ARM_WRIST_ROTATION = 0;
 
   // Claw
   public static final int HARD_GRIP_SOLENOID = 9;
@@ -68,7 +68,7 @@ public class RobotMap {
   public static final int OPERATOR_CONTROLLER_PORT = 1;
 
   //Intake
-  public static final int INTAKE_BASE_TALON = 0; // TODO Set these
+  public static final int INTAKE_BASE_TALON = 8; // TODO Set these
   public static final int INTAKE_ROLLER_VICTOR = 0;
 
 
