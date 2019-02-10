@@ -9,6 +9,7 @@ package frc.team670.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
@@ -34,6 +35,8 @@ public abstract class RotatingSubsystem extends Subsystem implements TunableSubs
         this.offsetFromEncoderZero = offsetFromEncoderZero;
 
         rotatorTalon.configFactoryDefault();
+
+        rotatorTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
 
         if (rotatorTalon != null) {
             this.rotatorTalon = rotatorTalon;
