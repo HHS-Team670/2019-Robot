@@ -29,7 +29,7 @@ public class MustangSensors {
       isNavXNull = false;
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
-      SmartDashboard.putString("sensor-error", "Error instantiating navX-MXP");
+      SmartDashboard.putString("warning", "Error instantiating navX-MXP");
       navXMicro = null;
       isNavXNull = true;
     }
@@ -38,7 +38,7 @@ public class MustangSensors {
       intakeIRSensor = new DigitalInput(RobotMap.INTAKE_IR_DIO_PORT);
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error instantiating intakeIRSensor: " + ex.getMessage(), true);
-      SmartDashboard.putString("sensor-error", "Error instantiating intakeIRSensor");
+      SmartDashboard.putString("warning", "Error instantiating intakeIRSensor");
       intakeIRSensor = null;
     }
 
@@ -46,7 +46,7 @@ public class MustangSensors {
       clawIRSensor = new DigitalInput(RobotMap.CLAW_IR_DIO_PORT);
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error instantiating clawIRSensor: " + ex.getMessage(), true);
-      SmartDashboard.putString("sensor-error", "Error instantiating clawIRSensor");
+      SmartDashboard.putString("warning", "Error instantiating clawIRSensor");
       clawIRSensor = null;
     }
   }

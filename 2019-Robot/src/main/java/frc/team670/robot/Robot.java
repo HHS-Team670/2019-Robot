@@ -144,7 +144,10 @@ public class Robot extends TimedRobot {
     //   Logger.consoleLog("NavXYawReset: %s, NavXYawFieldCentric: %s", sensors.getYawDouble(), sensors.getFieldCentricYaw());
     // }
     SmartDashboard.putNumber("NavX Yaw", sensors.getYawDouble());
-    table.getEntry("gyro").setNumber((int) sensors.getAngle() % 360);
+    SmartDashboard.putNumber("gyro", (int) sensors.getAngle() % 360);
+    SmartDashboard.putString("current-command", Scheduler.getInstance().toString());
+    SmartDashboard.putString("current-arm-state", Arm.getCurrentState().toString());
+    SmartDashboard.putNumber("intake-angle", intake.getIntakeAngleInDegrees());
 
     periodCount++;
     leds.setClimbingData(true);//we climb
@@ -161,12 +164,14 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
+    SmartDashboard.putString("robotState", "disabledInit()");
     Logger.consoleLog("Robot Disabled");
     autonomousCommand = xkeys.getAutonCommand();
   }
 
   @Override
   public void disabledPeriodic() {
+    SmartDashboard.putString("robotState", "disabledPeriodic()");
     Scheduler.getInstance().run();
   }
 
@@ -183,6 +188,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    SmartDashboard.putString("robotState", "autonomousInit()");
     sensors.resetNavX(); // Reset NavX completely, zero the field centric based on how robot faces from start of game.
     fieldCentricPose = new Pose();
     Logger.consoleLog("Auton Started");
@@ -212,13 +218,13 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
+    SmartDashboard.putString("robotState", "autonomousPeriodic()");
     Scheduler.getInstance().run();
   }
 
   @Override
   public void teleopInit() {
-
-    table.getEntry("teleopState").setString("teleop started");
+    SmartDashboard.putString("robotState", "teleopInit()");
 
     Logger.consoleLog("Teleop Started");
     // This makes sure that the autonomous stops running when
@@ -237,6 +243,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
+    SmartDashboard.putString("robotState", "teleopPeriodic()");
     Scheduler.getInstance().run();
   }
 

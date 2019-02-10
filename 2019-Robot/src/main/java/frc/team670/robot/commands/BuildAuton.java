@@ -102,20 +102,25 @@ public class BuildAuton extends CommandGroup {
             else if (height.equals("LOW")) {
                 return LegalState.LOW_HATCH_BACK;
             }
+        } else if (target.contains("Exchange")) {
+            return LegalState.GRAB_BALL_LOADINGSTATION_BACK;
+        } else if (target.contains("")) {
+            return LegalState.GRAB_BALL_INTAKE;
         }
-    } else {
+    } 
+    if (isFacingBack) {
         if (target.contains("Rocket") && (target.contains("1") || target.contains("3"))) {
             if (height.equals("MIDDLE")) {
-                return LegalState.PLACE_HATCH_ROCKET_MIDDLE_FORWARD;
+                return LegalState.PLACE_HATCH_ROCKET_MIDDLE_BACK;
             } else if (height.equals("LOW")) {
-                return LegalState.LOW_HATCH_FORWARD;
+                return LegalState.LOW_HATCH_BACK;
             }
         }
         else if (target.contains("Rocket") && target.contains("2")) {
             if (height.equals("MIDDLE")) {
-                return LegalState.PLACE_BALL_ROCKET_MIDDLE_FORWARD;
+                return LegalState.PLACE_BALL_ROCKET_MIDDLE_BACK;
             } else if (height.equals("LOW")) {
-                return LegalState.PLACE_BALL_ROCKET_LOW_FORWARD;
+                return LegalState.PLACE_BALL_ROCKET_LOW_BACK;
             }
         }
         else if (target.contains("Cargo")) {
@@ -127,6 +132,8 @@ public class BuildAuton extends CommandGroup {
             else if (height.equals("LOW")) {
                 return LegalState.LOW_HATCH_FORWARD;
             }
+        } else if (target.contains("Exchange")) {
+            return LegalState.GRAB_BALL_LOADINGSTATION_FORWARD;
         }
     }
     return LegalState.NEUTRAL;
