@@ -4,6 +4,9 @@ START_BALL(1), // Starting Position
 START_HATCH(2),
 START_EMPTY(3),
 
+READY_GRAB_HATCH_GROUND_BACK(30), // Hatch from the ground at the back
+GRAB_HATCH_GROUND_BACK(31),
+
 GRAB_BALL_GROUND_BACK(4), // Ball from the ground at the back
 
 GRAB_BALL_INTAKE(5), // Ball from Intake

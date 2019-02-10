@@ -30,7 +30,7 @@ public class MoveArmTest {
     @Test
     public void testMoveArm() {
 
-        TestElbow elbow = new TestElbow(null, 0.0, 0, 0, false, 0, 0, 0, 0);
+        TestElbow elbow = new TestElbow();
         TestWrist wrist = new TestWrist();
         TestExtension extension = new TestExtension();
         TestIntake intake = new TestIntake();
