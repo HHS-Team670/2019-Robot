@@ -33,7 +33,7 @@ public class ArmClimb extends Command {
   private Climber climber;
   private Arm arm;
 
-  public static final int CLIMB_CURRENT = 10; // TODO figure required limited current
+  public static final int CLIMB_CURRENT = -10; // TODO figure required limited current. Negative to move backwards
   public static final double LEVEL_THREE_PLATFORM_HEIGHT_IN_INCHES = 19;
 
   /**
@@ -110,12 +110,12 @@ public class ArmClimb extends Command {
   /**
    * Holds the elbow down by setting a current limit and running the motor down at
    * full speed
-   * 
+   * @param currentLimit The current limit to set to (positive for forward output, negative for backwards)
    */
   private void holdElbowDownWithCurrentLimit(int currentLimit) {
     elbow.setClimbingCurrentLimit();
     //Climb current defaults to negative because of the way arm is flipped during climbing
-    elbow.setCurrentControl(-CLIMB_CURRENT);
+    elbow.setCurrentControl(CLIMB_CURRENT);
   }
 
   /**
