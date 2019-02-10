@@ -31,43 +31,46 @@ public abstract class RotatingSubsystem extends Subsystem implements TunableSubs
 
     public RotatingSubsystem(TalonSRX rotatorTalon, double arbitrary_feedforward_constant, int forward_soft_limit, int reverse_soft_limit, boolean timeout, int QUAD_ENCODER_MIN, int QUAD_ENCODER_MAX, int continuous_current_limit, int peak_current_limit, int offsetFromEncoderZero) {
         // For testing purposes
+        if(rotatorTalon != null) {
 
-        this.offsetFromEncoderZero = offsetFromEncoderZero;
+            this.offsetFromEncoderZero = offsetFromEncoderZero;
 
-        rotatorTalon.configFactoryDefault();
+            rotatorTalon.configFactoryDefault();
 
-        rotatorTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+            rotatorTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
 
-        if (rotatorTalon != null) {
-            this.rotatorTalon = rotatorTalon;
-            this.rotatorSensorCollection = rotatorTalon.getSensorCollection();
-            ARBITRARY_FEEDFORWARD_CONSTANT = arbitrary_feedforward_constant;
-            this.timeout = timeout;
+            if (rotatorTalon != null) {
+                this.rotatorTalon = rotatorTalon;
+                this.rotatorSensorCollection = rotatorTalon.getSensorCollection();
+                ARBITRARY_FEEDFORWARD_CONSTANT = arbitrary_feedforward_constant;
+                this.timeout = timeout;
 
-            setpoint = RotatingSubsystem.NO_SETPOINT;
+                setpoint = RotatingSubsystem.NO_SETPOINT;
 
-            int pulseWidthPos = getRotatorPulseWidth() & 4095;
+                int pulseWidthPos = getRotatorPulseWidth() & 4095;
 
-            if (pulseWidthPos < QUAD_ENCODER_MIN) {
-                pulseWidthPos += 4096;
+                if (pulseWidthPos < QUAD_ENCODER_MIN) {
+                    pulseWidthPos += 4096;
+                }
+                if (pulseWidthPos > QUAD_ENCODER_MAX) {
+                    pulseWidthPos -= 4096;
+                }
+
+                rotatorSensorCollection.setQuadraturePosition(pulseWidthPos, 0);
+
+                rotatorTalon.configContinuousCurrentLimit(continuous_current_limit);
+                rotatorTalon.configPeakCurrentLimit(peak_current_limit);
+                rotatorTalon.enableCurrentLimit(true);
+
+                // These thresholds stop the motor when limit is reached
+            rotatorTalon.configForwardSoftLimitThreshold(forward_soft_limit);
+            rotatorTalon.configReverseSoftLimitThreshold(reverse_soft_limit);
+
+                // Enable Safety Measures
+            rotatorTalon.configForwardSoftLimitEnable(true);
+            rotatorTalon.configReverseSoftLimitEnable(true);
+            
             }
-            if (pulseWidthPos > QUAD_ENCODER_MAX) {
-                pulseWidthPos -= 4096;
-            }
-
-            rotatorSensorCollection.setQuadraturePosition(pulseWidthPos, 0);
-
-            rotatorTalon.configContinuousCurrentLimit(continuous_current_limit);
-            rotatorTalon.configPeakCurrentLimit(peak_current_limit);
-            rotatorTalon.enableCurrentLimit(true);
-
-            // These thresholds stop the motor when limit is reached
-           rotatorTalon.configForwardSoftLimitThreshold(forward_soft_limit);
-           rotatorTalon.configReverseSoftLimitThreshold(reverse_soft_limit);
-
-            // Enable Safety Measures
-           rotatorTalon.configForwardSoftLimitEnable(true);
-           rotatorTalon.configReverseSoftLimitEnable(true);
         }
     }
 
