@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.Notifier;
 public class MustangController extends Joystick {
  
     private Notifier rumbler;
-    private long rumbleTime;
+    private boolean isRumbling;
     private long targetRumbleTime;
 
    public enum DPadState {
@@ -55,11 +55,13 @@ public class MustangController extends Joystick {
 
     public MustangController(int port) {
         super(port);
-        rumbleTime = 0;
+        isRumbling = false;
         targetRumbleTime = System.currentTimeMillis() - 10;
         rumbler = new Notifier(new Runnable() {
             public void run() {
-              checkRumble();
+                if(isRumbling) {
+                    checkRumble();
+                }
             }
           });
         rumbler.startPeriodic(0.125);
@@ -145,8 +147,8 @@ public class MustangController extends Joystick {
      */
     public void rumble(double power, double time) {
         setRumblePower(power);
-        rumbleTime = System.currentTimeMillis();
-        targetRumbleTime = rumbleTime + (long)(time * 1000);
+        isRumbling = true;
+        targetRumbleTime = System.currentTimeMillis() + (long)(time * 1000);
     }
 
     private void setRumblePower(double power) {
@@ -157,7 +159,7 @@ public class MustangController extends Joystick {
     private void checkRumble() {
         if(System.currentTimeMillis() >= targetRumbleTime) {
             setRumblePower(0);
-            rumbleTime = 0;
+            isRumbling = false;
         }
     }
 

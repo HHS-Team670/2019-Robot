@@ -39,7 +39,7 @@ public class CancelClimbBasedOnTimeLeftInMatch extends InstantCommand {
   @Override
   protected void initialize() {
     if(ds.getMatchTime() <= MIN_TIME_FOR_CLIMB && !climber.getFrontPistonsRetracted()){
-      Scheduler.getInstance().add(new AbortRobotPistonClimb(climber, arm, sensors)); //
+      Scheduler.getInstance().add(new AbortRobotPistonClimb(climber, arm, sensors));
     }
   }
 }
