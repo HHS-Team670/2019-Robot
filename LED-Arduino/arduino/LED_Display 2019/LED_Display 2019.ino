@@ -72,44 +72,33 @@ void setStripColor(int r, int g, int b, Adafruit_NeoPixel *stripptr, int quadran
   stripptr->show();
 }
 
-void setRunningLights(byte red, byte green, byte blue, int WaveDelay) {
-  byte
-  int Position=0;
-  int i,j;
-  for(j=0,i=45; j<15,i<=60; j++,i++)
-  {
-      Position++; // = 0; //Position + Rate;
-      for(j=0,i=45;j<15,i<=60,; i++,j++) {
-        // sine wave, 3 offset waves make a rainbow!
-        //float level = sin(i+Position) * 127 + 128;
-        //setPixel(i,level,0,0);
-        //float level = sin(i+Position) * 127 + 128;
-        strip.setPixelColor(i,((sin(i+Position) * 127 + 128)/255)*red,
-                   ((sin(i+Position) * 127 + 128)/255)*green,
-                   ((sin(i+Position) * 127 + 128)/255)*blue);
+void setRunningAllianceColors(Adafruit_NeoPixel*stripptr) {
+  byte red = 255;
+  byte blue = 0;
+  byte green = 0;
 
-        strip.setPixelColor(i,((sin(j+Position) * 127 + 128)/255)*red,
-                   ((sin(j+Position) * 127 + 128)/255)*green,
-                   ((sin(j+Position) * 127 + 128)/255)*blue);
+  int Position = 0;
+
+  for (int i = 0; i < strip.numPixels() * 2 ; i++)
+  {
+    Position++; // = 0; //Position + Rate;
+    int m, n;
+    for (m = 0; m <= strip.numPixels(); m++) {
+
+      if (allianceData == redAlliance) {
+        strip.setPixelColor(m, ((sin(m + Position) * 127 + 128) / 255) * 255,
+                            ((sin(m + Position) * 127 + 128) / 255) * 0,
+                            ((sin(m + Position) * 127 + 128) / 255) * 0);
       }
-      
-      strip.show();
-      delay(10);
-  }
-}
+      else if (allianceData == blueAlliance) {
+        strip.setPixelColor(m, ((sin(m + Position) * 127 + 128) / 255) * 0,
+                            ((sin(m + Position) * 127 + 128) / 255) * 0,
+                            ((sin(m + Position) * 127 + 128) / 255) * 255);
+      }
+    }
 
-void setRunningAllianceColors(Adafruit_NeoPixel *stripptr, int quad1, int quad2) //to be used when the robot is not moving, will flash alliance color
-{
-  if (stateData == stillDrive)
-  {
-    if (allianceData == blueAlliance)
-    {
-      setRunningLights(stripptr, quad1, quad2);
-    }
-    else if (allianceData == redAlliance)
-    {
-      setRunningLights(stripptr, quad1, quad2);
-    }
+    strip.show();
+    delay(30);
   }
 }
 
@@ -338,29 +327,30 @@ void bouncingBalls(Adafruit_NeoPixel *stripptr, int quadrant)
     reset(stripptr, quadrant);
   }
 }
-void meteorRain(Adafruit_NeoPixel *stripptr, int quadrant)
+void meteorRain(Adafruit_NeoPixel *stripptr)
 {
 
-  byte red = 0;
-  byte blue = 0;
-  byte green = 255;
+  byte red = 255;
+  byte blue = 255;
+  byte green = 0;
 
-  int meteorSize = 10;
-  int meteorTrailDecay = 30;
+  int meteorSize = 5;
+  int meteorTrailDecay = 10;
   boolean meteorRandomDecay = true;
   int speedDelay = 30;
 
 
-  reset(stripptr, quadrant);
+  reset(stripptr, 2);
+  reset(stripptr, 3);
 
   for (int i = 0; i < 2 * (stripptr->numPixels()); i++)
   {
     // fade brightness all LEDs one step
-    for (int j = 0; j < stripptr->numPixels(); j++)
+    for (int j = 15; j <45; j++)
     {
       if ( (!meteorRandomDecay) || (random(10) > 5) )
       {
-        fadeToBlack(j, meteorTrailDecay, stripptr, quadrant );
+        fadeToBlack(j, meteorTrailDecay, stripptr);
       }
     }
 
@@ -378,7 +368,7 @@ void meteorRain(Adafruit_NeoPixel *stripptr, int quadrant)
   }
 }
 
-void fadeToBlack(int ledNo, byte fadeValue, Adafruit_NeoPixel *stripptr, int quadrant)
+void fadeToBlack(int ledNo, byte fadeValue, Adafruit_NeoPixel *stripptr)
 {
 #ifdef ADAFRUIT_NEOPIXEL_H
   // NeoPixel
@@ -406,27 +396,31 @@ void fadeToBlack(int ledNo, byte fadeValue, Adafruit_NeoPixel *stripptr, int qua
 
 void setRainbow(Adafruit_NeoPixel *stripptr)
 {
-  byte *c;
-  int speedDelay = 10;
-  for (int j = 0; j < 256; j++)                                 // cycle all 256 colors in the wheel
-  {
-    for (int q = 0; q < 3; q++)
+    byte *c;
+    int speedDelay = 10;
+    for (int j = 0; j < 256; j++)                                // cycle all 256 colors in the wheel
     {
-      for (int i = 15; i <= 45 ; i = i + 3)
+     // UNCOMMENT BEFORE RUNNING WITH ROBORIO 
+     //parseData();
+      while(stateData==reverseDrive){
+      for (int q = 0; q < 3; q++)
       {
-        c = Wheel( (i + j) % 255);
-        stripptr->setPixelColor(i + q, *c, *(c + 1), *(c + 2)); //turn every third pixel on
-      }
-      stripptr->show();
+        for (int i = 15; i <= 43 ; i = i + 3)
+        {
+          c = Wheel( (i + j) % 255);
+          stripptr->setPixelColor(i + q, *c, *(c + 1), *(c + 2)); //turn every third pixel on
+        }
+        stripptr->show();
 
-      delay(speedDelay);
+        delay(speedDelay);
 
-      for (int i = 15; i < 45; i = i + 3)
-      {
-        stripptr->setPixelColor(i + q, 0, 0, 0);    //turn every third pixel off
+        for (int i = 15; i < 45; i = i + 3)
+        {
+          stripptr->setPixelColor(i + q, 0, 0, 0);    //turn every third pixel off
+        }
       }
     }
-  }
+    }
 }
 byte * Wheel(byte WheelPos)
 {
@@ -507,20 +501,16 @@ void setup()
 void loop()
 { //Ran indefinitly after setup()
 
-  //  setSolidRed(&strip,2);
-  //  setSolidRed(&strip,3);
-  //  setClimbingGreenLights(&strip, 1, 4);
-  allianceData = redAlliance;
-  setRunningAllianceColors(&strip, 1, 4);
-
-  parseData();
-
+  meteorRain(&strip);
+  
+ // parseData();
   strip.setBrightness(255);
   strip2.setBrightness(255);
-  //Below here is code to control the LED's from the data obtained above
+
+  
   if (stateData == stillDrive)
   {
-    setRunningAllianceColors(&strip, 1, 4);
+   // setRunningAllianceColors(&strip);
   }
   else if (stateData == forwardDrive)
   {
@@ -531,6 +521,7 @@ void loop()
   {
     setSolidRed(&strip, 1);
     setSolidRed(&strip, 4);
+    setRainbow(&strip);
   }
   else if (stateData == visionLock)
   {
