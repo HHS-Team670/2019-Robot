@@ -85,8 +85,8 @@ public class OI {
 
     runForward = new JoystickButton(driverController, XboxButtons.B);
     runForward.whenPressed(new MoveIntakeToSetpointAngle(80, Robot.intake));
-    // runBackward = new JoystickButton(driverController, XboxButtons.A);
-    // runBackward.whenPressed(new MoveIntakeToSetpointAngle(-80, Robot.intake));
+    runBackward = new JoystickButton(driverController, XboxButtons.A);
+    runBackward.whenPressed(new MoveIntakeToSetpointAngle(-80, Robot.intake));
   }
 
   public MustangController getDriverController() {

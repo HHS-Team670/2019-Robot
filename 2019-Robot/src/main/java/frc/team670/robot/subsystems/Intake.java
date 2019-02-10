@@ -28,14 +28,14 @@ public class Intake extends BaseIntake {
   private static final double MAX_BASE_OUTPUT = 0.75;
   private static final double kF = 0, kP = 0.3, kI = 0, kD = 0; //TODO figure out what these are
   private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0; //TODO Set this
-  private static final int FORWARD_SOFT_LIMIT = -1200, REVERSE_SOFT_LIMIT = 1300; // Negative is Forward, positive is backwards
+  private static final int FORWARD_SOFT_LIMIT = 971, REVERSE_SOFT_LIMIT = -910; // Negative is Forward, positive is backwards
   private static final double RAMP_RATE = 0.1;
-  private static final int OFFSET_FROM_ENCODER_ZERO = 1979;
+  private static final int OFFSET_FROM_ENCODER_ZERO = 670;
   private static final int CONTINUOUS_CURRENT_LIMIT = 20, PEAK_CURRENT_LIMIT = 0;
-  private final static int INTAKE_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 60,  INTAKE_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_SECOND = 400;
-  private static final int QUAD_ENCODER_MIN = FORWARD_SOFT_LIMIT - 100, QUAD_ENCODER_MAX = REVERSE_SOFT_LIMIT + 100;
+  private final static int INTAKE_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 120,  INTAKE_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_SECOND = 400;
+  private static final int QUAD_ENCODER_MIN = FORWARD_SOFT_LIMIT + 200, QUAD_ENCODER_MAX = REVERSE_SOFT_LIMIT - 200;
 
-  private static final double ARBITRARY_FEED_FORWARD = 0.3;
+  private static final double ARBITRARY_FEED_FORWARD = 0.15;
 
   private VictorSPX rollerVictor;
   
@@ -47,8 +47,8 @@ public class Intake extends BaseIntake {
     rollerVictor = new VictorSPX(RobotMap.INTAKE_ROLLER_VICTOR);
     intakeCoord = new Point2D.Double();
 
+    rotatorTalon.setInverted(true);
     rotatorTalon.setSensorPhase(false); // Positive is inwards movement, negative is outward
-    rotatorTalon.setInverted(false);
 
     enablePercentOutput();
     setMotionMagicPIDValues();
@@ -123,7 +123,7 @@ public class Intake extends BaseIntake {
     // percentage * half rotation
     // TODO - Fix this. This is not going to make 0 at the top if the absolute encoder is not zero there.
     // Offset the quadrature readings accordingly in the constructor?
-    return -1 * (int)((degrees / 360) * TICKS_PER_ROTATION); // MULTIPLIED BY NEGATIVE ONE BECAUSE ITS INVERTED
+    return (int)((degrees / 360) * TICKS_PER_ROTATION);
   }
 
   /**
@@ -133,12 +133,20 @@ public class Intake extends BaseIntake {
     //If straight up is 0 and going forward is positive
     // TODO - Fix this. This is not going to make 0 at the top if the absolute encoder is not zero there.
     // Offset the quadrature readings accordingly in the constructor?
-    return -1 * ((360 * ticks) / TICKS_PER_ROTATION); // MULTIPLIED BY NEGATIVE ONE BECAUSE ITS INVERTED
+    return ((360 * ticks) / TICKS_PER_ROTATION);
   }
 
   @Override
   public double getArbitraryFeedForwardAngleMultiplier() {
-    double output = (Math.cos(Math.toRadians(getAngleInDegrees())));
+    double angleInDegrees = getAngleInDegrees();
+    double output;
+    if(getAngleInDegrees() > 0) {
+      output = -1 * (Math.cos(Math.toRadians(angleInDegrees)));
+    }
+    else {
+      output = (Math.cos(Math.toRadians(angleInDegrees)));
+    }
+
     // System.out.println("IntakeArbitraryFeedforward: " + output);
     return output;
   }

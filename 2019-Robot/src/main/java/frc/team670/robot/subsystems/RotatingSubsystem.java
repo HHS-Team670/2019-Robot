@@ -62,12 +62,12 @@ public abstract class RotatingSubsystem extends Subsystem implements TunableSubs
             rotatorTalon.enableCurrentLimit(true);
 
             // These thresholds stop the motor when limit is reached
-        //    rotatorTalon.configForwardSoftLimitThreshold(forward_soft_limit);
-        //    rotatorTalon.configReverseSoftLimitThreshold(reverse_soft_limit);
+           rotatorTalon.configForwardSoftLimitThreshold(forward_soft_limit);
+           rotatorTalon.configReverseSoftLimitThreshold(reverse_soft_limit);
 
             // Enable Safety Measures
-           rotatorTalon.configForwardSoftLimitEnable(false);
-           rotatorTalon.configReverseSoftLimitEnable(false);
+           rotatorTalon.configForwardSoftLimitEnable(true);
+           rotatorTalon.configReverseSoftLimitEnable(true);
         }
     }
 

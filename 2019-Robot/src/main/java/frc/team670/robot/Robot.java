@@ -157,6 +157,7 @@ public class Robot extends TimedRobot {
   public void disabledInit() {
     Logger.consoleLog("Robot Disabled");
     autonomousCommand = xkeys.getAutonCommand();
+    intake.enablePercentOutput();
   }
 
   @Override
