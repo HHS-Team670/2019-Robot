@@ -9,6 +9,7 @@ package frc.team670.robot.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.team670.robot.commands.arm.movement.MoveArm;
+import frc.team670.robot.commands.arm.movement.MoveArmAfterDriveDistance;
 import frc.team670.robot.commands.arm.movement.PlaceOrGrab;
 import frc.team670.robot.commands.drive.DriveMotionProfile;
 import frc.team670.robot.commands.drive.vision.AdvancedVisionPIDDrive;
@@ -48,7 +49,7 @@ public class BuildAuton extends CommandGroup {
     // drives along the path described by the file
     addSequential(new DriveMotionProfile(fileName, true));
     // moves the arm to the destination while driving
-    addParallel(new MoveArm(Arm.getArmState(destination), arm));
+    addParallel(new MoveArmAfterDriveDistance(Arm.getArmState(destination), arm, 36));
     // drives to target using vision
     addSequential(new AdvancedVisionPIDDrive());
     // makes sure the arm is not above the robot
