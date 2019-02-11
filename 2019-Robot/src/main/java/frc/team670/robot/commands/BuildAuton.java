@@ -96,6 +96,31 @@ public class BuildAuton extends CommandGroup {
         else if (target.contains("Cargo")) {
             // if placing ball
             if (height.equals("MIDDLE")) {
+                return LegalState.PLACE_BALL_CARGOSHIP_BACK;
+            } 
+            // if placing hatch
+            else if (height.equals("LOW")) {
+                return LegalState.LOW_HATCH_BACK;
+            }
+        }
+    } else {
+        if (target.contains("Rocket") && (target.contains("1") || target.contains("3"))) {
+            if (height.equals("MIDDLE")) {
+                return LegalState.PLACE_HATCH_ROCKET_MIDDLE_FORWARD;
+            } else if (height.equals("LOW")) {
+                return LegalState.LOW_HATCH_FORWARD;
+            }
+        }
+        else if (target.contains("Rocket") && target.contains("2")) {
+            if (height.equals("MIDDLE")) {
+                return LegalState.PLACE_BALL_ROCKET_MIDDLE_FORWARD;
+            } else if (height.equals("LOW")) {
+                return LegalState.PLACE_BALL_ROCKET_LOW_FORWARD;
+            }
+        }
+        else if (target.contains("Cargo")) {
+            // if placing ball
+            if (height.equals("MIDDLE")) {
                 return LegalState.PLACE_BALL_CARGOSHIP_FORWARD;
             } 
             // if placing hatch

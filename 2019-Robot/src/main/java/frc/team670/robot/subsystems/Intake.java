@@ -24,117 +24,90 @@ import frc.team670.robot.utils.functions.MathUtils;
  */
 public class Intake extends BaseIntake {
 
-  public static final int INTAKE_ANGLE_IN = 0, INTAKE_ANGLE_DEPLOYED = 90;
+  public static final int INTAKE_ANGLE_IN = -90, INTAKE_ANGLE_DEPLOYED = 90;
   public static final double INTAKE_FIXED_LENGTH_IN_INCHES = 0, INTAKE_ROTATING_LENGTH_IN_INCHES = 0; //TODO set actual value
   private static final double MAX_BASE_OUTPUT = 0.75;
-  private static final double kF = 0, kP = 0.1, kI = 0, kD = 0; //TODO figure out what these are
-  private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0; //TODO Set this
-  private static final int FORWARD_SOFT_LIMIT = 0, REVERSE_SOFT_LIMIT = 0; // TODO figure out the values in rotations
-  private static final double RAMP_RATE = 0.1;
+  private static final double kF = 0, kP = 0.35, kI = 0, kD = 0;
 
-  private TalonSRX baseTalon;
+  // Motion Magic
+  private static final int kPIDLoopIdx = 0, MOTION_MAGIC_SLOT = 0, kTimeoutMs = 0;
+  private static final int OFFSET_FROM_ENCODER_ZERO = -260;
+  private static final int FORWARD_SOFT_LIMIT = 850, REVERSE_SOFT_LIMIT = -940;
+  private static final int CONTINUOUS_CURRENT_LIMIT = 20, PEAK_CURRENT_LIMIT = 0;
+  private final static int INTAKE_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 120,  INTAKE_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_SECOND = 400;
+  private static final int QUAD_ENCODER_MAX = FORWARD_SOFT_LIMIT + 200, QUAD_ENCODER_MIN = REVERSE_SOFT_LIMIT - 200;
+
+  private static final double ARBITRARY_FEED_FORWARD = 0.175;
+
   private VictorSPX rollerVictor;
+  // private TalonSRX rollerVictor;
   
   private Point2D.Double intakeCoord;
-  public static double TICKS_PER_ROTATION = 4096; // Still needs to be set
-
-
-  private static int INTAKE_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 15000; // TODO set this
-  private static int INTAKE_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS = 6000; // TODO set this
 
   public Intake() {
-    baseTalon = new TalonSRX(RobotMap.INTAKE_BASE_TALON);
+    super(new TalonSRX(RobotMap.INTAKE_BASE_TALON), ARBITRARY_FEED_FORWARD, FORWARD_SOFT_LIMIT, REVERSE_SOFT_LIMIT, true, QUAD_ENCODER_MIN, QUAD_ENCODER_MAX, CONTINUOUS_CURRENT_LIMIT, PEAK_CURRENT_LIMIT, OFFSET_FROM_ENCODER_ZERO);
+    
     rollerVictor = new VictorSPX(RobotMap.INTAKE_ROLLER_VICTOR);
+    // rollerVictor = new TalonSRX(RobotMap.INTAKE_ROLLER_VICTOR);
+
+    rollerVictor.setInverted(true);
+    rollerVictor.setNeutralMode(NeutralMode.Coast);
+
     intakeCoord = new Point2D.Double();
-    enableBaseMotionMagic();
+
+    rotatorTalon.setInverted(true);
+    rotatorTalon.setSensorPhase(false); // Positive is inwards movement, negative is outward
+
+    enablePercentOutput();
+    setMotionMagicPIDValues();
   }
 
   // May need to set tolerance
-  private void enableBaseMotionMagic() {
-    baseTalon.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
-    baseTalon.config_kF(kSlotMotionMagic, kF, kTimeoutMs);
-    baseTalon.config_kP(kSlotMotionMagic, kP, kTimeoutMs);
-    baseTalon.config_kI(kSlotMotionMagic, kI, kTimeoutMs);
-    baseTalon.config_kD(kSlotMotionMagic, kD, kTimeoutMs);
-    baseTalon.configMotionCruiseVelocity(INTAKE_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
-    baseTalon.configMotionAcceleration(INTAKE_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+  private void setMotionMagicPIDValues() {
+    rotatorTalon.selectProfileSlot(MOTION_MAGIC_SLOT, kPIDLoopIdx);
+    rotatorTalon.config_kF(MOTION_MAGIC_SLOT, kF, kTimeoutMs);
+    rotatorTalon.config_kP(MOTION_MAGIC_SLOT, kP, kTimeoutMs);
+    rotatorTalon.config_kI(MOTION_MAGIC_SLOT, kI, kTimeoutMs);
+    rotatorTalon.config_kD(MOTION_MAGIC_SLOT, kD, kTimeoutMs);
+    rotatorTalon.configMotionCruiseVelocity(INTAKE_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+    rotatorTalon.configMotionAcceleration(INTAKE_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_SECOND, kTimeoutMs);
 
-    baseTalon.configNominalOutputForward(0, RobotConstants.kTimeoutMs);
-    baseTalon.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
-    baseTalon.configPeakOutputForward(MAX_BASE_OUTPUT, RobotConstants.kTimeoutMs);
-    baseTalon.configPeakOutputReverse(-MAX_BASE_OUTPUT, RobotConstants.kTimeoutMs);
+    rotatorTalon.configNominalOutputForward(0, RobotConstants.kTimeoutMs);
+    rotatorTalon.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
+    rotatorTalon.configPeakOutputForward(MAX_BASE_OUTPUT, RobotConstants.kTimeoutMs);
+    rotatorTalon.configPeakOutputReverse(-MAX_BASE_OUTPUT, RobotConstants.kTimeoutMs);
 
-    // These thresholds stop the motor when limit is reached
-    baseTalon.configForwardSoftLimitThreshold(FORWARD_SOFT_LIMIT);
-    baseTalon.configReverseSoftLimitThreshold(REVERSE_SOFT_LIMIT);
-
-    // Enable Safety Measures
-    baseTalon.configForwardSoftLimitEnable(true);
-    baseTalon.configReverseSoftLimitEnable(true);
-
-    baseTalon.setNeutralMode(NeutralMode.Brake);
+    rotatorTalon.setNeutralMode(NeutralMode.Brake);
     rollerVictor.setNeutralMode(NeutralMode.Coast);
-
-    baseTalon.configClosedloopRamp(RAMP_RATE);
-    baseTalon.configOpenloopRamp(RAMP_RATE);
   }
 
   /**
    * Should set the setpoint for the Motion Magic on the intake
    */
-  public void setMotionMagicSetpoint(double intakeTicks) {
-    baseTalon.set(ControlMode.MotionMagic, intakeTicks);
-  }
-
-  /**
-   * Should return the setpoint for the motion magic on the base motor
-   */
-  public double getMotionMagicSetpoint() {
-    return baseTalon.getClosedLoopTarget();
+  public void setMotionMagicSetpointAngle(double intakeAngle) {
+    setpoint = convertIntakeDegreesToTicks(intakeAngle);
+    SmartDashboard.putNumber("MotionMagicSetpoint", setpoint);
+    rotatorTalon.set(ControlMode.MotionMagic, setpoint);
   }
 
   /**
    * Should return the setpoint for the motion magic on the base motor
    */
   public Point2D.Double getMotionMagicDestinationCoordinates(){
-    double x = INTAKE_ROTATING_LENGTH_IN_INCHES * Math.cos(convertIntakeTicksToDegrees(getMotionMagicSetpoint()));
-    double y = INTAKE_FIXED_LENGTH_IN_INCHES + INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(convertIntakeTicksToDegrees(getMotionMagicSetpoint()));
+    double x = INTAKE_ROTATING_LENGTH_IN_INCHES * Math.cos(Math.toRadians(getMotionMagicSetpoint()));
+    double y = INTAKE_FIXED_LENGTH_IN_INCHES + INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(getMotionMagicSetpoint());
     return new Point2D.Double(x, y);
   }
 
   public void setRotatorNeutralMode(NeutralMode mode) {
-    baseTalon.setNeutralMode(mode);
+    rotatorTalon.setNeutralMode(mode);
   }
-
-  /**
-   * Returns the tick value of the base motor
-   */
-  public int getIntakePositionInTicks() {
-    return baseTalon.getSensorCollection().getQuadraturePosition();
-  }
-
-  /**
-   * Returns the intake angle in degrees
-   */
-  public double getIntakeAngleInDegrees() {
-    return 0;
-    // return MathUtils.convertIntakeTicksToDegrees(getIntakePositionInTicks());
-  }
-
-  public static int convertIntakeDegreesToTicks(int degrees) {
-    return 0;
-  }
-
-  public static int convertIntakeTicksToDegrees(int ticks) {
-    return 0;
-  }
-
   /**
    * Returns the x, y coordinates of the top of the intake
    */
   public Point2D.Double getIntakeCoordinates(){
-    double x = INTAKE_ROTATING_LENGTH_IN_INCHES * Math.cos(getIntakeAngleInDegrees());
-    double y = INTAKE_FIXED_LENGTH_IN_INCHES + INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(getIntakeAngleInDegrees());
+    double x = INTAKE_ROTATING_LENGTH_IN_INCHES * Math.cos(getAngleInDegrees());
+    double y = INTAKE_FIXED_LENGTH_IN_INCHES + INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(getAngleInDegrees());
     intakeCoord.setLocation(x, y);
     return intakeCoord;
   }
@@ -157,31 +130,44 @@ public class Intake extends BaseIntake {
   /**
    * Converts an intake angle into ticks
    */
-  public static int convertIntakeDegreesToTicks(double degrees) {
+  private static int convertIntakeDegreesToTicks(double degrees) {
     //If straight up is 0 and going forward is positive
     // percentage * half rotation
-
     // TODO - Fix this. This is not going to make 0 at the top if the absolute encoder is not zero there.
     // Offset the quadrature readings accordingly in the constructor?
-    // Also why are you multiplying by 0.5, it is not half ticks per rotation
-    return (int)((degrees / 180) * (0.5 * TICKS_PER_ROTATION));
+    return (int)((degrees / 360) * TICKS_PER_ROTATION);
   }
 
   /**
    * Converts intake ticks into an angle
    */
-  public static double convertIntakeTicksToDegrees(double ticks) {
+  private static double convertIntakeTicksToDegrees(double ticks) {
     //If straight up is 0 and going forward is positive
-    // percentage * half degrees rotation
-
-     // TODO - Fix this. This is not going to make 0 at the top if the absolute encoder is not zero there.
+    // TODO - Fix this. This is not going to make 0 at the top if the absolute encoder is not zero there.
     // Offset the quadrature readings accordingly in the constructor?
-    // Also why are you multiplying by 0.5, it is not half ticks per rotation
-    return (ticks / (0.5 * TICKS_PER_ROTATION) * 180);
+    return ((360 * ticks) / TICKS_PER_ROTATION);
+  }
+
+  @Override
+  public double getArbitraryFeedForwardAngleMultiplier() {
+    double angleInDegrees = getAngleInDegrees();
+    return -1 * Math.sin(Math.toRadians(angleInDegrees));
+    // System.out.println("IntakeArbitraryFeedforward: " + output);
+  }
+
+  public void sendDataToDashboard() {
+    SmartDashboard.putNumber("Unadjusted Absolute Ticks", getUnadjustedPulseWidth());
+    SmartDashboard.putNumber("Absolute Ticks", getRotatorPulseWidth());
+    SmartDashboard.putNumber("Quadrature Ticks", getPositionTicks());
   }
 
   @Override
   public void initDefaultCommand() {
 
+  }
+
+  @Override
+  public double getAngleInDegrees() {
+    return convertIntakeTicksToDegrees(getPositionTicks());
   }
 }

@@ -8,6 +8,7 @@
 package frc.team670.robot.commands.intake;
 
 import edu.wpi.first.wpilibj.command.Command;
+import frc.team670.robot.Robot;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.BaseIntake;
 import frc.team670.robot.utils.Logger;
@@ -18,9 +19,8 @@ public class RunIntake extends Command {
   private MustangSensors sensors;
   private boolean runningIn;
 
-  private static final double RUNNING_POWER = 1.0; // TODO figure out if we want to run full speed
+  private static final double RUNNING_POWER = 0.30;
   private boolean hasBeenTriggered;
-  private long timeSinceIRSensorTripped, timeSinceInitialized;
 
   public RunIntake(BaseIntake intake, MustangSensors sensors, boolean runningIn) {
     requires(intake);
@@ -32,8 +32,8 @@ public class RunIntake extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    hasBeenTriggered = false;
     Logger.consoleLog();
-    timeSinceInitialized = System.currentTimeMillis();
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -41,22 +41,29 @@ public class RunIntake extends Command {
   protected void execute() {
     intake.runIntake(RUNNING_POWER, runningIn);
 
-      // If the IR sensor has been tripped and it is for the first time
+    // If the IR sensor has been tripped and it is for the first time
+    if(runningIn) {
       if (sensors.getIntakeIRSensor() != null && sensors.getIntakeIROutput() && !hasBeenTriggered) {
         hasBeenTriggered = true;
-        timeSinceIRSensorTripped = System.currentTimeMillis();
+        setTimeout(0.5 + timeSinceInitialized());
       }
+    }
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
     if(sensors.getIntakeIRSensor() == null || sensors.getClawIRSensor() == null){
-      return (System.currentTimeMillis() - timeSinceInitialized > 500);
+      return false;
     }
     // If 0.5 seconds has passed since the IR sensor was first tripped or if the
     // cargo is already in the claw
-    return (System.currentTimeMillis() - timeSinceIRSensorTripped > 500 || sensors.getClawIROutput());
+    if(runningIn) {
+      return (isTimedOut() || sensors.getClawIROutput());
+    }
+    else {
+      return false;
+    }
   }
 
   // Called once after isFinished returns true

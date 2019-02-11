@@ -8,11 +8,12 @@
 package frc.team670.robot.subsystems.extension;
 
 import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.team670.robot.subsystems.TunableSubsystem;
 
 /**
  * Add your docs here.
  */
-public abstract class BaseExtension extends Subsystem implements ExtensionInterface {
+public abstract class BaseExtension extends Subsystem implements ExtensionInterface, TunableSubsystem {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
 

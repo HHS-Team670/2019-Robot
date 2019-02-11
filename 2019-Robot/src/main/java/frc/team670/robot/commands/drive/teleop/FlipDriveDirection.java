@@ -10,6 +10,7 @@ package frc.team670.robot.commands.drive.teleop;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team670.robot.commands.drive.teleop.XboxRocketLeagueDrive;
 import frc.team670.robot.utils.Logger;
+import frc.team670.robot.Robot;
 
 /**
  * Flips the direction of the drive: forward or reversed.
@@ -25,6 +26,7 @@ public class FlipDriveDirection extends InstantCommand {
   protected void initialize() {
     boolean isReversed = XboxRocketLeagueDrive.isDriveReversed();
     XboxRocketLeagueDrive.setDriveReversed(!isReversed);
+    Robot.oi.rumbleDriverController(0.4, 0.1);
     Logger.consoleLog("Flipped Drive: %s", (!isReversed));
   }
 

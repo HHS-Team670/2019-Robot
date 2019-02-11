@@ -9,13 +9,13 @@ package frc.team670.robot.commands.claw;
 
 import frc.team670.robot.subsystems.Claw;
 import frc.team670.robot.utils.Logger;
-import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj.command.TimedCommand;
 
 /**
  * Opens the Claw using the "soft" grip
  * @author shaylandias
  */
-public class OpenClaw extends InstantCommand {
+public class OpenClaw extends TimedCommand {
 
   private Claw claw;
 
@@ -23,7 +23,9 @@ public class OpenClaw extends InstantCommand {
    * @param claw The Claw object
    */
   public OpenClaw(Claw claw) {
+    super(Claw.TIME_TO_MOVE);
     requires(claw);
+    this.claw = claw;
   }
 
   // Called just before this Command runs the first time

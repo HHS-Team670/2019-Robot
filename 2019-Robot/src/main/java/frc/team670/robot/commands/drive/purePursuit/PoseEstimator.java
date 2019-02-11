@@ -58,7 +58,7 @@ public class PoseEstimator {
 		double rightDist = driveBase.getRightMustangEncoderPositionInInches();
 		double deltaLeftDist = leftDist - prevLeftDist;
 		double deltaRightDist = rightDist - prevRightDist;
-		Rotation deltaHeading = prevPose.getRotation().inverse().rotate(sensors.getRotationAngle());
+		Rotation deltaHeading = prevPose.getRotation().inverse().rotate(sensors.getRotation());
 		//Use encoders + gyro to determine our velocity
 		velocity = Kinematics.forwardKinematics(deltaLeftDist, deltaRightDist, deltaHeading.radians());
 		//use velocity to determine our pose

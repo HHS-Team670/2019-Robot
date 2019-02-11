@@ -8,6 +8,7 @@ import frc.team670.robot.dataCollection.sensors.NavX;
 import frc.team670.robot.dataCollection.sensors.NavX.NavX_Pitch_PIDSource;
 import frc.team670.robot.dataCollection.sensors.NavX.ZeroableNavX_Yaw_PIDSource;
 import frc.team670.robot.utils.math.Rotation;
+import jaci.pathfinder.Pathfinder;
 
 /**
  * Instantiates sensor representation objects and contains methods for accessing the sensor data.
@@ -25,8 +26,8 @@ public class MustangSensors {
 
   public MustangSensors(){
     try {
-      navXMicro = new NavX(RobotMap.NAVX_PORT); 
-      isNavXNull = false;
+      // navXMicro = new NavX(RobotMap.NAVX_PORT); 
+      // isNavXNull = false;
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
       SmartDashboard.putString("warning", "Error instantiating navX-MXP");
@@ -101,9 +102,12 @@ public class MustangSensors {
    return -1 * getYawDouble();
   }
 
-  public Rotation getRotationAngle() {
-    double headingRadians = Math.toRadians(getYawDouble());
-    return new Rotation(Math.cos(headingRadians), Math.sin(headingRadians));
+  /**
+   * Gets the Rotation for the Pure Pursuit drive. (-180, 180) with 90 being forward
+   */
+  public Rotation getRotation() {
+    double headingRadians = Pathfinder.boundHalfDegrees(90 - getYawDouble());
+    return Rotation.fromDegrees(headingRadians);
   }
 
   /**

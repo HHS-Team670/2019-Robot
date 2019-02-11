@@ -9,6 +9,7 @@ package frc.team670.robot;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -20,6 +21,11 @@ import frc.team670.robot.dataCollection.MustangPi;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.dataCollection.Pose;
 import frc.team670.robot.dataCollection.XKeys;
+import frc.team670.robot.commands.RumbleDriverController;
+import frc.team670.robot.commands.drive.DriveMotionProfile;
+import frc.team670.robot.commands.intake.RunIntake;
+import frc.team670.robot.dataCollection.MustangPi;
+import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Claw;
 import frc.team670.robot.subsystems.Climber;
@@ -44,9 +50,7 @@ public class Robot extends TimedRobot {
   public static MustangPi visionPi = new MustangPi();
   public static DriveBase driveBase = new DriveBase();
   private MustangLEDs_2019 leds = new MustangLEDs_2019();
-  public static Pose fieldCentricPose = new Pose();
 
-  private long savedTime=0;
 
   private static Elbow elbow = new Elbow();
   private static Wrist wrist = new Wrist();
@@ -56,8 +60,9 @@ public class Robot extends TimedRobot {
   public static Arm arm = new Arm(elbow, wrist, extension, intake, claw);
 
   public static Climber climber = new Climber(sensors);
+  private Notifier updateArbitraryFeedForwards;
 
-  private long periodCount = 0;
+
 
   Command autonomousCommand;
   SendableChooser<Command> auton_chooser = new SendableChooser<>();
@@ -94,7 +99,6 @@ public class Robot extends TimedRobot {
     // chooser.addObject("My Auto", new MyAutoCommand());
     SmartDashboard.putData("Auto mode", auton_chooser);
     Logger.consoleLog();
-    savedTime = System.currentTimeMillis();
     System.out.println("Robot init");
 
     leds.socketSetup(5801);
@@ -113,6 +117,17 @@ public class Robot extends TimedRobot {
     autonomousCommand = xkeys.getAutonCommand();
     timer = new Timer();
 
+    updateArbitraryFeedForwards = new Notifier(new Runnable() {
+      public void run() {
+        wrist.updateArbitraryFeedForward();
+        elbow.updateArbitraryFeedForward();
+        extension.updateArbitraryFeedForward();
+        intake.updateArbitraryFeedForward();
+      }
+    });
+
+    updateArbitraryFeedForwards.startPeriodic(0.01);
+
     // autonomousCommand = new MeasureTrackwidth();
   }
 
@@ -126,26 +141,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    // if(System.currentTimeMillis() > savedTime + 1000) {
-    //   leds.updateClimbingBoolean(true);
-    // }
-    // else if(System.currentTimeMillis() > savedTime + 2000) {
-    //   leds.updateForwardDrive(true);
-    // }
-    // else if(System.currentTimeMillis() > savedTime + 3000) {
-    //   leds.updateReverseDrive(true);
-    // }
-    // else if(System.currentTimeMillis() > savedTime + 4000) {
-    //   leds.updateVisionData(true);
-    //   savedTime = System.currentTimeMillis();
-    // }  
-      
-    // Logger.consoleLog("LeftEncoderPos: %s, RightEncoderPos: %s", driveBase.getLeftDIOEncoderPosition(), driveBase.getRightDIOEncoderPosition());
-    // Logger.consoleLog("LeftEncoderVel: %s, RightEncoderVel: %s", driveBase.getLeftDIOEncoderVelocityInches(), driveBase.getRightDIOEncoderVelocityInches());
-      
-    // if(periodCount % 10 == 0) {
-    //   Logger.consoleLog("NavXYawReset: %s, NavXYawFieldCentric: %s", sensors.getYawDouble(), sensors.getFieldCentricYaw());
-    // }
     SmartDashboard.putNumber("gyro", (int) sensors.getAngle() % 360);
     SmartDashboard.putString("current-command", Scheduler.getInstance().toString());
     SmartDashboard.putString("current-arm-state", Arm.getCurrentState().toString());
@@ -154,9 +149,9 @@ public class Robot extends TimedRobot {
 
     periodCount++;
     leds.setClimbingData(true);//we climb
+    intake.sendDataToDashboard();
 
-    // System.out.println("Voltage: "+(irSensor.getVoltage()));
-    fieldCentricPose.update(); // Update our field centric Pose to the new robot position. Commented out to avoid null-pointers until sensors hooked up.
+    leds.setClimbingData(true);//we climb
  
   }
 
@@ -170,6 +165,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("robot-state", "disabledInit()");
     Logger.consoleLog("Robot Disabled");
     autonomousCommand = xkeys.getAutonCommand();
+    intake.enablePercentOutput();
   }
 
   @Override
@@ -193,24 +189,12 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     SmartDashboard.putString("robot-state", "autonomousInit()");
     sensors.resetNavX(); // Reset NavX completely, zero the field centric based on how robot faces from start of game.
-    fieldCentricPose = new Pose();
     Logger.consoleLog("Auton Started");
     table.getEntry("robotState").setString("autonomousInit()");
     timer.start();
-    // try{ 
-    //   autonomousCommand = new DriveMotionProfile("/output/2ft-straight.pf1.csv", false);
-    // }
-    // catch (FileNotFoundException e) {
-    //   e.printStackTrace();
-    // }
 
-    /*
-     * String autoSelected = SmartDashboard.getString("Auto Selector",
-     * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
-     * = new MyAutoCommand(); break; case "Default Auto": default:
-     * autonomousCommand = new ExampleCommand(); break; }
-     */
-
+    autonomousCommand = oi.getSelectedAutonCommand();
+    // autonomousCommand = new RunIntake(intake, sensors, true);
     // schedule the autonomous command (example)
     if (autonomousCommand != null) {
       autonomousCommand.start();
@@ -231,6 +215,8 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
     SmartDashboard.putString("robot-state", "teleopInit()");
 
+    table.getEntry("teleopState").setString("teleop started");
+
     Logger.consoleLog("Teleop Started");
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
@@ -250,6 +236,10 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     SmartDashboard.putString("robot-state", "teleopPeriodic()");
     SmartDashboard.putNumber("game-time", (int) timer.get());
+    if (Robot.oi.getDriverController().getYButton()) {
+      // Scheduler.getInstance().add(new ResetPulseWidthEncoder(intake));
+      // intake.zeroPulseWidthEncoder();
+    }
     Scheduler.getInstance().run();
   }
 

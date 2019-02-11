@@ -15,63 +15,74 @@ import frc.team670.robot.subsystems.extension.Extension;
  */
 public class TestExtension extends BaseExtension {
 
-    double extensionTicks;
+  double extensionLengthInInches;
 
-    public TestExtension() {
+  public TestExtension() {
 
-    }
+  }
 
-    @Override
-    public double getLengthInches() {
-        return Extension.convertExtensionTicksToInches(extensionTicks);
-    }
+  @Override
+  public double getLengthInches() {
+    return extensionLengthInInches;
+  }
 
-    @Override
-    public void setMotionMagicSetpoint(double extensionTicks) {
-        this.extensionTicks = extensionTicks;
-    }
-    
-    @Override
-    public void setCurrentLimit(int current) {
-    }
-  
-    @Override
-    public void enableCurrentLimit() {
-    }
-  
-    @Override
-    public void disableCurrentLimit() {
-    }
-  
-    @Override
-    public void setOutput(double output){
-    }
-  
-    @Override
-    public int getLengthTicks() { 
-      return (int)extensionTicks;
-    }
-  
-    @Override
-    public void enableExtensionPIDController() {
-    }
-  
-    @Override
-    public void setPIDControllerSetpoint(int setpoint) {
-    }
-  
-    @Override
-    public boolean isReverseLimitPressed() {
-      return false;
-    }
-  
-    @Override
-    public boolean isForwardLimitPressed() {
-      return false;
-    }
-    
-    @Override
-    public void zero(double encoderValue) {
-    }
+  @Override
+  public void setMotionMagicSetpointInInches(double extensionLengthInInches) {
+    this.extensionLengthInInches = extensionLengthInInches;
+  }
+
+  @Override
+  public void setCurrentLimit(int current) {
+  }
+
+  @Override
+  public void enableCurrentLimit() {
+  }
+
+  @Override
+  public void disableCurrentLimit() {
+  }
+
+  @Override
+  public void setOutput(double output) {
+  }
+
+  @Override
+  public void enableExtensionPIDController() {
+  }
+
+  @Override
+  public void setPIDControllerSetpointInInches(double setpointInInches) {
+    extensionLengthInInches = setpointInInches;
+  }
+
+  @Override
+  public boolean isReverseLimitPressed() {
+    return false;
+  }
+
+  @Override
+  public boolean isForwardLimitPressed() {
+    return false;
+  }
+
+  @Override
+  public void setQuadratureEncoder(double encoderValue) {
+  }
+
+  @Override
+  public boolean getTimeout() {
+    return false;
+  }
+
+  @Override
+  public void enablePercentOutput() {
+
+  }
+
+  @Override
+  public void rotatePercentOutput(double output) {
+
+  }
 
 }
