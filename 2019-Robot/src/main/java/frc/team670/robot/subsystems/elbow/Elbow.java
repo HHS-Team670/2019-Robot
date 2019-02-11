@@ -36,6 +36,7 @@ public class Elbow extends BaseElbow {
   public static final int FORWARD_SOFT_LIMIT = 850, REVERSE_SOFT_LIMIT = -940; // SET THIS
   private static final int QUAD_ENCODER_MIN = FORWARD_SOFT_LIMIT + 200, QUAD_ENCODER_MAX = REVERSE_SOFT_LIMIT - 200;// SET THIS BASED ON FORWARD AND REVERSE
   private static final double ARBITRARY_FEEDFORWARD = 0; // TODO SET THIS
+  private static final double ARBITARY_FEEDFORWARD_FULL_EXTENSION = 0; // Arbitrary feedforward when elbow is fully extended
 
 
   public Elbow() {
@@ -66,7 +67,6 @@ public class Elbow extends BaseElbow {
     elbowRotationSlave.setNeutralMode(NeutralMode.Brake);
 
     enablePercentOutput();
- 
   }
 
   @Override
@@ -133,13 +133,13 @@ public class Elbow extends BaseElbow {
   private static int convertElbowDegreesToTicks(double degrees) {
     // If straight up is 0 and going forward is positive
     // percentage * half rotation
-    return (int) ((degrees / 180) * (0.5 * RobotConstants.ELBOW_TICKS_PER_ROTATION));
+    return (int)((degrees / 360) * TICKS_PER_ROTATION);
   }
 
   private static double convertElbowTicksToDegrees(double ticks) {
     // If straight up is 0 and going forward is positive
     // percentage * half degrees rotation
-    return (ticks / (0.5 * RobotConstants.ELBOW_TICKS_PER_ROTATION)) * 180;
+    return ((360 * ticks) / TICKS_PER_ROTATION);
   }
 
   @Override
