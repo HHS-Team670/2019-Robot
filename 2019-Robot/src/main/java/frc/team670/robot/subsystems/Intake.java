@@ -14,6 +14,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.utils.functions.MathUtils;
@@ -145,7 +146,12 @@ public class Intake extends BaseIntake {
    *                      1]
    */
   public void runIntake(double power, boolean runningIn) {
-    power *= runningIn ? 1 : -1;
+    if (runningIn) {
+      SmartDashboard.putString("intake-status", "running-in");
+    } else {
+      power *= -1;
+      SmartDashboard.putString("intake-status", "running-out");
+    }
     rollerVictor.set(ControlMode.PercentOutput, power);
   }
   /**
