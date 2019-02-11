@@ -76,12 +76,16 @@ public class MustangLEDs_2019 {
 	public void setClimbingData(boolean trigger) { // Updates if we are climbing
 		if (trigger == true) {
 			stateData = climbing;
+		} else {
+			setStillDrive(true);
 		}
 	}
 
 	public void setVisionData(boolean trigger) { // updates if we lock onto a vision target
 		if (trigger == true) {
 			stateData = visionLock;
+		} else {
+			setStillDrive(true);
 		}
 	}
 
@@ -89,12 +93,16 @@ public class MustangLEDs_2019 {
 
 		if (trigger = true) {
 			stateData = forwardDrive;
+		} else {
+			setStillDrive(true);
 		}
 	}
 
 	public void setReverseData(boolean trigger) {// updates if we are driving in reverse
 		if (trigger = true) {
 			stateData = reverseDrive;
+		} else {
+			setStillDrive(true);
 		}
 	}
 
