@@ -120,7 +120,7 @@ public class Wrist extends BaseWrist {
   @Override
   public double getArbitraryFeedForwardAngleMultiplier() {
 
-    double angle = Robot.arm.getElbow().getAngleInDegrees() + Math.toRadians(getAngleInDegrees());
+    double angle = Robot.arm.getElbow().getAngleInDegrees() + getAngleInDegrees();
 
     Pathfinder.boundHalfDegrees(angle); // In case it wraps around after this addition, binds the angle.
 
