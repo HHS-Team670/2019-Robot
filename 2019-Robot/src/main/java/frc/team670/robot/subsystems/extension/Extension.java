@@ -33,7 +33,7 @@ public class Extension extends BaseExtension {
 
   // Motion Magic
   private static final int kPIDLoopIdx = 0, MOTION_MAGIC_SLOT = 0, kTimeoutMs = 0;
-  public static final int EXTENSION_IN_POS = 0; // TODO Set These
+  public static final int EXTENSION_IN_POS = 0; // TODO Set this in ticks
   public static final int EXTENSION_OUT_POS = 12000; // TODO Set this in ticks
   public static final double EXTENSION_OUT_IN_INCHES = convertExtensionTicksToInches(EXTENSION_OUT_POS); //TODO set this
   public static final int FORWARD_SOFT_LIMIT = EXTENSION_IN_POS - 100, REVERSE_SOFT_LIMIT = EXTENSION_OUT_POS + 100; // TODO figure out the values in rotations
