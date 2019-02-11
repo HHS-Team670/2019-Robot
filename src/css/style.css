@@ -124,8 +124,13 @@ body.login #login {
 #login > button {
     margin-left: 5px;
 }
-#multicam-debug {
+#front-camera-text {
   bottom: 0vh;
+  z-index: 1;
+}
+#back-camera-text {
+  bottom: 0vh;
+  left: 30vw;
   z-index: 1;
 }
 #robot-info {
@@ -155,6 +160,10 @@ body.login #login {
     position: absolute;
 }
 #arm-base {
+    transform-origin: top center;
+    transform: rotate(180deg);
+}
+#arm-extension {
     transform-origin: top center;
     transform: rotate(180deg);
 }
@@ -206,12 +215,22 @@ body.login #login {
     position: absolute;
     transform: translate(calc(90px + 125px + 130px + 100px), 275px);
 }
-#vline {
+#vline-left {
     position: absolute;
     transform: translate(0vw, 0vh);
     stroke-width: 0.25px;
 }
-#hline {
+#hline-left {
+    position: absolute;
+    transform: translate(0vw, 0vh);
+    stroke-width: 0.25px;
+}
+#vline-right {
+    position: absolute;
+    transform: translate(0vw, 0vh);
+    stroke-width: 0.25px;
+}
+#hline-right {
     position: absolute;
     transform: translate(0vw, 0vh);
     stroke-width: 0.25px;

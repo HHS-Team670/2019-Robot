@@ -14,15 +14,21 @@
 
     <div id="timer">2:30</div>
 
-    <div id="multicam-debug">
-      <p id="multicam-src">src</p>
+    <div id="front-camera-text">
+      <p>Front</p>
+    </div>
+
+    <div id="back-camera-text">
+      <p>Back</p>
     </div>
 
     <div id="camera"></div>
 
     <svg id="crosshairs" width="60vw" height="100vh">
-      <rect id="vline" width="0.05" height="100%"/>
-      <rect id="hline" width="100%" height="0.05"/>
+      <rect id="vline-left" width="0.05" height="100%"/>
+      <rect id="hline-left" width="50%" height="0.05"/>
+      <rect id="vline-right" width="0.05" height="100%" x="50%"/>
+      <rect id="hline-right" width="50%" height="0.05" x="50%"/>
     </svg>
 
     <svg id="status-lights" width="350" height="60">
@@ -54,10 +60,9 @@
       <text id="current-arm-state" x="50%" y="10%" style="text-anchor: middle">Current State</text>
       <rect x="15%" y="80%" width="70%" height="15%"/>
       <rect id="arm-base" x="20%" y="80%" width="3" height="35%"/>
-      <rect id="arm-base" x="20%" y="80%" width="3" height="35%"/>
       <rect id="arm" x="20%" y="25%" width="1" height="60px"/>
-      <rect id="wrist" x="39%" y="44.575%" width="1" height="10px"/>
-      <circle id="claw" cx="22.5%" cy="47%" r="5%"/>
+      <rect id="arm-extension" x="20%" y="25%" width="1" height="1"/>
+      <circle id="claw" cx="20%" cy="45%" r="5%"/>
       <rect x="74%" y="72%" width="3%" height="8%"/>
       <rect id="intake" x="75%" y="70%" width="22%" height="5%"/>
       <circle cx="30%" cy="95%" r="7%"/>
@@ -108,8 +113,8 @@
         <input type="radio" name="height1" value="Middle"> Middle</input> <br>
       </fieldset>
       <fieldset id="target-2">
-        <input type="radio" name="target2" value="ExchangeLeft"> ExchangeLeft</input> <br>
-        <input type="radio" name="target2" value="ExchangeRight"> ExchangeRight</input>
+        <input type="radio" name="target2" value="LoadingZoneLeft"> ExchangeLeft</input> <br>
+        <input type="radio" name="target2" value="LoadingZoneRight"> ExchangeRight</input>
       </fieldset>
       <fieldset id="height-2">
         <input type="radio" name="height2" value="Ball"> Ball</input> <br>

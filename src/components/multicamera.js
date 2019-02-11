@@ -5,7 +5,6 @@ ui.camera = {
 	src: 'http://10.6.70.26:80/?action=stream'
 };
 
-ui.multiCamSRC.innerHTML = ui.camera.src;
 ui.camera.viewer.style.backgroundImage = 'url(' + ui.camera.src + ')';
 
 // When camera is clicked on, send a value over network tables.
