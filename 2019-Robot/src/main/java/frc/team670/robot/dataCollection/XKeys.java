@@ -71,6 +71,11 @@ public class XKeys {
             if (value.toString().contains("cycle_climb")) nextStepArmClimb(height);
             if (value.toString().equals("piston_climb")) pistonClimb(height);
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+        table.addEntryListener("xkeys-cancel", (table2, key2, entry, value, flags) -> {
+            if (value.toString().equals("last")) cancelLastCommand();
+            if (value.toString().equals("all")) cancelAllCommands();
+        }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+
     }
 
     public Command getAutonCommand() {
@@ -109,6 +114,14 @@ public class XKeys {
 
     private void cancelArmClimb() {
         Scheduler.getInstance().add(new CancelArmClimb(Robot.arm));
+    }
+
+    private void cancelLastCommand() {
+        
+    }
+
+    private void cancelAllCommands() {
+        Scheduler.getInstance().removeAll();
     }
 
     private enum ClimbHeight {

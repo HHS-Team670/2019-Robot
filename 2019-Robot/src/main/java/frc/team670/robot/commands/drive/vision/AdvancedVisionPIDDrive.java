@@ -88,7 +88,7 @@ public class AdvancedVisionPIDDrive extends Command {
       Logger.consoleLog("No image found");
       end();
     }
-    SmartDashboard.putBoolean("vision-status", true);
+    SmartDashboard.putString("vision-status", "engaged");
 
     executeCount = 0;
 
@@ -146,7 +146,7 @@ public class AdvancedVisionPIDDrive extends Command {
     Robot.driveBase.stop();
     SettingUtils.releaseController(headingController);
     SettingUtils.releaseController(distanceController);
-    SmartDashboard.putBoolean("vision-status", false);
+    SmartDashboard.putString("vision-status", "");
   }
 
   // Called when another command which requires one or more of the same
