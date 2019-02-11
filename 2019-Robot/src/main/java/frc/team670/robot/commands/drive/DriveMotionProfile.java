@@ -150,8 +150,10 @@ public class DriveMotionProfile extends Command {
       }
     } catch (FileNotFoundException ex) {
       DriverStation.reportError("Error reading in File for DriveMotionProfile" + ex.getMessage(), true);
-      super.cancel();
-      return;
+      leftTrajectory = Pathfinder.readFromCSV(new File(Filesystem.getDeployDirectory() + "/output/DriveOffPlatform.left.pf1"));
+      rightTrajectory = Pathfinder.readFromCSV(new File(Filesystem.getDeployDirectory() + "/output/DriveOffPlatform.right.pf1"));
+      // super.cancel();
+      // return;
     }
   }
 
