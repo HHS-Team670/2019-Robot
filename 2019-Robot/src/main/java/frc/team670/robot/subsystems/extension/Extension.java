@@ -204,11 +204,6 @@ public class Extension extends BaseExtension {
 
     double output = Math.cos(Math.toRadians(angle));
 
-    if(angle > -90 && angle < 90) {
-      output = (output > 0 ? 1 : -1) * output;
-    } else {
-      output = (output < 0 ? 1 : -1) * output;
-    }
     return output;
   }
 

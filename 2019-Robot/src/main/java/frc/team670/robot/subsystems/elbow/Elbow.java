@@ -36,6 +36,7 @@ public class Elbow extends BaseElbow {
   public static final int FORWARD_SOFT_LIMIT = 850, REVERSE_SOFT_LIMIT = -940; // SET THIS
   private static final int QUAD_ENCODER_MIN = FORWARD_SOFT_LIMIT + 200, QUAD_ENCODER_MAX = REVERSE_SOFT_LIMIT - 200;// SET THIS BASED ON FORWARD AND REVERSE
   private static final double ARBITRARY_FEEDFORWARD = 0; // TODO SET THIS
+  private static final double ARBITARY_FEEDFORWARD_FULL_EXTENSION = 0; // Arbitrary feedforward when elbow is fully extended
 
 
   public Elbow() {
