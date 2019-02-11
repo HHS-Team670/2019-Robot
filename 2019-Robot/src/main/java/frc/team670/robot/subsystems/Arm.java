@@ -11,10 +11,8 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import frc.team670.robot.Robot;
 import frc.team670.robot.commands.arm.armTransitions.ArmTransition;
 import frc.team670.robot.commands.arm.armTransitions.CommonTransition;
-import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.subsystems.elbow.BaseElbow;
 import frc.team670.robot.subsystems.extension.BaseExtension;
 import frc.team670.robot.subsystems.wrist.BaseWrist;

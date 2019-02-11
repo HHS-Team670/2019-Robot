@@ -144,15 +144,10 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("gyro", (int) sensors.getAngle() % 360);
     SmartDashboard.putString("current-command", Scheduler.getInstance().toString());
     SmartDashboard.putString("current-arm-state", Arm.getCurrentState().toString());
-    SmartDashboard.putNumber("intake-angle", intake.getIntakeAngleInDegrees());
-    SmartDashboard.putNumber("elbow-angle", elbow.getAngle());
-
-    periodCount++;
+    SmartDashboard.putNumber("intake-angle", intake.getAngleInDegrees());
+    SmartDashboard.putNumber("elbow-angle", elbow.getAngleInDegrees());
     leds.setClimbingData(true);//we climb
-    intake.sendDataToDashboard();
-
-    leds.setClimbingData(true);//we climb
- 
+    intake.sendDataToDashboard(); 
   }
 
   /**
