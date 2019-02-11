@@ -1,72 +1,75 @@
 // Define UI elements
 var ui = {
-    robotState: document.getElementById('robot-state'),
     multiCamSRC: document.getElementById('multicam-src'),
-    navx: {
-      arm: document.getElementById('navx-arm'),
-      number: document.getElementById('navx-number')
-    },
-    turret: {
-      arm: document.getElementById('turret-arm'),
-      number: document.getElementById('turret-number')
-    }
+    timer: document.getElementById('timer')
 };
 
 var date = new Date();
 document.getElementById('big-warning').style.display = "none";
 document.getElementById('climb-state-text').style.stroke = `rgb(60, 60, 60)`;
 document.getElementById('climb-level-text').style.stroke = `rgb(60, 60, 60)`;
-var angle = 0;
+var angle = 90;
 document.getElementById('arm').style = "transform: rotate(" + angle + "deg)";
 document.getElementById('claw').style = "transform: translate(" + Math.sin(angle * Math.PI / 180) * 60 + "px, " + -1 * Math.cos(angle * Math.PI / 180) * 60 + "px)";
 document.getElementById('intake').style = "transform: rotate(" + 0 + "deg)";
+document.getElementById('arm-extension').setAttribute("height", "1");
+ui.timer.style.color = `rgb(0, 200, 0)`;
 
-
-NetworkTables.addKeyListener('/SmartDashboard/robotTime', (key, value) => {
-  var minutes = ~~(value / 60); // converts to integer
-  var seconds = (value - 60*minutes) % 60;
+NetworkTables.addKeyListener('/SmartDashboard/game-time', (key, value) => {
+  var remaining = 150 - value;
+  var minutes = ~~(remaining / 60); // converts to integer
+  var seconds = (remaining - 60*minutes) % 60;
   seconds = (seconds < 10) ? '0'+seconds : seconds;
 
-  ui.timer.style.color = `rgb(0, 200, 0)`;
-  if (value < 135){
+  if (remaining < 135){
      ui.timer.style.color = `rgb(255, 255, 255)`;
   }
-  if (value < 45){ 
-    ui.timer.style.color = `rgb(244,215,66)`
+  if (remaining < 45){ 
+    ui.timer.style.color = `rgb(244,215,66)`;
     document.getElementById('climb-state-text').style.stroke = `rgb(255, 255, 255)`;
     document.getElementById('climb-level-text').style.stroke = `rgb(255, 255, 255)`;
   }
-  if (value < 30){
+  if (remaining < 30){
      ui.timer.style.color = `rgb(200, 0, 0)`;
   }
   ui.timer.innerHTML = minutes + ':' + seconds;
 });
 
-NetworkTables.addKeyListener('/SmartDashboard/cameraSource', (key, value) => {
+NetworkTables.addKeyListener('/SmartDashboard/camera-source', (key, value) => {
   if (value == 'next') {
     window.webContents.reload();
   }
   NetworkTables.putValue('/SmartDashboard/cameraSource', '');
 });
 
-NetworkTables.addKeyListener('/SmartDashboard/robotState', (key, value) => {
-  if (value === "autonomousInit()") document.getElementById('auton-chooser').style.display = "none";
+NetworkTables.addKeyListener('/SmartDashboard/robot-state', (key, value) => {
+  if (value === "autonomousInit()") {
+    document.getElementById('auton-chooser').style.display = "none";
+  } else if (value === "autonomousPeriodic()") {
+    document.getElementById('auton-status').style.fill = "rgb(0,255,0)";
+    document.getElementById('auton-status').style.stroke = "rgb(0,255,0)";
+  } else if (value === "teleopInit()" || value === "teleopPeriodic()") {
+    document.getElementById('auton-status').style.fill = "none";
+    document.getElementById('auton-status').style.stroke = "rgb(255,255,255)";
+  }
 });
 
 document.getElementById('auton-chooser').style.display = "none";
 
-var timeSinceWarningFlashed = 0;
-
 NetworkTables.addKeyListener('/SmartDashboard/warning', (key, value) => {
   document.getElementById('big-warning').style.display = "inline";
   document.getElementById('warnings').innerHTML += (value + "\n");
-  timeSinceWarningFlashed = date.getTime();
-});
+  var timeSinceWarningFlashed = date.getTime();
 
-//Time is stored with prompt from Network Tables Listener, and disappears after a second
-if(date.getTime() - timeSinceWarningFlashed > 1000){
-  document.getElementById('big-warning').style.display = "none";
-}
+  //Time is stored with prompt from Network Tables Listener, and disappears after a second
+  var timing = true;
+  while (timing == true) {
+    if(date.getTime() - timeSinceWarningFlashed > 1000){
+      document.getElementById('big-warning').style.display = "none";
+      timing = false;
+    }
+  }
+});
 
 NetworkTables.addKeyListener('/SmartDashboard/current-command', (key, value) => {
   document.getElementById('current-command').innerHTML = value;
@@ -80,22 +83,37 @@ NetworkTables.addKeyListener('/SmartDashboard/climb-level', (key, value) => {
   document.getElementById('climb-level-text').innerHTML = value;
 });
 
+NetworkTables.addKeyListener('/SmartDashboard/current-arm-state', (key, value) => {
+  document.getElementById('current-arm-state').innerHTML = value;
+});
+
 NetworkTables.addKeyListener('/SmartDashboard/elbow-angle', (key, value) => {
   var angle = value;
   document.getElementById('arm').style = "transform: rotate(" + angle + "deg)";
-  document.getElementById('claw').style = "transform: translate(" + Math.sin(angle * Math.PI / 180) * 50 + "px, " + -1 * Math.cos(angle * Math.PI / 180) * 50 + "px)";
+  document.getElementById('claw').style = "transform: translate(" + Math.sin(angle * Math.PI / 180) * (50 + document.getElementById('arm-extension').getAttribute('height')) + "px, " + -1 * Math.cos(angle * Math.PI / 180) * (50 + document.getElementById('arm-extension').getAttribute('height')) + "px)";
+  document.getElementById('arm-extension').style = "transform: translate(" + Math.sin(angle * Math.PI / 180) * 50 + "px, " + -1 * Math.cos(angle * Math.PI / 180) * 50 + "px)";
 
-  var height = 0;
-  if (angle >= 225 && angle < 315) {
-    var height = 50 + Math.cos((angle-225)*2 * Math.PI / 180) * 50;
-  } else if (angle >= 45 && angle < 135) {
-    height = 0;
-  } else if (angle < 45 && angle >= 315) {
-    var height = 50 - Math.cos((angle-45)*2 * Math.PI / 180) * 50;
-  } else if (angle >= 135 && angle < 225) {
-    height = 100;
-  }
-  document.getElementById('hline').setAttribute('y', height+'%');
+  // var height = 0;
+  // if (angle >= 225 && angle < 315) {
+  //   var height = 50 + Math.cos((angle-225)*2 * Math.PI / 180) * 50;
+  // } else if (angle >= 45 && angle < 135) {
+  //   height = 0;
+  // } else if (angle < 45 && angle >= 315) {
+  //   var height = 50 - Math.cos((angle-45)*2 * Math.PI / 180) * 50;
+  // } else if (angle >= 135 && angle < 225) {
+  //   height = 100;
+  // }
+  // document.getElementById('hline-left').setAttribute('y', height+'%');
+  // document.getElementById('hline-right').setAttribute('y', height/2+'%');
+});
+
+NetworkTables.addKeyListener('/SmartDashboard/intake-angle', (key, value) => {
+  document.getElementById('intake').style = "transform: rotate(" + -1 * value + "deg)";
+
+});
+
+NetworkTables.addKeyListener('/SmartDashboard/arm-extension', (key, value) => {
+  document.getElementById('arm-extension').setAttribute('height', value * 150);
 });
 
 NetworkTables.addKeyListener('/SmartDashboard/claw-ir-sensor', (key, value) => {
@@ -118,14 +136,8 @@ NetworkTables.addKeyListener('/SmartDashboard/claw-ir-sensor', (key, value) => {
   }
 });
 
-NetworkTables.addKeyListener('/SmartDashboard/intake-status', (key, value) => {
-  if (value === 'running-in') {
-    document.getElementById('intake-status').style.fill = "rgb(0,255,0)";
-    document.getElementById('intake-status').style.stroke = "rgb(0,255,0)";
-  } else if (value === 'running-out') {
-    document.getElementById('intake-status').style.fill = "rgb(255,0,0)";
-    document.getElementById('intake-status').style.stroke = "rgb(255,0,0)";
-  } else if (value === 'intake-ir-triggered') {
+NetworkTables.addKeyListener('/SmartDashboard/intake-ir-sensor', (key, value) => {
+  if (value === true) {
     document.getElementById('intake-status').style.fill = "rgb(244, 160, 65)";
     document.getElementById('intake-status').style.stroke = "rgb(244, 160, 65)";
   } else {
@@ -134,8 +146,14 @@ NetworkTables.addKeyListener('/SmartDashboard/intake-status', (key, value) => {
   }
 });
 
-NetworkTables.addKeyListener('/SmartDashboard/intake-angle', (key, value) => {
-  document.getElementById('intake').style = "transform: rotate(" + -1 * value + "deg)";
+NetworkTables.addKeyListener('/SmartDashboard/intake-status', (key, value) => {
+  if (value === 'running-in') {
+    document.getElementById('intake-status').style.fill = "rgb(0,255,0)";
+    document.getElementById('intake-status').style.stroke = "rgb(0,255,0)";
+  } else if (value === 'running-out') {
+    document.getElementById('intake-status').style.fill = "rgb(255,0,0)";
+    document.getElementById('intake-status').style.stroke = "rgb(255,0,0)";
+  }
 });
 
 NetworkTables.addKeyListener('/SmartDashboard/vision-status', (key, value) => {
@@ -151,16 +169,6 @@ NetworkTables.addKeyListener('/SmartDashboard/vision-status', (key, value) => {
   }
 });
 
-NetworkTables.addKeyListener('/SmartDashboard/auton-status', (key, value) => {
-  if (value === 'running') {
-    document.getElementById('auton-status').style.fill = "rgb(0,255,0)";
-    document.getElementById('auton-status').style.stroke = "rgb(0,255,0)";
-  } else {
-    document.getElementById('auton-status').style.fill = "none";
-    document.getElementById('auton-status').style.stroke = "rgb(255,255,255)";
-  }
-});
-
 var keys = [];
 
 var allKeys = '';
@@ -171,14 +179,12 @@ document.addEventListener("keyup", function(event) {
   var result = split[split.length - 1];
   var nextTask = getFromMap(result);
   if (nextTask != null) {
-    document.getElementById('warnings').innerHTML = nextTask;
     if (nextTask.toUpperCase() === nextTask) NetworkTables.putValue('/SmartDashboard/xkeys-armstates', nextTask);
     else if (nextTask === "place" || nextTask === "grab") NetworkTables.putValue('/SmartDashboard/xkeys-placing', nextTask);
     else if (nextTask.includes("run_intake")) NetworkTables.putValue('/SmartDashboard/xkeys-intake', nextTask);
     else if (nextTask === "auto_pickup_ball") NetworkTables.putValue('/SmartDashboard/xkeys-autopickup', nextTask);
     else if (nextTask.includes("climb")) NetworkTables.putValue('/SmartDashboard/xkeys-climber', nextTask);
   }
-  document.getElementById('test2').innerHTML = armStates.length;
 });
 
 // naming convention: UPPER_CASE for preset arm states, lower_case for other commands
@@ -215,45 +221,7 @@ function getFromMap(key) { // mapping is more aligned with arm position on robot
 
   if (key === "x1d") return "GRAB_BALL_GROUND_BACK";
   if (key === "x25") return "GRAB_BALL_INTAKE";
-}
-
-// naming convention: UPPER_CASE for preset arm states, lower_case for other commands
-function getActionAlternate(key) {
-  if (key === "x06") return "backspace";
-  if (key === "x3e") return "enter";
-
-  if (key === "x0a") return "READY_TO_CLIMB";
-  if (key === "x03") return "next_step_climb";
-  if (key === "x0b") return "cancel_arm_climb";
-
-  if (key === "x33") return "run_intake_in";
-  if (key === "x3b") return "run_intake_out";
-
-  if (key === "x12") return "READY_LOW_HATCH_BACK";
-  if (key === "x13") return "READY_PLACE_BALL_ROCKET_LOW_BACK";
-  
-  if (key === "x15") return "GRAB_BALL_GROUND_BACK";
-  
-  if (key === "x1a") return "READY_PLACE_HATCH_ROCKET_MIDDLE_BACK";
-  if (key === "x1b") return "READY_PLACE_BALL_ROCKET_MIDDLE_BACK";
-  if (key === "x1c") return "PLACE_BALL_CARGOSHIP_BACK";
-  if (key === "x1d") return "READY_GRAB_BALL_LOADINGSTATION_BACK";
-  
-  if (key === "x22") return "READY_PLACE_HATCH_ROCKET_MIDDLE_FORWARD";
-  if (key === "x23") return "READY_PLACE_BALL_ROCKET_MIDDLE_FORWARD";
-  if (key === "x24") return "PLACE_BALL_CARGOSHIP_FORWARD";
-  if (key === "x25") return "READY_GRAB_BALL_LOADINGSTATION_FORWARD";
-  if (key === "x26") return "grab";
-  if (key === "x2a") return "READY_LOW_HATCH_FORWARD";
-  if (key === "x2b") return "READY_PLACE_BALL_ROCKET_LOW_FORWARD";
-  
-  if (key === "x2d") return "GRAB_BALL_INTAKE";
-  if (key === "x2e") return "place";
-  return null;
-}
-
-function finalize() {
-  NetworkTables.putValue('armSequence', armStates);
+  if (key === "x2d") return "GRAB_HATCH_GROUND_BACK";
 }
 
 function readRadioButtons() {
@@ -320,5 +288,3 @@ document.getElementById('confirm-button').onclick = function () {
   document.getElementById('test').innerHTML = auton;
   NetworkTables.putValue("autonSequence", auton);
 }
-
-document.getElementById('claw-status').setAttribute("fill", "red");
