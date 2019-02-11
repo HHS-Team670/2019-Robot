@@ -6,9 +6,11 @@ var ui = {
 
 var date = new Date();
 document.getElementById('big-warning').style.display = "none";
-document.getElementById('climb-state-text').style.stroke = `rgb(60, 60, 60)`;
-document.getElementById('climb-level-text').style.stroke = `rgb(60, 60, 60)`;
-var angle = 90;
+
+document.getElementById('climb-state-text').style.stroke = `rgb(90, 90, 90)`;
+document.getElementById('climb-level-text').style.stroke = `rgb(90, 90, 90)`;
+
+var angle = 70;
 document.getElementById('arm').style = "transform: rotate(" + angle + "deg)";
 document.getElementById('claw').style = "transform: translate(" + Math.sin(angle * Math.PI / 180) * 60 + "px, " + -1 * Math.cos(angle * Math.PI / 180) * 60 + "px)";
 document.getElementById('intake').style = "transform: rotate(" + 0 + "deg)";
@@ -24,7 +26,7 @@ NetworkTables.addKeyListener('/SmartDashboard/game-time', (key, value) => {
   if (remaining < 135){
      ui.timer.style.color = `rgb(255, 255, 255)`;
   }
-  if (remaining < 45){ 
+  if (remaining < 45){
     ui.timer.style.color = `rgb(244,215,66)`;
     document.getElementById('climb-state-text').style.stroke = `rgb(255, 255, 255)`;
     document.getElementById('climb-level-text').style.stroke = `rgb(255, 255, 255)`;
@@ -205,7 +207,7 @@ function getFromMap(key) { // mapping is more aligned with arm position on robot
   if (key === "x26") return "grab";
 
   if (key === "x12") return "READY_PLACE_HATCH_ROCKET_MIDDLE_BACK";
-  if (key === "x1a") return "READY_PLACE_BALL_ROCKET_MIDDLE_BACK";  
+  if (key === "x1a") return "READY_PLACE_BALL_ROCKET_MIDDLE_BACK";
   if (key === "x22") return "READY_PLACE_BALL_ROCKET_MIDDLE_FORWARD";
   if (key === "x2a") return "READY_PLACE_HATCH_ROCKET_MIDDLE_FORWARD";
 
