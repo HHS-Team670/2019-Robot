@@ -42,11 +42,11 @@ public class BuildAuton extends CommandGroup {
      * if the robot starts facing back, the third path and arm command will be going backwards */
     
     // gets the destination the arm should go to
-    destination = getLegalState(target1, height1, isRobotFacingBack); 
+    destination = getLegalState(target1, height1, true); 
     // finds the file corresponding to the path the robot should take
     fileName = start + "_" + target1 + ".pf1.csv";
     // drives along the path described by the file
-    addSequential(new DriveMotionProfile(fileName, isRobotFacingBack));
+    addSequential(new DriveMotionProfile(fileName, true));
     // moves the arm to the destination while driving
     addParallel(new MoveArm(Arm.getArmState(destination), arm));
     // drives to target using vision
@@ -77,37 +77,7 @@ public class BuildAuton extends CommandGroup {
   /**
    * Returns the proper LegalState the arm should go to based on the target, height, and robot direction
    */
-  private LegalState getLegalState(String target, String height, boolean isFacingBack) {
-    if (isFacingBack) {
-        if (target.contains("Rocket") && (target.contains("1") || target.contains("3"))) {
-            if (height.equals("MIDDLE")) {
-                return LegalState.PLACE_HATCH_ROCKET_MIDDLE_BACK;
-            } else if (height.equals("LOW")) {
-                return LegalState.LOW_HATCH_BACK;
-            }
-        }
-        else if (target.contains("Rocket") && target.contains("2")) {
-            if (height.equals("MIDDLE")) {
-                return LegalState.PLACE_BALL_ROCKET_MIDDLE_BACK;
-            } else if (height.equals("LOW")) {
-                return LegalState.PLACE_BALL_ROCKET_LOW_BACK;
-            }
-        }
-        else if (target.contains("Cargo")) {
-            // if placing ball
-            if (height.equals("MIDDLE")) {
-                return LegalState.PLACE_BALL_CARGOSHIP_BACK;
-            } 
-            // if placing hatch
-            else if (height.equals("LOW")) {
-                return LegalState.LOW_HATCH_BACK;
-            }
-        } else if (target.contains("Exchange")) {
-            return LegalState.GRAB_BALL_LOADINGSTATION_BACK;
-        } else if (target.contains("")) {
-            return LegalState.GRAB_BALL_INTAKE;
-        }
-    } 
+  private LegalState getLegalState(String target, String height, boolean isFacingBack) { 
     if (isFacingBack) {
         if (target.contains("Rocket") && (target.contains("1") || target.contains("3"))) {
             if (height.equals("MIDDLE")) {
