@@ -8,9 +8,8 @@
 package frc.team670.robot.commands.arm.joystick;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
-import frc.team670.robot.Robot;
 import frc.team670.robot.subsystems.Arm;
-import frc.team670.robot.subsystems.wrist.Wrist;
+import frc.team670.robot.subsystems.wrist.BaseWrist;
 import frc.team670.robot.utils.ArmControlMode;
 
 /**
@@ -18,11 +17,13 @@ import frc.team670.robot.utils.ArmControlMode;
  */
 public class JoystickWrist extends InstantCommand {
   
-  private Wrist wrist;
+  private BaseWrist wrist;
+  private double power;
 
-  public JoystickWrist(Wrist wrist) {
+  public JoystickWrist(BaseWrist wrist, double power) {
     super();
     this.wrist = wrist;
+    this.power = power;
     requires(wrist);
   }
 
@@ -30,7 +31,7 @@ public class JoystickWrist extends InstantCommand {
   @Override
   protected void initialize() {
     if (FlipJoystickArmControl.state.equals(ArmControlMode.WRIST)) {
-      wrist.setOutput(Arm.OPERATOR_ARM_CONTROL_SCALAR * Robot.oi.getOperatorController().getRightStickY());
+      wrist.setOutput(Arm.OPERATOR_ARM_CONTROL_SCALAR * power);
     }
   }
 }

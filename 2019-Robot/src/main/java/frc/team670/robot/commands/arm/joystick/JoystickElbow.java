@@ -8,9 +8,8 @@
 package frc.team670.robot.commands.arm.joystick;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
-import frc.team670.robot.Robot;
 import frc.team670.robot.subsystems.Arm;
-import frc.team670.robot.subsystems.elbow.Elbow;
+import frc.team670.robot.subsystems.elbow.BaseElbow;
 import frc.team670.robot.utils.ArmControlMode;
 
 /**
@@ -18,11 +17,13 @@ import frc.team670.robot.utils.ArmControlMode;
  */
 public class JoystickElbow extends InstantCommand {
   
-  private Elbow elbow;
+  private BaseElbow elbow;
+  private double power;
 
-  public JoystickElbow(Elbow elbow) {
+  public JoystickElbow(BaseElbow elbow, double power) {
     super();
     this.elbow = elbow;
+    this.power = power;
     requires(elbow);
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
@@ -32,7 +33,7 @@ public class JoystickElbow extends InstantCommand {
   @Override
   protected void initialize() {
     if (FlipJoystickArmControl.state.equals(ArmControlMode.ELBOW)) {
-      elbow.setOutput(Arm.OPERATOR_ARM_CONTROL_SCALAR * Robot.oi.getOperatorController().getRightStickY());
+      elbow.setOutput(Arm.OPERATOR_ARM_CONTROL_SCALAR * power);
     }
   }
 }

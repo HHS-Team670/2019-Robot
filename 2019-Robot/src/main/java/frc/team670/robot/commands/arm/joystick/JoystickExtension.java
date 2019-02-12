@@ -8,9 +8,8 @@
 package frc.team670.robot.commands.arm.joystick;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
-import frc.team670.robot.Robot;
 import frc.team670.robot.subsystems.Arm;
-import frc.team670.robot.subsystems.extension.Extension;
+import frc.team670.robot.subsystems.extension.BaseExtension;
 import frc.team670.robot.utils.ArmControlMode;
 
 /**
@@ -18,11 +17,13 @@ import frc.team670.robot.utils.ArmControlMode;
  */
 public class JoystickExtension extends InstantCommand {
   
-  private Extension extension;
+  private BaseExtension extension;
+  private double power;
 
-  public JoystickExtension(Extension extension) {
+  public JoystickExtension(BaseExtension extension, double power) {
     super();
     this.extension = extension;
+    this.power = power;
     requires(extension);
   }
 
@@ -30,7 +31,7 @@ public class JoystickExtension extends InstantCommand {
   @Override
   protected void initialize() {
     if (FlipJoystickArmControl.state.equals(ArmControlMode.EXTENSION)) {
-      extension.setOutput(Arm.OPERATOR_ARM_CONTROL_SCALAR * Robot.oi.getOperatorController().getRightStickY());
+      extension.setOutput(Arm.OPERATOR_ARM_CONTROL_SCALAR * power);
     }
   }
 }
