@@ -17,6 +17,9 @@ document.getElementById('claw').style = "transform: translate(" + (Math.sin(angl
 document.getElementById('intake').style = "transform: rotate(" + 0 + "deg)";
 document.getElementById('arm-extension').style = "transform: translate(" + (Math.sin((angle) * Math.PI / 180) * armLength) + "px, " + (armLength - (Math.sin((angle+90) * Math.PI / 180) * armLength)) + "px) rotate(" + (angle + 180) + "deg)";
 
+document.getElementById('vline-right').setAttribute('x', 70+'%');
+document.getElementById('vline-left').setAttribute('x', 25+'%');
+
 ui.timer.style.color = `rgb(0, 200, 0)`;
 
 NetworkTables.addKeyListener('/SmartDashboard/game-time', (key, value) => {
@@ -43,7 +46,7 @@ NetworkTables.addKeyListener('/SmartDashboard/camera-source', (key, value) => {
   if (value == 'next') {
     window.webContents.reload();
   }
-  NetworkTables.putValue('/SmartDashboard/cameraSource', '');
+  NetworkTables.putValue('/SmartDashboard/camera-source', '');
 });
 
 NetworkTables.addKeyListener('/SmartDashboard/robot-state', (key, value) => {
@@ -97,18 +100,18 @@ NetworkTables.addKeyListener('/SmartDashboard/elbow-angle', (key, value) => {
   document.getElementById('arm').style = "transform: rotate(" + angle + "deg)";
   document.getElementById('arm-extension').style = "transform: translate(" + (Math.sin((angle) * Math.PI / 180) * 60) + "px, " + (60 - (Math.sin((angle+90) * Math.PI / 180) * 60)) + "px) rotate(" + (angle + 180) + "deg)";
 
-  // var height = 0;
-  // if (angle >= 225 && angle < 315) {
-  //   var height = 50 + Math.cos((angle-225)*2 * Math.PI / 180) * 50;
-  // } else if (angle >= 45 && angle < 135) {
-  //   height = 0;
-  // } else if (angle < 45 && angle >= 315) {
-  //   var height = 50 - Math.cos((angle-45)*2 * Math.PI / 180) * 50;
-  // } else if (angle >= 135 && angle < 225) {
-  //   height = 100;
-  // }
-  // document.getElementById('hline-left').setAttribute('y', height+'%');
-  // document.getElementById('hline-right').setAttribute('y', height/2+'%');
+  var frontHeight = 0;
+  var backHeight = 0;
+  if (angle >= 42.65 && angle < 172.35) {
+    frontHeight = (angle - 42.65) / (172.35 - 42.65) * 100;
+  } else if (angle >= 172.35 && angle < 187.65) {
+    frontHeight = 100;
+    backHeight = 100;
+  } else if (angle >= 187.65 && angle < 227.35) {
+    backHeight = (angle - 187.65) / (227.35 - 187.65) * 100;
+  }
+  document.getElementById('hline-left').setAttribute('y', frontHeight+'%');
+  document.getElementById('hline-right').setAttribute('y', backHeight+'%');
 });
 
 NetworkTables.addKeyListener('/SmartDashboard/intake-angle', (key, value) => {
