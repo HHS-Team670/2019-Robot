@@ -57,7 +57,7 @@ public class Intake extends BaseIntake {
     rotatorTalon.setInverted(true);
     rotatorTalon.setSensorPhase(false); // Positive is inwards movement, negative is outward
 
-    enablePercentOutput();
+    stop();
     setMotionMagicPIDValues();
   }
 

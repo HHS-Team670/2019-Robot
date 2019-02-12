@@ -54,7 +54,7 @@ public class Wrist extends BaseWrist {
 
     rotatorTalon.setNeutralMode(NeutralMode.Brake);
 
-    enablePercentOutput();
+    stop();
   }
   
   @Override

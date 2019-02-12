@@ -88,7 +88,7 @@ public abstract class RotatingSubsystem extends Subsystem implements TunableSubs
     /**
      * Enbales the main talon to percent output mode
      */
-    public synchronized void enablePercentOutput() {
+    public synchronized void stop() {
         clearSetpoint();
         rotatorTalon.set(ControlMode.PercentOutput, 0);
         System.out.println("Intake Put in Percent Output");
@@ -105,7 +105,7 @@ public abstract class RotatingSubsystem extends Subsystem implements TunableSubs
     /**
      * Rotates the talon at a certain percent output
      */
-    public void rotatePercentOutput(double output) {
+    public void moveByPercentOutput(double output) {
         rotatorTalon.set(ControlMode.PercentOutput, output);
     }
 

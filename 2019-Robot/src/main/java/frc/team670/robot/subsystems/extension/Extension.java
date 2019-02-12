@@ -96,7 +96,7 @@ public class Extension extends BaseExtension {
 
     // extensionMotor.getSensorCollection().setQuadraturePosition(pulseWidthPos, 0);
     extensionMotor.getSensorCollection().setQuadraturePosition(START_POSITION_TICKS, 0); // The Extension 
-    enablePercentOutput();
+    stop();
   }
 
   @Override
@@ -217,13 +217,13 @@ public class Extension extends BaseExtension {
   }
 
   @Override
-  public synchronized void enablePercentOutput() {
+  public synchronized void stop() {
     setpoint = NO_SETPOINT;
     extensionMotor.set(ControlMode.PercentOutput, 0);
   }
 
   @Override
-  public synchronized void rotatePercentOutput(double output) {
+  public synchronized void moveByPercentOutput(double output) {
     setpoint = NO_SETPOINT;
     extensionMotor.set(ControlMode.PercentOutput, output);
   }

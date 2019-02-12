@@ -149,7 +149,7 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     Logger.consoleLog("Robot Disabled");
-    intake.enablePercentOutput();
+    intake.stop();
   }
 
   @Override

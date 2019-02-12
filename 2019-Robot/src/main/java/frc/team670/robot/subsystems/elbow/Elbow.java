@@ -66,7 +66,7 @@ public class Elbow extends BaseElbow {
     rotatorTalon.setNeutralMode(NeutralMode.Brake);
     elbowRotationSlave.setNeutralMode(NeutralMode.Brake);
 
-    enablePercentOutput();
+    stop();
   }
 
   @Override
