@@ -10,15 +10,12 @@ document.getElementById('big-warning').style.display = "none";
 document.getElementById('climb-state-text').style.stroke = `rgb(90, 90, 90)`;
 document.getElementById('climb-level-text').style.stroke = `rgb(90, 90, 90)`;
 
-var angle = 30;
+var angle = 0;
+var armLength = 110;
 document.getElementById('arm').style = "transform: rotate(" + angle + "deg)";
-document.getElementById('claw').style = "transform: translate(" + Math.sin(angle * Math.PI / 180) * (parseInt(document.getElementById('arm-extension').getAttribute('height')) + 80) + "px, " + -1 * Math.cos(angle * Math.PI / 180) * (parseInt(document.getElementById('arm-extension').getAttribute('height')) + 80) + "px)";
+document.getElementById('claw').style = "transform: translate(" + (Math.sin(angle * Math.PI / 180) * (parseInt(document.getElementById('arm-extension').getAttribute('height')) + armLength)) + "px, " + (armLength - Math.sin((angle+90) * Math.PI / 180) * (parseInt(document.getElementById('arm-extension').getAttribute('height')) + armLength)) + "px)";
 document.getElementById('intake').style = "transform: rotate(" + 0 + "deg)";
-// document.getElementById('arm-extension').setAttribute("height", "1");
-document.getElementById('arm-extension').style.stroke = `rgb(255, 0, 0)`;
-document.getElementById('arm-extension').style = "transform: translate(" + (1 * Math.sin((angle) * Math.PI / 180) * 60) + "px, " + (1 * Math.cos(angle * Math.PI / 180) * 60) + "px) rotate(" + (angle + 180) + "deg)";
-
-document.getElementById('current-command-text').innerHTML = '>>>('+ (1 * Math.sin((angle) * Math.PI / 180) * 60).toFixed(3) + "px, " + (1 * Math.cos(angle * Math.PI / 180) * 60).toFixed(3) + "px)" + '<<<';
+document.getElementById('arm-extension').style = "transform: translate(" + (Math.sin((angle) * Math.PI / 180) * armLength) + "px, " + (armLength - (Math.sin((angle+90) * Math.PI / 180) * armLength)) + "px) rotate(" + (angle + 180) + "deg)";
 
 ui.timer.style.color = `rgb(0, 200, 0)`;
 
@@ -96,9 +93,9 @@ NetworkTables.addKeyListener('/SmartDashboard/current-arm-state', (key, value) =
 
 NetworkTables.addKeyListener('/SmartDashboard/elbow-angle', (key, value) => {
   var angle = value;
+  document.getElementById('claw').style = "transform: translate(" + Math.sin(angle * Math.PI / 180) * (parseInt(document.getElementById('arm-extension').getAttribute('height')) + 60) + "px, " + -1 * Math.cos(angle * Math.PI / 180) * (parseInt(document.getElementById('arm-extension').getAttribute('height')) + 60) + "px)";
   document.getElementById('arm').style = "transform: rotate(" + angle + "deg)";
-  document.getElementById('claw').style = "transform: translate(" + Math.sin(angle * Math.PI / 180) * (parseInt(document.getElementById('arm-extension').getAttribute('height')) + 80) + "px, " + -1 * Math.cos(angle * Math.PI / 180) * (parseInt(document.getElementById('arm-extension').getAttribute('height')) + 80) + "px)";
-  document.getElementById('arm-extension').style = "transform: translate(" + Math.sin(angle * Math.PI / 180) * 50 + "px, " + -1 * Math.cos(angle * Math.PI / 180) * 50 + "px)";
+  document.getElementById('arm-extension').style = "transform: translate(" + (Math.sin((angle) * Math.PI / 180) * 60) + "px, " + (60 - (Math.sin((angle+90) * Math.PI / 180) * 60)) + "px) rotate(" + (angle + 180) + "deg)";
 
   // var height = 0;
   // if (angle >= 225 && angle < 315) {
@@ -120,7 +117,7 @@ NetworkTables.addKeyListener('/SmartDashboard/intake-angle', (key, value) => {
 });
 
 NetworkTables.addKeyListener('/SmartDashboard/arm-extension', (key, value) => {
-  document.getElementById('arm-extension').setAttribute('height', value * 150);
+  document.getElementById('arm-extension').setAttribute('height', value * 60);
 });
 
 NetworkTables.addKeyListener('/SmartDashboard/claw-ir-sensor', (key, value) => {
