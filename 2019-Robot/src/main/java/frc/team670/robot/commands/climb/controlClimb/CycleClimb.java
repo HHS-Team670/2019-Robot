@@ -19,6 +19,7 @@ import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.LegalState;
 import frc.team670.robot.subsystems.Climber;
+import frc.team670.robot.Robot;
 
 /**
  * Allows one Button to cycle through all the necessary stages of climbing:
@@ -61,6 +62,8 @@ public class CycleClimb extends InstantCommand {
     very little time left, this will stow the arm and bring the robot back down to flat
     */
     Scheduler.getInstance().add(new CancelClimbBasedOnTimeLeftInMatch(arm, climber, sensors));
+
+    Robot.leds.setClimbingData(true);
 
     switch (cg) {
      case DEPLOY_PISTONS:

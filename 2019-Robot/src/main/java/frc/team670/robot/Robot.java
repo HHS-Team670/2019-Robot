@@ -9,15 +9,17 @@ package frc.team670.robot;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team670.robot.commands.RumbleDriverController;
 import frc.team670.robot.commands.drive.DriveMotionProfile;
-import frc.team670.robot.commands.intake.RunIntake;
+import frc.team670.robot.commands.drive.teleop.XboxRocketLeagueDrive;
+import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangPi;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.Arm;
@@ -30,6 +32,7 @@ import frc.team670.robot.subsystems.elbow.Elbow;
 import frc.team670.robot.subsystems.extension.Extension;
 import frc.team670.robot.subsystems.wrist.Wrist;
 import frc.team670.robot.utils.Logger;
+import frc.team670.robot.utils.functions.MathUtils;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -43,8 +46,7 @@ public class Robot extends TimedRobot {
   public static MustangSensors sensors = new MustangSensors();
   public static MustangPi visionPi = new MustangPi();
   public static DriveBase driveBase = new DriveBase();
-  private MustangLEDs_2019 leds = new MustangLEDs_2019();
-
+  public static MustangLEDs_2019 leds = new MustangLEDs_2019();
 
   private static Elbow elbow = new Elbow();
   private static Wrist wrist = new Wrist();
@@ -55,6 +57,7 @@ public class Robot extends TimedRobot {
 
   public static Climber climber = new Climber(sensors);
   private Notifier updateArbitraryFeedForwards;
+  private Notifier checkVisionLock;
 
 
 
@@ -116,6 +119,22 @@ public class Robot extends TimedRobot {
       }
     });
 
+    checkVisionLock = new Notifier(new Runnable() {
+      public void run() {
+        if(!MathUtils.doublesEqual(visionPi.getAngleToWallTarget().pidGet(), RobotConstants.VISION_ERROR_CODE)) {
+          leds.setVisionData(true);
+        } else {
+          boolean isReversed = XboxRocketLeagueDrive.isDriveReversed();
+          if (isReversed) {
+            Robot.leds.setReverseData(true);
+          } else {
+            Robot.leds.setForwardData(true);
+          }
+        }
+      }
+    });
+    checkVisionLock.startPeriodic(0.2);
+
     updateArbitraryFeedForwards.startPeriodic(0.01);
 
     // autonomousCommand = new MeasureTrackwidth();
@@ -129,18 +148,21 @@ public class Robot extends TimedRobot {
    * <p>This runs after the mode specific periodic functions, but before
    * LiveWindow and SmartDashboard integrated updating.
    */
-  @Override
+  int counter = 0;
+  
+
+ @Override
   public void robotPeriodic() {
- 
     SmartDashboard.putNumber("NavX Yaw", sensors.getYawDouble());
     table.getEntry("gyro").setNumber((int) sensors.getAngle() % 360);
 
     intake.sendDataToDashboard();
-
-    leds.setClimbingData(true);//we climb
- 
+    if (counter % 10 == 0) {
+      leds.setForwardData(true);
+    } else
+      leds.changeAlliance(false);
+    counter++;
   }
-
   /**
    * This function is called once each time the robot enters Disabled mode.
    * You can use it to reset any subsystem information you want to clear when
@@ -170,6 +192,15 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+
+    if(DriverStation.getInstance().getAlliance().equals(Alliance.Red)) {
+      leds.changeAlliance(false);
+    } else if (DriverStation.getInstance().getAlliance().equals(Alliance.Blue)) {
+      leds.changeAlliance(true);
+    } else {
+      leds.changeAlliance(true);
+    }
+
     sensors.resetNavX(); // Reset NavX completely, zero the field centric based on how robot faces from start of game.
     Logger.consoleLog("Auton Started");
     table.getEntry("robotState").setString("autonomousInit()");
@@ -192,6 +223,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+
+    leds.setForwardData(true);
 
     table.getEntry("teleopState").setString("teleop started");
 
