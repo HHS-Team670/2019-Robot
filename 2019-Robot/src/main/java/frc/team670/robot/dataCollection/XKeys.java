@@ -63,7 +63,6 @@ public class XKeys {
         table.addEntryListener("xkeys-intake", (table2, key2, entry, value, flags) -> {
             if (value.toString().equals("run_intake_in")) runIntake(true);
             else if (value.toString().equals("run_intake_out")) runIntake(false);
-            else if (value.toString().equals("cancel_intake_rollers")) cancelIntakeRollers();
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-autopickup", (table2, key2, entry, value, flags) -> {
             autoPickupBall();
@@ -73,15 +72,16 @@ public class XKeys {
             else if (value.toString().equals("set_climb_2")) height = ClimbHeight.LEVEL2;
             else if (value.toString().equals("set_climb_3")) height = ClimbHeight.LEVEL3;
             
-            if (value.toString().equals("cancel_arm_climb")) cancelArmClimb();
-            else if (value.toString().equals("cancel_piston_climb")) cancelPistonClimb();
-            else if (value.toString().contains("cycle_climb")) nextStepArmClimb(height);
+            if (value.toString().contains("cycle_climb")) nextStepArmClimb(height);
             else if (value.toString().equals("piston_climb")) pistonClimb(height);
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-cancel", (table2, key2, entry, value, flags) -> {
-            if (value.toString().equals("all")) cancelAllCommands();
-            if (value.toString().equals("arm")) cancelArmMovement();
-            if (value.toString().equals("driveBase")) cancelDriveBase();
+            if (value.toString().equals("cancel_all")) cancelAllCommands();
+            if (value.toString().equals("cancel_arm")) cancelArmMovement();
+            if (value.toString().equals("cancel_drive")) cancelDriveBase();
+            if (value.toString().equals("cancel_intake")) cancelIntakeRollers();
+            if (value.toString().equals("cancel_arm_climb")) cancelArmClimb();
+            if (value.toString().equals("cancel_piston_climb")) cancelPistonClimb();
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
 
     }
