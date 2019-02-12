@@ -55,6 +55,7 @@ public class BuildAuton extends CommandGroup {
     addParallel(new MoveArmAfterDriveDistance(Arm.getArmState(destination), arm, 36));
     if(pivot){
         addSequential(new NavXPivot(180));
+        isRobotFacingBack = !isRobotFacingBack;
         pivot = false;
     }
     // drives to target using vision
@@ -72,6 +73,7 @@ public class BuildAuton extends CommandGroup {
     addParallel(new MoveArm(Arm.getArmState(destination), arm));
     if(pivot){
         addSequential(new NavXPivot(180));
+        isRobotFacingBack = !isRobotFacingBack;
         pivot = false;
     }
     addSequential(new AdvancedVisionPIDDrive());
@@ -84,6 +86,7 @@ public class BuildAuton extends CommandGroup {
     addParallel(new MoveArm(Arm.getArmState(destination), arm));
     if(pivot){
         addSequential(new NavXPivot(180));
+        isRobotFacingBack = !isRobotFacingBack;
         pivot = false;
     }
     addSequential(new AdvancedVisionPIDDrive());
