@@ -43,7 +43,7 @@ public class RunIntake extends Command {
 
     // If the IR sensor has been tripped and it is for the first time
     if(runningIn) {
-      if (sensors.getIntakeIRSensor() != null && sensors.getIntakeIROutput() && !hasBeenTriggered) {
+      if (!sensors.isIntakeIRSensorNull() && sensors.getIntakeIROutput() && !hasBeenTriggered) {
         hasBeenTriggered = true;
         setTimeout(0.5 + timeSinceInitialized());
       }
@@ -53,17 +53,12 @@ public class RunIntake extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    if(sensors.getIntakeIRSensor() == null || sensors.getClawIRSensor() == null){
-      return false;
+    // If 0.5 seconds has passed since the IR sensor was first tripped 
+    if (runningIn && !sensors.isIntakeIRSensorNull()) {
+      return (isTimedOut());
     }
-    // If 0.5 seconds has passed since the IR sensor was first tripped or if the
-    // cargo is already in the claw
-    if(runningIn) {
-      return (isTimedOut() || sensors.getClawIROutput());
-    }
-    else {
-      return false;
-    }
+
+    return false;
   }
 
   // Called once after isFinished returns true

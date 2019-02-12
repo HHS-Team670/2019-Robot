@@ -45,6 +45,7 @@ public class Extension extends BaseExtension {
   public static final int QUAD_ENCODER_MAX = FORWARD_SOFT_LIMIT + 200, QUAD_ENCODER_MIN = REVERSE_SOFT_LIMIT - 200; //TODO Set these values based on forward and back soft limits (especially the addition/subtraction)
 
   private static final double ARBITRARY_FEEDFORWARD_CONSTANT = 0.3;
+  private static final double MAX_EXTENSION_OUTPUT = 0.8;
 
   private double setpoint;
   private static final double NO_SETPOINT = 99999;
@@ -79,8 +80,8 @@ public class Extension extends BaseExtension {
 
     extensionMotor.configNominalOutputForward(0, RobotConstants.kTimeoutMs);
     extensionMotor.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
-    extensionMotor.configPeakOutputForward(1, RobotConstants.kTimeoutMs);
-    extensionMotor.configPeakOutputReverse(-1, RobotConstants.kTimeoutMs);
+    extensionMotor.configPeakOutputForward(MAX_EXTENSION_OUTPUT, RobotConstants.kTimeoutMs);
+    extensionMotor.configPeakOutputReverse(-MAX_EXTENSION_OUTPUT, RobotConstants.kTimeoutMs);
 
     //Tuning stuff
     setpoint = NO_SETPOINT;

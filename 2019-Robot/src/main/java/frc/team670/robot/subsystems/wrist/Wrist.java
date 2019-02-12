@@ -36,6 +36,7 @@ public class Wrist extends BaseWrist {
   private static final int WRIST_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS = 400; // TODO set this
   public static final int FORWARD_SOFT_LIMIT = 850, REVERSE_SOFT_LIMIT = -940; // TODO set this
   public static final int QUAD_ENCODER_MAX = FORWARD_SOFT_LIMIT + 200, QUAD_ENCODER_MIN = REVERSE_SOFT_LIMIT - 200; //TODO Set these values based on soft limits (especially add/subtract)
+  private static final double MAX_WRIST_OUTPUT = 0.8;
 
   public Wrist() {
     super(new TalonSRX(RobotMap.ARM_WRIST_ROTATION), ARBITRARY_FEEDFORWARD, FORWARD_SOFT_LIMIT, REVERSE_SOFT_LIMIT, false, QUAD_ENCODER_MIN, QUAD_ENCODER_MAX, CONTINUOUS_CURRENT_LIMIT, PEAK_CURRENT_LIMIT, OFFSET_FROM_ENCODER_ZERO);
@@ -49,8 +50,8 @@ public class Wrist extends BaseWrist {
     
     rotator.configNominalOutputForward(0, RobotConstants.kTimeoutMs);
     rotator.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
-    rotator.configPeakOutputForward(1, RobotConstants.kTimeoutMs);
-    rotator.configPeakOutputReverse(-1, RobotConstants.kTimeoutMs);
+    rotator.configPeakOutputForward(MAX_WRIST_OUTPUT, RobotConstants.kTimeoutMs);
+    rotator.configPeakOutputReverse(-MAX_WRIST_OUTPUT, RobotConstants.kTimeoutMs);
 
     rotator.setNeutralMode(NeutralMode.Brake);
 
