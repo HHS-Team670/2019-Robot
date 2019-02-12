@@ -3,7 +3,7 @@
    Purpose: Updated 2019 light show for differnt field tasks.
    Requires an Arduino with an Ethernet Shield or an Arduino with a built
    in Ethernet port, such as the Leonardo or Yun.
-   @author arnav kulkarni, arnuv tandon
+   @author arnav kulkarni, arnuv tandon, ct chen
 */
 
 //iterate through first quadrant
@@ -16,7 +16,7 @@
 #include <Adafruit_NeoPixel.h>                      //Adafruit library for led methods
 
 Adafruit_NeoPixel strip =                           //Defines an Adafruit Neopixel strip, containing 120 LEDs, using
-  Adafruit_NeoPixel(60, 5, NEO_GRB + NEO_KHZ800);
+  Adafruit_NeoPixel(30, 5, NEO_GRB + NEO_KHZ800);
 
 Adafruit_NeoPixel strip2 =                           //Defines an Adafruit Neopixel strip, containing 120 LEDs, using
   Adafruit_NeoPixel(60, 6, NEO_GRB + NEO_KHZ800);    //Arduino pin #6, and using the GRB format at 800KHZ bitstream
@@ -402,8 +402,6 @@ byte * Wheel(byte WheelPos)
     c[1] = WheelPos * 3;
     c[2] = 255 - WheelPos * 3;
   }
-
-
   return c;
 }
 
@@ -430,8 +428,10 @@ void parseData()
     }
   }
   //Parses dataString and receives corresponding values from Java program
-  stateData = dataString.substring(0, 2);          //Grabs the expected location of various data, puts it in variables
-  allianceData = dataString.substring(2, 4);
+  allianceData = dataString.substring(0, 2);          //Grabs the expected location of various data, puts it in variables
+//  Serial.println(allianceData);
+//  Serial.println(stateData);
+  stateData = dataString.substring(2, 4);
 }
 
 void resetConnectionTimer()
@@ -447,8 +447,8 @@ void resetConnectionTimer()
 void setup()
 { //Sets up constants before program begins
   Ethernet.begin(mac, ip);                          //Initalizes an Ethernet instance
-  Serial.begin(9600);                               //Initalizes serial communications to monitor data transfer
   robotClient.connect(robotIp, 5801);               //Connects the client instance to the robot's socket at 5801;
+    Serial.begin(9600);                               //Initalizes serial communications to monitor data transfer
   strip.begin();
   strip2.begin();
   //Starts communication with the NeoPixel strip
@@ -456,39 +456,48 @@ void setup()
 
 void loop()
 { //Ran indefinitly after setup()
-
-
   parseData();
   strip.setBrightness(255);
   strip2.setBrightness(255);
+  Serial.println(stateData);
+  Serial.println(allianceData);
+if(stateData==forwardDrive){
+  Serial.println("BAMRUDE BENOI");
+}
+//if(allianceData==redAlliance){
+//  Serial.println("RAJESH RAGOOLAN");
+//}
+//    for (int i = 0; i < strip.numPixels(); i++) {
+//      strip.setPixelColor(i, 0, 255, 0);
+//    }
+//    strip.show();
 
-  if (stateData == stillDrive)
-  {
-    setRunningAllianceColors(&strip);
-  }
-  else if (stateData == forwardDrive)
-  {
-    setSolidGreen(&strip, 1);
-    setSolidGreen(&strip, 4);
-    setRandomStrobe(&strip);
-  }
-  else if (stateData == reverseDrive)
-  {
-    setSolidRed(&strip, 1);
-    setSolidRed(&strip, 4);
-    setRainbow(&strip);
-  }
-  else if (stateData == visionLock)
-  {
-    setSolidPurple(&strip, 1);
-    setSolidPurple(&strip, 4);
-    setCylonBounce(&strip);
-  }
-  else if (stateData == climbing)
-  {
-    setClimbingGreenLights(&strip);
-  }
+  //    if (stateData == stillDrive)
+  //    {
+  //      setRunningAllianceColors(&strip);
+  //    }
+  //    else if (stateData == forwardDrive)
+  //    {
+  //      setSolidGreen(&strip, 1);
+  //      setSolidGreen(&strip, 4);
+  //      setRandomStrobe(&strip);
+  //    }
+  //    else if (stateData == reverseDrive)
+  //    {
+  //      setSolidRed(&strip, 1);
+  //      setSolidRed(&strip, 4);
+  //      setRainbow(&strip);
+  //    }
+  //    else if (stateData == visionLock)
+  //    {
+  //      setSolidPurple(&strip, 1);
+  //      setSolidPurple(&strip, 4);
+  //      setCylonBounce(&strip);
+  //    }
+  //    else if (stateData == climbing)
+  //    {
+  //      setClimbingGreenLights(&strip);
+  //    }
 
   resetConnectionTimer();
 }
-
