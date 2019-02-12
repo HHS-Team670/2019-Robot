@@ -150,7 +150,6 @@ public class Robot extends TimedRobot {
    */
   int counter = 0;
   
-  boolean oof = false;
 
  @Override
   public void robotPeriodic() {
@@ -159,9 +158,9 @@ public class Robot extends TimedRobot {
 
     intake.sendDataToDashboard();
     if (counter % 10 == 0) {
-      leds.setStillDrive(true);
+      leds.setForwardData(true);
     } else
-      leds.changeAlliance(oof);
+      leds.changeAlliance(false);
     counter++;
   }
   /**
