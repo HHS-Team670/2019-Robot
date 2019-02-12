@@ -119,11 +119,7 @@ public class XKeys {
     private void cancelLastCommand() {
         
     }
-
-    private void cancelAllCommands() {
-        Scheduler.getInstance().removeAll();
-    }
-
+    
     private enum ClimbHeight {
         FLAT, LEVEL2, LEVEL3;
     }
