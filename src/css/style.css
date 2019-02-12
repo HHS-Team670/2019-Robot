@@ -165,7 +165,6 @@ body.login #login {
 }
 #arm-extension {
     transform-origin: top center;
-    transform: rotate(180deg);
 }
 #arm {
     transform-origin: bottom center;
@@ -173,6 +172,7 @@ body.login #login {
 }
 #intake {
     transform-origin: center left;
+    /* transform: rotate(180deg); */
 }
 #auton-chooser {
     position: relative;

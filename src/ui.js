@@ -10,11 +10,16 @@ document.getElementById('big-warning').style.display = "none";
 document.getElementById('climb-state-text').style.stroke = `rgb(90, 90, 90)`;
 document.getElementById('climb-level-text').style.stroke = `rgb(90, 90, 90)`;
 
-var angle = 100;
+var angle = 30;
 document.getElementById('arm').style = "transform: rotate(" + angle + "deg)";
-document.getElementById('claw').style = "transform: translate(" + Math.sin(angle * Math.PI / 180) * 80 + "px, " + -1 * Math.cos(angle * Math.PI / 180) * 80 + "px)";
+document.getElementById('claw').style = "transform: translate(" + Math.sin(angle * Math.PI / 180) * (parseInt(document.getElementById('arm-extension').getAttribute('height')) + 80) + "px, " + -1 * Math.cos(angle * Math.PI / 180) * (parseInt(document.getElementById('arm-extension').getAttribute('height')) + 80) + "px)";
 document.getElementById('intake').style = "transform: rotate(" + 0 + "deg)";
-document.getElementById('arm-extension').setAttribute("height", "1");
+// document.getElementById('arm-extension').setAttribute("height", "1");
+document.getElementById('arm-extension').style.stroke = `rgb(255, 0, 0)`;
+document.getElementById('arm-extension').style = "transform: translate(" + (1 * Math.sin((angle) * Math.PI / 180) * 60) + "px, " + (1 * Math.cos(angle * Math.PI / 180) * 60) + "px) rotate(" + (angle + 180) + "deg)";
+
+document.getElementById('current-command-text').innerHTML = '>>>('+ (1 * Math.sin((angle) * Math.PI / 180) * 60).toFixed(3) + "px, " + (1 * Math.cos(angle * Math.PI / 180) * 60).toFixed(3) + "px)" + '<<<';
+
 ui.timer.style.color = `rgb(0, 200, 0)`;
 
 NetworkTables.addKeyListener('/SmartDashboard/game-time', (key, value) => {
@@ -92,7 +97,7 @@ NetworkTables.addKeyListener('/SmartDashboard/current-arm-state', (key, value) =
 NetworkTables.addKeyListener('/SmartDashboard/elbow-angle', (key, value) => {
   var angle = value;
   document.getElementById('arm').style = "transform: rotate(" + angle + "deg)";
-  document.getElementById('claw').style = "transform: translate(" + Math.sin(angle * Math.PI / 180) * (50 + document.getElementById('arm-extension').getAttribute('height')) + "px, " + -1 * Math.cos(angle * Math.PI / 180) * (50 + document.getElementById('arm-extension').getAttribute('height')) + "px)";
+  document.getElementById('claw').style = "transform: translate(" + Math.sin(angle * Math.PI / 180) * (parseInt(document.getElementById('arm-extension').getAttribute('height')) + 80) + "px, " + -1 * Math.cos(angle * Math.PI / 180) * (parseInt(document.getElementById('arm-extension').getAttribute('height')) + 80) + "px)";
   document.getElementById('arm-extension').style = "transform: translate(" + Math.sin(angle * Math.PI / 180) * 50 + "px, " + -1 * Math.cos(angle * Math.PI / 180) * 50 + "px)";
 
   // var height = 0;
