@@ -62,7 +62,7 @@ public class MoveIntakeToSetpointAngle extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    intake.enablePercentOutput();
+    intake.stop();
     intake.setRotatorNeutralMode(NeutralMode.Coast);
     // Logger.consoleLog("endIntakeAngle:%s", intake.getAngleInDegrees());
     System.out.println("FINISHED MOVE INTAKE");

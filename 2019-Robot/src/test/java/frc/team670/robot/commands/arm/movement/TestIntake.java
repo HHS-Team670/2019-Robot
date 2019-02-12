@@ -89,7 +89,7 @@ public class TestIntake extends BaseIntake {
     }
 
     @Override
-    public void enablePercentOutput() {
-
+    public void stop() {
+        
     }
 }

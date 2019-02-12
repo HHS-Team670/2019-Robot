@@ -31,6 +31,8 @@ public class Extension extends BaseExtension {
   private static final double EXTENSION_POWER = 0.75; // TODO set this for Extension movement when climbing
   private static final int CONTINUOUS_CURRENT_LIMIT = 20, PEAK_CURRENT_LIMIT = 0;
 
+  private static final int START_POSITION_TICKS = 0; // TODO set this. Start position needed since extension has no absolute encoder
+
   // Motion Magic
   private static final int kPIDLoopIdx = 0, MOTION_MAGIC_SLOT = 0, kTimeoutMs = 0;
   public static final int EXTENSION_IN_POS = 0; // TODO Set These
@@ -43,6 +45,7 @@ public class Extension extends BaseExtension {
   public static final int QUAD_ENCODER_MAX = FORWARD_SOFT_LIMIT + 200, QUAD_ENCODER_MIN = REVERSE_SOFT_LIMIT - 200; //TODO Set these values based on forward and back soft limits (especially the addition/subtraction)
 
   private static final double ARBITRARY_FEEDFORWARD_CONSTANT = 0.3;
+  private static final double MAX_EXTENSION_OUTPUT = 0.8;
 
   private double setpoint;
   private static final double NO_SETPOINT = 99999;
@@ -77,23 +80,24 @@ public class Extension extends BaseExtension {
 
     extensionMotor.configNominalOutputForward(0, RobotConstants.kTimeoutMs);
     extensionMotor.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
-    extensionMotor.configPeakOutputForward(1, RobotConstants.kTimeoutMs);
-    extensionMotor.configPeakOutputReverse(-1, RobotConstants.kTimeoutMs);
+    extensionMotor.configPeakOutputForward(MAX_EXTENSION_OUTPUT, RobotConstants.kTimeoutMs);
+    extensionMotor.configPeakOutputReverse(-MAX_EXTENSION_OUTPUT, RobotConstants.kTimeoutMs);
 
     //Tuning stuff
     setpoint = NO_SETPOINT;
 
-    int pulseWidthPos = getExtensionPulseWidth()&4095;
+    // int pulseWidthPos = getExtensionPulseWidth()&4095;
 
-    if (pulseWidthPos < QUAD_ENCODER_MIN) {
-      pulseWidthPos += 4096;
-    } 
-    if (pulseWidthPos > QUAD_ENCODER_MAX) {
-      pulseWidthPos -= 4096;
-    }
+    // if (pulseWidthPos < QUAD_ENCODER_MIN) {
+    //   pulseWidthPos += 4096;
+    // } 
+    // if (pulseWidthPos > QUAD_ENCODER_MAX) {
+    //   pulseWidthPos -= 4096;
+    // }
 
-    extensionMotor.getSensorCollection().setQuadraturePosition(pulseWidthPos, 0);
-    enablePercentOutput();
+    // extensionMotor.getSensorCollection().setQuadraturePosition(pulseWidthPos, 0);
+    extensionMotor.getSensorCollection().setQuadraturePosition(START_POSITION_TICKS, 0); // The Extension 
+    stop();
   }
 
   @Override
@@ -136,8 +140,8 @@ public class Extension extends BaseExtension {
 
   @Override
   public synchronized void setPIDControllerSetpointInInches(double setpointInInches) {
-    setpoint = convertExtensionInchesToTicks(setpointInInches);
-    extensionMotor.set(ControlMode.Position, setpoint);
+    setpoint = NO_SETPOINT;
+    extensionMotor.set(ControlMode.Position, convertExtensionInchesToTicks(setpointInInches));
   }
 
   @Override
@@ -199,16 +203,8 @@ public class Extension extends BaseExtension {
   }
 
   private double getArbitraryFeedForwardAngleMultiplier() {
-
     double angle = Robot.arm.getElbow().getAngleInDegrees();
-
     double output = Math.cos(Math.toRadians(angle));
-
-    if(angle > -90 && angle < 90) {
-      output = (output > 0 ? 1 : -1) * output;
-    } else {
-      output = (output < 0 ? 1 : -1) * output;
-    }
     return output;
   }
 
@@ -222,12 +218,14 @@ public class Extension extends BaseExtension {
   }
 
   @Override
-  public synchronized void enablePercentOutput() {
+  public synchronized void stop() {
+    setpoint = NO_SETPOINT;
     extensionMotor.set(ControlMode.PercentOutput, 0);
   }
 
   @Override
-  public synchronized void rotatePercentOutput(double output) {
+  public synchronized void moveByPercentOutput(double output) {
+    setpoint = NO_SETPOINT;
     extensionMotor.set(ControlMode.PercentOutput, output);
   }
 

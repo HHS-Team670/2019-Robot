@@ -20,7 +20,6 @@ public class MustangSensors {
   private NavX navXMicro = null;
   private boolean isNavXNull;
   private DigitalInput intakeIRSensor;
-  private DigitalInput clawIRSensor;
   public static final double NAVX_ERROR_CODE = -40001;
 
 
@@ -41,14 +40,6 @@ public class MustangSensors {
       DriverStation.reportError("Error instantiating intakeIRSensor: " + ex.getMessage(), true);
       SmartDashboard.putString("warning", "Error instantiating intakeIRSensor");
       intakeIRSensor = null;
-    }
-
-    try {
-      clawIRSensor = new DigitalInput(RobotMap.CLAW_IR_DIO_PORT);
-    } catch (RuntimeException ex) {
-      DriverStation.reportError("Error instantiating clawIRSensor: " + ex.getMessage(), true);
-      SmartDashboard.putString("warning", "Error instantiating clawIRSensor");
-      clawIRSensor = null;
     }
   }
 
@@ -180,27 +171,10 @@ public class MustangSensors {
 
 
   /**
-   * Returns true if object is within threshold and false if not
-   */
-  public boolean getClawIROutput(){
-    if(clawIRSensor != null){
-      return clawIRSensor.get();
-    }
-    return false;
-  }
-
-  /**
    * Returns the intake IR sensor
    */
-  public DigitalInput getIntakeIRSensor(){
-    return intakeIRSensor;
-  }
-
-  /**
-   * Returns the claw IR sensor
-   */
-  public DigitalInput getClawIRSensor(){
-    return clawIRSensor;
+  public boolean isIntakeIRSensorNull(){
+    return intakeIRSensor == null;
   }
 
   /**
