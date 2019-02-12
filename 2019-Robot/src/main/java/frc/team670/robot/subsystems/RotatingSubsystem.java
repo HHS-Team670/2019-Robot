@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  */
 public abstract class RotatingSubsystem extends Subsystem implements TunableSubsystem {
     protected static final int NO_SETPOINT = 99999;
-    protected TalonSRX rotatorTalon;
+    protected TalonSRX rotator;
     protected int setpoint;
     protected boolean timeout;
     protected double arbitraryFeedForwardConstant;
@@ -32,7 +32,7 @@ public abstract class RotatingSubsystem extends Subsystem implements TunableSubs
     public RotatingSubsystem(TalonSRX rotatorTalon, double arbitraryFeedForwardConstant, int forwardSoftLimit, int reverseSoftLimit, boolean timeout, int quadEncoderMin, int quadEncoderMax, int continuousCurrentLimit, int peakCurrentLimit, int offsetFromEncoderZero) {
         // For testing purposes
         if (rotatorTalon != null) {
-            this.rotatorTalon = rotatorTalon;
+            this.rotator = rotatorTalon;
             this.rotatorSensorCollection = rotatorTalon.getSensorCollection();
             this.arbitraryFeedForwardConstant = arbitraryFeedForwardConstant;
             this.timeout = timeout;
@@ -44,7 +44,7 @@ public abstract class RotatingSubsystem extends Subsystem implements TunableSubs
             rotatorTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
 
             if (rotatorTalon != null) {
-                this.rotatorTalon = rotatorTalon;
+                this.rotator = rotatorTalon;
                 this.rotatorSensorCollection = rotatorTalon.getSensorCollection();
                 this.arbitraryFeedForwardConstant = arbitraryFeedForwardConstant;
                 this.timeout = timeout;
@@ -90,7 +90,7 @@ public abstract class RotatingSubsystem extends Subsystem implements TunableSubs
      */
     public synchronized void stop() {
         clearSetpoint();
-        rotatorTalon.set(ControlMode.PercentOutput, 0);
+        rotator.set(ControlMode.PercentOutput, 0);
         System.out.println("Intake Put in Percent Output");
     }
 
@@ -106,7 +106,7 @@ public abstract class RotatingSubsystem extends Subsystem implements TunableSubs
      * Rotates the talon at a certain percent output
      */
     public void moveByPercentOutput(double output) {
-        rotatorTalon.set(ControlMode.PercentOutput, output);
+        rotator.set(ControlMode.PercentOutput, output);
     }
 
     /**
@@ -115,7 +115,7 @@ public abstract class RotatingSubsystem extends Subsystem implements TunableSubs
     public synchronized void updateArbitraryFeedForward(){
         if(setpoint != NO_SETPOINT) {
             double value = getArbitraryFeedForwardAngleMultiplier() * arbitraryFeedForwardConstant;
-            rotatorTalon.set(ControlMode.MotionMagic, setpoint, DemandType.ArbitraryFeedForward, value);
+            rotator.set(ControlMode.MotionMagic, setpoint, DemandType.ArbitraryFeedForward, value);
           }
     }
 
@@ -128,11 +128,11 @@ public abstract class RotatingSubsystem extends Subsystem implements TunableSubs
     }
 
     protected double getMotionMagicSetpoint(){
-        return rotatorTalon.getClosedLoopTarget();
+        return rotator.getClosedLoopTarget();
     }
 
     protected int getPositionTicks(){
-        return rotatorTalon.getSelectedSensorPosition(0);
+        return rotator.getSelectedSensorPosition(0);
     }
 
     /**

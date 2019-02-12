@@ -23,6 +23,8 @@ import frc.team670.robot.constants.RobotMap;
  */
 public class Intake extends BaseIntake {
 
+  private static final int ROLLER_CONTINUOUS_CURRENT = 30, ROLLER_PEAK_CURRENT = 0;
+
   public static final int INTAKE_ANGLE_IN = -90, INTAKE_ANGLE_DEPLOYED = 90;
   public static final double INTAKE_FIXED_LENGTH_IN_INCHES = 0, INTAKE_ROTATING_LENGTH_IN_INCHES = 0; //TODO set actual value
   private static final double MAX_BASE_OUTPUT = 0.75;
@@ -38,24 +40,22 @@ public class Intake extends BaseIntake {
 
   private static final double ARBITRARY_FEED_FORWARD = 0.175;
 
-  private VictorSPX rollerVictor;
-  // private TalonSRX rollerVictor;
+  private TalonSRX roller;
   
   private Point2D.Double intakeCoord;
 
   public Intake() {
     super(new TalonSRX(RobotMap.INTAKE_BASE_TALON), ARBITRARY_FEED_FORWARD, FORWARD_SOFT_LIMIT, REVERSE_SOFT_LIMIT, true, QUAD_ENCODER_MIN, QUAD_ENCODER_MAX, CONTINUOUS_CURRENT_LIMIT, PEAK_CURRENT_LIMIT, OFFSET_FROM_ENCODER_ZERO);
     
-    rollerVictor = new VictorSPX(RobotMap.INTAKE_ROLLER_VICTOR);
-    // rollerVictor = new TalonSRX(RobotMap.INTAKE_ROLLER_VICTOR);
+    roller = new TalonSRX(RobotMap.INTAKE_ROLLER_VICTOR);
 
-    rollerVictor.setInverted(true);
-    rollerVictor.setNeutralMode(NeutralMode.Coast);
+    roller.setInverted(true);
+    roller.setNeutralMode(NeutralMode.Coast);
 
     intakeCoord = new Point2D.Double();
 
-    rotatorTalon.setInverted(true);
-    rotatorTalon.setSensorPhase(false); // Positive is inwards movement, negative is outward
+    rotator.setInverted(true);
+    rotator.setSensorPhase(false); // Positive is inwards movement, negative is outward
 
     stop();
     setMotionMagicPIDValues();
@@ -63,21 +63,24 @@ public class Intake extends BaseIntake {
 
   // May need to set tolerance
   private void setMotionMagicPIDValues() {
-    rotatorTalon.selectProfileSlot(MOTION_MAGIC_SLOT, kPIDLoopIdx);
-    rotatorTalon.config_kF(MOTION_MAGIC_SLOT, kF, kTimeoutMs);
-    rotatorTalon.config_kP(MOTION_MAGIC_SLOT, kP, kTimeoutMs);
-    rotatorTalon.config_kI(MOTION_MAGIC_SLOT, kI, kTimeoutMs);
-    rotatorTalon.config_kD(MOTION_MAGIC_SLOT, kD, kTimeoutMs);
-    rotatorTalon.configMotionCruiseVelocity(INTAKE_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
-    rotatorTalon.configMotionAcceleration(INTAKE_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_SECOND, kTimeoutMs);
+    rotator.selectProfileSlot(MOTION_MAGIC_SLOT, kPIDLoopIdx);
+    rotator.config_kF(MOTION_MAGIC_SLOT, kF, kTimeoutMs);
+    rotator.config_kP(MOTION_MAGIC_SLOT, kP, kTimeoutMs);
+    rotator.config_kI(MOTION_MAGIC_SLOT, kI, kTimeoutMs);
+    rotator.config_kD(MOTION_MAGIC_SLOT, kD, kTimeoutMs);
+    rotator.configMotionCruiseVelocity(INTAKE_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+    rotator.configMotionAcceleration(INTAKE_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_SECOND, kTimeoutMs);
 
-    rotatorTalon.configNominalOutputForward(0, RobotConstants.kTimeoutMs);
-    rotatorTalon.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
-    rotatorTalon.configPeakOutputForward(MAX_BASE_OUTPUT, RobotConstants.kTimeoutMs);
-    rotatorTalon.configPeakOutputReverse(-MAX_BASE_OUTPUT, RobotConstants.kTimeoutMs);
+    rotator.configNominalOutputForward(0, RobotConstants.kTimeoutMs);
+    rotator.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
+    rotator.configPeakOutputForward(MAX_BASE_OUTPUT, RobotConstants.kTimeoutMs);
+    rotator.configPeakOutputReverse(-MAX_BASE_OUTPUT, RobotConstants.kTimeoutMs);
 
-    rotatorTalon.setNeutralMode(NeutralMode.Brake);
-    rollerVictor.setNeutralMode(NeutralMode.Coast);
+    rotator.setNeutralMode(NeutralMode.Brake);
+    roller.setNeutralMode(NeutralMode.Coast);
+    roller.configContinuousCurrentLimit(ROLLER_CONTINUOUS_CURRENT);
+    roller.configPeakCurrentLimit(ROLLER_PEAK_CURRENT);
+    roller.enableCurrentLimit(true);
   }
 
   /**
@@ -86,7 +89,7 @@ public class Intake extends BaseIntake {
   public void setMotionMagicSetpointAngle(double intakeAngle) {
     setpoint = convertIntakeDegreesToTicks(intakeAngle);
     SmartDashboard.putNumber("MotionMagicSetpoint", setpoint);
-    rotatorTalon.set(ControlMode.MotionMagic, setpoint);
+    rotator.set(ControlMode.MotionMagic, setpoint);
   }
 
   /**
@@ -99,7 +102,7 @@ public class Intake extends BaseIntake {
   }
 
   public void setRotatorNeutralMode(NeutralMode mode) {
-    rotatorTalon.setNeutralMode(mode);
+    rotator.setNeutralMode(mode);
   }
   /**
    * Returns the x, y coordinates of the top of the intake
@@ -119,7 +122,7 @@ public class Intake extends BaseIntake {
    */
   public void runIntake(double power, boolean runningIn) {
     power *= runningIn ? 1 : -1;
-    rollerVictor.set(ControlMode.PercentOutput, power);
+    roller.set(ControlMode.PercentOutput, power);
   }
   /**
    * Converts an intake angle into ticks
