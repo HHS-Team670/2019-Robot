@@ -153,6 +153,7 @@ public class AdvancedVisionPIDDrive extends Command {
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    Robot.driveBase.stop();
     Logger.consoleLog("AdvancedVisionPIDDrive Interrupted.");
     end();
   }

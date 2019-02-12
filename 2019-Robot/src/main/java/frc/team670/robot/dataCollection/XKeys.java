@@ -14,13 +14,18 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team670.robot.Robot;
 import frc.team670.robot.commands.BuildAuton;
+import frc.team670.robot.commands.CancelAllCommands;
+import frc.team670.robot.commands.arm.movement.CancelArmMovement;
 import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.commands.arm.movement.PlaceOrGrab;
 import frc.team670.robot.commands.climb.armClimb.CancelArmClimb;
 import frc.team670.robot.commands.climb.controlClimb.CycleClimb;
+import frc.team670.robot.commands.climb.pistonClimb.AbortRobotPistonClimb;
 import frc.team670.robot.commands.climb.pistonClimb.PistonClimbWithTiltControl;
+import frc.team670.robot.commands.drive.vision.CancelDriveBase;
 import frc.team670.robot.commands.intake.AutoPickupCargo;
 import frc.team670.robot.commands.intake.RunIntake;
+import frc.team670.robot.commands.intake.StopIntakeRollers;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
 import frc.team670.robot.subsystems.Arm.LegalState;
@@ -58,6 +63,7 @@ public class XKeys {
         table.addEntryListener("xkeys-intake", (table2, key2, entry, value, flags) -> {
             if (value.toString().equals("run_intake_in")) runIntake(true);
             else if (value.toString().equals("run_intake_out")) runIntake(false);
+            else if (value.toString().equals("cancel_intake_rollers")) cancelIntakeRollers();
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-autopickup", (table2, key2, entry, value, flags) -> {
             autoPickupBall();
@@ -68,12 +74,14 @@ public class XKeys {
             else if (value.toString().equals("set_climb_3")) height = ClimbHeight.LEVEL3;
             
             if (value.toString().equals("cancel_arm_climb")) cancelArmClimb();
-            if (value.toString().contains("cycle_climb")) nextStepArmClimb(height);
-            if (value.toString().equals("piston_climb")) pistonClimb(height);
+            else if (value.toString().equals("cancel_piston_climb")) cancelPistonClimb();
+            else if (value.toString().contains("cycle_climb")) nextStepArmClimb(height);
+            else if (value.toString().equals("piston_climb")) pistonClimb(height);
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-cancel", (table2, key2, entry, value, flags) -> {
-            if (value.toString().equals("last")) cancelLastCommand();
             if (value.toString().equals("all")) cancelAllCommands();
+            if (value.toString().equals("arm")) cancelArmMovement();
+            if (value.toString().equals("driveBase")) cancelDriveBase();
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
 
     }
@@ -116,10 +124,25 @@ public class XKeys {
         Scheduler.getInstance().add(new CancelArmClimb(Robot.arm));
     }
 
-    private void cancelLastCommand() {
-        
+    private void cancelAllCommands() {
+        Scheduler.getInstance().add(new CancelAllCommands());
     }
-    
+
+    private void cancelIntakeRollers(){
+        Scheduler.getInstance().add(new StopIntakeRollers(Robot.intake));
+    }
+
+    private void cancelPistonClimb(){
+        Scheduler.getInstance().add(new AbortRobotPistonClimb(Robot.climber, Robot.arm, Robot.sensors));
+    }
+
+    private void cancelArmMovement(){
+        Scheduler.getInstance().add(new CancelArmMovement(Robot.arm.getElbow(), Robot.arm.getExtension(), Robot.arm.getWrist(), Robot.intake, Robot.claw));
+    }
+
+    private void cancelDriveBase(){
+        Scheduler.getInstance().add(new CancelDriveBase(Robot.driveBase));
+    }
     private enum ClimbHeight {
         FLAT, LEVEL2, LEVEL3;
     }

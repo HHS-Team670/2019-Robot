@@ -17,7 +17,6 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
-import frc.team670.robot.utils.functions.MathUtils;
 
 /**
  * Represents the Intake mechanism of the robot.
