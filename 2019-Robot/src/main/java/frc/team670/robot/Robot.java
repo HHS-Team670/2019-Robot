@@ -148,16 +148,22 @@ public class Robot extends TimedRobot {
    * <p>This runs after the mode specific periodic functions, but before
    * LiveWindow and SmartDashboard integrated updating.
    */
-  @Override
+  int counter = 0;
+  
+  boolean oof = false;
+
+ @Override
   public void robotPeriodic() {
- 
     SmartDashboard.putNumber("NavX Yaw", sensors.getYawDouble());
     table.getEntry("gyro").setNumber((int) sensors.getAngle() % 360);
 
     intake.sendDataToDashboard();
- 
+    if (counter % 10 == 0) {
+      leds.setStillDrive(true);
+    } else
+      leds.changeAlliance(oof);
+    counter++;
   }
-
   /**
    * This function is called once each time the robot enters Disabled mode.
    * You can use it to reset any subsystem information you want to clear when

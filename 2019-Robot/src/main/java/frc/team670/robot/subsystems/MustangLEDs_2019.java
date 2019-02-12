@@ -122,7 +122,7 @@ public class MustangLEDs_2019 {
 				ArrayList<MatOfPoint> gpgArray = new ArrayList<MatOfPoint>();
 				while (socketClient == null) { // Attempts until client is found
 
-					System.out.println("Socket Client null");
+					System.out.println("Waiting for LED client connection");
 					try {
 						socketClient = serverSocket.accept();
 					} catch (IOException e) {
