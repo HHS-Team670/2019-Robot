@@ -132,6 +132,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("elbow-angle", elbow.getAngleInDegrees());
     SmartDashboard.putBoolean("claw-ir-sensor", sensors.getClawIROutput());
     SmartDashboard.putBoolean("intake-ir-sensor", sensors.getIntakeIROutput());
+    SmartDashboard.putNumber("arm-extension" , extension.getLengthInches() / extension.EXTENSION_OUT_IN_INCHES);
     leds.setClimbingData(true);//we climb
     intake.sendDataToDashboard(); 
   }

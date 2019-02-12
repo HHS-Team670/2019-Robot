@@ -15,7 +15,7 @@ import frc.team670.robot.subsystems.Arm.ArmState;
 /**
  * Add your docs here.
  */
-public class MoveArmAfterDriveDistance extends MoveArm{
+public class MoveArmAfterDriveDistance extends MoveArm {
   private int inchesToStart;
   /**
    * Add your docs here.
