@@ -133,13 +133,13 @@ public class Elbow extends BaseElbow {
   private static int convertElbowDegreesToTicks(double degrees) {
     // If straight up is 0 and going forward is positive
     // percentage * half rotation
-    return (int) ((degrees / 180) * (0.5 * RobotConstants.ELBOW_TICKS_PER_ROTATION));
+    return (int)((degrees / 360) * TICKS_PER_ROTATION);
   }
 
   private static double convertElbowTicksToDegrees(double ticks) {
     // If straight up is 0 and going forward is positive
     // percentage * half degrees rotation
-    return (ticks / (0.5 * RobotConstants.ELBOW_TICKS_PER_ROTATION)) * 180;
+    return ((360 * ticks) / TICKS_PER_ROTATION);
   }
 
   @Override

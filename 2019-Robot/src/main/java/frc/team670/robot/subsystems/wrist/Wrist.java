@@ -105,7 +105,7 @@ public class Wrist extends BaseWrist {
   private static int convertWristDegreesToTicks(double degrees) {
     //If straight is 0 and going forward is positive
     // percentage * half rotation
-    return (int)((degrees / 180) * (0.5 * RobotConstants.WRIST_TICKS_PER_ROTATION));
+    return (int)((degrees / 360) * TICKS_PER_ROTATION);
   }
 
   /**
@@ -114,7 +114,7 @@ public class Wrist extends BaseWrist {
   private static double convertWristTicksToDegrees(int ticks) {
     //If straight is 0 and going forward is positive
     // percentage * half degrees rotation
-    return (ticks / (0.5 * RobotConstants.WRIST_TICKS_PER_ROTATION)) * 180;
+      return ((360 * ticks) / TICKS_PER_ROTATION);
   }
 
   @Override
