@@ -107,6 +107,8 @@ public class PistonClimbWithTiltControl extends Command {
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    climber.setFrontPIDControllerSetpoint(climber.getFrontTalonPositionInTicks());
+    climber.setFrontPIDControllerSetpoint(climber.getBackTalonPositionInTicks());
     end();
     Logger.consoleLog();
   }
