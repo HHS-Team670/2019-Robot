@@ -187,6 +187,7 @@ document.addEventListener("keyup", function(event) {
   var nextTask = getFromMap(result);
   if (nextTask != null) {
     if (nextTask.toUpperCase() === nextTask) NetworkTables.putValue('/SmartDashboard/xkeys-armstates', nextTask);
+    else if (nextTask.includes("cancel")) NetworkTables.putValue('/SmartDashboard/xkeys-cancel', nextTask);
     else if (nextTask === "place" || nextTask === "grab") NetworkTables.putValue('/SmartDashboard/xkeys-placing', nextTask);
     else if (nextTask.includes("run_intake")) NetworkTables.putValue('/SmartDashboard/xkeys-intake', nextTask);
     else if (nextTask === "auto_pickup_ball") NetworkTables.putValue('/SmartDashboard/xkeys-autopickup', nextTask);
@@ -202,7 +203,6 @@ function getFromMap(key) { // mapping is more aligned with arm position on robot
   if (key === "x05") return "set_climb_flat";
   if (key === "x0b") return "cycle_climb";
   if (key === "x0c") return "piston_climb";
-  if (key === "x0d") return "cancel_arm_climb";
 
   if (key === "x33") return "run_intake_in";
   if (key === "x3b") return "run_intake_out";
@@ -229,6 +229,13 @@ function getFromMap(key) { // mapping is more aligned with arm position on robot
   if (key === "x1d") return "GRAB_BALL_GROUND_BACK";
   if (key === "x25") return "GRAB_BALL_INTAKE";
   if (key === "x2d") return "GRAB_HATCH_GROUND_BACK";
+
+  if (key === "") return "cancel_drive";
+  if (key === "") return "cancel_intake";
+  if (key === "") return "cancel_arm";
+  if (key === "x0d") return "cancel_arm_climb";
+  if (key === "") return "cancel_piston_climb";
+  if (key === "" || key === "") return "cancel_all";
 }
 
 function readRadioButtons() {
