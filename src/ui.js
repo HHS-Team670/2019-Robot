@@ -23,6 +23,7 @@ document.getElementById('vline-left').setAttribute('x', 25+'%');
 ui.timer.style.color = `rgb(0, 200, 0)`;
 
 NetworkTables.addKeyListener('/SmartDashboard/game-time', (key, value) => {
+  if (value == null) return;
   var remaining = 150 - value;
   var minutes = ~~(remaining / 60); // converts to integer
   var seconds = (remaining - 60*minutes) % 60;
@@ -79,22 +80,24 @@ NetworkTables.addKeyListener('/SmartDashboard/warning', (key, value) => {
 });
 
 NetworkTables.addKeyListener('/SmartDashboard/current-command', (key, value) => {
-  document.getElementById('current-command').innerHTML = value;
+  if (value != 'undefined') document.getElementById('current-command').innerHTML = value;
+  else document.getElementById('current-command').innerHTML = "NULL";
 });
 
 NetworkTables.addKeyListener('/SmartDashboard/climb-state', (key, value) => {
-  document.getElementById('climb-state-text').innerHTML = value;
+  if (value != null) document.getElementById('climb-state-text').innerHTML = value;
 });
 
 NetworkTables.addKeyListener('/SmartDashboard/climb-level', (key, value) => {
-  document.getElementById('climb-level-text').innerHTML = value;
+  if (value != null) document.getElementById('climb-level-text').innerHTML = value;
 });
 
 NetworkTables.addKeyListener('/SmartDashboard/current-arm-state', (key, value) => {
-  document.getElementById('current-arm-state').innerHTML = value;
+  if (value != null) document.getElementById('current-arm-state').innerHTML = value;
 });
 
 NetworkTables.addKeyListener('/SmartDashboard/elbow-angle', (key, value) => {
+  if (value == null) return;
   var angle = value;
   document.getElementById('claw').style = "transform: translate(" + Math.sin(angle * Math.PI / 180) * (parseInt(document.getElementById('arm-extension').getAttribute('height')) + 60) + "px, " + -1 * Math.cos(angle * Math.PI / 180) * (parseInt(document.getElementById('arm-extension').getAttribute('height')) + 60) + "px)";
   document.getElementById('arm').style = "transform: rotate(" + angle + "deg)";
@@ -115,12 +118,12 @@ NetworkTables.addKeyListener('/SmartDashboard/elbow-angle', (key, value) => {
 });
 
 NetworkTables.addKeyListener('/SmartDashboard/intake-angle', (key, value) => {
-  document.getElementById('intake').style = "transform: rotate(" + -1 * value + "deg)";
+  if (value != null) document.getElementById('intake').style = "transform: rotate(" + -1 * value + "deg)";
 
 });
 
 NetworkTables.addKeyListener('/SmartDashboard/arm-extension', (key, value) => {
-  document.getElementById('arm-extension').setAttribute('height', value * 60);
+  if (value != null) document.getElementById('arm-extension').setAttribute('height', value * 60);
 });
 
 NetworkTables.addKeyListener('/SmartDashboard/claw-ir-sensor', (key, value) => {
@@ -183,7 +186,8 @@ document.addEventListener("keyup", function(event) {
   var pressed = event.key.replace("Enter", "");
   allKeys += pressed;
   var split = allKeys.split(" ");
-  var result = split[split.length - 1];
+  var result = (split[split.length - 1]).toLowerCase();
+  document.getElementById('current-command-text').innerHTML = result;
   var nextTask = getFromMap(result);
   if (nextTask != null) {
     if (nextTask.toUpperCase() === nextTask) NetworkTables.putValue('/SmartDashboard/xkeys-armstates', nextTask);
@@ -197,29 +201,30 @@ document.addEventListener("keyup", function(event) {
 
 // naming convention: UPPER_CASE for preset arm states, lower_case for other commands
 function getFromMap(key) { // mapping is more aligned with arm position on robot
-  if (key === "x0a") return "READY_TO_CLIMB";
+  if (key === "x0d") return "READY_TO_CLIMB";
   if (key === "x03") return "set_climb_3";
   if (key === "x04") return "set_climb_2";
   if (key === "x05") return "set_climb_flat";
-  if (key === "x0b") return "cycle_climb";
-  if (key === "x0c") return "piston_climb";
+  if (key === "x06") return "cycle_climb";
+  if (key === "x0a") return "piston_climb";
 
-  if (key === "x33") return "run_intake_in";
-  if (key === "x3b") return "run_intake_out";
-  if (key === "x34") return "auto_pickup_ball";
+  if (key === "x3c") return "toggle_intake_in";
+  if (key === "x3b") return "toggle_intake_out";
+  if (key === "x34") return "run_intake_in_with_IR";
+  if (key === "x3e") return "auto_pickup_ball";
 
   if (key === "x2e") return "place";
-  if (key === "x26") return "grab";
+  if (key === "x16") return "grab";
 
   if (key === "x12") return "READY_PLACE_HATCH_ROCKET_MIDDLE_BACK";
   if (key === "x1a") return "READY_PLACE_BALL_ROCKET_MIDDLE_BACK";
   if (key === "x22") return "READY_PLACE_BALL_ROCKET_MIDDLE_FORWARD";
   if (key === "x2a") return "READY_PLACE_HATCH_ROCKET_MIDDLE_FORWARD";
 
-  if (key === "x13") return "READY_GRAB_BALL_LOADINGSTATION_BACK";
+  if (key === "x13") return "GRAB_BALL_LOADINGSTATION_BACK";
   if (key === "x1b") return "PLACE_BALL_CARGOSHIP_BACK";
   if (key === "x23") return "PLACE_BALL_CARGOSHIP_FORWARD";
-  if (key === "x2b") return "READY_GRAB_BALL_LOADINGSTATION_FORWARD";
+  if (key === "x2b") return "GRAB_BALL_LOADINGSTATION_FORWARD";
 
   if (key === "x14") return "READY_LOW_HATCH_BACK";
   if (key === "x1c") return "READY_PLACE_BALL_ROCKET_LOW_BACK";
@@ -228,14 +233,15 @@ function getFromMap(key) { // mapping is more aligned with arm position on robot
 
   if (key === "x1d") return "GRAB_BALL_GROUND_BACK";
   if (key === "x25") return "GRAB_BALL_INTAKE";
-  if (key === "x2d") return "GRAB_HATCH_GROUND_BACK";
+  if (key === "x15") return "READY_GRAB_HATCH_GROUND_BACK";
+  if (key === "x2d") return "STOW";
 
-  if (key === "") return "cancel_drive";
-  if (key === "") return "cancel_intake";
-  if (key === "") return "cancel_arm";
-  if (key === "x0d") return "cancel_arm_climb";
-  if (key === "") return "cancel_piston_climb";
-  if (key === "" || key === "") return "cancel_all";
+  if (key === "o") return "cancel_drive";
+  if (key === "p") return "cancel_intake";
+  if (key === "n") return "cancel_arm";
+  if (key === "m") return "cancel_arm_climb";
+  if (key === "x0e") return "cancel_piston_climb";
+  if (key === "rq" || key === "qr" || key === "q" || key === "r") return "cancel_all";
 }
 
 function readRadioButtons() {
