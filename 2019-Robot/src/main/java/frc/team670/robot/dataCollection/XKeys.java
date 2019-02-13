@@ -120,6 +120,10 @@ public class XKeys {
         Scheduler.getInstance().add(new PistonClimbWithTiltControl(setpoint, Robot.climber, Robot.sensors));
     }
 
+    private void runIntakeWhileHeld(){
+        // Scheduler.getInstance().add(new Button)
+    }
+
     private void cancelArmClimb() {
         Scheduler.getInstance().add(new CancelArmClimb(Robot.arm));
     }

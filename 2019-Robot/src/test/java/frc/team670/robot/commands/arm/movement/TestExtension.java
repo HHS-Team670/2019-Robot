@@ -40,6 +40,11 @@ public class TestExtension extends BaseExtension {
   }
 
   @Override
+  public int getLengthTicks() {
+    return 0;
+  }
+
+  @Override
   public void disableCurrentLimit() {
   }
 
@@ -83,6 +88,16 @@ public class TestExtension extends BaseExtension {
   @Override
   public void moveByPercentOutput(double output) {
 
+  }
+
+  @Override
+  public double getForwardSoftLimitInInches() {
+    return 0;
+  }
+
+  @Override
+  public double getReverseSoftLimitInInches() {
+    return 0;
   }
 
 }

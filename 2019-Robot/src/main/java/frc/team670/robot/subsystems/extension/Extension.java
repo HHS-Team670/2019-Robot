@@ -32,6 +32,7 @@ public class Extension extends BaseExtension {
   private static final int CONTINUOUS_CURRENT_LIMIT = 20, PEAK_CURRENT_LIMIT = 0;
 
   private static final int START_POSITION_TICKS = 0; // TODO set this. Start position needed since extension has no absolute encoder
+  public static final int MAX_POSITION_TICKS = 0; // TODO set this
 
   // Motion Magic
   private static final int kPIDLoopIdx = 0, MOTION_MAGIC_SLOT = 0, kTimeoutMs = 0;
@@ -39,13 +40,14 @@ public class Extension extends BaseExtension {
   public static final int EXTENSION_OUT_POS = 12000; // TODO Set this in ticks
   public static final double EXTENSION_OUT_IN_INCHES = convertExtensionTicksToInches(EXTENSION_OUT_POS); //TODO set this
   public static final int FORWARD_SOFT_LIMIT = EXTENSION_IN_POS - 100, REVERSE_SOFT_LIMIT = EXTENSION_OUT_POS + 100; // TODO figure out the values in rotations
+ 
   private static final double MM_F = 0, MM_P = 0, MM_I = 0, MM_D = 0; //TODO figure out what these are. Motion Magic Constants
   private static final int MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 90; // TODO set this
   private static final int EXTMOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS = 400; // TODO set this
   public static final int QUAD_ENCODER_MAX = FORWARD_SOFT_LIMIT + 200, QUAD_ENCODER_MIN = REVERSE_SOFT_LIMIT - 200; //TODO Set these values based on forward and back soft limits (especially the addition/subtraction)
 
   private static final double ARBITRARY_FEEDFORWARD_CONSTANT = 0.3;
-  private static final double MAX_EXTENSION_OUTPUT = 0.8;
+  public static final double MAX_EXTENSION_OUTPUT = 0.4;
 
   private double setpoint;
   private static final double NO_SETPOINT = 99999;
@@ -124,6 +126,11 @@ public class Extension extends BaseExtension {
 
   private int getPositionTicks() {
     return extensionMotor.getSelectedSensorPosition(0);
+  }
+
+  @Override
+  public int getLengthTicks() {
+    return getPositionTicks();
   }
   
   @Override
@@ -210,6 +217,14 @@ public class Extension extends BaseExtension {
 
   private int getExtensionPulseWidth() {  
     return extensionMotor.getSensorCollection().getPulseWidthPosition();
+  }
+
+  public double getForwardSoftLimitInInches(){
+    return convertExtensionTicksToInches(FORWARD_SOFT_LIMIT);
+  }
+
+  public double getReverseSoftLimitInInches(){
+    return convertExtensionTicksToInches(REVERSE_SOFT_LIMIT);
   }
 
   @Override

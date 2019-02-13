@@ -19,7 +19,7 @@ public class RunIntake extends Command {
   private MustangSensors sensors;
   private boolean runningIn;
 
-  private static final double RUNNING_POWER = 0.30;
+  public static final double RUNNING_POWER = 0.30;
   private boolean hasBeenTriggered;
 
   public RunIntake(BaseIntake intake, MustangSensors sensors, boolean runningIn) {
