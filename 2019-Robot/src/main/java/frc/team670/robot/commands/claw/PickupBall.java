@@ -9,7 +9,7 @@ package frc.team670.robot.commands.claw;
 
 import edu.wpi.first.wpilibj.command.TimedCommand;
 import frc.team670.robot.subsystems.Claw;
-import frc.team670.robot.subsystems.wrist.Wrist;
+import frc.team670.robot.subsystems.wrist.BaseWrist;
 import frc.team670.robot.subsystems.wrist.Wrist.HeldItem;
 import frc.team670.robot.utils.Logger;
 
@@ -19,9 +19,9 @@ import frc.team670.robot.utils.Logger;
 public class PickupBall extends TimedCommand {
  
   private Claw claw;
-  private Wrist wrist;
+  private BaseWrist wrist;
 
-  public PickupBall(Claw claw, Wrist wrist) {
+  public PickupBall(Claw claw, BaseWrist wrist) {
     super(Claw.TIME_TO_MOVE);
     this.claw = claw;
     this.wrist = wrist;
