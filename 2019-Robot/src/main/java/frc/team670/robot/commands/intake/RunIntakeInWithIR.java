@@ -8,25 +8,22 @@
 package frc.team670.robot.commands.intake;
 
 import edu.wpi.first.wpilibj.command.Command;
-import frc.team670.robot.Robot;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.BaseIntake;
 import frc.team670.robot.utils.Logger;
 
-public class RunIntake extends Command {
+public class RunIntakeInWithIR extends Command {
 
   private BaseIntake intake;
   private MustangSensors sensors;
-  private boolean runningIn;
 
   public static final double RUNNING_POWER = 0.30;
   private boolean hasBeenTriggered;
 
-  public RunIntake(BaseIntake intake, MustangSensors sensors, boolean runningIn) {
+  public RunIntakeInWithIR(BaseIntake intake, MustangSensors sensors) {
     requires(intake);
     this.intake = intake;
     this.sensors = sensors;
-    this.runningIn = runningIn;
   }
 
   // Called just before this Command runs the first time
@@ -39,22 +36,20 @@ public class RunIntake extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    intake.runIntake(RUNNING_POWER, runningIn);
+    intake.runIntake(RUNNING_POWER, true);
 
     // If the IR sensor has been tripped and it is for the first time
-    if(runningIn) {
-      if (!sensors.isIntakeIRSensorNull() && sensors.getIntakeIROutput() && !hasBeenTriggered) {
-        hasBeenTriggered = true;
-        setTimeout(0.5 + timeSinceInitialized());
-      }
+    if (!sensors.isIntakeIRSensorNull() && sensors.getIntakeIROutput() && !hasBeenTriggered) {
+      hasBeenTriggered = true;
+      setTimeout(0.5 + timeSinceInitialized());
     }
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    // If 0.5 seconds has passed since the IR sensor was first tripped 
-    if (runningIn && !sensors.isIntakeIRSensorNull()) {
+    // If 0.5 seconds has passed since the IR sensor was first tripped
+    if (!sensors.isIntakeIRSensorNull()) {
       return (isTimedOut());
     }
 

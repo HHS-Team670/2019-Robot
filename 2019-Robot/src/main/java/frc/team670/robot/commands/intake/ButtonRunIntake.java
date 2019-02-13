@@ -26,7 +26,7 @@ public class ButtonRunIntake extends InstantCommand {
   @Override
   protected void initialize() {
 
-    intake.runIntake(RunIntake.RUNNING_POWER, runningIn);
+    intake.runIntake(RunIntakeInWithIR.RUNNING_POWER, runningIn);
   }
 
 }
