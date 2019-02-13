@@ -32,7 +32,7 @@ public class AutoPickupCargo extends CommandGroup {
     addParallel(new MoveArm(Arm.getStates().get(LegalState.GRAB_BALL_INTAKE), arm));
     addSequential(new RunIntakeInWithIR(intake, sensors));
     addParallel(new TimedRunIntake(Claw.TIME_TO_MOVE, intake, true));
-    addSequential(new PickupBall(claw, arm.getWrist()));
+    addSequential(new PickupBall(claw, arm));
     addSequential(new MoveArm(Arm.getArmState(LegalState.NEUTRAL), arm));
   }
 }

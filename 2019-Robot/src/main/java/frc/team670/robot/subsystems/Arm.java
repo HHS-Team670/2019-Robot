@@ -26,6 +26,9 @@ import frc.team670.robot.utils.sort.Node;
  */
 public class Arm {
 
+  public enum HeldItem {NONE, BALL, HATCH};
+  private HeldItem heldItem;
+
   public static final double ARM_HEIGHT_IN_INCHES = 5;
   public static final double CLAW_LENGTH_IN_INCHES = 8;
   public static final int FIXED_ARM_LENGTH_IN_INCHES = 0;
@@ -48,6 +51,8 @@ public class Arm {
     this.wrist = wrist;
     this.extension = extension;
     this.claw = claw;
+
+    heldItem = HeldItem.NONE; // TODO set this up to reflect starting state
 
     // State Setup
     states = new HashMap<LegalState, ArmState>();
@@ -180,6 +185,14 @@ public class Arm {
       //To be more safe, there is an extra buffer
       lowestPoint += extraClearanceInInches;
       return lowestPoint;
+  }
+
+  public void setHeldItem(HeldItem item) {
+    heldItem = item;
+  }
+
+  public HeldItem getHeldItem() {
+    return heldItem;
   }
 
   /**

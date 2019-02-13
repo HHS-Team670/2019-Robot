@@ -10,7 +10,6 @@ package frc.team670.robot.subsystems.wrist;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import frc.team670.robot.subsystems.RotatingSubsystem;
-import frc.team670.robot.subsystems.wrist.Wrist.HeldItem;
 
 /**
  * Add your docs here.
@@ -33,7 +32,4 @@ public abstract class BaseWrist extends RotatingSubsystem implements WristInterf
 
   }
 
-  public void setHeldItem(HeldItem item) {
-
-  }
 }

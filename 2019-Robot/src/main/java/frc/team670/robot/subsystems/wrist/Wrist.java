@@ -15,6 +15,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
+import frc.team670.robot.subsystems.Arm.HeldItem;
 import jaci.pathfinder.Pathfinder;
 
 /**
@@ -45,9 +46,6 @@ public class Wrist extends BaseWrist {
 
   public static final int TICKS_PER_ROTATION = 4096; //Subject to change, check sources
 
-  public enum HeldItem {NONE, BALL, HATCH};
-  private HeldItem heldItem;
-
   public Wrist() {
     super(new TalonSRX(RobotMap.ARM_WRIST_ROTATION), ARBITRARY_FEEDFORWARD, FORWARD_SOFT_LIMIT, REVERSE_SOFT_LIMIT, false, QUAD_ENCODER_MIN, QUAD_ENCODER_MAX, CONTINUOUS_CURRENT_LIMIT, PEAK_CURRENT_LIMIT, OFFSET_FROM_ENCODER_ZERO);
     rotator.selectProfileSlot(MOTION_MAGIC_SLOT, kPIDLoopIdx);
@@ -64,8 +62,6 @@ public class Wrist extends BaseWrist {
     rotator.configPeakOutputReverse(-MAX_WRIST_OUTPUT, RobotConstants.kTimeoutMs);
 
     rotator.setNeutralMode(NeutralMode.Brake);
-
-    heldItem = heldItem.NONE;
 
     stop();
   }
@@ -158,7 +154,7 @@ public class Wrist extends BaseWrist {
     public synchronized void updateArbitraryFeedForward(){
       if(setpoint != NO_SETPOINT) {
         double arbitraryFeedForwardConstant;
-
+        HeldItem heldItem = Robot.arm.getHeldItem();
         if(heldItem.equals(HeldItem.NONE)) {
           arbitraryFeedForwardConstant = ARBITRARY_FEEDFORWARD;
         } else if (heldItem.equals(HeldItem.BALL)) {
@@ -170,10 +166,6 @@ public class Wrist extends BaseWrist {
         double value = getArbitraryFeedForwardAngleMultiplier() * arbitraryFeedForwardConstant;
         rotator.set(ControlMode.MotionMagic, setpoint, DemandType.ArbitraryFeedForward, value);
       }
-  }
-
-  public void setHeldItem(HeldItem item) {
-    heldItem = item;
   }
 
   @Override
