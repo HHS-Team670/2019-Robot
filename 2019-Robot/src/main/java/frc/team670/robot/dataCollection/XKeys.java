@@ -112,18 +112,17 @@ public class XKeys {
     private ArmState getArmState(String in) {
         LegalState legalState = null;
         if (in.equals("READY_TO_CLIMB")) legalState = LegalState.READY_TO_CLIMB;
-        if (in.equals("READY_PLACE_HATCH_ROCKET_MIDDLE_BACK")) legalState = LegalState.READY_PLACE_HATCH_ROCKET_MIDDLE_BACK;
-        if (in.equals("READY_PLACE_BALL_ROCKET_MIDDLE_BACK")) legalState = LegalState.READY_PLACE_BALL_ROCKET_MIDDLE_BACK;
-        if (in.equals("READY_PLACE_BALL_ROCKET_MIDDLE_FORWARD")) legalState = LegalState.READY_PLACE_BALL_ROCKET_MIDDLE_FORWARD;
+        if (in.equals("READY_PLACE_HATCH_ROCKET_MIDDLE_BACK")) legalState = LegalState.READY_PLACE_HATCH_ROCKET_MIDDLE_BACK; 
         if (in.equals("READY_PLACE_HATCH_ROCKET_MIDDLE_FORWARD")) legalState = LegalState.READY_PLACE_HATCH_ROCKET_MIDDLE_FORWARD;
+        if (in.equals("READY_PLACE_BALL_ROCKET_MIDDLE_BACK")) legalState = LegalState.READY_PLACE_BALL_ROCKET_MIDDLE_BACK;
         if (in.equals("GRAB_BALL_LOADINGSTATION_BACK")) legalState = LegalState.GRAB_BALL_LOADINGSTATION_BACK;
+        if (in.equals("GRAB_BALL_LOADINGSTATION_FORWARD")) legalState = LegalState.GRAB_BALL_LOADINGSTATION_FORWARD;
         if (in.equals("PLACE_BALL_CARGOSHIP_BACK")) legalState = LegalState.PLACE_BALL_CARGOSHIP_BACK;
         if (in.equals("PLACE_BALL_CARGOSHIP_FORWARD")) legalState = LegalState.PLACE_BALL_CARGOSHIP_FORWARD;
-        if (in.equals("GRAB_BALL_LOADINGSTATION_FORWARD")) legalState = LegalState.GRAB_BALL_LOADINGSTATION_FORWARD;
         if (in.equals("READY_LOW_HATCH_BACK")) legalState = LegalState.READY_LOW_HATCH_BACK;
+        if (in.equals("READY_LOW_HATCH_FORWARD")) legalState = LegalState.READY_LOW_HATCH_FORWARD;
         if (in.equals("READY_PLACE_BALL_ROCKET_LOW_BACK")) legalState = LegalState.READY_PLACE_BALL_ROCKET_LOW_BACK;
         if (in.equals("READY_PLACE_BALL_ROCKET_LOW_FORWARD")) legalState = LegalState.READY_PLACE_BALL_ROCKET_LOW_FORWARD;
-        if (in.equals("READY_LOW_HATCH_FORWARD")) legalState = LegalState.READY_LOW_HATCH_FORWARD;
         if (in.equals("GRAB_BALL_GROUND_BACK")) legalState = LegalState.GRAB_BALL_GROUND_BACK;
         if (in.equals("GRAB_BALL_INTAKE")) legalState = LegalState.GRAB_BALL_INTAKE;
         if (in.equals("READY_GRAB_HATCH_GROUND_BACK")) legalState = LegalState.READY_GRAB_HATCH_GROUND_BACK;
@@ -171,9 +170,11 @@ public class XKeys {
     }
 
     private void nextStepArmClimb(ClimbHeight height) {
-        if (height == ClimbHeight.FLAT) Scheduler.getInstance().add(new CycleClimb(Robot.arm, Robot.climber, Robot.sensors, Climber.PISTON_ENCODER_FLAT));
-        else if (height == ClimbHeight.LEVEL2) Scheduler.getInstance().add(new CycleClimb(Robot.arm, Robot.climber, Robot.sensors, Climber.PISTON_ENCODER_LEVEL_TWO));
-        else if (height == ClimbHeight.LEVEL3) Scheduler.getInstance().add(new CycleClimb(Robot.arm, Robot.climber, Robot.sensors, Climber.PISTON_ENCODER_LEVEL_THREE));
+        int setpoint = 0;
+        if (height == ClimbHeight.FLAT) setpoint = Climber.PISTON_ENCODER_FLAT;
+        else if (height == ClimbHeight.LEVEL2) setpoint = Climber.PISTON_ENCODER_LEVEL_TWO;
+        else if (height == ClimbHeight.LEVEL3) setpoint = Climber.PISTON_ENCODER_LEVEL_THREE;
+        Scheduler.getInstance().add(new CycleClimb(Robot.arm, Robot.climber, Robot.sensors, setpoint));
     }
 
     private void pistonClimb(ClimbHeight height) {
@@ -182,14 +183,6 @@ public class XKeys {
         if (height == ClimbHeight.LEVEL2) setpoint = Climber.PISTON_ENCODER_LEVEL_TWO;
         if (height == ClimbHeight.LEVEL3) setpoint = Climber.PISTON_ENCODER_LEVEL_THREE;
         Scheduler.getInstance().add(new PistonClimbWithTiltControl(setpoint, Robot.climber, Robot.sensors));
-    }
-
-    private void toggleRunIntakeIn(){
-        Scheduler.getInstance().add(new ToggleButtonRunIntake(Robot.intake, true, toggleIntake = !toggleIntake));
-    }
-
-    private void toggleRunIntakeOut() {
-        Scheduler.getInstance().add(new ToggleButtonRunIntake(Robot.intake, false, toggleIntake = !toggleIntake));
     }
 
     private void cancelArmClimb() {

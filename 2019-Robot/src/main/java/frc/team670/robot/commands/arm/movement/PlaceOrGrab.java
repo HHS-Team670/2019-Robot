@@ -45,9 +45,7 @@ public class PlaceOrGrab extends CommandGroup {
       addSequential(new DropBall(Robot.claw));
       addSequential(new MoveArm(state, Robot.arm));
     } else if (state.equals(Arm.getArmState(LegalState.PLACE_BALL_ROCKET_MIDDLE_FORWARD))) {
-      // addSequential(new MoveArm(Arm.getArmState(LegalState.PLACE_BALL_ROCKET_MIDDLE_FORWARD), Robot.arm));
       addSequential(new DropBall(Robot.claw));
-      // addSequential(new MoveArm(state, Robot.arm));
     } else if (state.equals(Arm.getArmState(LegalState.READY_PLACE_HATCH_ROCKET_MIDDLE_BACK))) {
       addSequential(new MoveArm(Arm.getArmState(LegalState.PLACE_HATCH_ROCKET_MIDDLE_BACK), Robot.arm));
       addSequential(new DropHatch(Robot.claw));
@@ -60,14 +58,10 @@ public class PlaceOrGrab extends CommandGroup {
       addSequential(new PickupBall(Robot.claw));
     } else if (state.equals(Arm.getArmState(LegalState.GRAB_BALL_INTAKE))) { // check this
       addSequential(new AutoPickupCargo(Robot.arm, Robot.intake, Robot.claw, Robot.sensors));
-    } else if (state.equals(Arm.getArmState(LegalState.GRAB_BALL_LOADINGSTATION_BACK))) { // figure this out
-      // addSequential(new MoveArm(Arm.getArmState(LegalState.GRAB_BALL_LOADINGSTATION_BACK), Robot.arm));
+    } else if (state.equals(Arm.getArmState(LegalState.GRAB_BALL_LOADINGSTATION_BACK))) {
       addSequential(new PickupBall(Robot.claw));
-      // addSequential(new MoveArm(state, Robot.arm));
-    } else if (state.equals(Arm.getArmState(LegalState.GRAB_BALL_LOADINGSTATION_FORWARD))) { // figure this out
-      // addSequential(new MoveArm(Arm.getArmState(LegalState.GRAB_BALL_LOADINGSTATION_FORWARD), Robot.arm));
+    } else if (state.equals(Arm.getArmState(LegalState.GRAB_BALL_LOADINGSTATION_FORWARD))) {
       addSequential(new PickupBall(Robot.claw));
-      // addSequential(new MoveArm(state, Robot.arm));
     } else if (state.equals(Arm.getArmState(LegalState.READY_LOW_HATCH_BACK))) {
       if (isPlacing) {
         addSequential(new MoveArm(Arm.getArmState(LegalState.LOW_HATCH_BACK), Robot.arm));
