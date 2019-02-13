@@ -35,8 +35,8 @@ public class JoystickPistonClimb extends InstantCommand {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    frontPower *= (frontPower > 0) ? Climber.MAXIMUM_PISTON_POWER : -1 * Climber.MINIMUM_PISTON_POWER; //Multiplied by -1 because constant is negative and so is stick input
-    backPower *= (backPower > 0) ? Climber.MAXIMUM_PISTON_POWER : -1 * Climber.MINIMUM_PISTON_POWER; //Multiplied by -1 because constant is negative and so is stick input
+    frontPower *= (frontPower > 0) ? (0.75 * Climber.MAXIMUM_PISTON_POWER) : -0.8 * Climber.MINIMUM_PISTON_POWER; //Multiplied by -1 because constant is negative and so is stick input
+    backPower *= (backPower > 0) ? (0.75 * Climber.MAXIMUM_PISTON_POWER) : -0.8 * Climber.MINIMUM_PISTON_POWER; //Multiplied by -1 because constant is negative and so is stick input
 
     // Front pistons are approaching flat position so either the entire robot is
     // almost back down or the front pistons are almost retracted. If the original

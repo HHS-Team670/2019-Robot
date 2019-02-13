@@ -22,6 +22,11 @@ public abstract class BaseWrist extends RotatingSubsystem implements WristInterf
     super(rotatorTalon, arbitrary_feedforward_constant, forward_soft_limit, reverse_soft_limit, timeout, QUAD_ENCODER_MIN, QUAD_ENCODER_MAX, CONTINUOUS_CURRENT_LIMIT, PEAK_CURRENT_LIMIT, offsetFromEncoderZero);
   }
 
+  public abstract double getForwardSoftLimitAngle();
+
+  public abstract double getReverseSoftLimitAngle();
+
+
   @Override
   public void initDefaultCommand() {
 

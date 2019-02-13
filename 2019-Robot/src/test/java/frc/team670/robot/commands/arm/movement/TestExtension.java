@@ -85,4 +85,14 @@ public class TestExtension extends BaseExtension {
 
   }
 
+  @Override
+  public double getForwardSoftLimitInInches() {
+    return 0;
+  }
+
+  @Override
+  public double getReverseSoftLimitInInches() {
+    return 0;
+  }
+
 }

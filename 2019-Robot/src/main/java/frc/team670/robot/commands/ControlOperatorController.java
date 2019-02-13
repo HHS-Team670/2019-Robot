@@ -50,7 +50,7 @@ public class ControlOperatorController extends Command {
       Scheduler.getInstance().add(new JoystickWrist(Robot.arm.getWrist(), controller.getLeftStickY()));
 
       double extensionPower = Math.pow((controller.getRightTriggerAxis() - controller.getLeftTriggerAxis()), 2);
-      Scheduler.getInstance().add(new JoystickExtension(Robot.arm.getExtension(), extensionPower));
+      Scheduler.getInstance().add(new JoystickExtension(Robot.arm, Robot.intake, Robot.arm.getExtension(), extensionPower));
     } else if (os == OperatorState.CLIMB) {
       Scheduler.getInstance().add(new JoystickPistonClimb(Robot.climber, controller.getLeftStickY(), controller.getRightStickY()));
     }

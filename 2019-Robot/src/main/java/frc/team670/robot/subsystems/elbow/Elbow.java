@@ -34,9 +34,10 @@ public class Elbow extends BaseElbow {
   private static final int ELBOW_ACCELERATION_SENSOR_UNITS_PER_SEC = 400; // TODO set this
   private static final int OFFSET_FROM_ENCODER_ZERO = 0; // TODO set this
   public static final int FORWARD_SOFT_LIMIT = 850, REVERSE_SOFT_LIMIT = -940; // SET THIS
+  
   private static final int QUAD_ENCODER_MIN = FORWARD_SOFT_LIMIT + 200, QUAD_ENCODER_MAX = REVERSE_SOFT_LIMIT - 200;// SET THIS BASED ON FORWARD AND REVERSE
   private static final double ARBITRARY_FEEDFORWARD = 0; // TODO SET THIS
-  private static final double MAX_ELBOW_OUTPUT = 0.8;
+  public static final double MAX_ELBOW_OUTPUT = 0.4;
   private static final double ARBITARY_FEEDFORWARD_FULL_EXTENSION = 0; // Arbitrary feedforward when elbow is fully extended
 
 
@@ -143,6 +144,14 @@ public class Elbow extends BaseElbow {
     return ((360 * ticks) / TICKS_PER_ROTATION);
   }
 
+  public double getForwardSoftLimitAngle(){
+    return convertElbowTicksToDegrees(FORWARD_SOFT_LIMIT);
+  }
+
+  public double getReverseSoftLimitAngle(){
+    return convertElbowTicksToDegrees(REVERSE_SOFT_LIMIT);
+  }
+  
   @Override
   protected double getArbitraryFeedForwardAngleMultiplier() {
     double angle = getAngleInDegrees();
