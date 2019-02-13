@@ -1,8 +1,7 @@
 package frc.team670.robot.commands.drive.purePursuit;
 
-import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.dataCollection.MustangSensors;
-import frc.team670.robot.utils.functions.MathUtils;
+import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.utils.math.Kinematics;
 import frc.team670.robot.utils.math.RigidTransform;
 import frc.team670.robot.utils.math.Rotation;
@@ -61,8 +60,8 @@ public class PoseEstimator {
 
 	public void update() {
 		double leftDist, rightDist;
-		leftDist = DriveBase.convertDriveBaseTicksToInches(driveBase.getLeftDIOEncoderPosition()); //Not negative because encoders increase when robot moves forward
-		rightDist = DriveBase.convertDriveBaseTicksToInches(driveBase.getRightDIOEncoderPosition());
+		leftDist = driveBase.getLeftMustangEncoderPositionInInches(); //Not negative because encoders increase when robot moves forward
+		rightDist = driveBase.getRightMustangEncoderPositionInInches();
 		// System.out.println("LeftDist: " + leftDist + ", RightDist: " + rightDist);
 		double deltaLeftDist = leftDist - prevLeftDist;
 		double deltaRightDist = rightDist - prevRightDist;

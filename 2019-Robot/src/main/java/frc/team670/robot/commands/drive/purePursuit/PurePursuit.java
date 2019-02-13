@@ -8,13 +8,9 @@
 package frc.team670.robot.commands.drive.purePursuit;
 
 import edu.wpi.first.wpilibj.command.Command;
-import frc.team670.robot.Robot;
-import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.dataCollection.MustangSensors;
+import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.utils.Logger;
-import frc.team670.robot.utils.functions.MathUtils;
-import frc.team670.robot.utils.math.DrivePower;
-import frc.team670.robot.utils.math.Vector;
 
 public class PurePursuit extends Command {
 
@@ -44,7 +40,7 @@ public class PurePursuit extends Command {
     purePursuitTracker.reset();
     Logger.consoleLog();
     executeCount = 0;
-    purePursuitTracker.startNotifier(0.001); //Pass in period in seconds
+    purePursuitTracker.startNotifier(0.01); //Pass in period in seconds
     System.out.println("Start, Pose: " + poseEstimator.getPose());
   }
 
@@ -73,7 +69,7 @@ public class PurePursuit extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    System.out.println("Ended, Pose: " + poseEstimator.getPose());
+    Logger.consoleLog("Pose: %s ", poseEstimator.getPose());
     driveBase.setSparkVelocityControl(0,0);
     purePursuitTracker.stopNotifier();
     purePursuitTracker.reset();

@@ -8,7 +8,6 @@ import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.DriveBase;
-import frc.team670.robot.utils.functions.MathUtils;
 import frc.team670.robot.utils.math.DrivePower;
 import frc.team670.robot.utils.math.Vector;
 
@@ -36,7 +35,7 @@ public class PurePursuitTracker {
 		updater = new Notifier( new Runnable() {
 			public void run() {
 				poseEstimator.update();
-				drivePower = update(poseEstimator.getPose(), driveBase.getLeftSparkEncoderVelocityInches(), driveBase.getRightSparkEncoderVelocityInches(), sensors.getRotationAngle().radians());
+				drivePower = update(poseEstimator.getPose(), driveBase.getLeftMustangEncoderVelocityInInchesPerSecond(), driveBase.getRightMustangEncoderVelocityInInchesPerSecond(), sensors.getRotationAngle().radians());
 				Robot.driveBase.setSparkVelocityControl(drivePower.getLeft(), drivePower.getRight()); //Returns in inches/s
 			}
 		});
