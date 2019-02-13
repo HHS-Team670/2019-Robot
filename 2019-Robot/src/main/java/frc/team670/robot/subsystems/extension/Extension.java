@@ -32,6 +32,7 @@ public class Extension extends BaseExtension {
   private static final int CONTINUOUS_CURRENT_LIMIT = 20, PEAK_CURRENT_LIMIT = 0;
 
   private static final int START_POSITION_TICKS = 0; // TODO set this. Start position needed since extension has no absolute encoder
+  public static final int MAX_POSITION_TICKS = 0; // TODO set this
 
   // Motion Magic
   private static final int kPIDLoopIdx = 0, MOTION_MAGIC_SLOT = 0, kTimeoutMs = 0;
@@ -45,6 +46,7 @@ public class Extension extends BaseExtension {
   public static final int QUAD_ENCODER_MAX = FORWARD_SOFT_LIMIT + 200, QUAD_ENCODER_MIN = REVERSE_SOFT_LIMIT - 200; //TODO Set these values based on forward and back soft limits (especially the addition/subtraction)
 
   private static final double ARBITRARY_FEEDFORWARD_CONSTANT = 0.3;
+  private static final double MAX_EXTENSION_OUTPUT = 0.8;
 
   private double setpoint;
   private static final double NO_SETPOINT = 99999;
@@ -79,8 +81,8 @@ public class Extension extends BaseExtension {
 
     extensionMotor.configNominalOutputForward(0, RobotConstants.kTimeoutMs);
     extensionMotor.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
-    extensionMotor.configPeakOutputForward(1, RobotConstants.kTimeoutMs);
-    extensionMotor.configPeakOutputReverse(-1, RobotConstants.kTimeoutMs);
+    extensionMotor.configPeakOutputForward(MAX_EXTENSION_OUTPUT, RobotConstants.kTimeoutMs);
+    extensionMotor.configPeakOutputReverse(-MAX_EXTENSION_OUTPUT, RobotConstants.kTimeoutMs);
 
     //Tuning stuff
     setpoint = NO_SETPOINT;
@@ -96,7 +98,7 @@ public class Extension extends BaseExtension {
 
     // extensionMotor.getSensorCollection().setQuadraturePosition(pulseWidthPos, 0);
     extensionMotor.getSensorCollection().setQuadraturePosition(START_POSITION_TICKS, 0); // The Extension 
-    enablePercentOutput();
+    stop();
   }
 
   @Override
@@ -123,6 +125,11 @@ public class Extension extends BaseExtension {
 
   private int getPositionTicks() {
     return extensionMotor.getSelectedSensorPosition(0);
+  }
+
+  @Override
+  public int getLengthTicks() {
+    return getPositionTicks();
   }
   
   @Override
@@ -217,13 +224,13 @@ public class Extension extends BaseExtension {
   }
 
   @Override
-  public synchronized void enablePercentOutput() {
+  public synchronized void stop() {
     setpoint = NO_SETPOINT;
     extensionMotor.set(ControlMode.PercentOutput, 0);
   }
 
   @Override
-  public synchronized void rotatePercentOutput(double output) {
+  public synchronized void moveByPercentOutput(double output) {
     setpoint = NO_SETPOINT;
     extensionMotor.set(ControlMode.PercentOutput, output);
   }

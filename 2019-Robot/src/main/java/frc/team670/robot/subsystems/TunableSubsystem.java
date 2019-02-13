@@ -14,8 +14,14 @@ public interface TunableSubsystem {
 
     public boolean getTimeout();
 
-    public void enablePercentOutput();
+    /**
+     * Enables percent output to shut off other movement of the Subsystem (note this means it will stop holding itself up).
+     */
+    public void stop();
 
-    public void rotatePercentOutput(double output);
+    /**
+     * Moves the Subsystem using percent outpu
+     */
+    public void moveByPercentOutput(double output);
 
 }

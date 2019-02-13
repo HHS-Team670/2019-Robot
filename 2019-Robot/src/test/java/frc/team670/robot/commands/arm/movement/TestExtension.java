@@ -40,6 +40,11 @@ public class TestExtension extends BaseExtension {
   }
 
   @Override
+  public int getLengthTicks() {
+    return 0;
+  }
+
+  @Override
   public void disableCurrentLimit() {
   }
 
@@ -76,12 +81,12 @@ public class TestExtension extends BaseExtension {
   }
 
   @Override
-  public void enablePercentOutput() {
+  public void stop() {
 
   }
 
   @Override
-  public void rotatePercentOutput(double output) {
+  public void moveByPercentOutput(double output) {
 
   }
 

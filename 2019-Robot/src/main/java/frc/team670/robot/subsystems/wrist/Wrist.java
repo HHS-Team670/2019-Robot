@@ -36,40 +36,41 @@ public class Wrist extends BaseWrist {
   private static final int WRIST_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS = 400; // TODO set this
   public static final int FORWARD_SOFT_LIMIT = 850, REVERSE_SOFT_LIMIT = -940; // TODO set this
   public static final int QUAD_ENCODER_MAX = FORWARD_SOFT_LIMIT + 200, QUAD_ENCODER_MIN = REVERSE_SOFT_LIMIT - 200; //TODO Set these values based on soft limits (especially add/subtract)
+  private static final double MAX_WRIST_OUTPUT = 0.8;
 
   public Wrist() {
     super(new TalonSRX(RobotMap.ARM_WRIST_ROTATION), ARBITRARY_FEEDFORWARD, FORWARD_SOFT_LIMIT, REVERSE_SOFT_LIMIT, false, QUAD_ENCODER_MIN, QUAD_ENCODER_MAX, CONTINUOUS_CURRENT_LIMIT, PEAK_CURRENT_LIMIT, OFFSET_FROM_ENCODER_ZERO);
-    rotatorTalon.selectProfileSlot(MOTION_MAGIC_SLOT, kPIDLoopIdx);
-		rotatorTalon.config_kF(MOTION_MAGIC_SLOT, MM_F, kTimeoutMs);
-		rotatorTalon.config_kP(MOTION_MAGIC_SLOT, MM_P, kTimeoutMs);
-		rotatorTalon.config_kI(MOTION_MAGIC_SLOT, MM_I, kTimeoutMs);
-    rotatorTalon.config_kD(MOTION_MAGIC_SLOT, MM_D, kTimeoutMs);
-    rotatorTalon.configMotionCruiseVelocity(WRIST_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
-    rotatorTalon.configMotionAcceleration(WRIST_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+    rotator.selectProfileSlot(MOTION_MAGIC_SLOT, kPIDLoopIdx);
+		rotator.config_kF(MOTION_MAGIC_SLOT, MM_F, kTimeoutMs);
+		rotator.config_kP(MOTION_MAGIC_SLOT, MM_P, kTimeoutMs);
+		rotator.config_kI(MOTION_MAGIC_SLOT, MM_I, kTimeoutMs);
+    rotator.config_kD(MOTION_MAGIC_SLOT, MM_D, kTimeoutMs);
+    rotator.configMotionCruiseVelocity(WRIST_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+    rotator.configMotionAcceleration(WRIST_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
     
-    rotatorTalon.configNominalOutputForward(0, RobotConstants.kTimeoutMs);
-    rotatorTalon.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
-    rotatorTalon.configPeakOutputForward(1, RobotConstants.kTimeoutMs);
-    rotatorTalon.configPeakOutputReverse(-1, RobotConstants.kTimeoutMs);
+    rotator.configNominalOutputForward(0, RobotConstants.kTimeoutMs);
+    rotator.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
+    rotator.configPeakOutputForward(MAX_WRIST_OUTPUT, RobotConstants.kTimeoutMs);
+    rotator.configPeakOutputReverse(-MAX_WRIST_OUTPUT, RobotConstants.kTimeoutMs);
 
-    rotatorTalon.setNeutralMode(NeutralMode.Brake);
+    rotator.setNeutralMode(NeutralMode.Brake);
 
-    enablePercentOutput();
+    stop();
   }
   
   @Override
   public void enableCurrentLimit() {
-    rotatorTalon.enableCurrentLimit(true);
+    rotator.enableCurrentLimit(true);
   }
 
   @Override
   public void disableCurrentLimit() {
-    rotatorTalon.enableCurrentLimit(false);
+    rotator.enableCurrentLimit(false);
   }
 
   @Override
   public void setOutput(double output){
-    rotatorTalon.set(ControlMode.PercentOutput, output);
+    rotator.set(ControlMode.PercentOutput, output);
   }
   
   @Override
@@ -85,18 +86,18 @@ public class Wrist extends BaseWrist {
   @Override
   public boolean isForwardLimitPressed() {
     //drive until switch is closed
-    return rotatorTalon.getSensorCollection().isFwdLimitSwitchClosed();
+    return rotator.getSensorCollection().isFwdLimitSwitchClosed();
   }
   
   @Override
   public boolean isReverseLimitPressed() {
     //drive until switch is closed
-    return rotatorTalon.getSensorCollection().isRevLimitSwitchClosed();
+    return rotator.getSensorCollection().isRevLimitSwitchClosed();
   }
   
   @Override
   public void setQuadratureEncoder(double encoderValue) {
-    rotatorTalon.getSensorCollection().setQuadraturePosition((int) encoderValue, RobotConstants.ARM_RESET_TIMEOUTMS);
+    rotator.getSensorCollection().setQuadraturePosition((int) encoderValue, RobotConstants.ARM_RESET_TIMEOUTMS);
   }
 
   /**
@@ -128,12 +129,12 @@ public class Wrist extends BaseWrist {
   }
 
   public int getWristPulseWidth() {
-    return rotatorTalon.getSensorCollection().getPulseWidthPosition();
+    return rotator.getSensorCollection().getPulseWidthPosition();
   }
 
   @Override
   public void setMotionMagicSetpointAngle(double angle) {
     setpoint = convertWristDegreesToTicks(angle);
-    rotatorTalon.set(ControlMode.MotionMagic, setpoint);
+    rotator.set(ControlMode.MotionMagic, setpoint);
   }
 }

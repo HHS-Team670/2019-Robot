@@ -26,13 +26,13 @@ public class MeasureArbitraryFeedforward extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    tunableSubsystem.enablePercentOutput();
+    tunableSubsystem.stop();
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    tunableSubsystem.rotatePercentOutput(output); 
+    tunableSubsystem.moveByPercentOutput(output); 
     SmartDashboard.putNumber("Intake Movement Output", output);
   }
 
@@ -48,7 +48,7 @@ public class MeasureArbitraryFeedforward extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    tunableSubsystem.enablePercentOutput();
+    tunableSubsystem.stop();
   }
 
   // Called when another command which requires one or more of the same

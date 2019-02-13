@@ -43,7 +43,7 @@ public class MoveRotatorToSetpoint extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    rotatingSubsystem.enablePercentOutput();
+    rotatingSubsystem.stop();
     rotatingSubsystem.clearSetpoint();
   }
 
