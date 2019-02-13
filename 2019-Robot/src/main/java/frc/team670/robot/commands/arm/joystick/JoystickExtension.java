@@ -30,7 +30,7 @@ public class JoystickExtension extends InstantCommand {
   @Override
   protected void initialize() {
     if (FlipJoystickArmControl.state.equals(ArmControlMode.EXTENSION)) {
-      extension.setOutput(Arm.OPERATOR_ARM_CONTROL_SCALAR * Robot.oi.getOperatorController().getRightStickY());
+      // extension.setOutput(Arm.OPERATOR_ARM_CONTROL_SCALAR * Robot.oi.getOperatorController().getRightStickY());
     }
   }
 }
