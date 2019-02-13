@@ -40,6 +40,11 @@ public class TestExtension extends BaseExtension {
   }
 
   @Override
+  public int getLengthTicks() {
+    return 0;
+  }
+
+  @Override
   public void disableCurrentLimit() {
   }
 
