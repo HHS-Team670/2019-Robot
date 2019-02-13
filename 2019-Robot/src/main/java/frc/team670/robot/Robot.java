@@ -158,8 +158,10 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("current-arm-state", Arm.getCurrentState().toString());
     SmartDashboard.putNumber("intake-angle", intake.getAngleInDegrees());
     SmartDashboard.putNumber("elbow-angle", elbow.getAngleInDegrees());
+    SmartDashboard.putNumber("wrist-angle", wrist.getAngleInDegrees());
     SmartDashboard.putBoolean("intake-ir-sensor", sensors.getIntakeIROutput());
-    SmartDashboard.putNumber("arm-extension" , extension.getLengthInches() / extension.EXTENSION_OUT_IN_INCHES);
+    SmartDashboard.putNumber("extension-actual-length" , extension.getLengthInches());
+    SmartDashboard.putNumber("arm-extension" , extension.getLengthInches() / Extension.EXTENSION_OUT_IN_INCHES);
     leds.setClimbingData(true);//we climb
     intake.sendDataToDashboard(); 
     SmartDashboard.putNumber("NavX Yaw", sensors.getYawDouble());
