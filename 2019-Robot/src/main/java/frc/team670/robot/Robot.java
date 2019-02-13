@@ -7,8 +7,6 @@
 
 package frc.team670.robot;
 
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
@@ -165,7 +163,6 @@ public class Robot extends TimedRobot {
     leds.setClimbingData(true);//we climb
     intake.sendDataToDashboard(); 
     SmartDashboard.putNumber("NavX Yaw", sensors.getYawDouble());
-    // table.getEntry("gyro").setNumber((int) sensors.getAngle() % 360);
 
     intake.sendDataToDashboard();
     if (counter % 10 == 0) {
@@ -249,8 +246,6 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("robot-state", "teleopInit()");
 
     leds.setForwardData(true);
-
-    // table.getEntry("teleopState").setString("teleop started");
 
     Logger.consoleLog("Teleop Started");
     // This makes sure that the autonomous stops running when
