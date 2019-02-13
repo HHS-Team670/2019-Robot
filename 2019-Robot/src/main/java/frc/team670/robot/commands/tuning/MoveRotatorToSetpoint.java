@@ -54,3 +54,4 @@ public class MoveRotatorToSetpoint extends Command {
     end();
   }
 }
+

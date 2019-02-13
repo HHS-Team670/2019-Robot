@@ -8,6 +8,7 @@
 package frc.team670.robot.commands.arm.movement;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.Robot;
 import frc.team670.robot.commands.claw.DropBall;
 import frc.team670.robot.commands.claw.DropHatch;
@@ -25,6 +26,7 @@ public class PlaceOrGrab extends CommandGroup {
    * @param isPlacing whether or not an object is being placed (true if placing, false if grabbing)
    */
   public PlaceOrGrab(boolean isPlacing) {
+    SmartDashboard.putString("current-command", "PlaceOrGrab");
     ArmState state = Arm.getCurrentState();
     if (state.equals(Arm.getArmState(LegalState.PLACE_BALL_CARGOSHIP_BACK))) {
       addSequential(new DropBall(Robot.claw));

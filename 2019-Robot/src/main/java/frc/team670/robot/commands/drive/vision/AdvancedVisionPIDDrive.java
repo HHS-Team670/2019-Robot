@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangPi.VisionValues;
@@ -87,6 +88,7 @@ public class AdvancedVisionPIDDrive extends Command {
       Logger.consoleLog("No image found");
       end();
     }
+    SmartDashboard.putString("vision-status", "engaged");
 
     executeCount = 0;
 
@@ -144,12 +146,14 @@ public class AdvancedVisionPIDDrive extends Command {
     Robot.driveBase.stop();
     SettingUtils.releaseController(headingController);
     SettingUtils.releaseController(distanceController);
+    SmartDashboard.putString("vision-status", "");
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    Robot.driveBase.stop();
     Logger.consoleLog("AdvancedVisionPIDDrive Interrupted.");
     end();
   }
