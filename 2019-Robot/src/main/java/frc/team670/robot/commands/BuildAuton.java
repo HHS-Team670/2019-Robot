@@ -40,19 +40,15 @@ public class BuildAuton extends CommandGroup {
 
     // determines whether the robot starts facing backwards based on the first radio button
     boolean isRobotFacingBack = true;
-
-    /* if the robot starts facing back, the first path and arm command will be going backwards
-     * if the robot starts facing back, the second path and arm command will be going forwards
-     * if the robot starts facing back, the third path and arm command will be going backwards */
     
     // gets the destination the arm should go to
     destination = getLegalState(start, target1, height1); 
     // finds the file corresponding to the path the robot should take
     fileName = start + "_" + target1 + ".pf1.csv";
-    // drives along the path described by the file
-    addSequential(new DriveMotionProfile(fileName, true));
     // moves the arm to the destination while driving
     addParallel(new MoveArmAfterDriveDistance(Arm.getArmState(destination), arm, 36));
+    // drives along the path described by the file
+    addSequential(new DriveMotionProfile(fileName, true));
     if(pivot){
         addSequential(new NavXPivot(180));
         isRobotFacingBack = !isRobotFacingBack;
@@ -66,11 +62,11 @@ public class BuildAuton extends CommandGroup {
         addSequential(new PlaceOrGrab(true));
     }
  
-    // repeat for second target with robot direction flipped
+    // repeat for second target
     destination = getLegalState(target1, target2, height2); 
     fileName = target1 + "_" + target2 + ".pf1.csv";
-    addSequential(new DriveMotionProfile(fileName, !isRobotFacingBack));
     addParallel(new MoveArm(Arm.getArmState(destination), arm));
+    addSequential(new DriveMotionProfile(fileName, !isRobotFacingBack));
     if(pivot){
         addSequential(new NavXPivot(180));
         isRobotFacingBack = !isRobotFacingBack;
@@ -79,11 +75,11 @@ public class BuildAuton extends CommandGroup {
     addSequential(new AdvancedVisionPIDDrive());
     if (destination != LegalState.NEUTRAL) addSequential(new PlaceOrGrab(false));
 
-    // repeat for third target with original robot direction
+    // repeat for third target
     destination = getLegalState(target2, target3, height3); 
     fileName = target2 + "_" + target3 + ".pf1.csv";
-    addSequential(new DriveMotionProfile(fileName, isRobotFacingBack));
     addParallel(new MoveArm(Arm.getArmState(destination), arm));
+    addSequential(new DriveMotionProfile(fileName, isRobotFacingBack));
     if(pivot){
         addSequential(new NavXPivot(180));
         isRobotFacingBack = !isRobotFacingBack;
@@ -94,7 +90,7 @@ public class BuildAuton extends CommandGroup {
   }
 
   /**
-   * Returns the proper LegalState the arm should go to based on the target, height, and robot direction
+   * Returns the proper LegalState the arm should go to based on the start, target, and height
    */
   private LegalState getLegalState(String start, String target, String height) { 
         if (target.contains("Rocket") && (target.contains("1") || target.contains("3"))) {
