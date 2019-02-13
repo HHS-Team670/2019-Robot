@@ -13,6 +13,7 @@ import frc.team670.robot.commands.arm.movement.PlaceOrGrab;
 import frc.team670.robot.commands.drive.DriveMotionProfile;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.LegalState;
+import frc.team670.robot.commands.drive.vision.VisionPurePursuit;
 
 
 public class BuildAuton extends CommandGroup {
@@ -49,7 +50,7 @@ public class BuildAuton extends CommandGroup {
     // moves the arm to the destination while driving
     addParallel(new MoveArm(Arm.getArmState(destination), arm));
     // drives to target using vision
-    addSequential(new AdvancedVisionPIDDrive());
+    // addSequential(new VisionPurePursuit(DriveBase driveBase, MustangCoprocessor coprocessor, MustangSensors sensors, double spaceFromTarget, boolean isReversed)); // TODO fill in variables
     // makes sure the arm is not above the robot
     if (destination != LegalState.NEUTRAL) {
         // places the element the robot is carrying
@@ -61,7 +62,7 @@ public class BuildAuton extends CommandGroup {
     fileName = target1 + "_" + target2 + ".pf1.csv";
     addSequential(new DriveMotionProfile(fileName, !isRobotFacingBack));
     addParallel(new MoveArm(Arm.getArmState(destination), arm));
-    addSequential(new AdvancedVisionPIDDrive());
+    // addSequential(new VisionPurePursuit(DriveBase driveBase, MustangCoprocessor coprocessor, MustangSensors sensors, double spaceFromTarget, boolean isReversed)); // TODO fill in variables
     if (destination != LegalState.NEUTRAL) addSequential(new PlaceOrGrab(false));
 
     // repeat for third target with original robot direction
@@ -69,7 +70,7 @@ public class BuildAuton extends CommandGroup {
     fileName = target2 + "_" + target3 + ".pf1.csv";
     addSequential(new DriveMotionProfile(fileName, isRobotFacingBack));
     addParallel(new MoveArm(Arm.getArmState(destination), arm));
-    addSequential(new AdvancedVisionPIDDrive());
+    // addSequential(new VisionPurePursuit(DriveBase driveBase, MustangCoprocessor coprocessor, MustangSensors sensors, double spaceFromTarget, boolean isReversed)); // TODO fill in variables
     if (destination != LegalState.NEUTRAL) addSequential(new PlaceOrGrab(true));
   }
 
