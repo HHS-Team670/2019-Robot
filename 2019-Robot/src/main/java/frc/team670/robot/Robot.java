@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team670.robot.commands.ControlOperatorController;
 import frc.team670.robot.commands.drive.DriveMotionProfile;
 import frc.team670.robot.commands.drive.teleop.XboxRocketLeagueDrive;
 import frc.team670.robot.constants.RobotConstants;
@@ -61,8 +62,8 @@ public class Robot extends TimedRobot {
 
 
 
-  Command autonomousCommand;
-  SendableChooser<Command> auton_chooser = new SendableChooser<>();
+  private Command autonomousCommand, operatorControl;
+  private SendableChooser<Command> auton_chooser = new SendableChooser<>();
   public static SendableChooser<Boolean> pid_chooser = new SendableChooser<>();
 
   private NetworkTableInstance instance;
@@ -109,7 +110,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("KA", 0);
 
     autonomousCommand = new DriveMotionProfile("10ft-straight.pf1.csv", false);
-
+    operatorControl = new ControlOperatorController(oi.getOperatorController());
     updateArbitraryFeedForwards = new Notifier(new Runnable() {
       public void run() {
         wrist.updateArbitraryFeedForward();
@@ -210,6 +211,10 @@ public class Robot extends TimedRobot {
     // schedule the autonomous command (example)
     if (autonomousCommand != null) {
       autonomousCommand.start();
+    }
+
+    if (operatorControl != null) {
+      operatorControl.start();
     }
   }
 
