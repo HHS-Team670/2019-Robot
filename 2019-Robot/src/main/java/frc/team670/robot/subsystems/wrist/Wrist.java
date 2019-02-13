@@ -32,8 +32,8 @@ public class Wrist extends BaseWrist {
   private static final double MM_F = 0, MM_P = 0, MM_I = 0, MM_D = 0; //TODO figure out what these are
   private static final double ARBITRARY_FEEDFORWARD = 0; // TODO set this
   private static final int OFFSET_FROM_ENCODER_ZERO = 0; // TODO set this
-  private static final int WRIST_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 90; // TODO set this
-  private static final int WRIST_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS = 400; // TODO set this
+  private static final int WRIST_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 600; // TODO set this
+  private static final int WRIST_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS = 6000; // TODO set this
   public static final int FORWARD_SOFT_LIMIT = 850, REVERSE_SOFT_LIMIT = -940; // TODO set this
   
   public static final int QUAD_ENCODER_MAX = FORWARD_SOFT_LIMIT + 200, QUAD_ENCODER_MIN = REVERSE_SOFT_LIMIT - 200; //TODO Set these values based on soft limits (especially add/subtract)
