@@ -17,23 +17,20 @@ import frc.team670.robot.subsystems.BaseIntake;
 public class ButtonRunIntake extends InstantCommand {
   private BaseIntake intake;
   private boolean runningIn;
+  private double power;
 
-  public ButtonRunIntake(BaseIntake intake, boolean runningIn) {
+  public ButtonRunIntake(BaseIntake intake, boolean runningIn, double power) {
     this.intake = intake;
     this.runningIn = runningIn;
+    this.power = power;
   }
 
   // Called once when the command executes
   @Override
   protected void initialize() {
-<<<<<<< HEAD
     SmartDashboard.putString("current-command", "ButtonRunIntake");
 
     intake.runIntake(power, runningIn);
-=======
-
-    intake.runIntake(RunIntakeInWithIR.RUNNING_POWER, runningIn);
->>>>>>> parent of 1071d6e... Intake control changed
   }
 
 }

@@ -65,8 +65,8 @@ public class XKeys {
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-intake", (table2, key2, entry, value, flags) -> {
             if (value.toString().equals("run_intake_in_with_IR")) runIntakeInWithIR();
-            else if (value.toString().equals("run_intake_in_while_held")) runIntakeInWhileHeld();
-            else if (value.toString().equals("run_intake_out_while_held")) runIntakeOutWhileHeld();
+            else if (value.toString().equals("toggle_run_intake_in")) runIntakeIn();
+            else if (value.toString().equals("toggle_run_intake_out")) runIntakeOut();
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-autopickup", (table2, key2, entry, value, flags) -> {
             autoPickupBall();
@@ -108,7 +108,7 @@ public class XKeys {
 
     private void runIntakeIn() {
         if (intakeRunning) {
-            Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, intakeRunning));
+            Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, true, RunIntakeInWithIR.RUNNING_POWER));
             intakeRunning = false;
         } else {
             Scheduler.getInstance().add(new StopIntakeRollers(Robot.intake));
@@ -118,7 +118,7 @@ public class XKeys {
 
     private void runIntakeOut() {
         if (intakeRunning) {
-            Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, intakeRunning));
+            Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, false, RunIntakeInWithIR.RUNNING_POWER));
             intakeRunning = false;
         } else {
             Scheduler.getInstance().add(new StopIntakeRollers(Robot.intake));
@@ -142,14 +142,6 @@ public class XKeys {
         if (height == ClimbHeight.LEVEL2) setpoint = Climber.PISTON_ENCODER_LEVEL_TWO;
         if (height == ClimbHeight.LEVEL3) setpoint = Climber.PISTON_ENCODER_LEVEL_THREE;
         Scheduler.getInstance().add(new PistonClimbWithTiltControl(setpoint, Robot.climber, Robot.sensors));
-    }
-
-    private void runIntakeInWhileHeld(){
-        Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, true));
-    }
-
-    private void runIntakeOutWhileHeld() {
-        Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, false));
     }
 
     private void cancelArmClimb() {
