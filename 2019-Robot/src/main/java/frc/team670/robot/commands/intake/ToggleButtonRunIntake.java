@@ -7,27 +7,19 @@
 
 package frc.team670.robot.commands.intake;
 
-import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj.command.ConditionalCommand;
 import frc.team670.robot.subsystems.BaseIntake;
 
-/**
- * Add your docs here.
- */
-public class ButtonRunIntake extends InstantCommand {
-  private BaseIntake intake;
-  private boolean runningIn;
-  private double power;
+public class ToggleButtonRunIntake extends ConditionalCommand {
+  private boolean toggle;
 
-  public ButtonRunIntake(BaseIntake intake, double power, boolean runningIn) {
-    this.intake = intake;
-    this.runningIn = runningIn;
-    this.power = power;
+  public ToggleButtonRunIntake(BaseIntake intake, boolean runningIn, boolean toggle) {
+    super(new ButtonRunIntake(intake, RunIntakeInWithIR.RUNNING_POWER, runningIn), new ButtonRunIntake(intake, 0, runningIn));
+    this.toggle = toggle;
   }
 
-  // Called once when the command executes
   @Override
-  protected void initialize() {
-    intake.runIntake(power, runningIn);
+  protected boolean condition() {
+    return toggle;
   }
-
 }
