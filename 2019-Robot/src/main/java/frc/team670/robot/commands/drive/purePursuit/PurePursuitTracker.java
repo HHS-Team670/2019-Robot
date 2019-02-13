@@ -3,7 +3,12 @@ package frc.team670.robot.commands.drive.purePursuit;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import edu.wpi.first.wpilibj.Notifier;
+import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
+import frc.team670.robot.dataCollection.MustangSensors;
+import frc.team670.robot.subsystems.DriveBase;
+import frc.team670.robot.utils.functions.MathUtils;
 import frc.team670.robot.utils.math.DrivePower;
 import frc.team670.robot.utils.math.Vector;
 
@@ -19,11 +24,41 @@ public class PurePursuitTracker {
 	private Path path;
 	private double lookaheadDistance;
 	private double robotTrack = 0;
+	private	DrivePower drivePower;
 
-	public PurePursuitTracker(PoseEstimator poseEstimator) {
-        this.poseEstimator = poseEstimator;
+	private Notifier updater;
+
+	private boolean isReversed;
+
+	public PurePursuitTracker(PoseEstimator poseEstimator, DriveBase driveBase, MustangSensors sensors, boolean isReversed) {
+		this.poseEstimator = poseEstimator;
+		this.isReversed = isReversed;
+		updater = new Notifier( new Runnable() {
+			public void run() {
+				poseEstimator.update();
+				drivePower = update(poseEstimator.getPose(), MathUtils.convertDriveBaseTicksToInches(driveBase.getLeftVelocity()), MathUtils.convertDriveBaseTicksToInches(driveBase.getRightVelocity()), sensors.getRotationAngle().radians());
+				Robot.driveBase.velocityControl(MathUtils.convertInchesToDriveBaseTicks(drivePower.getLeft()), MathUtils.convertInchesToDriveBaseTicks(drivePower.getRight()));
+			}
+		});
         reset();
 	}
+
+
+	/**
+	 * Makes a Pure Pursuit Tracker that is not reversed
+	 */
+	public PurePursuitTracker(PoseEstimator poseEstimator, DriveBase driveBase, MustangSensors sensors) {
+		this(poseEstimator, driveBase, sensors, false);
+	}
+
+	public void startNotifier(double period){
+		updater.startPeriodic(period);
+	}
+
+	public void stopNotifier(){
+		updater.stop();
+	}
+
 
 	/**
 	 * Sets the path to be tracked
@@ -58,6 +93,7 @@ public class PurePursuitTracker {
 		for (int i = closestPointIndex + 1; i < robotPath.size(); i++) {
 			Vector startPoint = robotPath.get(i - 1);
 			Vector endPoint = robotPath.get(i);
+			// System.out.println("StartPoint: " + startPoint + ", EndPoint: " + endPoint);
 			if (i == robotPath.size() - 1)
 				onLastSegment = true;
 			Optional<Vector> lookaheadPtOptional = calculateLookAheadPoint(startPoint, endPoint, currPose, lookaheadDistance, onLastSegment);
@@ -66,22 +102,21 @@ public class PurePursuitTracker {
 				break;
 			}
 		}
+		
+		double targetVel = robotPath.get(getClosestPointIndex(currPose)).getVelocity();
+
 		double curvature = path.calculateCurvatureLookAheadArc(currPose, heading, lookaheadPoint, lookaheadDistance);
-		double leftTargetVel = calculateLeftTargetVelocity(robotPath.get(getClosestPointIndex(currPose)).getVelocity(), curvature);
-		double rightTargetVel = calculateRightTargetVelocity(robotPath.get(getClosestPointIndex(currPose)).getVelocity(), curvature);
+		double leftTargetVel = calculateLeftTargetVelocity(targetVel, curvature);
+		double rightTargetVel = calculateRightTargetVelocity(targetVel, curvature);
 
 		double leftFeedback = FEEDBACK_MULTIPLIER * (leftTargetVel - currLeftVel);
 		double rightFeedback = FEEDBACK_MULTIPLIER * (rightTargetVel - currRightVel);
-        /*
-        System.out.println("leftTargetVel: " + leftTargetVel);
-        System.out.println("rightTargetVel: " + rightTargetVel);
-        double rightFF = calculateFeedForward(rightTargetVel, currVel, true);
-        double leftFF = calculateFeedForward(leftTargetVel, currVel, false);
-        double rightFB = calculateFeedback(rightTargetVel, currVel);
-        double leftFB = calculateFeedback(leftTargetVel, currVel);
-        */
 
-		return new DrivePower(leftTargetVel + leftFeedback, rightTargetVel + rightFeedback);
+		double leftVel = leftTargetVel + leftFeedback;
+		double rightVel = rightTargetVel + rightFeedback;
+
+		// Flips the left and right velocities if it needs to be reversed
+		return new DrivePower((isReversed ? rightVel : leftVel), (isReversed ? leftVel : rightVel));
 	}
 
 	/**
@@ -102,8 +137,6 @@ public class PurePursuitTracker {
 	 * @return right target velocity
 	 */
 	private double calculateRightTargetVelocity(double targetRobotVelocity, double curvature) {
-		//System.out.println("target robot velocity: " + targetRobotVelocity);
-		//System.out.println("curvature " + curvature);
 		return targetRobotVelocity * ((2 - (robotTrack * curvature))) / 2;
 	}
 
@@ -157,9 +190,9 @@ public class PurePursuitTracker {
 	 */
 	private Optional<Vector> calculateLookAheadPoint(Vector startPoint, Vector endPoint, Vector currPos, double lookaheadDistance, boolean onLastSegment) {
 		Optional<Double> tIntersect = calcIntersectionTVal(startPoint, endPoint, currPos, lookaheadDistance);
-		if (tIntersect.isPresent() && onLastSegment) {
+		if (!tIntersect.isPresent() && onLastSegment) {
 			return Optional.of(path.getRobotPath().get(path.getRobotPath().size() - 1));
-		} else if (tIntersect.isPresent()) {
+		} else if (!tIntersect.isPresent()) {
 			return Optional.empty();
 		} else {
 			Vector intersectVector = Vector.sub(endPoint, startPoint, null);

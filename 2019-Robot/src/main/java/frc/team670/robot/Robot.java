@@ -20,7 +20,7 @@ import frc.team670.robot.commands.ControlOperatorController;
 import frc.team670.robot.commands.drive.DriveMotionProfile;
 import frc.team670.robot.commands.drive.teleop.XboxRocketLeagueDrive;
 import frc.team670.robot.constants.RobotConstants;
-import frc.team670.robot.dataCollection.MustangPi;
+import frc.team670.robot.dataCollection.MustangCoprocessor;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Claw;
@@ -44,7 +44,7 @@ import frc.team670.robot.utils.functions.MathUtils;
 public class Robot extends TimedRobot {
   public static OI oi;
   public static MustangSensors sensors = new MustangSensors();
-  public static MustangPi visionPi = new MustangPi();
+  public static MustangCoprocessor coprocessor = new MustangCoprocessor();
   public static DriveBase driveBase = new DriveBase();
   public static MustangLEDs_2019 leds = new MustangLEDs_2019();
 
@@ -121,7 +121,7 @@ public class Robot extends TimedRobot {
 
     checkVisionLock = new Notifier(new Runnable() {
       public void run() {
-        if(!MathUtils.doublesEqual(visionPi.getAngleToWallTarget().pidGet(), RobotConstants.VISION_ERROR_CODE)) {
+        if(!MathUtils.doublesEqual(coprocessor.getAngleToWallTarget(), RobotConstants.VISION_ERROR_CODE)) {
           leds.setVisionData(true);
         } else {
           boolean isReversed = XboxRocketLeagueDrive.isDriveReversed();

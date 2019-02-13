@@ -12,8 +12,11 @@ import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.commands.arm.movement.MoveArmAfterDriveDistance;
 import frc.team670.robot.commands.arm.movement.PlaceOrGrab;
 import frc.team670.robot.commands.drive.DriveMotionProfile;
+<<<<<<< HEAD
 import frc.team670.robot.commands.drive.pivot.NavXPivot;
 import frc.team670.robot.commands.drive.vision.AdvancedVisionPIDDrive;
+=======
+>>>>>>> 90311af... Started to port purepursuit - still need to finish the motors and comment code
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.LegalState;
 
