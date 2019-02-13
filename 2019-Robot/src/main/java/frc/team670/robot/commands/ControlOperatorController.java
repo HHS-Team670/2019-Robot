@@ -16,6 +16,7 @@ import frc.team670.robot.commands.arm.joystick.JoystickExtension;
 import frc.team670.robot.commands.arm.joystick.JoystickWrist;
 import frc.team670.robot.commands.climb.pistonClimb.JoystickPistonClimb;
 import frc.team670.robot.commands.intake.ButtonRunIntake;
+import frc.team670.robot.commands.intake.RunIntakeInWithIR;
 import frc.team670.robot.utils.MustangController;
 import frc.team670.robot.utils.MustangController.XboxButtons;
 
@@ -65,8 +66,8 @@ public class ControlOperatorController extends Command {
     }
 
     // Control running intake 
-    rightBumper.whileHeld(new ButtonRunIntake(Robot.intake, true));
-    leftBumper.whileHeld(new ButtonRunIntake(Robot.intake, false));
+    rightBumper.whileHeld(new ButtonRunIntake(Robot.intake, RunIntakeInWithIR.RUNNING_POWER, true));
+    leftBumper.whileHeld(new ButtonRunIntake(Robot.intake, RunIntakeInWithIR.RUNNING_POWER, false));
   }
 
   /**

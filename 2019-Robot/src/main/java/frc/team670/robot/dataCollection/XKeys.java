@@ -27,6 +27,7 @@ import frc.team670.robot.commands.intake.AutoPickupCargo;
 import frc.team670.robot.commands.intake.ButtonRunIntake;
 import frc.team670.robot.commands.intake.RunIntakeInWithIR;
 import frc.team670.robot.commands.intake.StopIntakeRollers;
+import frc.team670.robot.commands.intake.ToggleButtonRunIntake;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
 import frc.team670.robot.subsystems.Arm.LegalState;
@@ -45,6 +46,7 @@ public class XKeys {
     private NetworkTable table;
     private Command autonCommand;
     private ClimbHeight height;
+    private boolean toggleIntake;
 
     private boolean intakeRunning = true;
 
@@ -144,12 +146,12 @@ public class XKeys {
         Scheduler.getInstance().add(new PistonClimbWithTiltControl(setpoint, Robot.climber, Robot.sensors));
     }
 
-    private void runIntakeInWhileHeld(){
-        Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, true));
+    private void toggleRunIntakeIn(){
+        Scheduler.getInstance().add(new ToggleButtonRunIntake(Robot.intake, true, toggleIntake = !toggleIntake));
     }
 
-    private void runIntakeOutWhileHeld() {
-        Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, false));
+    private void toggleRunIntakeOut() {
+        Scheduler.getInstance().add(new ToggleButtonRunIntake(Robot.intake, false, toggleIntake = !toggleIntake));
     }
 
     private void cancelArmClimb() {

@@ -17,10 +17,12 @@ import frc.team670.robot.subsystems.BaseIntake;
 public class ButtonRunIntake extends InstantCommand {
   private BaseIntake intake;
   private boolean runningIn;
+  private double power;
 
-  public ButtonRunIntake(BaseIntake intake, boolean runningIn) {
+  public ButtonRunIntake(BaseIntake intake, double power, boolean runningIn) {
     this.intake = intake;
     this.runningIn = runningIn;
+    this.power = power;
   }
 
   // Called once when the command executes
@@ -28,7 +30,7 @@ public class ButtonRunIntake extends InstantCommand {
   protected void initialize() {
     SmartDashboard.putString("current-command", "ButtonRunIntake");
 
-    intake.runIntake(RunIntakeInWithIR.RUNNING_POWER, runningIn);
+    intake.runIntake(power, runningIn);
   }
 
 }
