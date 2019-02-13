@@ -52,7 +52,6 @@ public class PathGenerator {
      * Generates a not-reversed path
      */
     public Path generatePath() {
-        Path path = new Path(spacing);
         return generatePath(false);
     }
         

@@ -36,8 +36,8 @@ public class PurePursuitTracker {
 		updater = new Notifier( new Runnable() {
 			public void run() {
 				poseEstimator.update();
-				drivePower = update(poseEstimator.getPose(), MathUtils.convertDriveBaseTicksToInches(driveBase.getLeftVelocity()), MathUtils.convertDriveBaseTicksToInches(driveBase.getRightVelocity()), sensors.getRotationAngle().radians());
-				Robot.driveBase.velocityControl(MathUtils.convertInchesToDriveBaseTicks(drivePower.getLeft()), MathUtils.convertInchesToDriveBaseTicks(drivePower.getRight()));
+				drivePower = update(poseEstimator.getPose(), driveBase.getLeftSparkEncoderVelocityInches(), driveBase.getRightSparkEncoderVelocityInches(), sensors.getRotationAngle().radians());
+				Robot.driveBase.setSparkVelocityControl(drivePower.getLeft(), drivePower.getRight()); //Returns in inches/s
 			}
 		});
         reset();

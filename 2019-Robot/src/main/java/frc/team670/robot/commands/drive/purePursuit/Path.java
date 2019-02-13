@@ -206,7 +206,6 @@ public class Path {
 		
 		if(reverse) {
 			heading -= Math.PI; // Subtract Pi from heading (in Radians) so that it turns the right way when reversing
-			// System.out.println("Heading" + heading);
 		}
 		
 		double a = -Math.tan(heading);

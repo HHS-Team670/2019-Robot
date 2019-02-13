@@ -74,7 +74,7 @@ public class PurePursuit extends Command {
   @Override
   protected void end() {
     System.out.println("Ended, Pose: " + poseEstimator.getPose());
-    driveBase.velocityControl(0, 0);
+    driveBase.setSparkVelocityControl(0,0);
     purePursuitTracker.stopNotifier();
     purePursuitTracker.reset();
   }

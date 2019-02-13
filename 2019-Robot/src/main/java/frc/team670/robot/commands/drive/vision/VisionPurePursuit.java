@@ -24,6 +24,7 @@ import frc.team670.robot.utils.math.Vector;
 public class VisionPurePursuit extends InstantCommand {
   
   private static final double MAX_VEL = 16, MAX_ACC = 100, MAX_VELK = 1; // VELK = Curve Velocity (1-5)
+  //NOTE: Everything passed into the PurePursuit algorithm is in inches/s including constants above and output goes straight to the Spark Neos in inches/s as a velocity control - Check PurePursuitTracker Notifier for this output
   private static final double B = 0.9, A = 1 - B, TOLERANCE = 0.001;
 
   private PurePursuit command;

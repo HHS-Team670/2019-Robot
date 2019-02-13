@@ -64,6 +64,11 @@ public class MustangSensors {
     return ultrasonic.getWPIUltrasonicObject();
   }
 
+  public Rotation getRotationAngle() {
+    double headingRadians = Pathfinder.boundHalfDegrees(90 - getYawDouble());
+    return Rotation.fromDegrees(headingRadians);
+  }
+
   /**
    * Resets the NavX. This means that the NavX performs a shut-down and recalibration, taking time. Use this if it significantly drifs.
    */
