@@ -38,9 +38,9 @@ import frc.team670.robot.subsystems.Climber;
 
 /**
  * Listens on network tables to keys sent over by the XKeys keyboard and calls the corresponding commands
- * 
+ *
  * Link to XKeys bindings: https://docs.google.com/spreadsheets/d/1Y1cZvWabaVvush9LvfwKdRgCdmRTlztb67nWk5D-5x4/edit?usp=sharing
- * Link to Dashboard where XKeys are read in and values are sent over networktables: https://github.com/HHS-Team670/FRCDashboard 
+ * Link to Dashboard where XKeys are read in and values are sent over networktables: https://github.com/HHS-Team670/FRCDashboard
  */
 public class XKeys {
 
@@ -64,13 +64,11 @@ public class XKeys {
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-armstates", (table2, key2, entry, value, flags) -> {
             if (value.getType() != NetworkTableType.kString) return;
-            String s = value.getString();
-            moveArm(Arm.getArmState(LegalState.valueOf(s)));
+            moveArm(getArmState(value.getString()));
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-placing", (table2, key2, entry, value, flags) -> {
             if (value.getType() != NetworkTableType.kString) return;
             String s = value.getString();
-            SmartDashboard.putString("XKEYS", "placing listener");
             if (s.equals("place")) placeOrGrab(true);
             else if (s.equals("grab")) placeOrGrab(false);
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
@@ -90,7 +88,7 @@ public class XKeys {
             if (s.equals("set_climb_flat")) height = ClimbHeight.FLAT;
             else if (s.equals("set_climb_2")) height = ClimbHeight.LEVEL2;
             else if (s.equals("set_climb_3")) height = ClimbHeight.LEVEL3;
-            
+
             if (s.contains("cycle_climb")) nextStepArmClimb(height);
             else if (s.equals("piston_climb")) pistonClimb(height);
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
@@ -111,7 +109,32 @@ public class XKeys {
         return autonCommand;
     }
 
+    private ArmState getArmState(String in) {
+        LegalState legalState = null;
+        if (in.equals("READY_TO_CLIMB")) legalState = LegalState.READY_TO_CLIMB;
+        if (in.equals("READY_PLACE_HATCH_ROCKET_MIDDLE_BACK")) legalState = LegalState.READY_PLACE_HATCH_ROCKET_MIDDLE_BACK;
+        if (in.equals("READY_PLACE_BALL_ROCKET_MIDDLE_BACK")) legalState = LegalState.READY_PLACE_BALL_ROCKET_MIDDLE_BACK;
+        if (in.equals("READY_PLACE_BALL_ROCKET_MIDDLE_FORWARD")) legalState = LegalState.READY_PLACE_BALL_ROCKET_MIDDLE_FORWARD;
+        if (in.equals("READY_PLACE_HATCH_ROCKET_MIDDLE_FORWARD")) legalState = LegalState.READY_PLACE_HATCH_ROCKET_MIDDLE_FORWARD;
+        if (in.equals("GRAB_BALL_LOADINGSTATION_BACK")) legalState = LegalState.GRAB_BALL_LOADINGSTATION_BACK;
+        if (in.equals("PLACE_BALL_CARGOSHIP_BACK")) legalState = LegalState.PLACE_BALL_CARGOSHIP_BACK;
+        if (in.equals("PLACE_BALL_CARGOSHIP_FORWARD")) legalState = LegalState.PLACE_BALL_CARGOSHIP_FORWARD;
+        if (in.equals("GRAB_BALL_LOADINGSTATION_FORWARD")) legalState = LegalState.GRAB_BALL_LOADINGSTATION_FORWARD;
+        if (in.equals("READY_LOW_HATCH_BACK")) legalState = LegalState.READY_LOW_HATCH_BACK;
+        if (in.equals("READY_PLACE_BALL_ROCKET_LOW_BACK")) legalState = LegalState.READY_PLACE_BALL_ROCKET_LOW_BACK;
+        if (in.equals("READY_PLACE_BALL_ROCKET_LOW_FORWARD")) legalState = LegalState.READY_PLACE_BALL_ROCKET_LOW_FORWARD;
+        if (in.equals("READY_LOW_HATCH_FORWARD")) legalState = LegalState.READY_LOW_HATCH_FORWARD;
+        if (in.equals("GRAB_BALL_GROUND_BACK")) legalState = LegalState.GRAB_BALL_GROUND_BACK;
+        if (in.equals("GRAB_BALL_INTAKE")) legalState = LegalState.GRAB_BALL_INTAKE;
+        if (in.equals("READY_GRAB_HATCH_GROUND_BACK")) legalState = LegalState.READY_GRAB_HATCH_GROUND_BACK;
+        if (in.equals("STOW")) legalState = LegalState.STOW;
+        if (in.equals("NEUTRAL")) legalState = LegalState.NEUTRAL;
+
+        return Arm.getArmState(legalState);
+    }
+
     private void moveArm(ArmState state) {
+        SmartDashboard.putString("current-command", "moveArm()");
         Scheduler.getInstance().add(new MoveArm(state, Robot.arm));
     }
 
