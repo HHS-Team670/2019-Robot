@@ -8,20 +8,24 @@
 package frc.team670.robot.commands;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
-import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team670.robot.Robot;
 
 public class CancelAllCommands extends InstantCommand {
   public CancelAllCommands() {
-
+    requires(Robot.intake);
+    requires(Robot.driveBase);
+    requires(Robot.arm.getElbow());
+    requires(Robot.arm.getWrist());
+    requires(Robot.arm.getExtension());
+    requires(Robot.climber);
+    requires(Robot.claw);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
     SmartDashboard.putString("current-command", "CancelAllCommands");
-
-    Scheduler.getInstance().removeAll();
   }
 
 }
