@@ -3,7 +3,7 @@ package frc.team670.robot.constants;
 public class RobotConstants {
 
     // Robot Dimensions
-    public static final double ROBOT_LENGTH = 32, ROBOT_WIDTH = 27.5, DRIVEBASE_TO_GROUND = 0;
+    public static final double ROBOT_LENGTH = 32, ROBOT_WIDTH = 27.5, DRIVEBASE_TO_GROUND = 2;
 
     // Drive Base Dimensions TODO set these
     public static final double DRIVEBASE_GEAR_RATIO = 8.45; // 8.45 if low gear, 10.71 if high gear. TODO check which
@@ -18,14 +18,6 @@ public class RobotConstants {
     public static final int DIO_TICKS_PER_INCH = (int) (DIO_TICKS_PER_ROTATION / (Math.PI * DRIVE_BASE_WHEEL_DIAMETER));
      /** The number of ticks per rotation of a drivebase wheel for the SPARK Encoders  */
      public static final int SPARK_TICKS_PER_ROTATION = 1024;
-
-    // TODO Set all of these!!!!
-    public static double EXTENSION_TICKS_PER_MOTOR_ROTATION = 4096; //Subject to change, measure real value
-    public static double EXTENSION_MOTOR_ROTATIONS_PER_INCH = 0.05371428571; //Should be real value
-    /** Elbow will have an absolute Mag Encoder */
-    public static double ELBOW_TICKS_PER_ROTATION = 4096; // Still needs to be set
-    /** Wrist has an abolute Mag Encoder */
-    public static double WRIST_TICKS_PER_ROTATION = 4096; //Subject to change, check sources
 
     // LEDs
     public static final int LED_PORT = 5801;

@@ -45,7 +45,7 @@ public class ExtensionBackReset extends Command {
    */
   @Override
   protected void end() {
-    extension.setQuadratureEncoder(Extension.REVERSE_SOFT_LIMIT);
+    extension.setQuadratureEncoder(Extension.EXTENSION_IN_POS);
     extension.setOutput(0);
     Logger.consoleLog();
   }

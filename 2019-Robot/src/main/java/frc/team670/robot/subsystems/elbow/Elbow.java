@@ -43,10 +43,15 @@ public class Elbow extends BaseElbow {
   private static final double ARBITARY_FEEDFORWARD_FULL_EXTENSION = 0; // Arbitrary Feedforward when elbow is fully extended TODO SET THIS
   private static final double ARBITRARY_FEEDFORWARD_EXTENSION_LENGTH_SCALAR = (ARBITARY_FEEDFORWARD_FULL_EXTENSION - NO_EXTENSION_ARBITRARY_FEEDFORWARD) / Extension.MAX_POSITION_TICKS; // Extra Feedforward per extension tick
 
+  public static final int FORWARD_LIMIT_SWITCH_TICKS = 0; // TODO set this
+  public static final int REVERSE_LIMIT_SWITCH_TICKS = 0; // TODO set this
+
+  private static final int ELBOW_TICKS_PER_ROTATION = (int) (4096 * 1.2); //1 encoder rotation = 0.8333 arm rotations. The arm max range is 300 degrees, so this remains inside that.
 
 
   public Elbow() {
     super(new TalonSRX(RobotMap.ARM_ELBOW_ROTATION_MOTOR_TALON), NO_EXTENSION_ARBITRARY_FEEDFORWARD, FORWARD_SOFT_LIMIT, REVERSE_SOFT_LIMIT, false, QUAD_ENCODER_MIN, QUAD_ENCODER_MAX, NORMAL_CONTINUOUS_CURRENT_LIMIT, PEAK_CURRENT_LIMIT, OFFSET_FROM_ENCODER_ZERO);
+   
     elbowRotationSlave = new VictorSPX(RobotMap.ARM_ELBOW_ROTATION_MOTOR_VICTOR);
     elbowRotationSlave.set(ControlMode.Follower, rotator.getDeviceID());  
 
@@ -139,13 +144,13 @@ public class Elbow extends BaseElbow {
   private static int convertElbowDegreesToTicks(double degrees) {
     // If straight up is 0 and going forward is positive
     // percentage * half rotation
-    return (int)((degrees / 360) * TICKS_PER_ROTATION);
+    return (int)((degrees / 360) * ELBOW_TICKS_PER_ROTATION);
   }
 
   private static double convertElbowTicksToDegrees(double ticks) {
     // If straight up is 0 and going forward is positive
     // percentage * half degrees rotation
-    return ((360 * ticks) / TICKS_PER_ROTATION);
+    return ((360 * ticks) / ELBOW_TICKS_PER_ROTATION);
   }
 
   public double getForwardSoftLimitAngle(){

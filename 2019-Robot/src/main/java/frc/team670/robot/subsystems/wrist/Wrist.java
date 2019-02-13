@@ -39,6 +39,8 @@ public class Wrist extends BaseWrist {
   public static final int QUAD_ENCODER_MAX = FORWARD_SOFT_LIMIT + 200, QUAD_ENCODER_MIN = REVERSE_SOFT_LIMIT - 200; //TODO Set these values based on soft limits (especially add/subtract)
   public static final double MAX_WRIST_OUTPUT = 0.4;
 
+  public static final int TICKS_PER_ROTATION = 4096; //Subject to change, check sources
+
   public Wrist() {
     super(new TalonSRX(RobotMap.ARM_WRIST_ROTATION), ARBITRARY_FEEDFORWARD, FORWARD_SOFT_LIMIT, REVERSE_SOFT_LIMIT, false, QUAD_ENCODER_MIN, QUAD_ENCODER_MAX, CONTINUOUS_CURRENT_LIMIT, PEAK_CURRENT_LIMIT, OFFSET_FROM_ENCODER_ZERO);
     rotator.selectProfileSlot(MOTION_MAGIC_SLOT, kPIDLoopIdx);
