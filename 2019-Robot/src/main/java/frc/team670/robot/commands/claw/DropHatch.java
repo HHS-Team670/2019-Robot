@@ -9,6 +9,8 @@ package frc.team670.robot.commands.claw;
 
 import edu.wpi.first.wpilibj.command.TimedCommand;
 import frc.team670.robot.subsystems.Claw;
+import frc.team670.robot.subsystems.wrist.Wrist;
+import frc.team670.robot.subsystems.wrist.Wrist.HeldItem;
 import frc.team670.robot.utils.Logger;
 
 /**
@@ -17,10 +19,12 @@ import frc.team670.robot.utils.Logger;
 public class DropHatch extends TimedCommand {
  
   private Claw claw;
+  private Wrist wrist;
 
-  public DropHatch(Claw claw) {
+  public DropHatch(Claw claw, Wrist wrist) {
     super(Claw.TIME_TO_MOVE);
     this.claw = claw;
+    this.wrist = wrist;
     requires(claw);
   }
 
@@ -32,8 +36,20 @@ public class DropHatch extends TimedCommand {
   }
 
   @Override
+  protected void end() {
+    super.end();
+    wrist.setHeldItem(HeldItem.NONE);
+  }
+
+  @Override
   protected boolean isFinished() {
     return super.isFinished();
+  }
+
+  @Override
+  protected void interrupted() {
+    super.interrupted();
+    end();
   }
 
 }
