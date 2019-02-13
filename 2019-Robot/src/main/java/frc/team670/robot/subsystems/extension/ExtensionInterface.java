@@ -33,6 +33,8 @@ public interface ExtensionInterface {
 
   public boolean isReverseLimitPressed();
 
+  public int getLengthTicks();
+
   /**
    * @return true if forward limit switch closed, false if not
    */

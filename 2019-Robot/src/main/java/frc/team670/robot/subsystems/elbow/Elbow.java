@@ -8,12 +8,15 @@
 package frc.team670.robot.subsystems.elbow;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
+import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
+import frc.team670.robot.subsystems.extension.Extension;
 
 /**
  * Controls motors for elbow movement
@@ -27,6 +30,8 @@ public class Elbow extends BaseElbow {
   private static final int CLIMBING_CONTINUOUS_CURRENT_LIMIT = 35, NORMAL_CONTINUOUS_CURRENT_LIMIT = 33, PEAK_CURRENT_LIMIT = 0; // TODO set current limit in Amps
   private static final double CURRENT_P = 0.2, CURRENT_I = 0.0, CURRENT_D = 0.0, CURRENT_F = 0.0; // TODO Check these constants
 
+  private static final double MAX_ELBOW_OUTPUT = 0.8; // TODO set this
+
   // Motion Magic
   private static final int kPIDLoopIdx = 0, MOTION_MAGIC_SLOT = 0, kTimeoutMs = 0;
   private static final double MM_F = 0, MM_P = 0, MM_I = 0, MM_D = 0; //TODO figure out what these are
@@ -35,13 +40,13 @@ public class Elbow extends BaseElbow {
   private static final int OFFSET_FROM_ENCODER_ZERO = 0; // TODO set this
   public static final int FORWARD_SOFT_LIMIT = 850, REVERSE_SOFT_LIMIT = -940; // SET THIS
   private static final int QUAD_ENCODER_MIN = FORWARD_SOFT_LIMIT + 200, QUAD_ENCODER_MAX = REVERSE_SOFT_LIMIT - 200;// SET THIS BASED ON FORWARD AND REVERSE
-  private static final double ARBITRARY_FEEDFORWARD = 0; // TODO SET THIS
-  private static final double MAX_ELBOW_OUTPUT = 0.8;
-  private static final double ARBITARY_FEEDFORWARD_FULL_EXTENSION = 0; // Arbitrary feedforward when elbow is fully extended
+  private static final double NO_EXTENSION_ARBITRARY_FEEDFORWARD = 0; // Arbitrary Feedforward at no extension. TODO SET THIS
+  private static final double ARBITARY_FEEDFORWARD_FULL_EXTENSION = 0; // Arbitrary Feedforward when elbow is fully extended TODO SET THIS
+  private static final double ARBITRARY_FEEDFORWARD_EXTENSION_LENGTH_SCALAR = (ARBITARY_FEEDFORWARD_FULL_EXTENSION - NO_EXTENSION_ARBITRARY_FEEDFORWARD) / Extension.MAX_POSITION_TICKS; // Extra Feedforward per extension tick
 
 
   public Elbow() {
-    super(new TalonSRX(RobotMap.ARM_ELBOW_ROTATION_MOTOR_TALON), ARBITRARY_FEEDFORWARD, FORWARD_SOFT_LIMIT, REVERSE_SOFT_LIMIT, false, QUAD_ENCODER_MIN, QUAD_ENCODER_MAX, NORMAL_CONTINUOUS_CURRENT_LIMIT, PEAK_CURRENT_LIMIT, OFFSET_FROM_ENCODER_ZERO);
+    super(new TalonSRX(RobotMap.ARM_ELBOW_ROTATION_MOTOR_TALON), NO_EXTENSION_ARBITRARY_FEEDFORWARD, FORWARD_SOFT_LIMIT, REVERSE_SOFT_LIMIT, false, QUAD_ENCODER_MIN, QUAD_ENCODER_MAX, NORMAL_CONTINUOUS_CURRENT_LIMIT, PEAK_CURRENT_LIMIT, OFFSET_FROM_ENCODER_ZERO);
     elbowRotationSlave = new VictorSPX(RobotMap.ARM_ELBOW_ROTATION_MOTOR_VICTOR);
     elbowRotationSlave.set(ControlMode.Follower, rotator.getDeviceID());  
 
@@ -141,6 +146,14 @@ public class Elbow extends BaseElbow {
     // If straight up is 0 and going forward is positive
     // percentage * half degrees rotation
     return ((360 * ticks) / TICKS_PER_ROTATION);
+  }
+
+  @Override
+  public synchronized void updateArbitraryFeedForward() {
+    if(setpoint != NO_SETPOINT) {
+      double value = getArbitraryFeedForwardAngleMultiplier() * (ARBITRARY_FEEDFORWARD_EXTENSION_LENGTH_SCALAR * Robot.arm.getExtension().getLengthTicks() + arbitraryFeedForwardConstant);
+      rotator.set(ControlMode.MotionMagic, setpoint, DemandType.ArbitraryFeedForward, value);
+    }
   }
 
   @Override

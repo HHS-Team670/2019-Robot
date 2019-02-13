@@ -32,6 +32,7 @@ public class Extension extends BaseExtension {
   private static final int CONTINUOUS_CURRENT_LIMIT = 20, PEAK_CURRENT_LIMIT = 0;
 
   private static final int START_POSITION_TICKS = 0; // TODO set this. Start position needed since extension has no absolute encoder
+  public static final int MAX_POSITION_TICKS = 0; // TODO set this
 
   // Motion Magic
   private static final int kPIDLoopIdx = 0, MOTION_MAGIC_SLOT = 0, kTimeoutMs = 0;
@@ -124,6 +125,11 @@ public class Extension extends BaseExtension {
 
   private int getPositionTicks() {
     return extensionMotor.getSelectedSensorPosition(0);
+  }
+
+  @Override
+  public int getLengthTicks() {
+    return getPositionTicks();
   }
   
   @Override
