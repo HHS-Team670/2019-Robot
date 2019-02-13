@@ -5,39 +5,36 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.commands.arm.joystick;
+package frc.team670.robot.commands.arm.movement;
 
-import edu.wpi.first.wpilibj.command.InstantCommand;
-import frc.team670.robot.utils.ArmControlMode;
+import frc.team670.robot.Robot;
+import frc.team670.robot.constants.RobotConstants;
+import frc.team670.robot.subsystems.Arm;
+import frc.team670.robot.subsystems.Arm.ArmState;
 
 /**
  * Add your docs here.
  */
-public class FlipJoystickArmControl extends InstantCommand {
+public class MoveArmAfterDriveDistance extends MoveArm {
+  private int inchesToStart;
   /**
    * Add your docs here.
    */
-  public static ArmControlMode state;
-
-  public FlipJoystickArmControl() {
-    super();
+  public MoveArmAfterDriveDistance(ArmState destination, Arm arm, int inchesToStart) {
+    super(destination, arm);
+    this.inchesToStart = inchesToStart;
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-    state = ArmControlMode.DISABLED;
   }
 
   // Called once when the command executes
   @Override
   protected void initialize() {
-    if (state.equals(ArmControlMode.DISABLED)) {
-      state = ArmControlMode.ELBOW;
-    } else if (state.equals(ArmControlMode.ELBOW)) {
-      state = ArmControlMode.EXTENSION;
-    } else if (state.equals(ArmControlMode.EXTENSION)) {
-      state = ArmControlMode.WRIST;
-    } else {
-      state = ArmControlMode.DISABLED;
+    while (Robot.driveBase.getLeftDIOEncoderPosition() / RobotConstants.DIO_TICKS_PER_INCH < inchesToStart) {
+      // do nothing
     }
+    // do this after the loop exits
+    super.initialize();
   }
 
 }

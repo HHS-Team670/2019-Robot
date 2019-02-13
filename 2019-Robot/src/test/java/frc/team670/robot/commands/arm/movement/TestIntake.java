@@ -45,19 +45,13 @@ public class TestIntake extends BaseIntake {
 
     }
 
-    /**
+    /*
      * Returns the intake angle in degrees
      */
     public double getAngleInDegrees() {
         return intakeAngle;
     }
 
-    @Override
-    /**
-     * Runs the intake at a given percent power
-     * 
-     * @param percentOutput The desired percent power for the rollers to run at [-1, 1]
-     */
     public void runIntake(double power, boolean i) {
 
     }
@@ -98,6 +92,4 @@ public class TestIntake extends BaseIntake {
     public void stop() {
         
     }
-
-
 }

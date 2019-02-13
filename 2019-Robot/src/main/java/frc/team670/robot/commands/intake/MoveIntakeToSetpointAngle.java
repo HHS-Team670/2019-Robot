@@ -72,6 +72,7 @@ public class MoveIntakeToSetpointAngle extends Command {
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    intake.setMotionMagicSetpointAngle(intake.getAngleInDegrees());
     end();
     Logger.consoleLog();
   }

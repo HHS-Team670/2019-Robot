@@ -67,6 +67,7 @@ public class MoveExtension extends Command {
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    extension.setMotionMagicSetpointInInches(extension.getLengthInches());
     Logger.consoleLog();
     end();
   }

@@ -22,4 +22,8 @@ public abstract class BaseExtension extends Subsystem implements ExtensionInterf
     // Set the default command for a subsystem here.
     // setDefaultCommand(new MySpecialCommand());
   }
+
+  public abstract double getForwardSoftLimitInInches();
+
+  public abstract double getReverseSoftLimitInInches();
 }

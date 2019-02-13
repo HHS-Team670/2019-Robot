@@ -20,6 +20,10 @@ public abstract class BaseElbow extends RotatingSubsystem implements ElbowInterf
     super(rotatorTalon, arbitraryFeedForwardConstant, forwardSoftLimit, reverseSoftLimit, timeout, quadEncoerMin, quadEncoderMax, continuousCurrentLimit, peakCurrentLimit, offsetFromEncoderZero);
   }
 
+  public abstract double getForwardSoftLimitAngle();
+
+  public abstract double getReverseSoftLimitAngle();
+
   @Override
   protected void initDefaultCommand() {
     

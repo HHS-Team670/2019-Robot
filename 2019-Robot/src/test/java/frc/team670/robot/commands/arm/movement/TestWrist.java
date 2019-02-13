@@ -73,4 +73,14 @@ public class TestWrist extends BaseWrist{
         return 0;
     }
 
+    @Override
+    public double getForwardSoftLimitAngle() {
+        return 0;
+    }
+
+    @Override
+    public double getReverseSoftLimitAngle() {
+        return 0;
+    }
+
 }

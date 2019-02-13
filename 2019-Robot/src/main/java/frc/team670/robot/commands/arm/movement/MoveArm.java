@@ -10,6 +10,7 @@ package frc.team670.robot.commands.arm.movement;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
 
@@ -30,6 +31,8 @@ public class MoveArm extends InstantCommand {
   // Called once when the command executes
   @Override
   protected void initialize() {
+
+    SmartDashboard.putString("current-command", "MoveArm");
 
     CommandGroup moveArm = ArmPathGenerator.getPath(destination, arm);
     // TODO add stuff in here to store the path made based on the currentState and then do a lookup instead of a new search

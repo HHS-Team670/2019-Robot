@@ -7,7 +7,7 @@
 
 package frc.team670.robot.commands.climb.pistonClimb;
 
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team670.robot.subsystems.Climber;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.MustangController;
@@ -16,34 +16,27 @@ import frc.team670.robot.utils.MustangController;
  * Runs the piston climb with a percent output based on input from the joystick
  * 
  */
-public class JoystickPistonClimb extends Command {
+public class JoystickPistonClimb extends InstantCommand {
   private Climber climber;
-  private MustangController controller;
   private int tolerance = 500;
+  private double frontPower, backPower;
   private int loggingIterationCounter;
 
   /**
    * @param climber    the climber being used
    * @param controller the operator controller being used
    */
-  public JoystickPistonClimb(Climber climber, MustangController controller) {
+  public JoystickPistonClimb(Climber climber, double leftPower, double rightPower) {
     this.climber = climber;
-    this.controller = controller;
+    this.frontPower = leftPower;
+    this.backPower = rightPower;
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    Logger.consoleLog("startBackPistonPosition:%s startFrontPistonPosition:%s ", climber.getBackTalonPositionInTicks(), climber.getFrontTalonPositionInTicks());
-  }
-
-  // Called repeatedly when this Command is scheduled to run
-  @Override
-  protected void execute() {
-    double frontPower = controller.getLeftStickY();
-    frontPower *= (frontPower > 0) ? Climber.MAXIMUM_PISTON_POWER : -1 * Climber.MINIMUM_PISTON_POWER; //Multiplied by -1 because constant is negative and so is stick input
-    double backPower = controller.getRightStickY();
-    backPower *= (backPower > 0) ? Climber.MAXIMUM_PISTON_POWER : -1 * Climber.MINIMUM_PISTON_POWER; //Multiplied by -1 because constant is negative and so is stick input
+    frontPower *= (frontPower > 0) ? (0.75 * Climber.MAXIMUM_PISTON_POWER) : -0.8 * Climber.MINIMUM_PISTON_POWER; //Multiplied by -1 because constant is negative and so is stick input
+    backPower *= (backPower > 0) ? (0.75 * Climber.MAXIMUM_PISTON_POWER) : -0.8 * Climber.MINIMUM_PISTON_POWER; //Multiplied by -1 because constant is negative and so is stick input
 
     // Front pistons are approaching flat position so either the entire robot is
     // almost back down or the front pistons are almost retracted. If the original
@@ -77,12 +70,6 @@ public class JoystickPistonClimb extends Command {
     Logger.consoleLog("currentBackPistonPosition:%s currentFrontPistonPosition:%s", climber.getBackTalonPositionInTicks(), climber.getFrontTalonPositionInTicks());
 
     loggingIterationCounter++;
-  }
-
-  // Make this return true when this Command no longer needs to run execute()
-  @Override
-  protected boolean isFinished() {
-    return false;
   }
 
   // Called once after isFinished returns true

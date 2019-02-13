@@ -166,4 +166,5 @@ public class Intake extends BaseIntake {
   public double getAngleInDegrees() {
     return convertIntakeTicksToDegrees(getPositionTicks());
   }
+
 }

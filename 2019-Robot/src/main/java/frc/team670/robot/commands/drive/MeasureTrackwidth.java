@@ -40,7 +40,6 @@ public class MeasureTrackwidth extends Command {
   @Override
   protected void execute() {
     Robot.driveBase.tankDrive(-0.3, 0.3);
-    SmartDashboard.putNumber("current angle: ", Robot.sensors.getAngle());
     Logger.consoleLog("Current Angle: " + Robot.sensors.getAngle() + "");
     Logger.consoleLog("Goal Angle: " + goalAngle + "");
   }
