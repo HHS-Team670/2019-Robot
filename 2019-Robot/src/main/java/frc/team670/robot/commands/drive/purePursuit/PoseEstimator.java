@@ -1,7 +1,8 @@
 package frc.team670.robot.commands.drive.purePursuit;
 
-import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.DriveBase;
+import frc.team670.robot.dataCollection.MustangSensors;
+import frc.team670.robot.utils.functions.MathUtils;
 import frc.team670.robot.utils.math.Kinematics;
 import frc.team670.robot.utils.math.RigidTransform;
 import frc.team670.robot.utils.math.Rotation;
@@ -21,6 +22,11 @@ public class PoseEstimator {
 		reset();
 		this.driveBase = driveBase;
 		this.sensors = sensors;
+
+		prevLeftDist = -1 * MathUtils.convertDriveBaseTicksToInches(driveBase.getLeftEncoderPosition());
+		prevRightDist = -1 * MathUtils.convertDriveBaseTicksToInches(driveBase.getRightEncoderPosition());
+		update();
+		// System.out.println("Start Pose: " + pose);
 	}
 	public void setDriveTrainBase(DriveBase driveTrainBase) {
 		this.driveBase = driveTrainBase;
@@ -54,16 +60,21 @@ public class PoseEstimator {
 	}
 
 	public void update() {
-		double leftDist = driveBase.getLeftMustangEncoderPositionInInches();
-		double rightDist = driveBase.getRightMustangEncoderPositionInInches();
+		double leftDist, rightDist; // TODO make these non negative if drivebase does not have encoders flipped negative
+		leftDist = -1* MathUtils.convertDriveBaseTicksToInches(driveBase.getLeftEncoderPosition());
+		rightDist = -1* MathUtils.convertDriveBaseTicksToInches(driveBase.getRightEncoderPosition());
+		// System.out.println("LeftDist: " + leftDist + ", RightDist: " + rightDist);
 		double deltaLeftDist = leftDist - prevLeftDist;
 		double deltaRightDist = rightDist - prevRightDist;
-		Rotation deltaHeading = prevPose.getRotation().inverse().rotate(sensors.getRotation());
+		Rotation deltaHeading = prevPose.getRotation().inverse().rotate(sensors.getRotationAngle());
+
 		//Use encoders + gyro to determine our velocity
 		velocity = Kinematics.forwardKinematics(deltaLeftDist, deltaRightDist, deltaHeading.radians());
+
 		//use velocity to determine our pose
 		pose = Kinematics.integrateForwardKinematics(prevPose, velocity);
 		//update for next iteration
+		// System.out.println(pose);
 		prevLeftDist = leftDist;
 		prevRightDist = rightDist;
 		prevPose = pose;

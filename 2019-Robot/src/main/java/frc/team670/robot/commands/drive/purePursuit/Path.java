@@ -1,7 +1,6 @@
 package frc.team670.robot.commands.drive.purePursuit;
 
 import frc.team670.robot.utils.math.Vector;
-
 import java.util.ArrayList;
 
 public class Path {
@@ -9,8 +8,16 @@ public class Path {
 	private ArrayList<Vector> robotPath = new ArrayList<>();
 	private Vector endVector = new Vector(0, 0);
 
+	private boolean reverse;
+
+    public Path(double spacing, boolean reverse) {
+		this.spacing = spacing;
+		this.reverse = reverse;
+    }
+
 	public Path(double spacing) {
 		this.spacing = spacing;
+		reverse = false;
 	}
 
 	public ArrayList<Vector> getRobotPath() {
@@ -25,14 +32,24 @@ public class Path {
 		return robotPath.get(robotPath.size() - 1);
 	}
 
+	/**
+	 * Initializes the path
+	 *
+	 * @param maxVel   maximum robot velocity
+	 * @param maxAccel maximum robot acceleration
+	 * @param maxVelk  maximum turning velocity (between 1-5)
+	 */
 	public void initializePath(double maxVel, double maxAccel, double maxVelk) {
 		setCurvatures();
 		setDistances();
 		setTargetVelocities(maxVel, maxAccel, maxVelk);
 	}
 
-	//adds a start and end point Vector to the robotPath ArrayList
-
+	/**
+	 * Adds a path segment to this path
+	 * @param start starting point
+	 * @param end ending point
+	 */
 	public void addSegment(Vector start, Vector end) {
 		ArrayList<Vector> injectTemp = new ArrayList<>();
 		injectPoints(start, end, injectTemp);
@@ -40,8 +57,12 @@ public class Path {
 		endVector = end;
 	}
 
-	//methods to populate the path with more points, then to smooth the points in the path
-
+	/**
+	 * Injects points into this path
+	 * @param startPt starting point
+	 * @param endPt ending point
+	 * @param temp temporary storage for injected points
+	 */
 	private void injectPoints(Vector startPt, Vector endPt, ArrayList<Vector> temp) {
 		Vector vector = new Vector(Vector.sub(endPt, startPt, null));
         double pointsCount = Math.ceil(vector.norm() / spacing);
@@ -53,6 +74,12 @@ public class Path {
 		}
 	}
 
+	/**
+	 * Smooths the path using gradient descent
+	 * @param a 1-b
+	 * @param b smoothing factor (higher = more smooth)
+	 * @param tolerance convergence tolerance amount (higher = less smoothing)
+	 */
 	public void smooth(double a, double b, double tolerance) {
 		ArrayList<Vector> newPath = new ArrayList<>();
 		for (Vector v : robotPath) {
@@ -160,7 +187,7 @@ public class Path {
 			double distance = Vector.dist(robotPath.get(i + 1), robotPath.get(i));
 			//System.out.println(robotPath.get(i));
 			double maxReachableVel = Math.sqrt(Math.pow(robotPath.get(i + 1).getVelocity(), 2) + (2 * maxAccel * distance));
-			robotPath.get(i).setVelocity(Math.min(calculateMaxVelocity(robotPath, i, maxVel, k), maxReachableVel));
+			robotPath.get(i).setVelocity(Math.min(calculateMaxVelocity(robotPath, i, maxVel, k), maxReachableVel) * (reverse ? -1 : 1));
 		}
 	}
 
@@ -176,6 +203,12 @@ public class Path {
 	//calculating the curvature necessary for a lookahead arc
 
 	public double calculateCurvatureLookAheadArc(Vector currPos, double heading, Vector lookahead, double lookaheadDistance) {
+		
+		if(reverse) {
+			heading -= Math.PI; // Subtract Pi from heading (in Radians) so that it turns the right way when reversing
+			// System.out.println("Heading" + heading);
+		}
+		
 		double a = -Math.tan(heading);
 		double b = 1;
 		double c = (Math.tan(heading) * currPos.x) - currPos.y;

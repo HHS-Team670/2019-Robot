@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.commands.arm.movement.PlaceOrGrab;
 import frc.team670.robot.commands.drive.DriveMotionProfile;
-import frc.team670.robot.commands.drive.vision.AdvancedVisionPIDDrive;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.LegalState;
 

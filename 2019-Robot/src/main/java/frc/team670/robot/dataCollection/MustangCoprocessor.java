@@ -16,29 +16,34 @@ import frc.team670.robot.constants.RobotConstants;
  * Stores values off of NetworkTables for easy retrieval and gives them Listeners to update the stored values
  * as they are changed.
  */
-public class MustangPi {
+public class MustangCoprocessor {
 
     private HashMap<String, NetworkTableObject> entries;
 
     private VisionValues wallTarget; 
 
     // The keys for the NetworkTable entries that the raspberry pi is putting up. Ensure that these are placed on the raspi also. Maybe make a shared config file
-    private static final String[] RASPI_KEYS = new String[] {"reflect_tape_vision_data"};
+    private static final String[] NETWORK_TABLE_KEYS = new String[] {"reflect_tape_vision_data"};
     // The name of the subtable set on the raspberry pi
     private static final String TABLE_NAME = "SmartDashboard";
 
-    // TODO Literally all of this code below needs a review from someone who knows what they're talking about - Shaylan
+    //Vision Constants
+    public static final double TARGET_HEIGHT = 31; //inches
+    public static final double CAMERA_HEIGHT = 8.75; //inches
+    private final double targetHeightRelativeToCamera = TARGET_HEIGHT - CAMERA_HEIGHT; //inches
+    private  final double cameraHorizontalOffset = 5.25; //inches
+    private final double verticalCameraOffsetAngle = 27; //degrees
 
-    public MustangPi() {
-        this(RASPI_KEYS);
+    public MustangCoprocessor() {
+        this(NETWORK_TABLE_KEYS);
     }
 
-    private MustangPi(String[] keys) {
+    private MustangCoprocessor(String[] keys) {
         entries = new HashMap<String, NetworkTableObject>();
         for(String key : keys){
            entries.put(key, new NetworkTableObject(key));
         }
-        wallTarget = new VisionValues(RASPI_KEYS[0]);
+        wallTarget = new VisionValues(NETWORK_TABLE_KEYS[0]);
     }
 
     private class NetworkTableObject {
@@ -80,78 +85,122 @@ public class MustangPi {
     }
 
     /** 
-     * Angle to the vision target in degrees, as a PIDSource. Provides the VISION_ERROR_CODE if no value found.
+     * Horizontal Angle to the vision target in degrees, as a PIDSource. Provides the VISION_ERROR_CODE if no value found.
      */
-    public VisionValue_PIDSource getAngleToWallTarget() {
-        return wallTarget.getAngle_PIDSource();
+    public VisionValue_PIDSource getHAnglePIDSource() {
+        return wallTarget.getHAngle_PIDSource();
     }
 
     /**
-     * Distance to the vision target in inches, as a PIDSource. Provides the VISION_ERROR_CODE if no value found.
+     * Vertical Angle to the vision target in degrees, as a PIDSource. Provides the VISION_ERROR_CODE if no value found.
      */
-    public VisionValue_PIDSource getDistanceToWallTarget() {
-        return wallTarget.getDistance_PIDSource();
+    public VisionValue_PIDSource getVAnglePIDSource() {
+        return wallTarget.getVAngle_PIDSource();
     }
 
-    public double[] getVisionValues() {
-        if(entries == null) {
-            System.out.println("entries null");
-            return null;
+    /*
+     * Returns distance to the target from the center of the robot
+     */
+    public double getDistanceToWallTarget() {
+        double hangle_offset = wallTarget.getHAngle();
+        if(MathUtils.doublesEqual(hangle_offset, RobotConstants.VISION_ERROR_CODE)){
+            return RobotConstants.VISION_ERROR_CODE;
         }
-        return entries.get(RASPI_KEYS[0]).getValue();
+        double depth_offset = getOffsetDepth();
+        double real_depth = Math.sqrt(Math.pow(depth_offset, 2) + Math.pow(cameraHorizontalOffset, 2)
+                - 2 * depth_offset * cameraHorizontalOffset * Math.sin(Math.toRadians(hangle_offset)));
+        return real_depth;
+    }
+
+    /*
+     * Return the the depth from the horizontally offsetted camera
+     */
+    private double getOffsetDepth() {
+        double vangle = Math.abs(wallTarget.getVAngle()+verticalCameraOffsetAngle);
+        double hangle = wallTarget.getHAngle(); //TAKE OUT IF BELOW COSINE MATH NOT NEEDED
+        double offset_depth = targetHeightRelativeToCamera / Math.tan(Math.toRadians(vangle));
+        //offset_depth = offset_depth / Math.cos(Math.toRadians(Math.abs(hangle))); NOT SURE IF NEEDED - TEST
+        return offset_depth;
+    }
+
+    /*
+     * Returns horizontal angle to the target from the center of the robot
+     */
+    public double getAngleToWallTarget() {
+        double horizontalAngleOffset = wallTarget.getHAngle();
+
+        if(MathUtils.doublesEqual(horizontalAngleOffset, RobotConstants.VISION_ERROR_CODE)){
+            return RobotConstants.VISION_ERROR_CODE;
+        }
+        double multiplier = 1;
+        if(horizontalAngleOffset < 0){
+            multiplier = -1;
+        }
+
+        double y = getOffsetDepth() * Math.cos(Math.toRadians(horizontalAngleOffset));
+        double real_angle = multiplier*Math.acos(y / getDistanceToWallTarget());
+        return Math.toDegrees(real_angle);
+    }
+
+    /*
+     * Returns an array containing the calculated vision values - [horizontal angle, distance to target]
+     */
+    public double[] getVisionValues() {
+        double[] values = {getAngleToWallTarget(), getDistanceToWallTarget()};
+        return values;
     }
 
     /**
-     * Represents a set of vision data received from the raspberry pi containing an array of doubles in the form [angle, distance, timestamp]
+     * Represents a set of vision data received from the coprocessor containing an array of doubles in the form [hangle, vangle, timestamp]
      */
     public class VisionValues {
-        private static final int ANGLE_INDEX = 0, DISTANCE_INDEX = 1, TIMESTAMP_INDEX = 2;
-        private VisionValue_PIDSource angle, distance;
+        private static final int HANGLE_INDEX = 0, VANGLE_INDEX = 1, TIMESTAMP_INDEX = 2;
+        private VisionValue_PIDSource hangle, vangle;
         
         private VisionValues(String keyName) {
-            angle = new VisionValue_PIDSource(keyName, ANGLE_INDEX);
-            distance = new VisionValue_PIDSource(keyName, DISTANCE_INDEX);
+            hangle = new VisionValue_PIDSource(keyName, HANGLE_INDEX);
+            vangle = new VisionValue_PIDSource(keyName, VANGLE_INDEX);
         }
 
-        public VisionValue_PIDSource getAngle_PIDSource() {
-            return angle;
+        public VisionValue_PIDSource getHAngle_PIDSource() {
+            return hangle;
         }
 
-        public VisionValue_PIDSource getDistance_PIDSource() {
-            return distance;
-        }
-
-        /**
-         * Angle to the located target in degrees.
-         */
-        public double getAngle() {
-            return angle.pidGet();
+        public VisionValue_PIDSource getVAngle_PIDSource() {
+            return vangle;
         }
 
         /**
-         * Distance to the located target in inches.
+         * Horizontal Angle to the located target in degrees.
          */
-        public double getDistance() {
-            return distance.pidGet();
+        public double getHAngle() {
+            return hangle.pidGet();
+        }
+
+        /**
+         * Vertical Angle to the located target in degrees.
+         */
+        public double getVAngle() {
+            return vangle.pidGet();
         }
 
         /**
          * Gets the time stamp of the last vision calculation off the pi.
          */
         public double getTimeStamp() {
-            return angle.getEntry(TIMESTAMP_INDEX);
+            return hangle.getEntry(TIMESTAMP_INDEX);
         }
 
         /**
-         * Returns true if a vision target is able to be located in the raspberry pi camera
+         * Returns true if a vision target is able to be located through camera
          */
         public boolean canSeeVisionTarget() {
-            return !MathUtils.doublesEqual(angle.pidGet(), RobotConstants.VISION_ERROR_CODE);
+            return !MathUtils.doublesEqual(hangle.pidGet(), RobotConstants.VISION_ERROR_CODE);
         }
     }
 
     /**
-     * Implements a VisionValue (distance or angle) as a PIDSource
+     * Implements a VisionValue (vertical/horizontal angle) as a PIDSource
      */
     public class VisionValue_PIDSource implements PIDSource {
 

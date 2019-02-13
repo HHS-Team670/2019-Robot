@@ -1,9 +1,8 @@
 package frc.team670.robot.commands.drive.purePursuit;
 
-import frc.team670.robot.utils.math.Vector;
-
 import java.util.ArrayList;
 import java.util.Arrays;
+import frc.team670.robot.utils.math.Vector;
 
 public class PathGenerator {
     private double spacing;
@@ -15,12 +14,25 @@ public class PathGenerator {
         this.spacing = spacing;
     }
 
+    /**
+	 * Smooths the path using gradient descent
+	 * @param a 1-b
+	 * @param b smoothing factor (higher = more smooth)
+	 * @param tolerance convergence tolerance amount (higher = less smoothing)
+	 */
     public void setSmoothingParameters(double a, double b, double tolerance) {
         this.a = a;
         this.b = b;
         this.tolerance = tolerance;
     }
 
+    /**
+	 * Initializes the path
+	 *
+	 * @param maxVel   maximum robot velocity
+	 * @param maxAccel maximum robot acceleration
+	 * @param maxVelk  maximum turning velocity (between 1-5)
+	 */
     public void setVelocities(double maxVel, double maxAccel, double maxVelk) {
         this.maxVel = maxVel;
         this.maxAccel = maxAccel;
@@ -35,8 +47,17 @@ public class PathGenerator {
         this.points.addAll(Arrays.asList(points));
     }
 
+
+    /**
+     * Generates a not-reversed path
+     */
     public Path generatePath() {
         Path path = new Path(spacing);
+        return generatePath(false);
+    }
+        
+    public Path generatePath(boolean reverse) {
+        Path path = new Path(spacing, reverse);
         for (int i = 0; i < points.size() - 1; ++i)
             path.addSegment(points.get(i), points.get(i + 1));
         path.addLastPoint();
