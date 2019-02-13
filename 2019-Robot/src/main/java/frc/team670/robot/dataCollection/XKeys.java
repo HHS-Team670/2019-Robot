@@ -46,7 +46,7 @@ public class XKeys {
     private Command autonCommand;
     private ClimbHeight height;
 
-    private boolean intakeRunning = true;
+    private boolean runIntakeIn = true, runIntakeOut = true;
 
     public XKeys() {
         instance = NetworkTableInstance.getDefault();
@@ -107,22 +107,22 @@ public class XKeys {
     }
 
     private void runIntakeIn() {
-        if (intakeRunning) {
+        if (runIntakeIn || runIntakeOut) {
             Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, true, RunIntakeInWithIR.RUNNING_POWER));
-            intakeRunning = false;
-        } else {
+            runIntakeIn = false;
+        } else if (!runIntakeIn){
             Scheduler.getInstance().add(new StopIntakeRollers(Robot.intake));
-            intakeRunning = true;
+            runIntakeIn = true;
         }
     }
 
     private void runIntakeOut() {
-        if (intakeRunning) {
+        if (runIntakeOut || runIntakeIn) {
             Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, false, RunIntakeInWithIR.RUNNING_POWER));
-            intakeRunning = false;
-        } else {
+            runIntakeOut = false;
+        } else if (!runIntakeOut){
             Scheduler.getInstance().add(new StopIntakeRollers(Robot.intake));
-            intakeRunning = true;
+            runIntakeOut = true;
         }
     }
 
