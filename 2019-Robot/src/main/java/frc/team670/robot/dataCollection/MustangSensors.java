@@ -64,6 +64,9 @@ public class MustangSensors {
     return ultrasonic.getWPIUltrasonicObject();
   }
 
+  /**
+   * Gets the Rotation for the Pure Pursuit drive. (-180, 180) with 90 being forward
+   */
   public Rotation getRotationAngle() {
     double headingRadians = Pathfinder.boundHalfDegrees(90 - getYawDouble());
     return Rotation.fromDegrees(headingRadians);
@@ -117,14 +120,6 @@ public class MustangSensors {
    */
   public double getYawDoubleForPathfinder(){
    return -1 * getYawDouble();
-  }
-
-  /**
-   * Gets the Rotation for the Pure Pursuit drive. (-180, 180) with 90 being forward
-   */
-  public Rotation getRotation() {
-    double headingRadians = Pathfinder.boundHalfDegrees(90 - getYawDouble());
-    return Rotation.fromDegrees(headingRadians);
   }
 
   /**
