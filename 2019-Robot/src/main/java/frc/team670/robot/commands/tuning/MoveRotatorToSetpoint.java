@@ -8,23 +8,24 @@
 package frc.team670.robot.commands.tuning;
 
 import edu.wpi.first.wpilibj.command.Command;
+import frc.team670.robot.subsystems.RotatingSubsystem;
 import frc.team670.robot.utils.functions.MathUtils;
 
 public class MoveRotatorToSetpoint extends Command {
 
   private RotatingSubsystem rotatingSubsystem;
-  private int ticks;
+  private double setpointAngle;
 
-  public MoveRotatorToSetpoint(RotatingSubsystem rotatingSubsystem, int ticks) {
+  public MoveRotatorToSetpoint(RotatingSubsystem rotatingSubsystem, double setpointAngle) {
     requires(rotatingSubsystem);
     this.rotatingSubsystem = rotatingSubsystem;
-    this.ticks = ticks;
+    this.setpointAngle = setpointAngle;
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    rotatingSubsystem.setMotionMagicSetpointTicks(ticks);
+    rotatingSubsystem.setMotionMagicSetpointAngle(setpointAngle);
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -36,13 +37,13 @@ public class MoveRotatorToSetpoint extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return MathUtils.isWithinTolerance(ticks, rotatingSubsystem.getPositionTicks(), 8);
+    return MathUtils.isWithinTolerance(setpointAngle, rotatingSubsystem.getAngleInDegrees(), 8);
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    rotatingSubsystem.enablePercentOutput();
+    rotatingSubsystem.stop();
     rotatingSubsystem.clearSetpoint();
   }
 
@@ -53,3 +54,4 @@ public class MoveRotatorToSetpoint extends Command {
     end();
   }
 }
+

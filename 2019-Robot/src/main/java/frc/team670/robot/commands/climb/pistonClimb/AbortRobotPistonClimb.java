@@ -10,6 +10,7 @@ package frc.team670.robot.commands.climb.pistonClimb;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.Arm;
@@ -35,7 +36,12 @@ public class AbortRobotPistonClimb extends InstantCommand {
 
   @Override
   protected void initialize() {
+    SmartDashboard.putString("current-command", "AbortRobotPistonClimb");
+
     CommandGroup abortPistonClimb = new CommandGroup();
+
+    if(!climber.getFrontPistonsRetracted()) {
+
     abortPistonClimb.addParallel(new MoveArm(Arm.getArmState(LegalState.STOW), arm)); //TODO make sure this is the right state
     /*
      * If the call to retract has been called and is halfway through, this should
@@ -52,9 +58,10 @@ public class AbortRobotPistonClimb extends InstantCommand {
     //  * driver should just drive onto the platform, this should bring both pistons
     //  * down to flat
     //  */
-    if (!climber.getFrontPistonsRetracted()) {
       // addParallel(new MoveArm()); //TODO: Move arm to stowed state so it doesn't hit anything on the way down
       abortPistonClimb.addSequential(new PistonClimbWithTiltControl(Climber.PISTON_ENCODER_FLAT, climber, sensors));
+    } else {
+      abortPistonClimb.addSequential(new MoveArm(Arm.getArmState(LegalState.STOW), arm)); //TODO make sure this is the right state
     }
 
     Scheduler.getInstance().add(abortPistonClimb);

@@ -6,7 +6,7 @@ Code for Team 670's 2019 "Destination: Deep Space" FIRST Robotics Competition Ro
 - GRIP-Pipelines: GRIP Vision Pipeline files being tested
 - LED-Arduino: Arduino code to run on an arduino coprocessor to run LED lights that interface with the RoboRIO<br/>
 - PathWeaver: Contains PathWeaver files to be worked on and built into .csv files for Pathfinder to run.
-- Raspi: Code and files to be used on a raspberry pi coprocessor<br/>
+- Raspi: Code and files to be used on a raspberry pi or ODroid-XU4 coprocessor<br/>
 
 ## Branching and Workflow on this Repository<br/>
 Please check this document for the team's policy for committing code to GitHub!<br/>

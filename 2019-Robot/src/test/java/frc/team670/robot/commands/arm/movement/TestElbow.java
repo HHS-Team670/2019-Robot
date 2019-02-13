@@ -8,31 +8,23 @@
 package frc.team670.robot.commands.arm.movement;
 
 import frc.team670.robot.subsystems.elbow.BaseElbow;
-import frc.team670.robot.subsystems.elbow.Elbow;
 
 /**
  * Add your docs here.
  */
 public class TestElbow extends BaseElbow {
 
+    private static final int OFFSET_FROM_ENCODER_ZERO = 0;
 
-    private double elbowTicks;
+    private double elbowAngle;
 
-    public TestElbow() {
-
-    }
-
-    /**
-     * Doesn't actually set MotionMagicSetpoint, instead moves the angle to that point.
-     */
-    @Override
-    public void setMotionMagicSetpoint(double elbowTicks) {
-        this.elbowTicks = elbowTicks;
+    public TestElbow(){
+        super(null, 0.0, 0, 0, false, 0, 0, 0, 0, 0);
     }
 
     @Override
-    public double getAngle() {
-        return Elbow.convertElbowTicksToDegrees(elbowTicks);
+    public double getAngleInDegrees() {
+        return elbowAngle;
     }
 
     @Override
@@ -56,11 +48,6 @@ public class TestElbow extends BaseElbow {
     }
 
     @Override
-    public int getPositionTicks() {
-        return (int)elbowTicks;
-    }
-
-    @Override
     public boolean isForwardLimitPressed() {
         return false;
     }
@@ -68,16 +55,6 @@ public class TestElbow extends BaseElbow {
     @Override
     public boolean isReverseLmitPressed() {
         return false;
-    }
-    
-    @Override
-    public void zero(double encoderValue) {
-
-    }
-
-    @Override
-    public double getEncoderValue() {
-        return 0;
     }
 
     @Override
@@ -90,9 +67,28 @@ public class TestElbow extends BaseElbow {
     }
 
     @Override
-    public void setMotionMagicSetpointTicks(int ticks) {
+    public double getArbitraryFeedForwardAngleMultiplier() {
+        return 0;
+    }
+
+    @Override
+    public void setQuadratureEncoder(double encoderValue) {
 
     }
 
+    @Override
+    public void setMotionMagicSetpointAngle(double angle) {
+        elbowAngle = angle;
+    }
+
+    @Override
+    public double getForwardSoftLimitAngle() {
+        return 0;
+    }
+
+    @Override
+    public double getReverseSoftLimitAngle() {
+        return 0;
+    }
 
 }

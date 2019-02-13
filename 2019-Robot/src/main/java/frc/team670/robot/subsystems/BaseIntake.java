@@ -10,23 +10,16 @@ package frc.team670.robot.subsystems;
 import java.awt.geom.Point2D;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-
-import frc.team670.robot.commands.tuning.RotatingSubsystem;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 public abstract class BaseIntake extends RotatingSubsystem {
+  
+  public BaseIntake(TalonSRX rotatorTalon, double arbitrary_feedforward_constant, int forward_soft_limit, int reverse_soft_limit, boolean timeout, int QUAD_ENCODER_MIN, int QUAD_ENCODER_MAX, int CONTINUOUS_CURRENT_LIMIT, int PEAK_CURRENT_LIMIT, int offsetFromEncoderZero){
+    super(rotatorTalon, arbitrary_feedforward_constant, forward_soft_limit, reverse_soft_limit, timeout, QUAD_ENCODER_MIN, QUAD_ENCODER_MAX, CONTINUOUS_CURRENT_LIMIT, PEAK_CURRENT_LIMIT, offsetFromEncoderZero);
+  }
 
   @Override
   public abstract void initDefaultCommand();
-
-   /**
-   * Should set the setpoint for the Motion Magic on the intake
-   */
-  public abstract void setMotionMagicSetpoint(double intakeTicks);
-
-  /**
-   * Should return the setpoint for the motion magic on the base motor
-   */
-  public abstract double getMotionMagicSetpoint();
 
   /**
    * Should return the setpoint coordinates for the motion magic on the base motor
@@ -34,17 +27,7 @@ public abstract class BaseIntake extends RotatingSubsystem {
   public abstract Point2D.Double getMotionMagicDestinationCoordinates();
 
   public abstract void setRotatorNeutralMode(NeutralMode mode);
-
-  /**
-   * Returns the tick value of the base motor
-   */
-  public abstract int getIntakePositionInTicks();
-
-  /**
-   * Returns the intake angle in degrees
-   */
-  public abstract double getIntakeAngleInDegrees();
-
+  
   /** 
    * Returns the x, y coordinates of the top of the intake
    */

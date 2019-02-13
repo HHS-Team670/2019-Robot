@@ -10,6 +10,7 @@ package frc.team670.robot.commands.climb.pistonClimb;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.dataCollection.NullPIDOutput;
 import frc.team670.robot.subsystems.Climber;
@@ -57,6 +58,8 @@ public class PistonClimbWithTiltControl extends Command {
 
   // Called just before this Command runs the first time
   protected void initialize() {
+    SmartDashboard.putString("current-command", "PistonClimbWIthTiltControl");
+
     // If the NavX is null, use the piston climb that takes inputs from the encoders
     // and not the NavX
     if (sensors.isNavXNull()) {
@@ -107,6 +110,8 @@ public class PistonClimbWithTiltControl extends Command {
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    climber.setFrontPIDControllerSetpoint(climber.getFrontTalonPositionInTicks());
+    climber.setFrontPIDControllerSetpoint(climber.getBackTalonPositionInTicks());
     end();
     Logger.consoleLog();
   }

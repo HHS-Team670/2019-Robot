@@ -7,12 +7,22 @@
 
 package frc.team670.robot.subsystems.elbow;
 
-import frc.team670.robot.commands.tuning.RotatingSubsystem;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
+import frc.team670.robot.subsystems.RotatingSubsystem;
 
 /**
  * Add your docs here.
  */
 public abstract class BaseElbow extends RotatingSubsystem implements ElbowInterface {
+
+  public BaseElbow(TalonSRX rotatorTalon, double arbitraryFeedForwardConstant, int forwardSoftLimit, int reverseSoftLimit, boolean timeout, int quadEncoerMin, int quadEncoderMax, int continuousCurrentLimit, int peakCurrentLimit, int offsetFromEncoderZero){
+    super(rotatorTalon, arbitraryFeedForwardConstant, forwardSoftLimit, reverseSoftLimit, timeout, quadEncoerMin, quadEncoderMax, continuousCurrentLimit, peakCurrentLimit, offsetFromEncoderZero);
+  }
+
+  public abstract double getForwardSoftLimitAngle();
+
+  public abstract double getReverseSoftLimitAngle();
 
   @Override
   protected void initDefaultCommand() {

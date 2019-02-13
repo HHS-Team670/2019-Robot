@@ -8,7 +8,7 @@
 package frc.team670.robot.commands.climb.armClimb;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.subsystems.Arm;
 
 /**
@@ -26,6 +26,8 @@ public class CancelArmClimb extends InstantCommand {
   // Called once when the command executes
   @Override
   protected void initialize() {
+    SmartDashboard.putString("current-command", "CancelArmClimb");
+
     ArmClimb.setUserWishesToStillClimb(false);
   }
 

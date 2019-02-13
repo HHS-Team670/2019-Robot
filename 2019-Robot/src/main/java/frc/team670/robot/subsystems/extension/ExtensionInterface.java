@@ -17,11 +17,6 @@ public interface ExtensionInterface {
   /**
    * Gets the current Extension length in absolute ticks with 0 at no extension.
    */
-  public int getLengthTicks();
-  
-  /**
-   * Gets the current Extension length in absolute inches with 0 at no extension.
-   */
   public double getLengthInches();
 
   /**
@@ -32,11 +27,13 @@ public interface ExtensionInterface {
   /**
    * Modifies the setpoint for the PID Controller
    */
-  public void setPIDControllerSetpoint(int setpoint);
+  public void setPIDControllerSetpointInInches(double setpointInInches);
 
   public void initDefaultCommand();
 
   public boolean isReverseLimitPressed();
+
+  public int getLengthTicks();
 
   /**
    * @return true if forward limit switch closed, false if not
@@ -46,11 +43,11 @@ public interface ExtensionInterface {
   /**
    * Sets the SensorCollection encoder value to encoderValue (use this to reset the encoder when at a known position)
    */
-  public void zero(double encoderValue);
+  public void setQuadratureEncoder(double encoderValue);
 
   /**
    * Setup for movement and Motion Magic
    */
-  public void setMotionMagicSetpoint(double extensionTicks);
+  public void setMotionMagicSetpointInInches(double extensionSetpointInInches);
 
 }

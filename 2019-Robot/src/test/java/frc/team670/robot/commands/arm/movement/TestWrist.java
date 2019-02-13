@@ -16,23 +16,23 @@ import frc.team670.robot.subsystems.wrist.Wrist;
  */
 public class TestWrist extends BaseWrist{
 
-    private double wristTicks;
+    private double wristAngle;
 
     public TestWrist() {
-
+        super(null, 0.0, 0, 0, false, 0, 0, 0, 0, 0);
     }
 
     /**
      * Doesn't actually set MotionMagicSetpoint, instead moves the angle to that point.
      */
     @Override
-    public void setMotionMagicSetpoint(double wristTicks) {
-        this.wristTicks = wristTicks;
+    public void setMotionMagicSetpointAngle(double wristAngle) {
+        this.wristAngle = wristAngle;
     }
 
     @Override
-    public double getAngle() {
-        return Wrist.convertWristTicksToDegrees((int)wristTicks);
+    public double getAngleInDegrees() {
+        return wristAngle;
     }
 
     @Override
@@ -48,11 +48,6 @@ public class TestWrist extends BaseWrist{
     }
 
     @Override
-    public int getPositionTicks() {
-        return (int)wristTicks;
-    }
-
-    @Override
     public boolean isForwardLimitPressed() {
         //drive until switch is closed
         return false;
@@ -65,7 +60,7 @@ public class TestWrist extends BaseWrist{
     }
     
     @Override
-    public void zero(double encoderValue) {
+    public void setQuadratureEncoder(double encoderValue) {
     }
 
     @Override
@@ -74,8 +69,18 @@ public class TestWrist extends BaseWrist{
     }
 
     @Override
-    public void setMotionMagicSetpointTicks(int ticks) {
+    public double getArbitraryFeedForwardAngleMultiplier() {
+        return 0;
+    }
 
+    @Override
+    public double getForwardSoftLimitAngle() {
+        return 0;
+    }
+
+    @Override
+    public double getReverseSoftLimitAngle() {
+        return 0;
     }
 
 }

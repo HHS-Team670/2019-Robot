@@ -15,78 +15,89 @@ import frc.team670.robot.subsystems.extension.Extension;
  */
 public class TestExtension extends BaseExtension {
 
-    double extensionTicks;
+  double extensionLengthInInches;
 
-    public TestExtension() {
-
-    }
-
-    @Override
-    public double getLengthInches() {
-        return Extension.convertExtensionTicksToInches(extensionTicks);
-    }
-
-    @Override
-    public void setMotionMagicSetpoint(double extensionTicks) {
-        this.extensionTicks = extensionTicks;
-    }
-    
-    @Override
-    public void setCurrentLimit(int current) {
-    }
-  
-    @Override
-    public void enableCurrentLimit() {
-    }
-  
-    @Override
-    public void disableCurrentLimit() {
-    }
-  
-    @Override
-    public void setOutput(double output){
-    }
-  
-    @Override
-    public int getLengthTicks() { 
-      return (int)extensionTicks;
-    }
-  
-    @Override
-    public void enableExtensionPIDController() {
-    }
-  
-    @Override
-    public void setPIDControllerSetpoint(int setpoint) {
-    }
-  
-    @Override
-    public boolean isReverseLimitPressed() {
-      return false;
-    }
-  
-    @Override
-    public boolean isForwardLimitPressed() {
-      return false;
-    }
-    
-    @Override
-    public void zero(double encoderValue) {
-    }
-
-  @Override
-  public void updateArbitraryFeedForward() {
+  public TestExtension() {
 
   }
 
   @Override
-  public int getPositionTicks() {
+  public double getLengthInches() {
+    return extensionLengthInInches;
+  }
+
+  @Override
+  public void setMotionMagicSetpointInInches(double extensionLengthInInches) {
+    this.extensionLengthInInches = extensionLengthInInches;
+  }
+
+  @Override
+  public void setCurrentLimit(int current) {
+  }
+
+  @Override
+  public void enableCurrentLimit() {
+  }
+
+  @Override
+  public int getLengthTicks() {
     return 0;
   }
 
   @Override
-  public void setMotionMagicSetpointTicks(int ticks) {
+  public void disableCurrentLimit() {
+  }
 
+  @Override
+  public void setOutput(double output) {
+  }
+
+  @Override
+  public void enableExtensionPIDController() {
+  }
+
+  @Override
+  public void setPIDControllerSetpointInInches(double setpointInInches) {
+    extensionLengthInInches = setpointInInches;
+  }
+
+  @Override
+  public boolean isReverseLimitPressed() {
+    return false;
+  }
+
+  @Override
+  public boolean isForwardLimitPressed() {
+    return false;
+  }
+
+  @Override
+  public void setQuadratureEncoder(double encoderValue) {
+  }
+
+  @Override
+  public boolean getTimeout() {
+    return false;
+  }
+
+  @Override
+  public void stop() {
+
+  }
+
+  @Override
+  public void moveByPercentOutput(double output) {
+
+  }
+
+  @Override
+  public double getForwardSoftLimitInInches() {
+    return 0;
+  }
+
+  @Override
+  public double getReverseSoftLimitInInches() {
+    return 0;
   }
 
 }

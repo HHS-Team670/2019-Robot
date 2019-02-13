@@ -8,6 +8,7 @@ import frc.team670.robot.dataCollection.sensors.NavX;
 import frc.team670.robot.dataCollection.sensors.NavX.NavX_Pitch_PIDSource;
 import frc.team670.robot.dataCollection.sensors.NavX.ZeroableNavX_Yaw_PIDSource;
 import frc.team670.robot.utils.math.Rotation;
+import jaci.pathfinder.Pathfinder;
 
 /**
  * Instantiates sensor representation objects and contains methods for accessing the sensor data.
@@ -19,17 +20,16 @@ public class MustangSensors {
   private NavX navXMicro = null;
   private boolean isNavXNull;
   private DigitalInput intakeIRSensor;
-  private DigitalInput clawIRSensor;
   public static final double NAVX_ERROR_CODE = -40001;
 
 
   public MustangSensors(){
     try {
-      navXMicro = new NavX(RobotMap.NAVX_PORT); 
-      isNavXNull = false;
+      // navXMicro = new NavX(RobotMap.NAVX_PORT); 
+      // isNavXNull = false;
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
-      SmartDashboard.putString("sensor-error", "Error instantiating navX-MXP");
+      SmartDashboard.putString("warning", "Error instantiating navX-MXP");
       navXMicro = null;
       isNavXNull = true;
     }
@@ -38,16 +38,8 @@ public class MustangSensors {
       intakeIRSensor = new DigitalInput(RobotMap.INTAKE_IR_DIO_PORT);
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error instantiating intakeIRSensor: " + ex.getMessage(), true);
-      SmartDashboard.putString("sensor-error", "Error instantiating intakeIRSensor");
+      SmartDashboard.putString("warning", "Error instantiating intakeIRSensor");
       intakeIRSensor = null;
-    }
-
-    try {
-      clawIRSensor = new DigitalInput(RobotMap.CLAW_IR_DIO_PORT);
-    } catch (RuntimeException ex) {
-      DriverStation.reportError("Error instantiating clawIRSensor: " + ex.getMessage(), true);
-      SmartDashboard.putString("sensor-error", "Error instantiating clawIRSensor");
-      clawIRSensor = null;
     }
   }
 
@@ -101,9 +93,12 @@ public class MustangSensors {
    return -1 * getYawDouble();
   }
 
-  public Rotation getRotationAngle() {
-    double headingRadians = Math.toRadians(getYawDouble());
-    return new Rotation(Math.cos(headingRadians), Math.sin(headingRadians));
+  /**
+   * Gets the Rotation for the Pure Pursuit drive. (-180, 180) with 90 being forward
+   */
+  public Rotation getRotation() {
+    double headingRadians = Pathfinder.boundHalfDegrees(90 - getYawDouble());
+    return Rotation.fromDegrees(headingRadians);
   }
 
   /**
@@ -176,27 +171,10 @@ public class MustangSensors {
 
 
   /**
-   * Returns true if object is within threshold and false if not
-   */
-  public boolean getClawIROutput(){
-    if(clawIRSensor != null){
-      return clawIRSensor.get();
-    }
-    return false;
-  }
-
-  /**
    * Returns the intake IR sensor
    */
-  public DigitalInput getIntakeIRSensor(){
-    return intakeIRSensor;
-  }
-
-  /**
-   * Returns the claw IR sensor
-   */
-  public DigitalInput getClawIRSensor(){
-    return clawIRSensor;
+  public boolean isIntakeIRSensorNull(){
+    return intakeIRSensor == null;
   }
 
   /**

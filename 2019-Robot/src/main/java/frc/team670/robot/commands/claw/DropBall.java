@@ -7,19 +7,19 @@
 
 package frc.team670.robot.commands.claw;
 
-import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj.command.TimedCommand;
 import frc.team670.robot.subsystems.Claw;
 import frc.team670.robot.utils.Logger;
 
 /**
  * Drops the ball using a hard open and by pushing it
  */
-public class DropBall extends InstantCommand {
+public class DropBall extends TimedCommand {
   
   private Claw claw;
 
   public DropBall(Claw claw) {
-    super();
+    super(Claw.TIME_TO_MOVE);
     this.claw = claw;
     requires(claw);
   }
@@ -30,6 +30,26 @@ public class DropBall extends InstantCommand {
     claw.openClaw(false);
     claw.push();
     Logger.consoleLog();
+  }
+
+  @Override
+  protected void execute() {
+
+  }
+
+  @Override
+  protected boolean isFinished() {
+    return isTimedOut();
+  }
+
+  @Override
+  protected void end() {
+    super.end();
+  }
+
+  @Override
+  protected void interrupted() {
+    super.interrupted();
   }
 
 }

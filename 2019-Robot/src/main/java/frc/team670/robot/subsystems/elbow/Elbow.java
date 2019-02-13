@@ -13,204 +13,161 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
-import frc.team670.robot.commands.arm.joystick.JoystickElbow;
+import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
-import frc.team670.robot.utils.functions.MathUtils;
+import frc.team670.robot.subsystems.extension.Extension;
 
 /**
  * Controls motors for elbow movement
  */
 public class Elbow extends BaseElbow {
-  // Put methods for controlling this subsystem
-  // here. Call these from Commands.
 
-
-  private TalonSRX elbowRotationMain;
   private VictorSPX elbowRotationSlave;
-  public static double ELBOW_START_POS = 6000; // TODO Set this
-  public static final double MAX_ELBOW_BACK = 0; //TODO find what is this number
-  public static final double MAX_ELBOW_FORWARD = 0; //TODO also find this
-  private static final double kF = 0, kP = 0, kI = 0, kD = 0; //TODO figure out what these are
-  // Also need to add pull gains slots
-  private static final int kPIDLoopIdx = 0, kSlotMotionMagic = 0, kTimeoutMs = 0;
 
-  private static final double RAMP_RATE = 0.1;
+  // Current
+  private static final int CURRENT_CONTROL_SLOT = 1;
+  private static final int CLIMBING_CONTINUOUS_CURRENT_LIMIT = 35, NORMAL_CONTINUOUS_CURRENT_LIMIT = 33, PEAK_CURRENT_LIMIT = 0; // TODO set current limit in Amps
+  private static final double CURRENT_P = 0.2, CURRENT_I = 0.0, CURRENT_D = 0.0, CURRENT_F = 0.0; // TODO Check these constants
+  // Motion Magic
+  private static final int kPIDLoopIdx = 0, MOTION_MAGIC_SLOT = 0, kTimeoutMs = 0;
+  private static final double MM_F = 0, MM_P = 0, MM_I = 0, MM_D = 0; //TODO figure out what these are
+  private static final int ELBOW_VELOCITY_SENSOR_UNITS_PER_100_MS = 90; // TODO set this
+  private static final int ELBOW_ACCELERATION_SENSOR_UNITS_PER_SEC = 400; // TODO set this
+  private static final int OFFSET_FROM_ENCODER_ZERO = 0; // TODO set this
+  public static final int FORWARD_SOFT_LIMIT = 850, REVERSE_SOFT_LIMIT = -940; // SET THIS
+  
+  private static final int QUAD_ENCODER_MIN = FORWARD_SOFT_LIMIT + 200, QUAD_ENCODER_MAX = REVERSE_SOFT_LIMIT - 200;// SET THIS BASED ON FORWARD AND REVERSE
+  private static final double ARBITRARY_FEEDFORWARD = 0; // TODO SET THIS
+  public static final double MAX_ELBOW_OUTPUT = 0.4;
+  private static final double NO_EXTENSION_ARBITRARY_FEEDFORWARD = 0; // Arbitrary Feedforward at no extension. TODO SET THIS
+  private static final double ARBITARY_FEEDFORWARD_FULL_EXTENSION = 0; // Arbitrary Feedforward when elbow is fully extended TODO SET THIS
+  private static final double ARBITRARY_FEEDFORWARD_EXTENSION_LENGTH_SCALAR = (ARBITARY_FEEDFORWARD_FULL_EXTENSION - NO_EXTENSION_ARBITRARY_FEEDFORWARD) / Extension.MAX_POSITION_TICKS; // Extra Feedforward per extension tick
 
-  private final int FORWARD_SOFT_LIMIT = 0, REVERSE_SOFT_LIMIT = 0; // TODO figure out the values in encoder rotations
-  private static final int CURRENT_CONTROL_SLOT = 0; // TODO Set this
-  private final int CLIMBING_CONTINUOUS_CURRENT_LIMIT = 35, NORMAL_CONTINUOUS_CURRENT_LIMIT = 33, PEAK_CURRENT_LIMIT = 0; // TODO set current limit in Amps
 
-  private double currentP = 0.2, currentI = 0.0, currentD = 0.0, currentF = 0.0; // TODO Check these constants
-
-  private static int ELBOW_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 15000; // TODO set this
-  private static int ELBOW_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS = 6000; // TODO set this
 
   public Elbow() {
-    elbowRotationMain = new TalonSRX(RobotMap.ARM_ELBOW_ROTATION_MOTOR_TALON);
-    super.setTalon(elbowRotationMain);
+    super(new TalonSRX(RobotMap.ARM_ELBOW_ROTATION_MOTOR_TALON), NO_EXTENSION_ARBITRARY_FEEDFORWARD, FORWARD_SOFT_LIMIT, REVERSE_SOFT_LIMIT, false, QUAD_ENCODER_MIN, QUAD_ENCODER_MAX, NORMAL_CONTINUOUS_CURRENT_LIMIT, PEAK_CURRENT_LIMIT, OFFSET_FROM_ENCODER_ZERO);
     elbowRotationSlave = new VictorSPX(RobotMap.ARM_ELBOW_ROTATION_MOTOR_VICTOR);
-    elbowRotationSlave.set(ControlMode.Follower, elbowRotationMain.getDeviceID());  
+    elbowRotationSlave.set(ControlMode.Follower, rotator.getDeviceID());  
 
-    elbowRotationMain.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
-		elbowRotationMain.config_kF(kSlotMotionMagic, kF, kTimeoutMs);
-		elbowRotationMain.config_kP(kSlotMotionMagic, kP, kTimeoutMs);
-		elbowRotationMain.config_kI(kSlotMotionMagic, kI, kTimeoutMs);
-    elbowRotationMain.config_kD(kSlotMotionMagic, kD, kTimeoutMs);
-    elbowRotationMain.configMotionCruiseVelocity(ELBOW_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
-    elbowRotationMain.configMotionAcceleration(ELBOW_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
+    rotator.selectProfileSlot(MOTION_MAGIC_SLOT, kPIDLoopIdx);
+		rotator.config_kF(MOTION_MAGIC_SLOT, MM_F, kTimeoutMs);
+		rotator.config_kP(MOTION_MAGIC_SLOT, MM_P, kTimeoutMs);
+		rotator.config_kI(MOTION_MAGIC_SLOT, MM_I, kTimeoutMs);
+    rotator.config_kD(MOTION_MAGIC_SLOT, MM_D, kTimeoutMs);
+    rotator.configMotionCruiseVelocity(ELBOW_VELOCITY_SENSOR_UNITS_PER_100_MS, kTimeoutMs);
+    rotator.configMotionAcceleration(ELBOW_ACCELERATION_SENSOR_UNITS_PER_SEC, kTimeoutMs);
 
     /* Config closed loop gains for Primary closed loop (Current) */
-    elbowRotationMain.config_kP(CURRENT_CONTROL_SLOT, currentP, RobotConstants.kTimeoutMs);
-    elbowRotationMain.config_kI(CURRENT_CONTROL_SLOT, currentI, RobotConstants.kTimeoutMs);
-    elbowRotationMain.config_kD(CURRENT_CONTROL_SLOT, currentD, RobotConstants.kTimeoutMs);
-    elbowRotationMain.config_kF(CURRENT_CONTROL_SLOT, currentF, RobotConstants.kTimeoutMs);
+    rotator.config_kP(CURRENT_CONTROL_SLOT, CURRENT_P, RobotConstants.kTimeoutMs);
+    rotator.config_kI(CURRENT_CONTROL_SLOT, CURRENT_I, RobotConstants.kTimeoutMs);
+    rotator.config_kD(CURRENT_CONTROL_SLOT, CURRENT_D, RobotConstants.kTimeoutMs);
+    rotator.config_kF(CURRENT_CONTROL_SLOT, CURRENT_F, RobotConstants.kTimeoutMs);
 
-    elbowRotationMain.configNominalOutputForward(0, RobotConstants.kTimeoutMs);
-    elbowRotationMain.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
-    elbowRotationMain.configPeakOutputForward(1, RobotConstants.kTimeoutMs);
-    elbowRotationMain.configPeakOutputReverse(-1, RobotConstants.kTimeoutMs);
+    rotator.configNominalOutputForward(0, RobotConstants.kTimeoutMs);
+    rotator.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
+    rotator.configPeakOutputForward(MAX_ELBOW_OUTPUT, RobotConstants.kTimeoutMs);
+    rotator.configPeakOutputReverse(-MAX_ELBOW_OUTPUT, RobotConstants.kTimeoutMs);
 
-    elbowRotationMain.setNeutralMode(NeutralMode.Brake);
+    rotator.setNeutralMode(NeutralMode.Brake);
     elbowRotationSlave.setNeutralMode(NeutralMode.Brake);
 
-    elbowRotationMain.configClosedloopRamp(0);
-    elbowRotationMain.configOpenloopRamp(RAMP_RATE);
-
-    // These thresholds stop the motor when limit is reached
-    elbowRotationMain.configForwardSoftLimitThreshold(FORWARD_SOFT_LIMIT);
-    elbowRotationMain.configReverseSoftLimitThreshold(REVERSE_SOFT_LIMIT);
-    elbowRotationMain.configContinuousCurrentLimit(NORMAL_CONTINUOUS_CURRENT_LIMIT);
-
-    // Enable Safety Measures
-    elbowRotationMain.configForwardSoftLimitEnable(true);
-    elbowRotationMain.configReverseSoftLimitEnable(true);
-    elbowRotationMain.enableCurrentLimit(true);
-    elbowRotationMain.configPeakCurrentLimit(PEAK_CURRENT_LIMIT);
-
-    setpoint = NO_SETPOINT;
-
-    int pulseWidthPos = getElbowPulseWidth()&4095;
-
-    if (pulseWidthPos < QUAD_ENCODER_MIN) {
-      pulseWidthPos += 4096;
-    } 
-    if (pulseWidthPos > QUAD_ENCODER_MAX) {
-      pulseWidthPos -= 4096;
-    }
-
-    elbowRotationMain.getSensorCollection().setQuadraturePosition(pulseWidthPos, 0);
-
-    elbowRotationMain.configContinuousCurrentLimit(NORMAL_CONTINUOUS_CURRENT_LIMIT);
-    elbowRotationMain.configPeakCurrentLimit(0);
-    elbowRotationMain.enableCurrentLimit(true);
-
-    timeout = false;
-
-    enablePercentOutput();
- 
+    stop();
   }
 
   @Override
   public void setOutput(double output) {
-    elbowRotationMain.set(ControlMode.PercentOutput, output);
+    rotator.set(ControlMode.PercentOutput, output);
   }
 
   @Override
   public double getOutputCurrent() {
-    return elbowRotationMain.getOutputCurrent();
+    return rotator.getOutputCurrent();
   }
 
   @Override
   public void setClimbingCurrentLimit() {
-    elbowRotationMain.configContinuousCurrentLimit(CLIMBING_CONTINUOUS_CURRENT_LIMIT);
+    rotator.configContinuousCurrentLimit(CLIMBING_CONTINUOUS_CURRENT_LIMIT);
   }
 
   @Override
   public void setNormalCurrentLimit() {
-    elbowRotationMain.configContinuousCurrentLimit(NORMAL_CONTINUOUS_CURRENT_LIMIT);
+    rotator.configContinuousCurrentLimit(NORMAL_CONTINUOUS_CURRENT_LIMIT);
   }
 
   @Override
-  public int getPositionTicks() {
-    return elbowRotationMain.getSensorCollection().getQuadraturePosition();
-  }
-  
-  @Override
-  public double getAngle() {
+  public double getAngleInDegrees() {
     return convertElbowTicksToDegrees(getPositionTicks());
   }
 
   @Override
   public void initDefaultCommand() {
-    setDefaultCommand(new JoystickElbow(this));
+    // setDefaultCommand(new JoystickElbow(this));
   }
 
   @Override
   public boolean isForwardLimitPressed() {
     //drive until switch is closed
-    return elbowRotationMain.getSensorCollection().isFwdLimitSwitchClosed();
+    return rotator.getSensorCollection().isFwdLimitSwitchClosed();
   }
 
   @Override
   public boolean isReverseLmitPressed() {
     //drive until switch is closed
-    return elbowRotationMain.getSensorCollection().isRevLimitSwitchClosed();
+    return rotator.getSensorCollection().isRevLimitSwitchClosed();
   }
   
   @Override
-  public void zero(double encoderValue) {
-    elbowRotationMain.getSensorCollection().setQuadraturePosition((int) encoderValue, RobotConstants.ARM_RESET_TIMEOUTMS);
+  public void setQuadratureEncoder(double encoderValue) {
+    rotatorSensorCollection.setQuadraturePosition((int) encoderValue, RobotConstants.ARM_RESET_TIMEOUTMS);
   }
 
   @Override
-  public double getEncoderValue() {
-    return elbowRotationMain.getSensorCollection().getQuadraturePosition();
+  public void setMotionMagicSetpointAngle(double elbowSetpointAngle) {
+    setpoint = convertElbowDegreesToTicks(elbowSetpointAngle);
+    rotator.selectProfileSlot(MOTION_MAGIC_SLOT, kPIDLoopIdx);
+    rotator.set(ControlMode.MotionMagic, setpoint);
   }
 
   @Override
-  public void setMotionMagicSetpointTicks(int elbowSetpointInTicks) {
-    super.setpoint = elbowSetpointInTicks;
-    elbowRotationMain.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
-    elbowRotationMain.set(ControlMode.MotionMagic, elbowSetpointInTicks);
+  public synchronized void setCurrentControl(int current) {
+    clearSetpoint();
+    rotator.selectProfileSlot(CURRENT_CONTROL_SLOT, 0);
+    rotator.set(ControlMode.Current, current);
   }
 
-  @Override
-  public void setCurrentControl(int current) {
-    elbowRotationMain.selectProfileSlot(CURRENT_CONTROL_SLOT, 0);
-    elbowRotationMain.set(ControlMode.Current, current);
-  }
-
-  public static int convertElbowDegreesToTicks(double degrees) {
+  private static int convertElbowDegreesToTicks(double degrees) {
     // If straight up is 0 and going forward is positive
     // percentage * half rotation
-    return (int)((degrees / 180) * (0.5 * RobotConstants.ELBOW_TICKS_PER_ROTATION));
-}
-
-public static double convertElbowTicksToDegrees(double ticks) {
-   //If straight up is 0 and going forward is positive
-   // percentage * half degrees rotation
-    return (ticks / (0.5 * RobotConstants.ELBOW_TICKS_PER_ROTATION)) * 180;
-}
-
-@Override
-public void setMotionMagicSetpoint(double elbowAngle) {
-  int ticks = (int) convertElbowDegreesToTicks(elbowAngle);
-  elbowRotationMain.selectProfileSlot(kSlotMotionMagic, kPIDLoopIdx);
-  elbowRotationMain.set(ControlMode.MotionMagic, ticks);
-}
-
-@Override
-public void updateArbitraryFeedForward() {
-  if(setpoint != NO_SETPOINT) {
-    double value = -1.0 * Math.cos(Math.toRadians(getAngle())) * ARBITRARY_FEEDFORWARD_CONSTANT;
-    elbowRotationMain.set(ControlMode.MotionMagic, setpoint, DemandType.ArbitraryFeedForward, value);
+    return (int)((degrees / 360) * TICKS_PER_ROTATION);
   }
-}
 
-public int getElbowPulseWidth() {  
-  return elbowRotationMain.getSensorCollection().getPulseWidthPosition();
-}
+  private static double convertElbowTicksToDegrees(double ticks) {
+    // If straight up is 0 and going forward is positive
+    // percentage * half degrees rotation
+    return ((360 * ticks) / TICKS_PER_ROTATION);
+  }
 
+  public double getForwardSoftLimitAngle(){
+    return convertElbowTicksToDegrees(FORWARD_SOFT_LIMIT);
+  }
 
+  public double getReverseSoftLimitAngle(){
+    return convertElbowTicksToDegrees(REVERSE_SOFT_LIMIT);
+  }
+  
+  @Override
+  public synchronized void updateArbitraryFeedForward() {
+    if(setpoint != NO_SETPOINT) {
+      double value = getArbitraryFeedForwardAngleMultiplier() * (ARBITRARY_FEEDFORWARD_EXTENSION_LENGTH_SCALAR * Robot.arm.getExtension().getLengthTicks() + arbitraryFeedForwardConstant);
+      rotator.set(ControlMode.MotionMagic, setpoint, DemandType.ArbitraryFeedForward, value);
+    }
+  }
+
+  @Override
+  protected double getArbitraryFeedForwardAngleMultiplier() {
+    double angle = getAngleInDegrees();
+    return -1 * Math.sin(Math.toRadians(angle)); // Assumes range of (-180,180) where positive input moves the motor towards 180
+  }
 }

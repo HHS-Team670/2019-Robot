@@ -8,7 +8,7 @@
 package frc.team670.robot.commands.intake;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import edu.wpi.first.wpilibj.command.WaitCommand;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.commands.claw.PickupBall;
 import frc.team670.robot.dataCollection.MustangSensors;
@@ -19,18 +19,20 @@ import frc.team670.robot.subsystems.Intake;
 
 public class AutoPickupCargo extends CommandGroup {
   /**
-   * @param arm The arm used in the command
-   * @param intake The intake used in the command
-   * @param claw The claw used in the command 
+   * @param arm     The arm used in the command
+   * @param intake  The intake used in the command
+   * @param claw    The claw used in the command
    * @param sensors The sensors used in the command
    */
   public AutoPickupCargo(Arm arm, Intake intake, Claw claw, MustangSensors sensors) {
-    // addSequential(new MoveArm(Arm.getArmState(LegalState.INTAKE_BALL_INTAKE_FORWARD), arm)); // TODO change this to MoveArmToIntake so that it does it safely without hitting intake
-    //runIntake will go until the IR in the claw gets tripped or 0.5 seconds after the Intake sensor has been tripped
-    addSequential(new RunIntake(intake, sensors, true));
+    SmartDashboard.putString("current-command", "AutoPickupCargo");
+
+    // runIntake will go until the IR in the claw gets tripped or 0.5 seconds after
+    // the Intake sensor has been tripped
+    addParallel(new MoveArm(Arm.getStates().get(LegalState.GRAB_BALL_INTAKE), arm));
+    addSequential(new RunIntakeInWithIR(intake, sensors));
+    addParallel(new TimedRunIntake(Claw.TIME_TO_MOVE, intake, true));
     addSequential(new PickupBall(claw));
-    addParallel(new TimedRunIntake(5000, intake, true));
-    addSequential(new WaitCommand(1));
     addSequential(new MoveArm(Arm.getArmState(LegalState.NEUTRAL), arm));
   }
 }

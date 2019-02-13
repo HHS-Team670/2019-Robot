@@ -19,9 +19,9 @@ import frc.team670.robot.utils.functions.MathUtils;
 public class MoveElbow extends Command {
 
   private BaseElbow elbow;
-  private int elbowSetpointInTicks;
+  private double elbowSetpointInDegrees;
 
-  private static final double TICKS_TOLERANCE = 10;
+  private static final double DEGREE_TOLERANCE = 0.5;
 
   private long executeCount;
 
@@ -31,18 +31,18 @@ public class MoveElbow extends Command {
    * @param angle The absolute angle to move to (180, -180) with 180 being towards the front of the robot (where the intake is).
    * In reality, this angle will not be in this full range because the elbow will have a limit to how much it can move.
    */
-  public MoveElbow(BaseElbow elbow, double angle) {
+  public MoveElbow(BaseElbow elbow, double elbowSetpointInDegrees) {
     this.elbow = elbow;
+    this.elbowSetpointInDegrees = elbowSetpointInDegrees;
     requires(elbow);
-    elbowSetpointInTicks = Elbow.convertElbowDegreesToTicks(angle);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    elbow.setMotionMagicSetpoint(elbowSetpointInTicks);
+    elbow.setMotionMagicSetpointAngle(elbowSetpointInDegrees);
     executeCount = 0;
-    Logger.consoleLog("tickSetpoint: %s", elbowSetpointInTicks);
+    Logger.consoleLog("angleSetpoint: %s", elbowSetpointInDegrees);
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -54,20 +54,20 @@ public class MoveElbow extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    System.out.println(elbow.getPositionTicks() + ", " + elbowSetpointInTicks);
-    return MathUtils.isWithinTolerance(elbow.getPositionTicks(), elbowSetpointInTicks, TICKS_TOLERANCE);
+    return MathUtils.isWithinTolerance(elbow.getAngleInDegrees(), elbowSetpointInDegrees, DEGREE_TOLERANCE);
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Logger.consoleLog("targetTickValue: %s, endingTickValue: %s", elbowSetpointInTicks, elbow.getPositionTicks());
+    Logger.consoleLog("targetAngle: %s, endingAngle: %s", elbowSetpointInDegrees, elbow.getAngleInDegrees());
   }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    elbow.setMotionMagicSetpointAngle(elbow.getAngleInDegrees());
     Logger.consoleLog();
     end();
   }
