@@ -10,6 +10,7 @@ package frc.team670.robot.commands.climb.pistonClimb;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.Arm;
@@ -35,6 +36,8 @@ public class AbortRobotPistonClimb extends InstantCommand {
 
   @Override
   protected void initialize() {
+    SmartDashboard.putString("current-command", "AbortRobotPistonClimb");
+
     CommandGroup abortPistonClimb = new CommandGroup();
 
     if(!climber.getFrontPistonsRetracted()) {

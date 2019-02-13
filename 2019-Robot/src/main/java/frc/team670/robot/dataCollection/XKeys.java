@@ -46,6 +46,8 @@ public class XKeys {
     private Command autonCommand;
     private ClimbHeight height;
 
+    private boolean intakeRunning = true;
+
     public XKeys() {
         instance = NetworkTableInstance.getDefault();
         table = instance.getTable("SmartDashboard");
@@ -63,8 +65,8 @@ public class XKeys {
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-intake", (table2, key2, entry, value, flags) -> {
             if (value.toString().equals("run_intake_in_with_IR")) runIntakeInWithIR();
-            else if (value.toString().equals("run_intake_in_while_held")) runIntakeInWhileHeld();
-            else if (value.toString().equals("run_intake_out_while_held")) runIntakeOutWhileHeld();
+            else if (value.toString().equals("toggle_intake_in")) runIntakeIn();
+            else if (value.toString().equals("toggle_intake_out")) runIntakeOut();
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-autopickup", (table2, key2, entry, value, flags) -> {
             autoPickupBall();
@@ -102,6 +104,26 @@ public class XKeys {
 
     private void runIntakeInWithIR() {
         Scheduler.getInstance().add(new RunIntakeInWithIR(Robot.intake, Robot.sensors));
+    }
+
+    private void runIntakeIn() {
+        if (intakeRunning) {
+            Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, intakeRunning));
+            intakeRunning = false;
+        } else {
+            Scheduler.getInstance().add(new StopIntakeRollers(Robot.intake));
+            intakeRunning = true;
+        }
+    }
+
+    private void runIntakeOut() {
+        if (intakeRunning) {
+            Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, intakeRunning));
+            intakeRunning = false;
+        } else {
+            Scheduler.getInstance().add(new StopIntakeRollers(Robot.intake));
+            intakeRunning = true;
+        }
     }
 
     private void autoPickupBall() {

@@ -8,6 +8,7 @@
 package frc.team670.robot.commands.drive.vision;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.subsystems.DriveBase;
 
 public class CancelDriveBase extends InstantCommand {
@@ -21,6 +22,8 @@ public class CancelDriveBase extends InstantCommand {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    SmartDashboard.putString("current-command", "CancelDriveBase");
+
     driveBase.stop();
   }
 

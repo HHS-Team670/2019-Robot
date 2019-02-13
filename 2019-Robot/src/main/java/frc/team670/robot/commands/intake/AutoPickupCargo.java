@@ -8,6 +8,7 @@
 package frc.team670.robot.commands.intake;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.commands.claw.PickupBall;
 import frc.team670.robot.dataCollection.MustangSensors;
@@ -24,6 +25,8 @@ public class AutoPickupCargo extends CommandGroup {
    * @param sensors The sensors used in the command
    */
   public AutoPickupCargo(Arm arm, Intake intake, Claw claw, MustangSensors sensors) {
+    SmartDashboard.putString("current-command", "AutoPickupCargo");
+
     // runIntake will go until the IR in the claw gets tripped or 0.5 seconds after
     // the Intake sensor has been tripped
     addParallel(new MoveArm(Arm.getStates().get(LegalState.GRAB_BALL_INTAKE), arm));

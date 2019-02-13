@@ -8,6 +8,7 @@
 package frc.team670.robot.commands.intake;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.BaseIntake;
 import frc.team670.robot.utils.Logger;
@@ -29,6 +30,7 @@ public class RunIntakeInWithIR extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    SmartDashboard.putString("current-command", "RunIntakeInWithIR");
     hasBeenTriggered = false;
     Logger.consoleLog();
   }

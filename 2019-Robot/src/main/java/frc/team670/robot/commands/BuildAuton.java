@@ -39,7 +39,7 @@ public class BuildAuton extends CommandGroup {
     pivot = false;
 
     // determines whether the robot starts facing backwards based on the first radio button
-    boolean isRobotFacingBack = startDirection.equals("Backward");
+    boolean isRobotFacingBack = true;
 
     /* if the robot starts facing back, the first path and arm command will be going backwards
      * if the robot starts facing back, the second path and arm command will be going forwards

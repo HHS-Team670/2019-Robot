@@ -8,6 +8,7 @@
 package frc.team670.robot.commands.arm.movement;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.subsystems.BaseIntake;
 import frc.team670.robot.subsystems.Claw;
 import frc.team670.robot.subsystems.elbow.BaseElbow;
@@ -36,6 +37,7 @@ public class CancelArmMovement extends InstantCommand {
   // Called once when the command executes
   @Override
   protected void initialize() {
+    SmartDashboard.putString("current-command", "CancelArmMovement");
     intake.runIntake(0, false);
   }
 

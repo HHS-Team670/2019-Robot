@@ -9,6 +9,7 @@ package frc.team670.robot.commands;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class CancelAllCommands extends InstantCommand {
   public CancelAllCommands() {
@@ -18,6 +19,8 @@ public class CancelAllCommands extends InstantCommand {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
+    SmartDashboard.putString("current-command", "CancelAllCommands");
+
     Scheduler.getInstance().removeAll();
   }
 

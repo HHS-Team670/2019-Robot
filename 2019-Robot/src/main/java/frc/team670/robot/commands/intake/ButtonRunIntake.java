@@ -8,6 +8,7 @@
 package frc.team670.robot.commands.intake;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.subsystems.BaseIntake;
 
 /**
@@ -25,6 +26,7 @@ public class ButtonRunIntake extends InstantCommand {
   // Called once when the command executes
   @Override
   protected void initialize() {
+    SmartDashboard.putString("current-command", "ButtonRunIntake");
 
     intake.runIntake(RunIntakeInWithIR.RUNNING_POWER, runningIn);
   }
