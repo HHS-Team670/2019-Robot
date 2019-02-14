@@ -166,6 +166,13 @@ public class MustangCoprocessor {
     }
 
     /**
+     * @return true if using back camera, false if using front
+     */
+    public boolean isBackCamera() {
+        return backCamera;
+    }
+
+    /**
      * Sets which camera to use for vision (front/back)
      * @param back true for back camera, false for front
      */
