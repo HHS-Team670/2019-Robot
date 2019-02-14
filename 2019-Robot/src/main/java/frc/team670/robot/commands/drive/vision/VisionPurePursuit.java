@@ -41,6 +41,8 @@ public class VisionPurePursuit extends InstantCommand {
   private double spaceFromTarget;
   private boolean isReversed;
   private static Notifier restrictArmMovement;
+  private double straightDistance;
+
 
   /**
    * @param isReversed True if using the back-facing camera on the robot to drive backwards
@@ -61,21 +63,20 @@ public class VisionPurePursuit extends InstantCommand {
     double horizontalAngle = coprocessor.getAngleToWallTarget();
     double ultrasonicDistance = sensors.getUltrasonicDistance()*Math.cos(Math.toRadians(horizontalAngle)); //use cosine to get the straight ultrasonic distance not the diagonal one
     double visionDistance = coprocessor.getDistanceToWallTarget();
-    double straightDistance;
 
     straightDistance = 120;// ultrasonicDistance; //(!MathUtils.doublesEqual(visionDistance, RoboConstants.VISION_ERROR_CODE) && visionDistance < ultrasonicDistance) ? visionDistance : ultrasonicDistance;
     // straightDistance = visionDistance;
     straightDistance = straightDistance - spaceFromTarget;
 
-    if(straightDistance > 60) {
+    if (straightDistance > 60) {
       restrictArmMovement = new Notifier(new Runnable() {
+
         public void run() {
-         if(sensors.getUltrasonicDistance() * Math.cos(Math.toRadians(horizontalAngle)) > 36){
-          //  Scheduler.getInstance().add(new CancelArmMovement(Robot.arm, Robot.intake, Robot.claw));
-          Scheduler.getInstance().add(new MoveArm(Arm.getStates().get(LegalState.NEUTRAL), Robot.arm));
-         } else {
-          Scheduler.getInstance().add(new MoveArm(Arm.getCurrentState(), Robot.arm));
-         }
+          straightDistance = sensors.getUltrasonicDistance() * Math.cos(Math.toRadians(horizontalAngle));
+          if (straightDistance < 48) {
+            Scheduler.getInstance().add(new MoveArm(Arm.getCurrentState(), Robot.arm));
+            cancel();
+          }
         }
       });
 
@@ -129,8 +130,9 @@ public class VisionPurePursuit extends InstantCommand {
     Scheduler.getInstance().add(command);
   }
 
-  public static void setArmRestrictionNotifierToNull(){
-    restrictArmMovement = null;
+  public static void disableArmRestriction() {
+    if (restrictArmMovement != null)
+      restrictArmMovement.stop();
   }
 
 }
