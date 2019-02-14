@@ -57,13 +57,6 @@ public class MustangSensors {
     return ultrasonic.getUltrasonicValue();
   }
 
-  /*
-   * Returns ultrasonic object
-   */
-  public Ultrasonic getUltrasonic(){
-    return ultrasonic.getWPIUltrasonicObject();
-  }
-
   /**
    * Gets the Rotation for the Pure Pursuit drive. (-180, 180) with 90 being forward
    */

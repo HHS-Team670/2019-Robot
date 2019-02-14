@@ -8,6 +8,7 @@
 package frc.team670.robot.commands.drive.purePursuit;
 
 import edu.wpi.first.wpilibj.command.Command;
+import frc.team670.robot.commands.drive.vision.VisionPurePursuit;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.utils.Logger;
@@ -63,6 +64,7 @@ public class PurePursuit extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
+    VisionPurePursuit.setArmRestrictionNotifierToNull();
     return purePursuitTracker.isDone();// || Robot.sensors.getUltrasonicDistance() < 15;
   }
 

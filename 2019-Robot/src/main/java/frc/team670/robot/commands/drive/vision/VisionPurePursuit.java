@@ -7,8 +7,11 @@
 
 package frc.team670.robot.commands.drive.vision;
 
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
+
+import frc.team670.robot.commands.arm.movement.CancelArmMovement;
 import frc.team670.robot.commands.drive.purePursuit.Path;
 import frc.team670.robot.commands.drive.purePursuit.PathGenerator;
 import frc.team670.robot.commands.drive.purePursuit.PoseEstimator;
@@ -17,6 +20,7 @@ import frc.team670.robot.dataCollection.MustangCoprocessor;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.utils.math.Vector;
+import frc.team670.robot.Robot;
 
 /**
  * Starts a Pure Pursuit path based off vision data
@@ -34,6 +38,7 @@ public class VisionPurePursuit extends InstantCommand {
   private static final double SPACING = 1; // Spacing Inches
   private double spaceFromTarget;
   private boolean isReversed;
+  private static Notifier restrictArmMovement;
 
   /**
    * @param isReversed True if using the back-facing camera on the robot to drive backwards
@@ -55,9 +60,25 @@ public class VisionPurePursuit extends InstantCommand {
     double ultrasonicDistance = sensors.getUltrasonicDistance()*Math.cos(Math.toRadians(horizontalAngle)); //use cosine to get the straight ultrasonic distance not the diagonal one
     double visionDistance = coprocessor.getDistanceToWallTarget();
     double straightDistance;
+
     straightDistance = 120;// ultrasonicDistance; //(!MathUtils.doublesEqual(visionDistance, RoboConstants.VISION_ERROR_CODE) && visionDistance < ultrasonicDistance) ? visionDistance : ultrasonicDistance;
     // straightDistance = visionDistance;
     straightDistance = straightDistance - spaceFromTarget;
+
+    if(straightDistance > 60) {
+      restrictArmMovement = new Notifier(new Runnable() {
+        public void run() {
+         if(sensors.getUltrasonicDistance() * Math.cos(Math.toRadians(horizontalAngle)) > 36){
+           Scheduler.getInstance().add(new CancelArmMovement(Robot.arm.getElbow(), Robot.arm.getExtension(), Robot.arm.getWrist(), Robot.intake, Robot.claw));
+         }
+        }
+      });
+
+      restrictArmMovement.startPeriodic(0.02);
+    } else {
+      restrictArmMovement = null;
+    }
+
     if(straightDistance < 0){
       System.out.println("Too close to target!");
       this.cancel();
@@ -101,7 +122,10 @@ public class VisionPurePursuit extends InstantCommand {
     command = new PurePursuit(path, driveBase, sensors, poseEstimator, isReversed);
 
     Scheduler.getInstance().add(command);
+  }
 
+  public static void setArmRestrictionNotifierToNull(){
+    restrictArmMovement = null;
   }
 
 }

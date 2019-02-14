@@ -30,7 +30,6 @@ import frc.team670.robot.commands.intake.AutoPickupCargo;
 import frc.team670.robot.commands.intake.ButtonRunIntake;
 import frc.team670.robot.commands.intake.RunIntakeInWithIR;
 import frc.team670.robot.commands.intake.StopIntakeRollers;
-import frc.team670.robot.commands.intake.ToggleButtonRunIntake;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
 import frc.team670.robot.subsystems.Arm.LegalState;
@@ -166,20 +165,12 @@ public class XKeys {
         Scheduler.getInstance().add(new PistonClimbWithTiltControl(setpoint, Robot.climber, Robot.sensors));
     }
 
-    private void toggleRunIntakeIn(){
-        Scheduler.getInstance().add(new ToggleButtonRunIntake(Robot.intake, true, toggleIntake = !toggleIntake));
-    }
-
-    private void toggleRunIntakeOut() {
-        Scheduler.getInstance().add(new ToggleButtonRunIntake(Robot.intake, false, toggleIntake = !toggleIntake));
-    }
-
     private void cancelArmClimb() {
         Scheduler.getInstance().add(new CancelArmClimb(Robot.arm));
     }
 
     private void cancelAllCommands() {
-        Scheduler.getInstance().add(new CancelAllCommands());
+        Scheduler.getInstance().add(new CancelAllCommands(Robot.driveBase, Robot.arm.getElbow(), Robot.arm.getExtension(), Robot.arm.getWrist(), Robot.intake, Robot.claw, Robot.climber));
     }
 
     private void cancelIntakeRollers(){
