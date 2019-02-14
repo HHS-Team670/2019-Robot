@@ -9,21 +9,19 @@ package frc.team670.robot.commands;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.BaseIntake;
 import frc.team670.robot.subsystems.Claw;
 import frc.team670.robot.subsystems.Climber;
 import frc.team670.robot.subsystems.DriveBase;
-import frc.team670.robot.subsystems.elbow.BaseElbow;
-import frc.team670.robot.subsystems.extension.BaseExtension;
-import frc.team670.robot.subsystems.wrist.BaseWrist;
 
 public class CancelAllCommands extends InstantCommand {
 
-  public CancelAllCommands(DriveBase driveBase, BaseElbow elbow, BaseExtension extension, BaseWrist wrist, BaseIntake intake, Claw claw, Climber climber) {
+  public CancelAllCommands(DriveBase driveBase, Arm arm, BaseIntake intake, Claw claw, Climber climber) {
     requires(driveBase);
-    requires(elbow);
-    requires(extension);
-    requires(wrist);
+    requires(arm.getElbow());
+    requires(arm.getExtension());
+    requires(arm.getWrist());
     requires(intake);
     requires(claw);
     requires(climber);

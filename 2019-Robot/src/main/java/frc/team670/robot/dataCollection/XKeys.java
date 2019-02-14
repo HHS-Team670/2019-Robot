@@ -170,7 +170,7 @@ public class XKeys {
     }
 
     private void cancelAllCommands() {
-        Scheduler.getInstance().add(new CancelAllCommands(Robot.driveBase, Robot.arm.getElbow(), Robot.arm.getExtension(), Robot.arm.getWrist(), Robot.intake, Robot.claw, Robot.climber));
+        Scheduler.getInstance().add(new CancelAllCommands(Robot.driveBase, Robot.arm, Robot.intake, Robot.claw, Robot.climber));
     }
 
     private void cancelIntakeRollers(){
@@ -182,7 +182,7 @@ public class XKeys {
     }
 
     private void cancelArmMovement(){
-        Scheduler.getInstance().add(new CancelArmMovement(Robot.arm.getElbow(), Robot.arm.getExtension(), Robot.arm.getWrist(), Robot.intake, Robot.claw));
+        Scheduler.getInstance().add(new CancelArmMovement(Robot.arm, Robot.intake, Robot.claw));
     }
 
     private void cancelDriveBase(){

@@ -10,17 +10,18 @@ package frc.team670.robot.commands.drive.vision;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
-
+import frc.team670.robot.Robot;
 import frc.team670.robot.commands.arm.movement.CancelArmMovement;
+import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.commands.drive.purePursuit.Path;
 import frc.team670.robot.commands.drive.purePursuit.PathGenerator;
 import frc.team670.robot.commands.drive.purePursuit.PoseEstimator;
 import frc.team670.robot.commands.drive.purePursuit.PurePursuit;
 import frc.team670.robot.dataCollection.MustangCoprocessor;
 import frc.team670.robot.dataCollection.MustangSensors;
+import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.utils.math.Vector;
-import frc.team670.robot.Robot;
 
 /**
  * Starts a Pure Pursuit path based off vision data
@@ -69,7 +70,9 @@ public class VisionPurePursuit extends InstantCommand {
       restrictArmMovement = new Notifier(new Runnable() {
         public void run() {
          if(sensors.getUltrasonicDistance() * Math.cos(Math.toRadians(horizontalAngle)) > 36){
-           Scheduler.getInstance().add(new CancelArmMovement(Robot.arm.getElbow(), Robot.arm.getExtension(), Robot.arm.getWrist(), Robot.intake, Robot.claw));
+           Scheduler.getInstance().add(new CancelArmMovement(Robot.arm, Robot.intake, Robot.claw));
+         } else {
+          Scheduler.getInstance().add(new MoveArm(Arm.getCurrentState(), Robot.arm));
          }
         }
       });
