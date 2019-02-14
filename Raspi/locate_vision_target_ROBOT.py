@@ -92,7 +92,7 @@ def main():
     while True:
 
         # gets which camera to use (front or back)
-        camera = table.getEntry(camera_key)
+        camera = table.getEntry(camera_key).getString("back")
 
         vs = None
         if camera is "front":
