@@ -8,6 +8,7 @@
 package frc.team670.robot.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.commands.arm.movement.MoveArmAfterDriveDistance;
 import frc.team670.robot.commands.arm.movement.PlaceOrGrab;
@@ -26,6 +27,7 @@ public class BuildAuton extends CommandGroup {
    * @param arm the arm object
    */
   public BuildAuton(String[] autonSequence, Arm arm) {
+    SmartDashboard.putString("current-command", "BuildAuton");
     String startDirection = autonSequence[0];
     String start = autonSequence[1];
     String target1 = autonSequence[2];
@@ -49,10 +51,10 @@ public class BuildAuton extends CommandGroup {
     destination = getLegalState(start, target1, height1); 
     // finds the file corresponding to the path the robot should take
     fileName = start + "_" + target1 + ".pf1.csv";
-    // drives along the path described by the file
-    addSequential(new DriveMotionProfile(fileName, true));
     // moves the arm to the destination while driving
     addParallel(new MoveArmAfterDriveDistance(Arm.getArmState(destination), arm, 36));
+    // drives along the path described by the file
+    addSequential(new DriveMotionProfile(fileName, true));
     if(pivot){
         addSequential(new NavXPivot(180));
         isRobotFacingBack = !isRobotFacingBack;
@@ -69,8 +71,8 @@ public class BuildAuton extends CommandGroup {
     // repeat for second target with robot direction flipped
     destination = getLegalState(target1, target2, height2); 
     fileName = target1 + "_" + target2 + ".pf1.csv";
-    addSequential(new DriveMotionProfile(fileName, !isRobotFacingBack));
     addParallel(new MoveArm(Arm.getArmState(destination), arm));
+    addSequential(new DriveMotionProfile(fileName, !isRobotFacingBack));
     if(pivot){
         addSequential(new NavXPivot(180));
         isRobotFacingBack = !isRobotFacingBack;
@@ -82,8 +84,8 @@ public class BuildAuton extends CommandGroup {
     // repeat for third target with original robot direction
     destination = getLegalState(target2, target3, height3); 
     fileName = target2 + "_" + target3 + ".pf1.csv";
-    addSequential(new DriveMotionProfile(fileName, isRobotFacingBack));
     addParallel(new MoveArm(Arm.getArmState(destination), arm));
+    addSequential(new DriveMotionProfile(fileName, isRobotFacingBack));
     if(pivot){
         addSequential(new NavXPivot(180));
         isRobotFacingBack = !isRobotFacingBack;

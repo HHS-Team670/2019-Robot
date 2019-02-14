@@ -39,9 +39,9 @@ import frc.team670.robot.subsystems.Climber;
 
 /**
  * Listens on network tables to keys sent over by the XKeys keyboard and calls the corresponding commands
- * 
+ *
  * Link to XKeys bindings: https://docs.google.com/spreadsheets/d/1Y1cZvWabaVvush9LvfwKdRgCdmRTlztb67nWk5D-5x4/edit?usp=sharing
- * Link to Dashboard where XKeys are read in and values are sent over networktables: https://github.com/HHS-Team670/FRCDashboard 
+ * Link to Dashboard where XKeys are read in and values are sent over networktables: https://github.com/HHS-Team670/FRCDashboard
  */
 public class XKeys {
 
@@ -49,8 +49,6 @@ public class XKeys {
     private NetworkTable table;
     private Command autonCommand;
     private ClimbHeight height;
-
-    private boolean intakeRunning = true;
     private boolean toggleIn = true, toggleOut = false;
 
     public XKeys() {
@@ -59,19 +57,18 @@ public class XKeys {
         table = instance.getTable("SmartDashboard");
         height = ClimbHeight.FLAT;
 
-        table.addEntryListener("autonSequence", (table2, key2, entry, value, flags) -> {
-            if (value.getType() != NetworkTableType.kStringArray) return;
+        table.addEntryListener("auton-sequence", (table2, key2, entry, value, flags) -> {
+            if (value.getType() != NetworkTableType.kStringArray) SmartDashboard.putString("auto-sequence", "not string array");
+            SmartDashboard.putString("auto-sequence", "building auton");
             autonCommand = new BuildAuton(value.getStringArray(), Robot.arm);
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-armstates", (table2, key2, entry, value, flags) -> {
             if (value.getType() != NetworkTableType.kString) return;
-            String s = value.getString();
-            moveArm(Arm.getArmState(LegalState.valueOf(s)));
+            moveArm(getArmState(value.getString()));
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-placing", (table2, key2, entry, value, flags) -> {
             if (value.getType() != NetworkTableType.kString) return;
             String s = value.getString();
-            SmartDashboard.putString("XKEYS", "placing listener");
             if (s.equals("place")) placeOrGrab(true);
             else if (s.equals("grab")) placeOrGrab(false);
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
@@ -115,11 +112,37 @@ public class XKeys {
         return autonCommand;
     }
 
+    private ArmState getArmState(String in) {
+        LegalState legalState = null;
+        if (in.equals("READY_TO_CLIMB")) legalState = LegalState.READY_TO_CLIMB;
+        if (in.equals("READY_PLACE_HATCH_ROCKET_MIDDLE_BACK")) legalState = LegalState.READY_PLACE_HATCH_ROCKET_MIDDLE_BACK; 
+        if (in.equals("READY_PLACE_HATCH_ROCKET_MIDDLE_FORWARD")) legalState = LegalState.READY_PLACE_HATCH_ROCKET_MIDDLE_FORWARD;
+        if (in.equals("READY_PLACE_BALL_ROCKET_MIDDLE_BACK")) legalState = LegalState.READY_PLACE_BALL_ROCKET_MIDDLE_BACK;
+        if (in.equals("GRAB_BALL_LOADINGSTATION_BACK")) legalState = LegalState.GRAB_BALL_LOADINGSTATION_BACK;
+        if (in.equals("GRAB_BALL_LOADINGSTATION_FORWARD")) legalState = LegalState.GRAB_BALL_LOADINGSTATION_FORWARD;
+        if (in.equals("PLACE_BALL_CARGOSHIP_BACK")) legalState = LegalState.PLACE_BALL_CARGOSHIP_BACK;
+        if (in.equals("PLACE_BALL_CARGOSHIP_FORWARD")) legalState = LegalState.PLACE_BALL_CARGOSHIP_FORWARD;
+        if (in.equals("READY_LOW_HATCH_BACK")) legalState = LegalState.READY_LOW_HATCH_BACK;
+        if (in.equals("READY_LOW_HATCH_FORWARD")) legalState = LegalState.READY_LOW_HATCH_FORWARD;
+        if (in.equals("READY_PLACE_BALL_ROCKET_LOW_BACK")) legalState = LegalState.READY_PLACE_BALL_ROCKET_LOW_BACK;
+        if (in.equals("READY_PLACE_BALL_ROCKET_LOW_FORWARD")) legalState = LegalState.READY_PLACE_BALL_ROCKET_LOW_FORWARD;
+        if (in.equals("GRAB_BALL_GROUND_BACK")) legalState = LegalState.GRAB_BALL_GROUND_BACK;
+        if (in.equals("GRAB_BALL_INTAKE")) legalState = LegalState.GRAB_BALL_INTAKE;
+        if (in.equals("READY_GRAB_HATCH_GROUND_BACK")) legalState = LegalState.READY_GRAB_HATCH_GROUND_BACK;
+        if (in.equals("STOW")) legalState = LegalState.STOW;
+        if (in.equals("NEUTRAL")) legalState = LegalState.NEUTRAL;
+
+        return Arm.getArmState(legalState);
+    }
+
     private void moveArm(ArmState state) {
+        SmartDashboard.putString("current-command", "moveArm()");
+        SmartDashboard.putString("ARMSTATE", state.toString());
         Scheduler.getInstance().add(new MoveArm(state, Robot.arm));
     }
 
     private void placeOrGrab(boolean isPlacing) {
+        SmartDashboard.putString("current-command", "placeOrGrab()");
         Scheduler.getInstance().add(new PlaceOrGrab(isPlacing));
     }
 
@@ -162,9 +185,11 @@ public class XKeys {
     }
 
     private void nextStepArmClimb(ClimbHeight height) {
-        if (height == ClimbHeight.FLAT) Scheduler.getInstance().add(new CycleClimb(Robot.arm, Robot.climber, Robot.sensors, Climber.PISTON_ENCODER_FLAT));
-        else if (height == ClimbHeight.LEVEL2) Scheduler.getInstance().add(new CycleClimb(Robot.arm, Robot.climber, Robot.sensors, Climber.PISTON_ENCODER_LEVEL_TWO));
-        else if (height == ClimbHeight.LEVEL3) Scheduler.getInstance().add(new CycleClimb(Robot.arm, Robot.climber, Robot.sensors, Climber.PISTON_ENCODER_LEVEL_THREE));
+        int setpoint = 0;
+        if (height == ClimbHeight.FLAT) setpoint = Climber.PISTON_ENCODER_FLAT;
+        else if (height == ClimbHeight.LEVEL2) setpoint = Climber.PISTON_ENCODER_LEVEL_TWO;
+        else if (height == ClimbHeight.LEVEL3) setpoint = Climber.PISTON_ENCODER_LEVEL_THREE;
+        Scheduler.getInstance().add(new CycleClimb(Robot.arm, Robot.climber, Robot.sensors, setpoint));
     }
 
     private void pistonClimb(ClimbHeight height) {

@@ -67,12 +67,12 @@ public class OI {
     runBackward = new JoystickButton(driverController, XboxButtons.A);
     runBackward.whenPressed(new MoveIntakeToSetpointAngle(-80, Robot.intake));
 
-    runIntakeIn = new JoystickButton(operatorController, XboxButtons.RIGHT_BUMPER);
-    runIntakeIn.whenPressed(new ButtonRunIntake(Robot.intake, RunIntakeInWithIR.RUNNING_POWER, true));
-    runIntakeIn.whenReleased(new StopIntakeRollers(Robot.intake));
-    runIntakeOut = new JoystickButton(operatorController, XboxButtons.LEFT_BUMPER);
-    runIntakeOut.whenPressed(new ButtonRunIntake(Robot.intake, RunIntakeInWithIR.RUNNING_POWER, false));
-    runIntakeOut.whenReleased(new StopIntakeRollers(Robot.intake));
+    // runIntakeIn = new JoystickButton(operatorController, XboxButtons.RIGHT_BUMPER);
+    // runIntakeIn.whenPressed(new ButtonRunIntake(Robot.intake, RunIntakeInWithIR.RUNNING_POWER, true));
+    // runIntakeIn.whenReleased(new StopIntakeRollers(Robot.intake));
+    // runIntakeOut = new JoystickButton(operatorController, XboxButtons.LEFT_BUMPER);
+    // runIntakeOut.whenPressed(new ButtonRunIntake(Robot.intake, RunIntakeInWithIR.RUNNING_POWER, false));
+    // runIntakeOut.whenReleased(new StopIntakeRollers(Robot.intake));
   }
 
   /**
