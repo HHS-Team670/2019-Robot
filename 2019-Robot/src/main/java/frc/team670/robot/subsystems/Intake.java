@@ -39,6 +39,8 @@ public class Intake extends BaseIntake {
 
   private static final double ARBITRARY_FEED_FORWARD = 0.175;
 
+  private static final int TICKS_PER_ROTATION = 4096;
+
   private TalonSRX roller;
   
   private Point2D.Double intakeCoord;
@@ -166,4 +168,5 @@ public class Intake extends BaseIntake {
   public double getAngleInDegrees() {
     return convertIntakeTicksToDegrees(getPositionTicks());
   }
+
 }

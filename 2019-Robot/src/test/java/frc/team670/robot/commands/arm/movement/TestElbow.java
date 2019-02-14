@@ -81,4 +81,14 @@ public class TestElbow extends BaseElbow {
         elbowAngle = angle;
     }
 
+    @Override
+    public double getForwardSoftLimitAngle() {
+        return 0;
+    }
+
+    @Override
+    public double getReverseSoftLimitAngle() {
+        return 0;
+    }
+
 }

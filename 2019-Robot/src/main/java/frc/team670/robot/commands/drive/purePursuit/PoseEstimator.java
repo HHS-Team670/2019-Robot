@@ -21,6 +21,11 @@ public class PoseEstimator {
 		reset();
 		this.driveBase = driveBase;
 		this.sensors = sensors;
+
+		prevLeftDist = DriveBase.convertDriveBaseTicksToInches(driveBase.getLeftDIOEncoderPosition());
+		prevRightDist = DriveBase.convertDriveBaseTicksToInches(driveBase.getRightDIOEncoderPosition());
+		update();
+		// System.out.println("Start Pose: " + pose);
 	}
 	public void setDriveTrainBase(DriveBase driveTrainBase) {
 		this.driveBase = driveTrainBase;
@@ -54,16 +59,21 @@ public class PoseEstimator {
 	}
 
 	public void update() {
-		double leftDist = driveBase.getLeftMustangEncoderPositionInInches();
-		double rightDist = driveBase.getRightMustangEncoderPositionInInches();
+		double leftDist, rightDist;
+		leftDist = driveBase.getLeftMustangEncoderPositionInInches(); //Not negative because encoders increase when robot moves forward
+		rightDist = driveBase.getRightMustangEncoderPositionInInches();
+		// System.out.println("LeftDist: " + leftDist + ", RightDist: " + rightDist);
 		double deltaLeftDist = leftDist - prevLeftDist;
 		double deltaRightDist = rightDist - prevRightDist;
-		Rotation deltaHeading = prevPose.getRotation().inverse().rotate(sensors.getRotation());
+		Rotation deltaHeading = prevPose.getRotation().inverse().rotate(sensors.getRotationAngle());
+
 		//Use encoders + gyro to determine our velocity
 		velocity = Kinematics.forwardKinematics(deltaLeftDist, deltaRightDist, deltaHeading.radians());
+
 		//use velocity to determine our pose
 		pose = Kinematics.integrateForwardKinematics(prevPose, velocity);
 		//update for next iteration
+		// System.out.println(pose);
 		prevLeftDist = leftDist;
 		prevRightDist = rightDist;
 		prevPose = pose;

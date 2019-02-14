@@ -10,17 +10,26 @@ package frc.team670.robot.dataCollection;
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.NetworkTableType;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.Robot;
 import frc.team670.robot.commands.BuildAuton;
+import frc.team670.robot.commands.CancelAllCommands;
+import frc.team670.robot.commands.arm.movement.CancelArmMovement;
 import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.commands.arm.movement.PlaceOrGrab;
 import frc.team670.robot.commands.climb.armClimb.CancelArmClimb;
 import frc.team670.robot.commands.climb.controlClimb.CycleClimb;
+import frc.team670.robot.commands.climb.pistonClimb.AbortRobotPistonClimb;
 import frc.team670.robot.commands.climb.pistonClimb.PistonClimbWithTiltControl;
+import frc.team670.robot.commands.drive.vision.CancelDriveBase;
 import frc.team670.robot.commands.intake.AutoPickupCargo;
-import frc.team670.robot.commands.intake.RunIntake;
+import frc.team670.robot.commands.intake.ButtonRunIntake;
+import frc.team670.robot.commands.intake.RunIntakeInWithIR;
+import frc.team670.robot.commands.intake.StopIntakeRollers;
+import frc.team670.robot.commands.intake.ToggleButtonRunIntake;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
 import frc.team670.robot.subsystems.Arm.LegalState;
@@ -39,38 +48,63 @@ public class XKeys {
     private NetworkTable table;
     private Command autonCommand;
     private ClimbHeight height;
+    private boolean toggleIntake;
+
+    private boolean intakeRunning = true;
 
     public XKeys() {
+        SmartDashboard.putString("XKEYS", "XKeys constructor");
         instance = NetworkTableInstance.getDefault();
         table = instance.getTable("SmartDashboard");
         height = ClimbHeight.FLAT;
 
         table.addEntryListener("autonSequence", (table2, key2, entry, value, flags) -> {
+            if (value.getType() != NetworkTableType.kStringArray) return;
             autonCommand = new BuildAuton(value.getStringArray(), Robot.arm);
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-armstates", (table2, key2, entry, value, flags) -> {
-            moveArm(Arm.getArmState(LegalState.valueOf(value.toString())));
+            if (value.getType() != NetworkTableType.kString) return;
+            String s = value.getString();
+            moveArm(Arm.getArmState(LegalState.valueOf(s)));
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-placing", (table2, key2, entry, value, flags) -> {
-            if (value.toString().equals("place")) placeOrGrab(true);
-            else if (value.toString().equals("grab")) placeOrGrab(false);
+            if (value.getType() != NetworkTableType.kString) return;
+            String s = value.getString();
+            SmartDashboard.putString("XKEYS", "placing listener");
+            if (s.equals("place")) placeOrGrab(true);
+            else if (s.equals("grab")) placeOrGrab(false);
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-intake", (table2, key2, entry, value, flags) -> {
-            if (value.toString().equals("run_intake_in")) runIntake(true);
-            else if (value.toString().equals("run_intake_out")) runIntake(false);
+            if (value.getType() != NetworkTableType.kString) return;
+            String s = value.getString();
+            if (s.equals("run_intake_in_with_IR")) runIntakeInWithIR();
+            else if (s.equals("toggle_intake_in")) runIntakeIn();
+            else if (s.equals("toggle_intake_out")) runIntakeOut();
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-autopickup", (table2, key2, entry, value, flags) -> {
             autoPickupBall();
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-climber", (table2, key2, entry, value, flags) -> {
-            if (value.toString().equals("set_climb_flat")) height = ClimbHeight.FLAT;
-            else if (value.toString().equals("set_climb_2")) height = ClimbHeight.LEVEL2;
-            else if (value.toString().equals("set_climb_3")) height = ClimbHeight.LEVEL3;
+            if (value.getType() != NetworkTableType.kString) return;
+            String s = value.getString();
+            if (s.equals("set_climb_flat")) height = ClimbHeight.FLAT;
+            else if (s.equals("set_climb_2")) height = ClimbHeight.LEVEL2;
+            else if (s.equals("set_climb_3")) height = ClimbHeight.LEVEL3;
             
-            if (value.toString().equals("cancel_arm_climb")) cancelArmClimb();
-            if (value.toString().contains("cycle_climb")) nextStepArmClimb(height);
-            if (value.toString().equals("piston_climb")) pistonClimb(height);
+            if (s.contains("cycle_climb")) nextStepArmClimb(height);
+            else if (s.equals("piston_climb")) pistonClimb(height);
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+        table.addEntryListener("xkeys-cancel", (table2, key2, entry, value, flags) -> {
+            if (value.getType() != NetworkTableType.kString) return;
+            String s = value.getString();
+            if (s.equals("cancel_all")) cancelAllCommands();
+            if (s.equals("cancel_arm")) cancelArmMovement();
+            if (s.equals("cancel_drive")) cancelDriveBase();
+            if (s.equals("cancel_intake")) cancelIntakeRollers();
+            if (s.equals("cancel_arm_climb")) cancelArmClimb();
+            if (s.equals("cancel_piston_climb")) cancelPistonClimb();
+        }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+
     }
 
     public Command getAutonCommand() {
@@ -85,8 +119,28 @@ public class XKeys {
         Scheduler.getInstance().add(new PlaceOrGrab(isPlacing));
     }
 
-    private void runIntake(boolean runningIn) {
-        Scheduler.getInstance().add(new RunIntake(Robot.intake, Robot.sensors, runningIn));
+    private void runIntakeInWithIR() {
+        Scheduler.getInstance().add(new RunIntakeInWithIR(Robot.intake, Robot.sensors));
+    }
+
+    private void runIntakeIn() {
+        if (intakeRunning) {
+            Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, RunIntakeInWithIR.RUNNING_POWER, true));
+            intakeRunning = false;
+        } else {
+            Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, 0, true));
+            intakeRunning = true;
+        }
+    }
+
+    private void runIntakeOut() {
+        if (intakeRunning) {
+            Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, RunIntakeInWithIR.RUNNING_POWER, false));
+            intakeRunning = false;
+        } else {
+            Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, 0, false));
+            intakeRunning = true;
+        }
     }
 
     private void autoPickupBall() {
@@ -107,10 +161,37 @@ public class XKeys {
         Scheduler.getInstance().add(new PistonClimbWithTiltControl(setpoint, Robot.climber, Robot.sensors));
     }
 
+    private void toggleRunIntakeIn(){
+        Scheduler.getInstance().add(new ToggleButtonRunIntake(Robot.intake, true, toggleIntake = !toggleIntake));
+    }
+
+    private void toggleRunIntakeOut() {
+        Scheduler.getInstance().add(new ToggleButtonRunIntake(Robot.intake, false, toggleIntake = !toggleIntake));
+    }
+
     private void cancelArmClimb() {
         Scheduler.getInstance().add(new CancelArmClimb(Robot.arm));
     }
 
+    private void cancelAllCommands() {
+        Scheduler.getInstance().add(new CancelAllCommands());
+    }
+
+    private void cancelIntakeRollers(){
+        Scheduler.getInstance().add(new StopIntakeRollers(Robot.intake));
+    }
+
+    private void cancelPistonClimb(){
+        Scheduler.getInstance().add(new AbortRobotPistonClimb(Robot.climber, Robot.arm, Robot.sensors));
+    }
+
+    private void cancelArmMovement(){
+        Scheduler.getInstance().add(new CancelArmMovement(Robot.arm.getElbow(), Robot.arm.getExtension(), Robot.arm.getWrist(), Robot.intake, Robot.claw));
+    }
+
+    private void cancelDriveBase(){
+        Scheduler.getInstance().add(new CancelDriveBase(Robot.driveBase));
+    }
     private enum ClimbHeight {
         FLAT, LEVEL2, LEVEL3;
     }

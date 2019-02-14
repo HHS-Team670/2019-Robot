@@ -27,7 +27,6 @@ public abstract class RotatingSubsystem extends Subsystem implements TunableSubs
     protected int offsetFromEncoderZero;
 
     protected SensorCollection rotatorSensorCollection;
-    protected static final int TICKS_PER_ROTATION = 4096;
 
     public RotatingSubsystem(TalonSRX rotatorTalon, double arbitraryFeedForwardConstant, int forwardSoftLimit, int reverseSoftLimit, boolean timeout, int quadEncoderMin, int quadEncoderMax, int continuousCurrentLimit, int peakCurrentLimit, int offsetFromEncoderZero) {
         // For testing purposes

@@ -2,8 +2,10 @@ package frc.team670.robot.dataCollection;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.constants.RobotMap;
+import frc.team670.robot.dataCollection.sensors.DIOUltrasonic;
 import frc.team670.robot.dataCollection.sensors.NavX;
 import frc.team670.robot.dataCollection.sensors.NavX.NavX_Pitch_PIDSource;
 import frc.team670.robot.dataCollection.sensors.NavX.ZeroableNavX_Yaw_PIDSource;
@@ -22,25 +24,52 @@ public class MustangSensors {
   private DigitalInput intakeIRSensor;
   public static final double NAVX_ERROR_CODE = -40001;
 
+   //Ultrasonic
+   private DIOUltrasonic ultrasonic = null;
+
 
   public MustangSensors(){
     try {
       // navXMicro = new NavX(RobotMap.NAVX_PORT); 
       // isNavXNull = false;
     } catch (RuntimeException ex) {
-      // DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
-      // SmartDashboard.putString("sensor-error", "Error instantiating navX-MXP");
+      DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
+      SmartDashboard.putString("warning", "Error instantiating navX-MXP");
       navXMicro = null;
       isNavXNull = true;
     }
-    
+
     try {
       intakeIRSensor = new DigitalInput(RobotMap.INTAKE_IR_DIO_PORT);
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error instantiating intakeIRSensor: " + ex.getMessage(), true);
-      SmartDashboard.putString("sensor-error", "Error instantiating intakeIRSensor");
+      SmartDashboard.putString("warning", "Error instantiating intakeIRSensor");
       intakeIRSensor = null;
     }
+
+    ultrasonic = new DIOUltrasonic();
+  }
+
+  /*
+   * Returns distance as given by ultrasonic
+   */
+  public double getUltrasonicDistance(){
+    return ultrasonic.getUltrasonicValue();
+  }
+
+  /*
+   * Returns ultrasonic object
+   */
+  public Ultrasonic getUltrasonic(){
+    return ultrasonic.getWPIUltrasonicObject();
+  }
+
+  /**
+   * Gets the Rotation for the Pure Pursuit drive. (-180, 180) with 90 being forward
+   */
+  public Rotation getRotationAngle() {
+    double headingRadians = Pathfinder.boundHalfDegrees(90 - getYawDouble());
+    return Rotation.fromDegrees(headingRadians);
   }
 
   /**
@@ -91,14 +120,6 @@ public class MustangSensors {
    */
   public double getYawDoubleForPathfinder(){
    return -1 * getYawDouble();
-  }
-
-  /**
-   * Gets the Rotation for the Pure Pursuit drive. (-180, 180) with 90 being forward
-   */
-  public Rotation getRotation() {
-    double headingRadians = Pathfinder.boundHalfDegrees(90 - getYawDouble());
-    return Rotation.fromDegrees(headingRadians);
   }
 
   /**

@@ -457,9 +457,25 @@ public class DriveBase extends Subsystem {
    * Returns the velocity of the right side of the drivebase in inches/second from
    * the Spark Encoder
    */
-  public double getRightSparkEncoderVelocityInches() {
-    return (DriveBase.convertDriveBaseTicksToInches(right1.getEncoder().getVelocity() / RobotConstants.SPARK_TICKS_PER_ROTATION) / 60);
+  // public double getLeftSparkEncoderVelocityInches() {
+  //   return (DriveBase.convertDriveBaseTicksToInches(left1.getEncoder().getVelocity() / RobotConstants.SPARK_TICKS_PER_ROTATION) / 60);
+  // }
+
+  /**
+   * Returns the velocity of the right side of the drivebase in ticks/second from
+   * the Spark Encoder
+   */
+  public double getLeftSparkEncoderVelocityTicks() {
+    return (left1.getEncoder().getVelocity() / RobotConstants.SPARK_TICKS_PER_ROTATION / 60);
   }
+
+  /**
+   * Returns the velocity of the right side of the drivebase in inches/second from
+   * the Spark Encoder
+   */
+  // public double getRightSparkEncoderVelocityInches() {
+  //   return (DriveBase.convertDriveBaseTicksToInches(right1.getEncoder().getVelocity() / RobotConstants.SPARK_TICKS_PER_ROTATION) / 60);
+  // }
 
   /**
    * Returns the velocity of the right side of the drivebase in ticks/second from
@@ -502,6 +518,10 @@ public class DriveBase extends Subsystem {
       double rotations = ticks / RobotConstants.DIO_TICKS_PER_ROTATION;
       return rotations * Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER;
    }
+
+   public static double convertSparkRevolutionsToInches(double revolutions) {
+    return revolutions * Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER;
+ }
 
   /**
   * Converts an inch value into drive base DIO Encoder ticks.

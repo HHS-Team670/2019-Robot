@@ -25,6 +25,9 @@ public class Extension extends BaseExtension {
 
   private TalonSRX extensionMotor;
 
+  public static final double TICKS_PER_MOTOR_ROTATION = 4096; // Should be real value
+  public static final double MOTOR_ROTATIONS_PER_INCH = 0.169333; //Should be real value
+
   // Position PID control constants when doing Arm Climb 
   private static final int POSITION_SLOT = 1;
   private final double P_P = 0.1, P_I = 0.0, P_D = 0.0, P_F = 0.0, RAMP_RATE = 0.1;
@@ -38,15 +41,16 @@ public class Extension extends BaseExtension {
   private static final int kPIDLoopIdx = 0, MOTION_MAGIC_SLOT = 0, kTimeoutMs = 0;
   public static final int EXTENSION_IN_POS = 0; // TODO Set These
   public static final int EXTENSION_OUT_POS = 12000; // TODO Set this in ticks
-  public static final double EXTENSION_OUT_IN_INCHES = convertExtensionTicksToInches(EXTENSION_OUT_POS); //TODO set this
+  public static final double EXTENSION_OUT_IN_INCHES = 12.75;
   public static final int FORWARD_SOFT_LIMIT = EXTENSION_IN_POS - 100, REVERSE_SOFT_LIMIT = EXTENSION_OUT_POS + 100; // TODO figure out the values in rotations
+ 
   private static final double MM_F = 0, MM_P = 0, MM_I = 0, MM_D = 0; //TODO figure out what these are. Motion Magic Constants
   private static final int MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 90; // TODO set this
   private static final int EXTMOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS = 400; // TODO set this
   public static final int QUAD_ENCODER_MAX = FORWARD_SOFT_LIMIT + 200, QUAD_ENCODER_MIN = REVERSE_SOFT_LIMIT - 200; //TODO Set these values based on forward and back soft limits (especially the addition/subtraction)
 
   private static final double ARBITRARY_FEEDFORWARD_CONSTANT = 0.3;
-  private static final double MAX_EXTENSION_OUTPUT = 0.8;
+  public static final double MAX_EXTENSION_OUTPUT = 0.4;
 
   private double setpoint;
   private static final double NO_SETPOINT = 99999;
@@ -186,7 +190,7 @@ public class Extension extends BaseExtension {
    */
   private static int convertExtensionInchesToTicks(double inches) { 
     //inches * (rotation/inches) * (ticks / rotation)
-    return (int)(inches * RobotConstants.EXTENSION_MOTOR_ROTATIONS_PER_INCH * RobotConstants.EXTENSION_TICKS_PER_MOTOR_ROTATION);
+    return (int)(inches * MOTOR_ROTATIONS_PER_INCH * TICKS_PER_MOTOR_ROTATION);
   }
 
   /**
@@ -194,7 +198,7 @@ public class Extension extends BaseExtension {
    */
   private static double convertExtensionTicksToInches(double ticks) {
     //ticks * (rotations/ticks) * (inches / rotations)
-    return ticks / RobotConstants.EXTENSION_TICKS_PER_MOTOR_ROTATION / RobotConstants.EXTENSION_MOTOR_ROTATIONS_PER_INCH;
+    return ticks / TICKS_PER_MOTOR_ROTATION / MOTOR_ROTATIONS_PER_INCH;
   }
 
 
@@ -216,6 +220,14 @@ public class Extension extends BaseExtension {
 
   private int getExtensionPulseWidth() {  
     return extensionMotor.getSensorCollection().getPulseWidthPosition();
+  }
+
+  public double getForwardSoftLimitInInches(){
+    return convertExtensionTicksToInches(FORWARD_SOFT_LIMIT);
+  }
+
+  public double getReverseSoftLimitInInches(){
+    return convertExtensionTicksToInches(REVERSE_SOFT_LIMIT);
   }
 
   @Override

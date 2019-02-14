@@ -15,6 +15,6 @@ public class FlipCamera extends InstantCommand{
     // called once when the command executes
     @Override
     protected void initialize(){
-        SmartDashboard.putString("cameraSource", "next");
+        SmartDashboard.putString("camera-source", "next");
     }
 }

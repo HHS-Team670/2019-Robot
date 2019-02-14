@@ -150,8 +150,10 @@ public class DriveMotionProfile extends Command {
       }
     } catch (FileNotFoundException ex) {
       DriverStation.reportError("Error reading in File for DriveMotionProfile" + ex.getMessage(), true);
-      super.cancel();
-      return;
+      leftTrajectory = Pathfinder.readFromCSV(new File(Filesystem.getDeployDirectory() + "/output/DriveOffPlatform.left.pf1"));
+      rightTrajectory = Pathfinder.readFromCSV(new File(Filesystem.getDeployDirectory() + "/output/DriveOffPlatform.right.pf1"));
+      // super.cancel();
+      // return;
     }
   }
 
@@ -195,15 +197,6 @@ public class DriveMotionProfile extends Command {
 
     // Set up Robot for Auton Driving
     Robot.driveBase.initAutonDrive();
-
-    // if (Robot.pid_chooser.getSelected().equals(true)) {
-    //   P = SmartDashboard.getNumber("P", P);
-    //   I = SmartDashboard.getNumber("I", I);
-    //   D = SmartDashboard.getNumber("D", D);
-    //   KA = SmartDashboard.getNumber("KA", KA);
-    // }
-    // SmartDashboard.putNumberArray("PID Values: ", new double[] {P, I, D, KA});
-
     Logger.consoleLog("PID values: " + P + ", " + I + ", " + D + ", " + (1.0/MAX_VELOCITY) + ", " + KA);
 
     // The first argument is the proportional gain. Usually this will be quite high

@@ -12,7 +12,8 @@ import frc.team670.robot.subsystems.extension.Extension;
 import frc.team670.robot.utils.Logger;
 
 /**
- * Zeroes the Extension encoder by slowly driving it to its forward limit switch and resetting its value.
+ * Don't use this!!! Zeroes the Extension encoder by slowly driving it to its forward limit switch and resetting its value.
+ * @deprecated
  */
 public class ExtensionForwardReset extends Command {
   private Extension extension;
@@ -37,7 +38,7 @@ public class ExtensionForwardReset extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return extension.isReverseLimitPressed();
+    return extension.isForwardLimitPressed();
   }
 
   /**
@@ -45,7 +46,7 @@ public class ExtensionForwardReset extends Command {
    */
   @Override
   protected void end() {
-    extension.setQuadratureEncoder(Extension.FORWARD_SOFT_LIMIT);
+    extension.setQuadratureEncoder(Extension.EXTENSION_OUT_POS);
     extension.setOutput(0);
     Logger.consoleLog();
   }

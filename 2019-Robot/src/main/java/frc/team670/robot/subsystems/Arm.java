@@ -11,10 +11,8 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import frc.team670.robot.Robot;
 import frc.team670.robot.commands.arm.armTransitions.ArmTransition;
 import frc.team670.robot.commands.arm.armTransitions.CommonTransition;
-import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.subsystems.elbow.BaseElbow;
 import frc.team670.robot.subsystems.extension.BaseExtension;
 import frc.team670.robot.subsystems.wrist.BaseWrist;
@@ -28,10 +26,12 @@ import frc.team670.robot.utils.sort.Node;
  */
 public class Arm {
 
+  public enum HeldItem {NONE, BALL, HATCH};
+  private HeldItem heldItem;
+
   public static final double ARM_HEIGHT_IN_INCHES = 5;
   public static final double CLAW_LENGTH_IN_INCHES = 8;
   public static final int FIXED_ARM_LENGTH_IN_INCHES = 0;
-  public static final double OPERATOR_ARM_CONTROL_SCALAR = 0.5;
 
   // All of the states
   private static HashMap<LegalState, ArmState> states;
@@ -51,6 +51,8 @@ public class Arm {
     this.wrist = wrist;
     this.extension = extension;
     this.claw = claw;
+
+    heldItem = HeldItem.NONE; // TODO set this up to reflect starting state
 
     // State Setup
     states = new HashMap<LegalState, ArmState>();
@@ -160,6 +162,37 @@ public class Arm {
     double x = (extensionLength + FIXED_ARM_LENGTH_IN_INCHES) * Math.sin(elbowAngle) + CLAW_LENGTH_IN_INCHES * Math.sin(wristAngle);
     double y = (extensionLength + FIXED_ARM_LENGTH_IN_INCHES) * Math.cos(elbowAngle) + CLAW_LENGTH_IN_INCHES * Math.cos(wristAngle) + ARM_HEIGHT_IN_INCHES;
     return new Point2D.Double(x, y);
+  }
+
+  /**
+   * Returns the arm's point in forward facing plane relative to (0,0) at the base
+   * of the arm.
+   */
+  public static double getCurrentLowestPointOnArm(double elbowAngle, double wristAngle, double extensionLength) {
+    double y = getCoordPosition(elbowAngle, wristAngle, extensionLength).getY();
+    double extraClearanceInInches = 2;
+      // If wrist angle is at 0, this should be the lowest point on the claw. If the
+      // wrist is angled up, that does not change this calculation.
+      // This should be relatively safe. It should not hit the pistons on the claw
+      // either.
+      double lowestPoint = y - Claw.MAX_CLAW_OPEN_DIAMETER / 2;
+      // If the wrist is angled forward, the center point that we are using to get arm
+      // coordinates will be closer to the ends of the claw so we shouldn't need to
+      // add in claw diameter. The cosine function brings that addition down to 0.
+      if (wristAngle > 0) {
+        lowestPoint = y -  (Claw.MAX_CLAW_OPEN_DIAMETER / 2) * Math.abs(Math.cos(Math.toRadians(wristAngle)));
+      }
+      //To be more safe, there is an extra buffer
+      lowestPoint += extraClearanceInInches;
+      return lowestPoint;
+  }
+
+  public void setHeldItem(HeldItem item) {
+    heldItem = item;
+  }
+
+  public HeldItem getHeldItem() {
+    return heldItem;
   }
 
   /**

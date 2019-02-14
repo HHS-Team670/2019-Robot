@@ -67,6 +67,7 @@ public class MoveElbow extends Command {
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
+    elbow.setMotionMagicSetpointAngle(elbow.getAngleInDegrees());
     Logger.consoleLog();
     end();
   }

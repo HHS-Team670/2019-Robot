@@ -23,6 +23,8 @@ import frc.team670.robot.subsystems.Intake;
  * the arm hitting anything on its path between the start and destination ArmStates
  */
 public class CommonTransition extends ArmTransition {
+  private Arm arm;
+
   /**
    * @param start The start ArmState (the ArmState that holds this transitions)
    * @param destination The ending ArmState (where this transition should go to)
@@ -31,6 +33,7 @@ public class CommonTransition extends ArmTransition {
    */
   public CommonTransition(LegalState start, LegalState destination, Arm arm, BaseIntake intake) {
     super(start, destination, arm, intake);
+    this.arm = arm;
   }
 
   @Override
@@ -51,6 +54,10 @@ public class CommonTransition extends ArmTransition {
     boolean moveIntakeSecond = false;
     boolean intakeMovementsAddedSequential = false;
 
+    double currentArmX = Arm.getCoordPosition(elbow.getAngleInDegrees(), wrist.getAngleInDegrees(), extension.getLengthInches()).getX();
+    double currentArmY = Arm.getCurrentLowestPointOnArm(elbow.getAngleInDegrees(), wrist.getAngleInDegrees(), extension.getLengthInches());
+    
+
     //Only reason why intake would have to move second is if the movement of the intake would hit the arm
 
     //If intake has to move from in to deployed or from deployed to in
@@ -69,6 +76,10 @@ public class CommonTransition extends ArmTransition {
            (intakeQuarterPoint > sourceY && intakeQuarterPoint < destY) ||
             (intakeDestY > sourceY && intakeDestY < destY)){
              moveIntakeSecond = true;
+      }
+
+      if (intakeHighPoint > currentArmY && currentArmX > intake.getIntakeCoordinates().getX() && currentArmX < intake.getIntakeCoordinates().getX()){
+        moveIntakeSecond = true;
       }
 
         //If arm doesn't even come near the intake, then there's no point adding the command sequentially
