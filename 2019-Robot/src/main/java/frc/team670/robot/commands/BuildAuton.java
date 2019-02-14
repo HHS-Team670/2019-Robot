@@ -71,7 +71,7 @@ public class BuildAuton extends CommandGroup {
             pivot = false;
         }
         // drives to target using vision
-        addInVisionDriveCommand();
+        addInVisionDriveCommandSequential();
         // makes sure the arm is not above the robot
         if (destination != LegalState.NEUTRAL) {
             // places the element the robot is carrying
@@ -89,7 +89,7 @@ public class BuildAuton extends CommandGroup {
             pivot = false;
         }
 
-        addInVisionDriveCommand();
+        addInVisionDriveCommandSequential();
         if (destination != LegalState.NEUTRAL)
             addSequential(new PlaceOrGrab(false));
 
@@ -103,8 +103,8 @@ public class BuildAuton extends CommandGroup {
             isRobotFacingBack = !isRobotFacingBack;
             pivot = false;
         }
-        
-        addInVisionDriveCommand();
+
+        addInVisionDriveCommandSequential();
         if (destination != LegalState.NEUTRAL)
             addSequential(new PlaceOrGrab(true));
     }
@@ -156,7 +156,7 @@ public class BuildAuton extends CommandGroup {
     return LegalState.NEUTRAL;
   }
 
-    private void addInVisionDriveCommand() {
+    private void addInVisionDriveCommandSequential() {
         PlaceGrabState placeGrabState = null;
         try {
             placeGrabState = (PlaceGrabState) Arm.getCurrentState();
