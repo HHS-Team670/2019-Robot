@@ -370,9 +370,10 @@ public class Arm {
 
   public class PlaceGrabState extends ArmState {
     private boolean isFront;
+    private boolean isLowTarget;
     private double distanceFromTarget;
 
-    public PlaceGrabState(double elbowAngle, double wristAngle, double extensionLength, boolean isIntakeDeployed, ArmTransition[] transitions, boolean isFront, double distanceFromTarget) {
+    public PlaceGrabState(double elbowAngle, double wristAngle, double extensionLength, boolean isIntakeDeployed, ArmTransition[] transitions, boolean isFront, double distanceFromTarget, boolean isLowTarget) {
       super(elbowAngle,  wristAngle,  extensionLength, isIntakeDeployed, transitions);
       this.isFront = isFront;
       this.distanceFromTarget = distanceFromTarget;
@@ -384,6 +385,10 @@ public class Arm {
 
     public double getDistanceFromTarget(){
       return distanceFromTarget;
+    }
+
+    public boolean getIsLowTarget(){
+      return isLowTarget;
     }
   }
 
@@ -473,7 +478,7 @@ public class Arm {
   // Changed to neutral because ready is not needed for this state
   private class GrabBallLoadingStationForward extends PlaceGrabState {
     private GrabBallLoadingStationForward(Arm arm, BaseIntake intake) {
-      super(78, -45, 7, false, new ArmTransition[] { new CommonTransition(LegalState.GRAB_BALL_LOADINGSTATION_FORWARD, LegalState.NEUTRAL, arm, intake)}, true, 4.0);
+      super(78, -45, 7, false, new ArmTransition[] { new CommonTransition(LegalState.GRAB_BALL_LOADINGSTATION_FORWARD, LegalState.NEUTRAL, arm, intake)}, true, 4.0, true);
     }
   }
 
@@ -487,7 +492,7 @@ public class Arm {
         new CommonTransition(LegalState.GRAB_BALL_LOADINGSTATION_BACK, LegalState.PLACE_BALL_CARGOSHIP_BACK, arm, intake), 
         // new CommonTransition(LegalState.GRAB_BALL_LOADINGSTATION_BACK, LegalState.READY_PLACE_HATCH_ROCKET_MIDDLE_BACK, arm, intake), // Probably not needed
         new CommonTransition(LegalState.GRAB_BALL_LOADINGSTATION_BACK, LegalState.READY_PLACE_BALL_ROCKET_LOW_BACK, arm, intake), 
-        new CommonTransition(LegalState.GRAB_BALL_LOADINGSTATION_BACK, LegalState.READY_PLACE_BALL_ROCKET_MIDDLE_BACK, arm, intake) }, false, 36.765);
+        new CommonTransition(LegalState.GRAB_BALL_LOADINGSTATION_BACK, LegalState.READY_PLACE_BALL_ROCKET_MIDDLE_BACK, arm, intake) }, false, 36.765, true);
     }
   }
 
@@ -499,7 +504,7 @@ public class Arm {
   }
   private class LowHatchForward extends PlaceGrabState {
     private LowHatchForward(Arm arm, BaseIntake intake) {
-      super(99.611, -9.611, 12.7306, false, new ArmTransition[] { new CommonTransition(LegalState.LOW_HATCH_FORWARD, LegalState.READY_LOW_HATCH_FORWARD, arm, intake)}, true, 4.0);
+      super(99.611, -9.611, 12.7306, false, new ArmTransition[] { new CommonTransition(LegalState.LOW_HATCH_FORWARD, LegalState.READY_LOW_HATCH_FORWARD, arm, intake)}, true, 4.0, true);
     }
   }
   private class ReadyLowHatchBack extends ArmState {
@@ -518,14 +523,14 @@ public class Arm {
   }
   private class LowHatchBack extends PlaceGrabState {
     private LowHatchBack(Arm arm, BaseIntake intake) {
-      super(-103.852, 13.852, 2.8998, false, new ArmTransition[] { new CommonTransition(LegalState.LOW_HATCH_BACK, LegalState.READY_LOW_HATCH_BACK, arm ,intake)}, false, 10.731);
+      super(-103.852, 13.852, 2.8998, false, new ArmTransition[] { new CommonTransition(LegalState.LOW_HATCH_BACK, LegalState.READY_LOW_HATCH_BACK, arm ,intake)}, false, 10.731, true);
     }
   }
 
   //Bumper can go under the cargoship
   private class PlaceBallCargoForward extends PlaceGrabState{
     private PlaceBallCargoForward(Arm arm, BaseIntake intake) {
-      super(54.715, 35.285, 6.3368, false, new ArmTransition[] { new CommonTransition(LegalState.PLACE_BALL_CARGOSHIP_FORWARD, LegalState.NEUTRAL, arm ,intake)}, true, 4.0);
+      super(54.715, 35.285, 6.3368, false, new ArmTransition[] { new CommonTransition(LegalState.PLACE_BALL_CARGOSHIP_FORWARD, LegalState.NEUTRAL, arm ,intake)}, true, 4.0, true);
     }
   }
 
@@ -539,7 +544,7 @@ public class Arm {
         // new CommonTransition(LegalState.PLACE_BALL_CARGOSHIP_BACK, LegalState.READY_PLACE_HATCH_ROCKET_MIDDLE_BACK, arm, intake), 
         // new CommonTransition(LegalState.PLACE_BALL_CARGOSHIP_BACK, LegalState.READY_PLACE_BALL_ROCKET_LOW_BACK, arm, intake), 
         // new CommonTransition(LegalState.PLACE_BALL_CARGOSHIP_BACK, LegalState.READY_PLACE_BALL_ROCKET_MIDDLE_BACK, arm, intake) 
-      }, false, 24.472);
+      }, false, 24.472, true);
     }
   }
 
@@ -552,7 +557,7 @@ public class Arm {
 
   private class PlaceHatchRocketMiddleForward extends PlaceGrabState{
     private PlaceHatchRocketMiddleForward(Arm arm, BaseIntake intake) {
-      super(45.988, 44.0122, 12.7306, false, new ArmTransition[] { new CommonTransition(LegalState.PLACE_HATCH_ROCKET_MIDDLE_FORWARD, LegalState.READY_PLACE_HATCH_ROCKET_MIDDLE_FORWARD, arm ,intake)}, true, 6.064);
+      super(45.988, 44.0122, 12.7306, false, new ArmTransition[] { new CommonTransition(LegalState.PLACE_HATCH_ROCKET_MIDDLE_FORWARD, LegalState.READY_PLACE_HATCH_ROCKET_MIDDLE_FORWARD, arm ,intake)}, true, 6.064, false);
     }
   }
 
@@ -567,13 +572,13 @@ public class Arm {
         // new CommonTransition(LegalState.READY_PLACE_HATCH_ROCKET_MIDDLE_BACK, LegalState.PLACE_BALL_CARGOSHIP_BACK, arm, intake), 
         // new CommonTransition(LegalState.READY_PLACE_HATCH_ROCKET_MIDDLE_BACK, LegalState.READY_PLACE_BALL_ROCKET_LOW_BACK, arm, intake), 
         // new CommonTransition(LegalState.READY_PLACE_HATCH_ROCKET_MIDDLE_BACK, LegalState.READY_PLACE_BALL_ROCKET_MIDDLE_BACK, arm, intake) 
-      }, false, 28.0);
+      }, false, 28.0, false);
     }
   }
 
-  private class PlaceHatchRocketMiddleBack extends ArmState{
+  private class PlaceHatchRocketMiddleBack extends PlaceGrabState{
     private PlaceHatchRocketMiddleBack(Arm arm, BaseIntake intake) {
-      super(-40.532, -49.468, 9.9418, false, new ArmTransition[] { new CommonTransition(LegalState.PLACE_HATCH_ROCKET_MIDDLE_BACK, LegalState.READY_PLACE_HATCH_ROCKET_MIDDLE_BACK, arm ,intake)});
+      super(-40.532, -49.468, 9.9418, false, new ArmTransition[] { new CommonTransition(LegalState.PLACE_HATCH_ROCKET_MIDDLE_BACK, LegalState.READY_PLACE_HATCH_ROCKET_MIDDLE_BACK, arm ,intake)}, false, 25.0, true);
     }
   }
 
@@ -586,7 +591,7 @@ public class Arm {
 
   private class PlaceBallRocketLowForward extends PlaceGrabState{
     private PlaceBallRocketLowForward(Arm arm, BaseIntake intake) {
-      super(84.569, 5.431, 12.7306, false, new ArmTransition[] { new CommonTransition(LegalState.PLACE_BALL_ROCKET_LOW_FORWARD, LegalState.READY_PLACE_BALL_ROCKET_LOW_FORWARD, arm ,intake)}, true, 11.042);
+      super(84.569, 5.431, 12.7306, false, new ArmTransition[] { new CommonTransition(LegalState.PLACE_BALL_ROCKET_LOW_FORWARD, LegalState.READY_PLACE_BALL_ROCKET_LOW_FORWARD, arm ,intake)}, true, 11.042, true);
     }
   }
 
@@ -607,7 +612,7 @@ public class Arm {
 
   private class PlaceBallRocketLowBack extends PlaceGrabState {
     private PlaceBallRocketLowBack(Arm arm, BaseIntake intake) {
-      super(-82.224, -7.776, 2.9678, false, new ArmTransition[] { new CommonTransition(LegalState.PLACE_BALL_ROCKET_LOW_BACK, LegalState.READY_PLACE_BALL_ROCKET_LOW_BACK, arm, intake)}, false, 31.216);
+      super(-82.224, -7.776, 2.9678, false, new ArmTransition[] { new CommonTransition(LegalState.PLACE_BALL_ROCKET_LOW_BACK, LegalState.READY_PLACE_BALL_ROCKET_LOW_BACK, arm, intake)}, false, 31.216, true);
     }
   }
   
@@ -622,7 +627,7 @@ public class Arm {
   // shooting needs testing
   private class PlaceBallRocketMiddleForward extends PlaceGrabState {
     private PlaceBallRocketMiddleForward(Arm arm, BaseIntake intake) {
-      super(26.6, 48.4, 12.7306, false, new ArmTransition[] { new CommonTransition(LegalState.PLACE_BALL_ROCKET_MIDDLE_FORWARD, LegalState.NEUTRAL, arm, intake)}, true, 35.0);
+      super(26.6, 48.4, 12.7306, false, new ArmTransition[] { new CommonTransition(LegalState.PLACE_BALL_ROCKET_MIDDLE_FORWARD, LegalState.NEUTRAL, arm, intake)}, true, 35.0, false);
     }
   }
 
@@ -643,7 +648,7 @@ public class Arm {
 
   private class PlaceBallRocketMiddleBack extends PlaceGrabState {
     private PlaceBallRocketMiddleBack(Arm arm, BaseIntake intake) {
-      super(-16.977, -73.023, 12.7306, false, new ArmTransition[] { new CommonTransition(LegalState.PLACE_BALL_ROCKET_MIDDLE_BACK, LegalState.READY_PLACE_BALL_ROCKET_MIDDLE_BACK, arm, intake)}, false, 18.184);
+      super(-16.977, -73.023, 12.7306, false, new ArmTransition[] { new CommonTransition(LegalState.PLACE_BALL_ROCKET_MIDDLE_BACK, LegalState.READY_PLACE_BALL_ROCKET_MIDDLE_BACK, arm, intake)}, false, 18.184, true);
     }
   }
 

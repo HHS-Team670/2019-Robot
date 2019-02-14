@@ -200,7 +200,6 @@ public class MustangCoprocessor {
     public void setTargetHeight(boolean lowTarget) {
         this.lowTarget = lowTarget;
     }
-
     /**
      * Represents a set of vision data received from the coprocessor containing an array of doubles in the form [hangle, vangle, timestamp]
      */

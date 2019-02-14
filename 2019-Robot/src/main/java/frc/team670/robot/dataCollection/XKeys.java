@@ -209,8 +209,9 @@ public class XKeys {
 
         double distanceFromTarget = placeGrabState.getDistanceFromTarget();
         boolean isReversed = !placeGrabState.getIsFront();
+        boolean isLow = placeGrabState.getIsLowTarget();
 
-        Scheduler.getInstance().add(new VisionPurePursuit(Robot.driveBase, Robot.coprocessor, Robot.sensors, distanceFromTarget, isReversed));
+        Scheduler.getInstance().add(new VisionPurePursuit(Robot.driveBase, Robot.coprocessor, Robot.sensors, distanceFromTarget, isReversed, isLow));
     }
     private enum ClimbHeight {
         FLAT, LEVEL2, LEVEL3;

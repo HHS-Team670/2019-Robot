@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team670.robot.Robot;
-import frc.team670.robot.commands.arm.movement.CancelArmMovement;
 import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.commands.drive.purePursuit.Path;
 import frc.team670.robot.commands.drive.purePursuit.PathGenerator;
@@ -21,7 +20,6 @@ import frc.team670.robot.dataCollection.MustangCoprocessor;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.DriveBase;
-import frc.team670.robot.subsystems.Arm.LegalState;
 import frc.team670.robot.utils.math.Vector;
 
 /**
@@ -47,13 +45,15 @@ public class VisionPurePursuit extends InstantCommand {
   /**
    * @param isReversed True if using the back-facing camera on the robot to drive backwards
    */
-  public VisionPurePursuit(DriveBase driveBase, MustangCoprocessor coprocessor, MustangSensors sensors, double spaceFromTarget, boolean isReversed) {
+  public VisionPurePursuit(DriveBase driveBase, MustangCoprocessor coprocessor, MustangSensors sensors, double spaceFromTarget, boolean isReversed, boolean lowTarget) {
     super();
     this.coprocessor = coprocessor;
     this.sensors = sensors;
     this.driveBase = driveBase;
     this.spaceFromTarget = spaceFromTarget;
     this.isReversed = isReversed;
+
+    coprocessor.setTargetHeight(lowTarget);
   }
 
   // Called once when the command executes

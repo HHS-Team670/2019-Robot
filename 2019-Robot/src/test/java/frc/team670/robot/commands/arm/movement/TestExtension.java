@@ -100,4 +100,9 @@ public class TestExtension extends BaseExtension {
     return 0;
   }
 
+  @Override
+  public double getMotionMagicSetpoint() {
+    return 0;
+  }
+
 }
