@@ -59,8 +59,8 @@ public class XKeys {
         height = ClimbHeight.FLAT;
 
         table.addEntryListener("auton-sequence", (table2, key2, entry, value, flags) -> {
-            if (value.getType() != NetworkTableType.kStringArray) return;
-            SmartDashboard.putString("current-command", "building auton");
+            if (value.getType() != NetworkTableType.kStringArray) SmartDashboard.putString("auto-sequence", "not string array");
+            SmartDashboard.putString("auto-sequence", "building auton");
             autonCommand = new BuildAuton(value.getStringArray(), Robot.arm);
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-armstates", (table2, key2, entry, value, flags) -> {

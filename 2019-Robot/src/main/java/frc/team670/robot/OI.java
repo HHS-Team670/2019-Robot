@@ -10,8 +10,8 @@ package frc.team670.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
-import frc.team670.robot.commands.ControlOperatorController;
-import frc.team670.robot.commands.RumbleDriverController;
+import frc.team670.robot.commands.cameras.FlipCamera;
+import frc.team670.robot.commands.drive.teleop.FlipDriveAndCamera;
 import frc.team670.robot.commands.intake.MoveIntakeToSetpointAngle;
 import frc.team670.robot.commands.tuning.DecreaseMeasurementOutput;
 import frc.team670.robot.commands.tuning.IncreaseMeasurementOutput;
@@ -48,8 +48,8 @@ public class OI {
     
     // toggleReverseDrive = new JoystickButton(driverController, XboxButtons.LEFT_BUMPER);
     // toggleReverseDrive.whenPressed(new FlipDriveDirection());
-    // flipCameras = new JoystickButton(driverController, XboxButtons.B);
-    // flipCameras.whenPressed(new FlipCamera());
+    flipCameras = new JoystickButton(driverController, XboxButtons.B);
+    flipCameras.whenPressed(new FlipDriveAndCamera());
     // flipArmDriverControlState = new JoystickButton(operatorController, XboxButtons.RIGHT_JOYSTICK_BUTTON);
     // flipArmDriverControlState.whenPressed(new FlipJoystickArmControl());
 
