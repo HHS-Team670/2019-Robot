@@ -29,7 +29,6 @@ import frc.team670.robot.commands.intake.AutoPickupCargo;
 import frc.team670.robot.commands.intake.ButtonRunIntake;
 import frc.team670.robot.commands.intake.RunIntakeInWithIR;
 import frc.team670.robot.commands.intake.StopIntakeRollers;
-import frc.team670.robot.commands.intake.ToggleButtonRunIntake;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
 import frc.team670.robot.subsystems.Arm.LegalState;
@@ -48,9 +47,9 @@ public class XKeys {
     private NetworkTable table;
     private Command autonCommand;
     private ClimbHeight height;
-    private boolean toggleIntake;
 
     private boolean intakeRunning = true;
+    private boolean toggleIn = true, toggleOut = false;
 
     public XKeys() {
         SmartDashboard.putString("XKEYS", "XKeys constructor");
@@ -124,22 +123,32 @@ public class XKeys {
     }
 
     private void runIntakeIn() {
-        if (intakeRunning) {
+        toggleIn = !toggleIn;
+
+        if(toggleOut){
+            toggleIn = true;
+            toggleOut = false;
+        }
+
+        if (toggleIn) {
             Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, RunIntakeInWithIR.RUNNING_POWER, true));
-            intakeRunning = false;
         } else {
             Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, 0, true));
-            intakeRunning = true;
         }
     }
 
     private void runIntakeOut() {
-        if (intakeRunning) {
+        toggleOut = !toggleOut;
+
+        if(toggleIn){
+            toggleIn = false;
+            toggleOut = true;
+        }
+        
+        if (toggleOut) {
             Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, RunIntakeInWithIR.RUNNING_POWER, false));
-            intakeRunning = false;
         } else {
             Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, 0, false));
-            intakeRunning = true;
         }
     }
 
@@ -159,14 +168,6 @@ public class XKeys {
         if (height == ClimbHeight.LEVEL2) setpoint = Climber.PISTON_ENCODER_LEVEL_TWO;
         if (height == ClimbHeight.LEVEL3) setpoint = Climber.PISTON_ENCODER_LEVEL_THREE;
         Scheduler.getInstance().add(new PistonClimbWithTiltControl(setpoint, Robot.climber, Robot.sensors));
-    }
-
-    private void toggleRunIntakeIn(){
-        Scheduler.getInstance().add(new ToggleButtonRunIntake(Robot.intake, true, toggleIntake = !toggleIntake));
-    }
-
-    private void toggleRunIntakeOut() {
-        Scheduler.getInstance().add(new ToggleButtonRunIntake(Robot.intake, false, toggleIntake = !toggleIntake));
     }
 
     private void cancelArmClimb() {
