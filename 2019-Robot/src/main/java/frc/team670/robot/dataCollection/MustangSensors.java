@@ -2,7 +2,6 @@ package frc.team670.robot.dataCollection;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.dataCollection.sensors.DIOUltrasonic;
@@ -23,9 +22,10 @@ public class MustangSensors {
   private boolean isNavXNull;
   private DigitalInput intakeIRSensor;
   public static final double NAVX_ERROR_CODE = -40001;
+  public static final double ULTRASONIC_ERROR_CODE = 99999;
 
    //Ultrasonic
-   private DIOUltrasonic ultrasonic = null;
+   private DIOUltrasonic ultrasonic;
 
 
   public MustangSensors(){
@@ -47,21 +47,23 @@ public class MustangSensors {
       intakeIRSensor = null;
     }
 
-    ultrasonic = new DIOUltrasonic();
+    try {
+      ultrasonic = new DIOUltrasonic();
+    } catch (RuntimeException ex) {
+      DriverStation.reportError("Error instantiating ultrasonic: " + ex.getMessage(), true);
+      SmartDashboard.putString("warning", "Error instantiating ultrasonic");
+      ultrasonic = null;
+    }
   }
 
   /*
    * Returns distance as given by ultrasonic
    */
   public double getUltrasonicDistance(){
-    return ultrasonic.getUltrasonicValue();
-  }
-
-  /*
-   * Returns ultrasonic object
-   */
-  public Ultrasonic getUltrasonic(){
-    return ultrasonic.getWPIUltrasonicObject();
+    if(ultrasonic != null)
+      return ultrasonic.getUltrasonicValue();
+    else
+      return ULTRASONIC_ERROR_CODE;
   }
 
   /**
