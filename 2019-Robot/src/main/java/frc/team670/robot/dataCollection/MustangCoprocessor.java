@@ -9,6 +9,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.NetworkTableType;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.utils.functions.MathUtils;
 import frc.team670.robot.constants.RobotConstants;
 
@@ -28,11 +29,22 @@ public class MustangCoprocessor {
     private static final String TABLE_NAME = "SmartDashboard";
 
     //Vision Constants
-    public static final double TARGET_HEIGHT = 31; //inches
-    public static final double CAMERA_HEIGHT = 8.75; //inches
-    private final double targetHeightRelativeToCamera = TARGET_HEIGHT - CAMERA_HEIGHT; //inches
-    private  final double cameraHorizontalOffset = 5.25; //inches
-    private final double verticalCameraOffsetAngle = 27; //degrees
+    public static final double HIGH_TARGET_HEIGHT = 39.125; //inches
+    public static final double LOW_TARGET_HEIGHT = 31.5; //inches
+
+    private static final double BACK_CAMERA_HORIZONTAL_OFFSET = 5.25; //inches
+    private static final double BACK_CAMERA_HEIGHT = 7.25;
+    private static final double BACK_CAMERA_VERTICAL_OFFSET_ANGLE = 27; //degrees
+
+    private static final double FRONT_CAMERA_HORIZONTAL_OFFSET = 5.25; //inches
+    private static final double FRONT_CAMERA_HEIGHT = 7.25;
+    private static final double FRONT_CAMERA_VERTICAL_OFFSET_ANGLE = 27; //degrees
+
+    private boolean backCamera; // true for back camera, false for front
+    private boolean lowTarget; // true for low vision taget, false for high
+    private  double cameraHorizontalOffset = BACK_CAMERA_HORIZONTAL_OFFSET; //inches
+    private double verticalCameraOffsetAngle = BACK_CAMERA_VERTICAL_OFFSET_ANGLE; //degrees
+    private double cameraHeight = BACK_CAMERA_HEIGHT; //degrees
 
     public MustangCoprocessor() {
         this(NETWORK_TABLE_KEYS);
@@ -44,6 +56,8 @@ public class MustangCoprocessor {
            entries.put(key, new NetworkTableObject(key));
         }
         wallTarget = new VisionValues(NETWORK_TABLE_KEYS[0]);
+        backCamera = true;
+        lowTarget = true;
     }
 
     private class NetworkTableObject {
@@ -118,7 +132,8 @@ public class MustangCoprocessor {
     private double getOffsetDepth() {
         double vangle = Math.abs(wallTarget.getVAngle()+verticalCameraOffsetAngle);
         double hangle = wallTarget.getHAngle(); //TAKE OUT IF BELOW COSINE MATH NOT NEEDED
-        double offset_depth = targetHeightRelativeToCamera / Math.tan(Math.toRadians(vangle));
+        double targetHeight = lowTarget ? LOW_TARGET_HEIGHT : HIGH_TARGET_HEIGHT;
+        double offset_depth = (targetHeight - cameraHeight) / Math.tan(Math.toRadians(vangle));
         //offset_depth = offset_depth / Math.cos(Math.toRadians(Math.abs(hangle))); NOT SURE IF NEEDED - TEST
         return offset_depth;
     }
@@ -148,6 +163,35 @@ public class MustangCoprocessor {
     public double[] getVisionValues() {
         double[] values = {getAngleToWallTarget(), getDistanceToWallTarget()};
         return values;
+    }
+
+    /**
+     * Sets which camera to use for vision (front/back)
+     * @param back true for back camera, false for front
+     */
+    public void setCamera(boolean back) {
+        SmartDashboard.putString("vision-camera", back ? "back" : "front");
+        backCamera = back;
+        if(back) {
+            cameraHorizontalOffset = BACK_CAMERA_HORIZONTAL_OFFSET; //inches
+            verticalCameraOffsetAngle = BACK_CAMERA_VERTICAL_OFFSET_ANGLE; //degrees
+            cameraHeight = BACK_CAMERA_HEIGHT; //degrees
+            SmartDashboard.putString("vision-camera", "back");
+        }
+        else {
+            cameraHorizontalOffset = FRONT_CAMERA_HORIZONTAL_OFFSET; //inches
+            verticalCameraOffsetAngle = FRONT_CAMERA_VERTICAL_OFFSET_ANGLE; //degrees
+            cameraHeight = FRONT_CAMERA_HEIGHT; //degrees
+            SmartDashboard.putString("vision-camera", "front");
+        }
+    }
+
+    /**
+     * Sets the target for vision (must be set properly to get correct distance)
+     * @param lowTarget true for low (everything but rocket ball), false for high (rocket ball)
+     */
+    public void setTargetHeight(boolean lowTarget) {
+        this.lowTarget = lowTarget;
     }
 
     /**
