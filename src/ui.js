@@ -119,7 +119,6 @@ NetworkTables.addKeyListener('/SmartDashboard/elbow-angle', (key, value) => {
 
 NetworkTables.addKeyListener('/SmartDashboard/intake-angle', (key, value) => {
   if (value != null) document.getElementById('intake').style = "transform: rotate(" + -1 * value + "deg)";
-
 });
 
 NetworkTables.addKeyListener('/SmartDashboard/arm-extension', (key, value) => {
@@ -209,7 +208,7 @@ document.addEventListener("keyup", function(event) {
 function getFromMap(key) { // mapping is more aligned with arm position on robot
   NetworkTables.putValue('/SmartDashboard/current-command-text', '>>>'+key+'<<<');
 
-  if (key === "x0d") return "READY_TO_CLIMB";
+  if (key === "0") return "READY_TO_CLIMB";
   if (key === "x03") return "set_climb_3";
   if (key === "x04") return "set_climb_2";
   if (key === "x05") return "set_climb_flat";
@@ -221,12 +220,12 @@ function getFromMap(key) { // mapping is more aligned with arm position on robot
   if (key === "x34") return "run_intake_in_with_IR";
   if (key === "x3e") return "auto_pickup_ball";
 
-  if (key === "9") return "place";
-  if (key === "w") return "grab";
+  if (key === "w") return "place";
+  if (key === "9") return "grab";
 
   if (key === "a") return "READY_PLACE_HATCH_ROCKET_MIDDLE_BACK";
   if (key === "b") return "READY_PLACE_BALL_ROCKET_MIDDLE_BACK";
-  if (key === "d") return "READY_PLACE_HATCH_ROCKET_MIDDLE_FORWARD";
+  if (key === "c") return "READY_PLACE_HATCH_ROCKET_MIDDLE_FORWARD";
 
   if (key === "j") return "GRAB_BALL_LOADINGSTATION_BACK";
   if (key === "k") return "PLACE_BALL_CARGOSHIP_BACK";
@@ -245,7 +244,7 @@ function getFromMap(key) { // mapping is more aligned with arm position on robot
 
   if (key === "o") return "cancel_drive";
   if (key === "p") return "cancel_intake";
-  if (key === "n") return "cancel_arm";
+  if (key === "d") return "cancel_arm";
   if (key === "m") return "cancel_arm_climb";
   if (key === "x0e") return "cancel_piston_climb";
   if (key === "rq" || key === "qr" || key === "q" || key === "r") return "cancel_all";

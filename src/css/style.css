@@ -172,7 +172,7 @@ body.login #login {
     /* transform: rotate(180deg); */
 }
 #intake {
-    transform-origin: center left;
+    transform-origin: bottom left;
     /* transform: rotate(180deg); */
 }
 #auton-chooser {
