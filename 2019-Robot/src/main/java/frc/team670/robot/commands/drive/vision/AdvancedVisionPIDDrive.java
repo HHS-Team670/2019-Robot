@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
-import frc.team670.robot.dataCollection.MustangCoprocessor.VisionValues;
+import frc.team670.robot.dataCollection.MustangPi.VisionValues;
 import frc.team670.robot.dataCollection.NullPIDOutput;
 import frc.team670.robot.dataCollection.Pose;
 import frc.team670.robot.dataCollection.sensors.MustangDriveBaseEncoder;
