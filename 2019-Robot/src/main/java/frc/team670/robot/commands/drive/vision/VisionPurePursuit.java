@@ -64,7 +64,7 @@ public class VisionPurePursuit extends InstantCommand {
     
 
     double horizontalAngle = coprocessor.getAngleToWallTarget();
-    double ultrasonicDistance = sensors.getUltrasonicDistance()*Math.cos(Math.toRadians(horizontalAngle)); //use cosine to get the straight ultrasonic distance not the diagonal one
+    double ultrasonicDistance = sensors.getFrontUltrasonicUnadjustedDistance()*Math.cos(Math.toRadians(horizontalAngle)); //use cosine to get the straight ultrasonic distance not the diagonal one
     double visionDistance = coprocessor.getDistanceToWallTarget();
 
     straightDistance = 120;// ultrasonicDistance; //(!MathUtils.doublesEqual(visionDistance, RoboConstants.VISION_ERROR_CODE) && visionDistance < ultrasonicDistance) ? visionDistance : ultrasonicDistance;
@@ -77,7 +77,7 @@ public class VisionPurePursuit extends InstantCommand {
 
 
         public void run() {
-          straightDistance = sensors.getUltrasonicDistance() * Math.cos(Math.toRadians(horizontalAngle));
+          straightDistance = sensors.getFrontUltrasonicUnadjustedDistance() * Math.cos(Math.toRadians(horizontalAngle));
           if (straightDistance < 48) {
             Scheduler.getInstance().add(new MoveArm(Arm.getCurrentState(), Robot.arm));
             cancel();
