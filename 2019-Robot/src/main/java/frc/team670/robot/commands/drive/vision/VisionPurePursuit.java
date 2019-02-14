@@ -60,6 +60,9 @@ public class VisionPurePursuit extends InstantCommand {
   @Override
   protected void initialize() {
     driveBase.initAutonDrive();
+
+    
+
     double horizontalAngle = coprocessor.getAngleToWallTarget();
     double ultrasonicDistance = sensors.getUltrasonicDistance()*Math.cos(Math.toRadians(horizontalAngle)); //use cosine to get the straight ultrasonic distance not the diagonal one
     double visionDistance = coprocessor.getDistanceToWallTarget();
@@ -70,6 +73,8 @@ public class VisionPurePursuit extends InstantCommand {
 
     if (straightDistance > 60) {
       restrictArmMovement = new Notifier(new Runnable() {
+
+
 
         public void run() {
           straightDistance = sensors.getUltrasonicDistance() * Math.cos(Math.toRadians(horizontalAngle));
