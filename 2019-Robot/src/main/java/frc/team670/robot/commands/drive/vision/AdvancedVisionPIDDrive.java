@@ -9,7 +9,6 @@ package frc.team670.robot.commands.drive.vision;
 
 import java.util.ArrayList;
 
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
@@ -17,11 +16,11 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
-import frc.team670.robot.dataCollection.MustangPi.VisionValues;
+import frc.team670.robot.dataCollection.MustangCoprocessor.VisionValues;
 import frc.team670.robot.dataCollection.NullPIDOutput;
 import frc.team670.robot.dataCollection.Pose;
-import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.dataCollection.sensors.MustangDriveBaseEncoder;
+import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.functions.MathUtils;
 import frc.team670.robot.utils.functions.SettingUtils;
