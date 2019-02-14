@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.constants.RobotMap;
+import frc.team670.robot.dataCollection.sensors.DIOUltrasonic;
 import frc.team670.robot.dataCollection.sensors.NavX;
 import frc.team670.robot.dataCollection.sensors.NavX.NavX_Pitch_PIDSource;
 import frc.team670.robot.dataCollection.sensors.NavX.ZeroableNavX_Yaw_PIDSource;
@@ -21,6 +22,10 @@ public class MustangSensors {
   private boolean isNavXNull;
   private DigitalInput intakeIRSensor;
   public static final double NAVX_ERROR_CODE = -40001;
+  public static final double ULTRASONIC_ERROR_CODE = 99999;
+
+   //Ultrasonic
+   private DIOUltrasonic frontUltrasonic, backLeftUltrasonic, backRightUltrasonic;
 
 
   public MustangSensors(){
@@ -33,7 +38,7 @@ public class MustangSensors {
       navXMicro = null;
       isNavXNull = true;
     }
-    
+
     try {
       intakeIRSensor = new DigitalInput(RobotMap.INTAKE_IR_DIO_PORT);
     } catch (RuntimeException ex) {
@@ -41,6 +46,82 @@ public class MustangSensors {
       SmartDashboard.putString("warning", "Error instantiating intakeIRSensor");
       intakeIRSensor = null;
     }
+
+    try {
+      frontUltrasonic = new DIOUltrasonic();
+    } catch (RuntimeException ex) {
+      DriverStation.reportError("Error instantiating ultrasonic: " + ex.getMessage(), true);
+      SmartDashboard.putString("warning", "Error instantiating ultrasonic");
+      frontUltrasonic = null;
+    }
+  }
+
+  /*
+   * Returns distance as given by ultrasonic
+   */
+  public double getFrontUltrasonicUnadjustedDistance(){
+    if(frontUltrasonic != null)
+      return frontUltrasonic.getUnadjustedDistance();
+    else
+      return ULTRASONIC_ERROR_CODE;
+  }
+
+  /*
+   * Returns adjusted distance as given by ultrasonic
+   */
+  public double getFrontUltrasonicDistance(double angle){
+    if(frontUltrasonic != null)
+      return frontUltrasonic.getDistance(angle);
+    else
+      return ULTRASONIC_ERROR_CODE;
+  }
+
+  /*
+   * Returns distance as given by ultrasonic
+   */
+  public double getBackRightUltrasonicUnadjustedDistance(){
+    if(frontUltrasonic != null)
+      return backRightUltrasonic.getUnadjustedDistance();
+    else
+      return ULTRASONIC_ERROR_CODE;
+  }
+
+  /*
+   * Returns adjusted distance as given by ultrasonic
+   */
+  public double getBackRightUltrasonicDistance(double angle){
+    if(frontUltrasonic != null)
+      return backRightUltrasonic.getDistance(angle);
+    else
+      return ULTRASONIC_ERROR_CODE;
+  }
+
+  /*
+   * Returns distance as given by ultrasonic
+   */
+  public double getBackLeftUltrasonicUnadjustedDistance(){
+    if(frontUltrasonic != null)
+      return backLeftUltrasonic.getUnadjustedDistance();
+    else
+      return ULTRASONIC_ERROR_CODE;
+  }
+
+  /*
+   * Returns adjusted distance as given by ultrasonic
+   */
+  public double getBackLeftUltrasonicDistance(double angle){
+    if(frontUltrasonic != null)
+      return backLeftUltrasonic.getDistance(angle);
+    else
+      return ULTRASONIC_ERROR_CODE;
+  }
+
+  /**
+   * Gets the Rotation for the Pure Pursuit drive. (-180, 180) with 90 being forward
+   */
+  public Rotation getRotationAngle() {
+    double headingRadians = Pathfinder.boundHalfDegrees(90 - getYawDouble());
+    return Rotation.fromDegrees(headingRadians);
   }
 
   /**
@@ -91,14 +172,6 @@ public class MustangSensors {
    */
   public double getYawDoubleForPathfinder(){
    return -1 * getYawDouble();
-  }
-
-  /**
-   * Gets the Rotation for the Pure Pursuit drive. (-180, 180) with 90 being forward
-   */
-  public Rotation getRotation() {
-    double headingRadians = Pathfinder.boundHalfDegrees(90 - getYawDouble());
-    return Rotation.fromDegrees(headingRadians);
   }
 
   /**

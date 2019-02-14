@@ -7,7 +7,6 @@
 
 package frc.team670.robot.commands;
 
-import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team670.robot.Robot;
@@ -15,10 +14,7 @@ import frc.team670.robot.commands.arm.joystick.JoystickElbow;
 import frc.team670.robot.commands.arm.joystick.JoystickExtension;
 import frc.team670.robot.commands.arm.joystick.JoystickWrist;
 import frc.team670.robot.commands.climb.pistonClimb.JoystickPistonClimb;
-import frc.team670.robot.commands.intake.ButtonRunIntake;
-import frc.team670.robot.commands.intake.RunIntakeInWithIR;
 import frc.team670.robot.utils.MustangController;
-import frc.team670.robot.utils.MustangController.XboxButtons;
 
 /**
 *
@@ -26,14 +22,11 @@ import frc.team670.robot.utils.MustangController.XboxButtons;
 public class ControlOperatorController extends Command {
   private OperatorState os;
   private MustangController controller;
-  private JoystickButton leftBumper, rightBumper;
 
   public ControlOperatorController(MustangController controller) {
     super();
     os = OperatorState.NONE;
     this.controller = controller;
-    leftBumper = new JoystickButton(controller, XboxButtons.LEFT_BUMPER);
-    rightBumper = new JoystickButton(controller, XboxButtons.RIGHT_BUMPER);
   }
 
   // Called once when the command executes
@@ -53,8 +46,8 @@ public class ControlOperatorController extends Command {
 
     // If in arm state
     if (os == OperatorState.ARM) {
-      Scheduler.getInstance().add(new JoystickElbow(Robot.arm.getElbow(), controller.getRightStickY()));
-      Scheduler.getInstance().add(new JoystickWrist(Robot.arm.getWrist(), controller.getLeftStickY()));
+      Scheduler.getInstance().add(new JoystickElbow(Robot.arm.getElbow(), Math.pow(controller.getRightStickY(), 2)));
+      Scheduler.getInstance().add(new JoystickWrist(Robot.arm.getWrist(),  Math.pow(controller.getLeftStickY(), 2)));
 
       double extensionPower = Math.pow((controller.getRightTriggerAxis() - controller.getLeftTriggerAxis()), 2);
       Scheduler.getInstance().add(new JoystickExtension(Robot.arm, Robot.intake, Robot.arm.getExtension(), extensionPower));
@@ -62,12 +55,8 @@ public class ControlOperatorController extends Command {
     
     // If in climb state
     else if (os == OperatorState.CLIMB) {
-      Scheduler.getInstance().add(new JoystickPistonClimb(Robot.climber, controller.getLeftStickY(), controller.getRightStickY()));
+      Scheduler.getInstance().add(new JoystickPistonClimb(Robot.climber, controller.getLeftStickY() * controller.getLeftStickY(), controller.getRightStickY() * controller.getRightStickY()));
     }
-
-    // Control running intake 
-    rightBumper.whileHeld(new ButtonRunIntake(Robot.intake, RunIntakeInWithIR.RUNNING_POWER, true));
-    leftBumper.whileHeld(new ButtonRunIntake(Robot.intake, RunIntakeInWithIR.RUNNING_POWER, false));
   }
 
   /**

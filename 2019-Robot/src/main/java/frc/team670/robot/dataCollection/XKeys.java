@@ -25,14 +25,15 @@ import frc.team670.robot.commands.climb.controlClimb.CycleClimb;
 import frc.team670.robot.commands.climb.pistonClimb.AbortRobotPistonClimb;
 import frc.team670.robot.commands.climb.pistonClimb.PistonClimbWithTiltControl;
 import frc.team670.robot.commands.drive.vision.CancelDriveBase;
+import frc.team670.robot.commands.drive.vision.VisionPurePursuit;
 import frc.team670.robot.commands.intake.AutoPickupCargo;
 import frc.team670.robot.commands.intake.ButtonRunIntake;
 import frc.team670.robot.commands.intake.RunIntakeInWithIR;
 import frc.team670.robot.commands.intake.StopIntakeRollers;
-import frc.team670.robot.commands.intake.ToggleButtonRunIntake;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
 import frc.team670.robot.subsystems.Arm.LegalState;
+import frc.team670.robot.subsystems.Arm.PlaceGrabState;
 import frc.team670.robot.subsystems.Climber;
 
 
@@ -51,6 +52,9 @@ public class XKeys {
     private boolean toggleIntake;
 
     private boolean intakeRunning = true;
+
+    private boolean intakeRunning = true;
+    private boolean toggleIn = true, toggleOut = false;
 
     public XKeys() {
         SmartDashboard.putString("XKEYS", "XKeys constructor");
@@ -89,9 +93,12 @@ public class XKeys {
             if (s.equals("set_climb_flat")) height = ClimbHeight.FLAT;
             else if (s.equals("set_climb_2")) height = ClimbHeight.LEVEL2;
             else if (s.equals("set_climb_3")) height = ClimbHeight.LEVEL3;
-
+            
             if (s.contains("cycle_climb")) nextStepArmClimb(height);
             else if (s.equals("piston_climb")) pistonClimb(height);
+        }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+        table.addEntryListener("xkeys-visionDrive", (table2, key2, entry, value, flags) -> {
+            visionDrive();
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-cancel", (table2, key2, entry, value, flags) -> {
             if (value.getType() != NetworkTableType.kString) return;
@@ -149,22 +156,32 @@ public class XKeys {
     }
 
     private void runIntakeIn() {
-        if (intakeRunning) {
+        toggleIn = !toggleIn;
+
+        if(toggleOut){
+            toggleIn = true;
+            toggleOut = false;
+        }
+
+        if (toggleIn) {
             Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, RunIntakeInWithIR.RUNNING_POWER, true));
-            intakeRunning = false;
         } else {
             Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, 0, true));
-            intakeRunning = true;
         }
     }
 
     private void runIntakeOut() {
-        if (intakeRunning) {
+        toggleOut = !toggleOut;
+
+        if(toggleIn){
+            toggleIn = false;
+            toggleOut = true;
+        }
+        
+        if (toggleOut) {
             Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, RunIntakeInWithIR.RUNNING_POWER, false));
-            intakeRunning = false;
         } else {
             Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, 0, false));
-            intakeRunning = true;
         }
     }
 
@@ -193,7 +210,7 @@ public class XKeys {
     }
 
     private void cancelAllCommands() {
-        Scheduler.getInstance().add(new CancelAllCommands());
+        Scheduler.getInstance().add(new CancelAllCommands(Robot.driveBase, Robot.arm, Robot.intake, Robot.claw, Robot.climber));
     }
 
     private void cancelIntakeRollers(){
@@ -205,13 +222,29 @@ public class XKeys {
     }
 
     private void cancelArmMovement(){
-        Scheduler.getInstance().add(new CancelArmMovement(Robot.arm.getElbow(), Robot.arm.getExtension(), Robot.arm.getWrist(), Robot.intake, Robot.claw));
+        Scheduler.getInstance().add(new CancelArmMovement(Robot.arm, Robot.intake, Robot.claw));
     }
 
     private void cancelDriveBase(){
         Scheduler.getInstance().add(new CancelDriveBase(Robot.driveBase));
     }
+
+    private void visionDrive(){
+        PlaceGrabState placeGrabState = null;
+        try {
+             placeGrabState = (PlaceGrabState) Arm.getCurrentState();
+        } catch (ClassCastException ex) {
+            return;
+        }
+
+        double distanceFromTarget = placeGrabState.getDistanceFromTarget();
+        boolean isReversed = !placeGrabState.getIsFront();
+        boolean isLow = placeGrabState.getIsLowTarget();
+
+        Scheduler.getInstance().add(new VisionPurePursuit(Robot.driveBase, Robot.coprocessor, Robot.sensors, distanceFromTarget, isReversed, isLow));
+    }
     private enum ClimbHeight {
         FLAT, LEVEL2, LEVEL3;
     }
+
 }

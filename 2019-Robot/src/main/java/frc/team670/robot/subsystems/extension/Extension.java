@@ -25,6 +25,9 @@ public class Extension extends BaseExtension {
 
   private TalonSRX extensionMotor;
 
+  public static final double TICKS_PER_MOTOR_ROTATION = 4096; // Should be real value
+  public static final double MOTOR_ROTATIONS_PER_INCH = 0.169333; //Should be real value
+
   // Position PID control constants when doing Arm Climb 
   private static final int POSITION_SLOT = 1;
   private final double P_P = 0.1, P_I = 0.0, P_D = 0.0, P_F = 0.0, RAMP_RATE = 0.1;
@@ -32,13 +35,12 @@ public class Extension extends BaseExtension {
   private static final int CONTINUOUS_CURRENT_LIMIT = 20, PEAK_CURRENT_LIMIT = 0;
 
   private static final int START_POSITION_TICKS = 0; // TODO set this. Start position needed since extension has no absolute encoder
-  public static final int MAX_POSITION_TICKS = 0; // TODO set this
 
   // Motion Magic
   private static final int kPIDLoopIdx = 0, MOTION_MAGIC_SLOT = 0, kTimeoutMs = 0;
   public static final int EXTENSION_IN_POS = 0; // TODO Set These
   public static final int EXTENSION_OUT_POS = 12000; // TODO Set this in ticks
-  public static final double EXTENSION_OUT_IN_INCHES = convertExtensionTicksToInches(EXTENSION_OUT_POS); //TODO set this
+  public static final double EXTENSION_OUT_IN_INCHES = 12.75;
   public static final int FORWARD_SOFT_LIMIT = EXTENSION_IN_POS - 100, REVERSE_SOFT_LIMIT = EXTENSION_OUT_POS + 100; // TODO figure out the values in rotations
  
   private static final double MM_F = 0, MM_P = 0, MM_I = 0, MM_D = 0; //TODO figure out what these are. Motion Magic Constants
@@ -84,6 +86,13 @@ public class Extension extends BaseExtension {
     extensionMotor.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
     extensionMotor.configPeakOutputForward(MAX_EXTENSION_OUTPUT, RobotConstants.kTimeoutMs);
     extensionMotor.configPeakOutputReverse(-MAX_EXTENSION_OUTPUT, RobotConstants.kTimeoutMs);
+
+    if(extensionMotor.getSensorCollection().isRevLimitSwitchClosed()) {
+      extensionMotor.setSelectedSensorPosition(EXTENSION_IN_POS);
+    }
+    else if(extensionMotor.getSensorCollection().isFwdLimitSwitchClosed()) {
+      extensionMotor.setSelectedSensorPosition(EXTENSION_OUT_POS);
+    }
 
     //Tuning stuff
     setpoint = NO_SETPOINT;
@@ -182,12 +191,16 @@ public class Extension extends BaseExtension {
     extensionMotor.set(ControlMode.MotionMagic, setpoint);
   }
 
+  public double getMotionMagicSetpoint() {
+    return extensionMotor.getClosedLoopTarget();
+  }
+
   /**
    * Converts inches for the intake into ticks
    */
   private static int convertExtensionInchesToTicks(double inches) { 
     //inches * (rotation/inches) * (ticks / rotation)
-    return (int)(inches * RobotConstants.EXTENSION_MOTOR_ROTATIONS_PER_INCH * RobotConstants.EXTENSION_TICKS_PER_MOTOR_ROTATION);
+    return (int)(inches * MOTOR_ROTATIONS_PER_INCH * TICKS_PER_MOTOR_ROTATION);
   }
 
   /**
@@ -195,7 +208,7 @@ public class Extension extends BaseExtension {
    */
   private static double convertExtensionTicksToInches(double ticks) {
     //ticks * (rotations/ticks) * (inches / rotations)
-    return ticks / RobotConstants.EXTENSION_TICKS_PER_MOTOR_ROTATION / RobotConstants.EXTENSION_MOTOR_ROTATIONS_PER_INCH;
+    return ticks / TICKS_PER_MOTOR_ROTATION / MOTOR_ROTATIONS_PER_INCH;
   }
 
 

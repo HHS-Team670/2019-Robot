@@ -8,6 +8,8 @@
 package frc.team670.robot.commands.claw;
 
 import edu.wpi.first.wpilibj.command.TimedCommand;
+import frc.team670.robot.subsystems.Arm;
+import frc.team670.robot.subsystems.Arm.HeldItem;
 import frc.team670.robot.subsystems.Claw;
 import frc.team670.robot.utils.Logger;
 
@@ -17,10 +19,12 @@ import frc.team670.robot.utils.Logger;
 public class DropBall extends TimedCommand {
   
   private Claw claw;
+  private Arm arm;
 
-  public DropBall(Claw claw) {
+  public DropBall(Claw claw, Arm arm) {
     super(Claw.TIME_TO_MOVE);
     this.claw = claw;
+    this.arm = arm;
     requires(claw);
   }
 
@@ -44,12 +48,14 @@ public class DropBall extends TimedCommand {
 
   @Override
   protected void end() {
+    arm.setHeldItem(HeldItem.NONE);
     super.end();
   }
 
   @Override
   protected void interrupted() {
     super.interrupted();
+    end();
   }
 
 }
