@@ -49,11 +49,6 @@ public class XKeys {
     private NetworkTable table;
     private Command autonCommand;
     private ClimbHeight height;
-    private boolean toggleIntake;
-
-    private boolean intakeRunning = true;
-
-    private boolean intakeRunning = true;
     private boolean toggleIn = true, toggleOut = false;
 
     public XKeys() {

@@ -9,6 +9,7 @@ package frc.team670.robot.commands.arm.joystick;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team670.robot.subsystems.elbow.BaseElbow;
+import frc.team670.robot.subsystems.elbow.Elbow;
 
 /**
  * Add your docs here.
