@@ -49,9 +49,9 @@ public class XKeys {
     private NetworkTable table;
     private Command autonCommand;
     private ClimbHeight height;
-    private boolean toggleIntake;
 
     private boolean intakeRunning = true;
+    private boolean toggleIn = true, toggleOut = false;
 
     public XKeys() {
         SmartDashboard.putString("XKEYS", "XKeys constructor");
@@ -128,22 +128,32 @@ public class XKeys {
     }
 
     private void runIntakeIn() {
-        if (intakeRunning) {
+        toggleIn = !toggleIn;
+
+        if(toggleOut){
+            toggleIn = true;
+            toggleOut = false;
+        }
+
+        if (toggleIn) {
             Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, RunIntakeInWithIR.RUNNING_POWER, true));
-            intakeRunning = false;
         } else {
             Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, 0, true));
-            intakeRunning = true;
         }
     }
 
     private void runIntakeOut() {
-        if (intakeRunning) {
+        toggleOut = !toggleOut;
+
+        if(toggleIn){
+            toggleIn = false;
+            toggleOut = true;
+        }
+        
+        if (toggleOut) {
             Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, RunIntakeInWithIR.RUNNING_POWER, false));
-            intakeRunning = false;
         } else {
             Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, 0, false));
-            intakeRunning = true;
         }
     }
 
