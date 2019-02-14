@@ -216,7 +216,7 @@ body.login #login {
     position: absolute;
     transform: translate(calc(90px + 125px + 130px + 100px), 275px);
 }
-#vline-left {
+/* #vline-left {
     position: absolute;
     transform: translate(0vw, 0vh);
     stroke-width: 0.25px;
@@ -232,6 +232,16 @@ body.login #login {
     stroke-width: 0.25px;
 }
 #hline-right {
+    position: absolute;
+    transform: translate(0vw, 0vh);
+    stroke-width: 0.25px;
+} */
+#vline {
+    position: absolute;
+    transform: translate(0vw, 0vh);
+    stroke-width: 0.25px;
+}
+#hline {
     position: absolute;
     transform: translate(0vw, 0vh);
     stroke-width: 0.25px;

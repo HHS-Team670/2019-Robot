@@ -20,6 +20,10 @@ document.getElementById('arm-extension').style = "transform: translate(" + (Math
 document.getElementById('vline-right').setAttribute('x', 70+'%');
 document.getElementById('vline-left').setAttribute('x', 25+'%');
 
+// var cameras = ['Back', 'Front'];
+// var cameraIndex = 0;
+// multiCamSRC.innerHTML = cameras[cameraIndex];
+
 ui.timer.style.color = `rgb(0, 200, 0)`;
 
 NetworkTables.addKeyListener('/SmartDashboard/game-time', (key, value) => {
@@ -46,6 +50,8 @@ NetworkTables.addKeyListener('/SmartDashboard/game-time', (key, value) => {
 NetworkTables.addKeyListener('/SmartDashboard/camera-source', (key, value) => {
   if (value == 'next') {
     window.webContents.reload();
+    // cameraIndex = (cameraIndex + 1) % cameras.length;
+    // multiCamSRC.innerHTML = cameras[cameraIndex];
   }
   NetworkTables.putValue('/SmartDashboard/camera-source', '');
 });
@@ -99,9 +105,9 @@ NetworkTables.addKeyListener('/SmartDashboard/current-arm-state', (key, value) =
 NetworkTables.addKeyListener('/SmartDashboard/elbow-angle', (key, value) => {
   if (value == null) return;
   var angle = value;
-  document.getElementById('claw').style = "transform: translate(" + Math.sin(angle * Math.PI / 180) * (parseInt(document.getElementById('arm-extension').getAttribute('height')) + 60) + "px, " + -1 * Math.cos(angle * Math.PI / 180) * (parseInt(document.getElementById('arm-extension').getAttribute('height')) + 60) + "px)";
+  document.getElementById('claw').style = "transform: translate(" + (Math.sin(angle * Math.PI / 180) * (parseInt(document.getElementById('arm-extension').getAttribute('height')) + armLength)) + "px, " + (armLength - Math.sin((angle+90) * Math.PI / 180) * (parseInt(document.getElementById('arm-extension').getAttribute('height')) + armLength)) + "px)";
   document.getElementById('arm').style = "transform: rotate(" + angle + "deg)";
-  document.getElementById('arm-extension').style = "transform: translate(" + (Math.sin((angle) * Math.PI / 180) * 60) + "px, " + (60 - (Math.sin((angle+90) * Math.PI / 180) * 60)) + "px) rotate(" + (angle + 180) + "deg)";
+  document.getElementById('arm-extension').style = "transform: translate(" + (Math.sin((angle) * Math.PI / 180) * armLength) + "px, " + (armLength - (Math.sin((angle+90) * Math.PI / 180) * armLength)) + "px) rotate(" + (angle + 180) + "deg)";
 
   var frontHeight = 0;
   var backHeight = 0;
@@ -113,8 +119,10 @@ NetworkTables.addKeyListener('/SmartDashboard/elbow-angle', (key, value) => {
   } else if (angle >= 187.65 && angle < 227.35) {
     backHeight = (angle - 187.65) / (227.35 - 187.65) * 100;
   }
-  document.getElementById('hline-left').setAttribute('y', frontHeight+'%');
-  document.getElementById('hline-right').setAttribute('y', backHeight+'%');
+  // document.getElementById('hline-left').setAttribute('y', frontHeight+'%');
+  // document.getElementById('hline-right').setAttribute('y', backHeight+'%');
+  // if (multiCamSRC.innerHTML === 'Front') document.getElementById('hline').setAttribute('y', frontHeight+'%');
+  // if (multiCamSRC.innerHTML === 'Back') document.getElementById('hline').setAttribute('y', backHeight+'%');
 });
 
 NetworkTables.addKeyListener('/SmartDashboard/intake-angle', (key, value) => {
@@ -252,13 +260,22 @@ function getFromMap(key) { // mapping is more aligned with arm position on robot
   return null;
 }
 
-var auton = ["", "", "", "", "", "", ""];
+var auton = ["test", "", "", "", "", "", ""];
 
 function readRadioButtons() {
-  var startChooser = document.forms['auto-chooser'].elements['start'];
+  // document.getElementById('warnings').innerHTML = 'readRadioButtons()';
+
+  document.getElementById('warnings').innerHTML = '>>>' + getSelection('start') + '<<<';
+  auton = new Array(7);
+
+  var startChooser = document.forms["auto-chooser"].elements["start"];
   for (var i = 0, len = startChooser.length; i < len; i++) {
     if (startChooser[i].checked) {
-      auton[0] = startChooser[i].value;
+      document.getElementById('warnings').innerHTML = startChooser[i].value + "<--";
+
+      document.getElementById('warnings').innerHTML = '-->' + auton;
+      auton[0] = startChooser[i].value+"";
+      document.getElementById('warnings').innerHTML = auton;
       break;
     }
   }
@@ -287,7 +304,7 @@ function readRadioButtons() {
     }
   }
 
-  var height2 = document.forms['auto-chooser'].elements['height1'];
+  var height2 = document.forms['auto-chooser'].elements['height2'];
   for (var i = 0, len = height2.length; i < len; i++) {
     if (height2[i].checked) {
       auton[4] = height2[i].value;
@@ -303,7 +320,7 @@ function readRadioButtons() {
     }
   }
 
-  var height3 = document.forms['auto-chooser'].elements['height1'];
+  var height3 = document.forms['auto-chooser'].elements['height3'];
   for (var i = 0, len = height3.length; i < len; i++) {
     if (height3[i].checked) {
       auton[6] = height3[i].value;
@@ -311,11 +328,11 @@ function readRadioButtons() {
     }
   }
 
+  document.getElementById('warnings').innerHTML = 'readRadioButtons() done';
+
 }
 
 function sendAuton() {
-  document.getElementById('warnings').innerHTML = 'reading....';
   readRadioButtons();
-  document.getElementById('warnings').innerHTML = auton;
   NetworkTables.putValue("auton-sequence", auton);
 }
