@@ -64,7 +64,6 @@ public class PurePursuit extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    VisionPurePursuit.disableArmRestriction();
     return purePursuitTracker.isDone();// || Robot.sensors.getUltrasonicDistance() < 15;
   }
 
@@ -72,6 +71,7 @@ public class PurePursuit extends Command {
   @Override
   protected void end() {
     Logger.consoleLog("Pose: %s ", poseEstimator.getPose());
+    VisionPurePursuit.disableArmRestriction();
     driveBase.setSparkVelocityControl(0,0);
     purePursuitTracker.stopNotifier();
     purePursuitTracker.reset();

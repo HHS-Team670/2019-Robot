@@ -16,10 +16,15 @@ import frc.team670.robot.commands.drive.purePursuit.Path;
 import frc.team670.robot.commands.drive.purePursuit.PathGenerator;
 import frc.team670.robot.commands.drive.purePursuit.PoseEstimator;
 import frc.team670.robot.commands.drive.purePursuit.PurePursuit;
+import frc.team670.robot.commands.drive.purePursuit.PurePursuitTracker;
+import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangCoprocessor;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.Arm;
+import frc.team670.robot.subsystems.Arm.LegalState;
 import frc.team670.robot.subsystems.DriveBase;
+import frc.team670.robot.utils.Logger;
+import frc.team670.robot.utils.functions.MathUtils;
 import frc.team670.robot.utils.math.Vector;
 
 /**
@@ -39,8 +44,6 @@ public class VisionPurePursuit extends InstantCommand {
   private double spaceFromTarget;
   private boolean isReversed;
   private static Notifier restrictArmMovement;
-  private double straightDistance;
-
 
   /**
    * @param isReversed True if using the back-facing camera on the robot to drive backwards
@@ -64,32 +67,38 @@ public class VisionPurePursuit extends InstantCommand {
     
 
     double horizontalAngle = coprocessor.getAngleToWallTarget();
-    double ultrasonicDistance = sensors.getFrontUltrasonicUnadjustedDistance()*Math.cos(Math.toRadians(horizontalAngle)); //use cosine to get the straight ultrasonic distance not the diagonal one
-    double visionDistance = coprocessor.getDistanceToWallTarget();
-
-    straightDistance = 120;// ultrasonicDistance; //(!MathUtils.doublesEqual(visionDistance, RoboConstants.VISION_ERROR_CODE) && visionDistance < ultrasonicDistance) ? visionDistance : ultrasonicDistance;
-    // straightDistance = visionDistance;
-    straightDistance = straightDistance - spaceFromTarget;
-
-    if (straightDistance > 60) {
-      restrictArmMovement = new Notifier(new Runnable() {
-
-
-
-        public void run() {
-          straightDistance = sensors.getFrontUltrasonicUnadjustedDistance() * Math.cos(Math.toRadians(horizontalAngle));
-          if (straightDistance < 48) {
-            Scheduler.getInstance().add(new MoveArm(Arm.getCurrentState(), Robot.arm));
-            cancel();
-          }
-        }
-      });
-
-      restrictArmMovement.startPeriodic(0.02);
-    } else {
-      restrictArmMovement = null;
+    if(MathUtils.doublesEqual(horizontalAngle, RobotConstants.VISION_ERROR_CODE)) {
+      Logger.consoleLog("No Valid Vision Data found, command quit.");
+      return;
     }
 
+    double ultrasonicDistance;
+    if(!isReversed) {
+      ultrasonicDistance = sensors.getFrontUltrasonicDistance(horizontalAngle);
+    }
+    else {
+      double ultraLeft = sensors.getBackLeftUltrasonicDistance(horizontalAngle);
+      double ultraRight = sensors.getBackRightUltrasonicDistance(horizontalAngle);
+
+      ultrasonicDistance = (ultraLeft < ultraRight) ? ultraLeft : ultraRight; // Take the one that is least
+    }
+    ultrasonicDistance *= Math.cos(Math.toRadians(horizontalAngle)); //use cosine to get the straight ultrasonic distance not the diagonal one
+
+    double visionDistance = coprocessor.getDistanceToWallTarget();
+
+    double straightDistance;
+    if(MathUtils.doublesEqual(visionDistance, RobotConstants.VISION_ERROR_CODE)) {
+      straightDistance = ultrasonicDistance;
+    } else {
+      straightDistance = (visionDistance < ultrasonicDistance) ? visionDistance : ultrasonicDistance;
+    }
+
+    if(straightDistance > 132) { // Distance is too far, must be invalid data.
+      Logger.consoleLog("No Valid Vision Data or Ultrasonic Data found, command quit.");
+      return;
+    }
+
+    straightDistance = straightDistance - spaceFromTarget;
     if(straightDistance < 0){
       System.out.println("Too close to target!");
       this.cancel();
@@ -99,14 +108,14 @@ public class VisionPurePursuit extends InstantCommand {
     System.out.println("Angle: " + coprocessor.getAngleToWallTarget());
     //horizontal distance - when going forward a positive horizontal distance is right and negative is left
     double horizontalDistance = -38;// straightDistance * Math.tan(Math.toRadians(coprocessor.getRealAngleToWallTarget())); // x = y * tan(theta)
-    double oneQuarterTargetY = (straightDistance) * 7.0/8.0;
+    double oneEighthTargetY = (straightDistance) * 1.0/8.0;
 
 
     System.out.println("straightDist: " + straightDistance + ", horizontalDistance: " + horizontalDistance);
     if(isReversed) { // Flip all of these to match our coord system when looking out the back
       straightDistance *= -1;
       horizontalDistance *= -1;
-      oneQuarterTargetY *= -1;
+      oneEighthTargetY *= -1;
     }
 
     sensors.zeroYaw();
@@ -116,7 +125,7 @@ public class VisionPurePursuit extends InstantCommand {
     // Make this start with the Pose Estimator and get its position at this poitn for starting coords.
     Vector startPose = poseEstimator.getPose();
     double startX = startPose.x, startY = startPose.y;
-    Vector oneQuarter = new Vector(startX + horizontalDistance, startY + oneQuarterTargetY);
+    Vector oneQuarter = new Vector(startX + horizontalDistance, startY + oneEighthTargetY);
     Vector endPoint = new Vector(startX + horizontalDistance, startY + (straightDistance));
 
     PathGenerator generator = new PathGenerator(SPACING);
@@ -131,6 +140,42 @@ public class VisionPurePursuit extends InstantCommand {
     Path path = generator.generatePath(isReversed);
 
     command = new PurePursuit(path, driveBase, sensors, poseEstimator, isReversed);
+
+    if (straightDistance > 60) { // Protect arm until it is time to actually place
+      restrictArmMovement = new Notifier(new Runnable() {
+
+        boolean movedToNeutral = false;
+        boolean reversed = isReversed;
+
+        public void run() {
+
+          double ultrasonicDistance;
+          if(!isReversed) {
+            ultrasonicDistance = sensors.getFrontUltrasonicDistance(horizontalAngle);
+          }
+          else {
+            double ultraLeft = sensors.getBackLeftUltrasonicDistance(horizontalAngle);
+            double ultraRight = sensors.getBackRightUltrasonicDistance(horizontalAngle);
+      
+            ultrasonicDistance = (ultraLeft < ultraRight) ? ultraLeft : ultraRight; // Take the one that is least
+          }
+          ultrasonicDistance *= Math.cos(Math.toRadians(horizontalAngle)); //use cosine to get the straight ultrasonic distance not the diagonal one
+      
+          if (ultrasonicDistance < 48) {
+            Scheduler.getInstance().add(new MoveArm(Arm.getCurrentState(), Robot.arm));
+            cancel();
+          } else {
+            if(!movedToNeutral) {
+              Scheduler.getInstance().add(new MoveArm(Arm.getArmState(LegalState.NEUTRAL), Robot.arm));
+              movedToNeutral = true;
+            }
+          }
+        }
+      });
+      restrictArmMovement.startPeriodic(0.03);
+    } else {
+      restrictArmMovement = null;
+    }
 
     Scheduler.getInstance().add(command);
   }

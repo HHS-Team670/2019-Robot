@@ -79,7 +79,7 @@ public class MustangSensors {
   /*
    * Returns distance as given by ultrasonic
    */
-  public double backRightUltrasonicUnadjustedDistance(){
+  public double getBackRightUltrasonicUnadjustedDistance(){
     if(frontUltrasonic != null)
       return backRightUltrasonic.getUnadjustedDistance();
     else
@@ -89,7 +89,7 @@ public class MustangSensors {
   /*
    * Returns adjusted distance as given by ultrasonic
    */
-  public double backRightUltrasonicDistance(double angle){
+  public double getBackRightUltrasonicDistance(double angle){
     if(frontUltrasonic != null)
       return backRightUltrasonic.getDistance(angle);
     else
