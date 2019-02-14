@@ -21,6 +21,7 @@ import frc.team670.robot.dataCollection.MustangCoprocessor;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.DriveBase;
+import frc.team670.robot.subsystems.Arm.LegalState;
 import frc.team670.robot.utils.math.Vector;
 
 /**
@@ -70,7 +71,8 @@ public class VisionPurePursuit extends InstantCommand {
       restrictArmMovement = new Notifier(new Runnable() {
         public void run() {
          if(sensors.getUltrasonicDistance() * Math.cos(Math.toRadians(horizontalAngle)) > 36){
-           Scheduler.getInstance().add(new CancelArmMovement(Robot.arm, Robot.intake, Robot.claw));
+          //  Scheduler.getInstance().add(new CancelArmMovement(Robot.arm, Robot.intake, Robot.claw));
+          Scheduler.getInstance().add(new MoveArm(Arm.getStates().get(LegalState.NEUTRAL), Robot.arm));
          } else {
           Scheduler.getInstance().add(new MoveArm(Arm.getCurrentState(), Robot.arm));
          }
