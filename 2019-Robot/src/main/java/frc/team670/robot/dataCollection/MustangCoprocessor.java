@@ -177,7 +177,6 @@ public class MustangCoprocessor {
      * @param back true for back camera, false for front
      */
     public void setCamera(boolean back) {
-        SmartDashboard.putString("vision-camera", back ? "back" : "front");
         backCamera = back;
         if(back) {
             cameraHorizontalOffset = BACK_CAMERA_HORIZONTAL_OFFSET; //inches

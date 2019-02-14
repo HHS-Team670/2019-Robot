@@ -25,7 +25,7 @@ public class MustangSensors {
   public static final double ULTRASONIC_ERROR_CODE = 99999;
 
    //Ultrasonic
-   private DIOUltrasonic ultrasonic;
+   private DIOUltrasonic frontUltrasonic, backLeftUltrasonic, backRightUltrasonic;
 
 
   public MustangSensors(){
@@ -48,20 +48,70 @@ public class MustangSensors {
     }
 
     try {
-      ultrasonic = new DIOUltrasonic();
+      frontUltrasonic = new DIOUltrasonic();
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error instantiating ultrasonic: " + ex.getMessage(), true);
       SmartDashboard.putString("warning", "Error instantiating ultrasonic");
-      ultrasonic = null;
+      frontUltrasonic = null;
     }
   }
 
   /*
    * Returns distance as given by ultrasonic
    */
-  public double getUltrasonicDistance(){
-    if(ultrasonic != null)
-      return ultrasonic.getUltrasonicValue();
+  public double getFrontUltrasonicUnadjustedDistance(){
+    if(frontUltrasonic != null)
+      return frontUltrasonic.getUnadjustedDistance();
+    else
+      return ULTRASONIC_ERROR_CODE;
+  }
+
+  /*
+   * Returns adjusted distance as given by ultrasonic
+   */
+  public double getFrontUltrasonicDistance(double angle){
+    if(frontUltrasonic != null)
+      return frontUltrasonic.getDistance(angle);
+    else
+      return ULTRASONIC_ERROR_CODE;
+  }
+
+  /*
+   * Returns distance as given by ultrasonic
+   */
+  public double backRightUltrasonicUnadjustedDistance(){
+    if(frontUltrasonic != null)
+      return backRightUltrasonic.getUnadjustedDistance();
+    else
+      return ULTRASONIC_ERROR_CODE;
+  }
+
+  /*
+   * Returns adjusted distance as given by ultrasonic
+   */
+  public double backRightUltrasonicDistance(double angle){
+    if(frontUltrasonic != null)
+      return backRightUltrasonic.getDistance(angle);
+    else
+      return ULTRASONIC_ERROR_CODE;
+  }
+
+  /*
+   * Returns distance as given by ultrasonic
+   */
+  public double getBackLeftUltrasonicUnadjustedDistance(){
+    if(frontUltrasonic != null)
+      return backLeftUltrasonic.getUnadjustedDistance();
+    else
+      return ULTRASONIC_ERROR_CODE;
+  }
+
+  /*
+   * Returns adjusted distance as given by ultrasonic
+   */
+  public double getBackLeftUltrasonicDistance(double angle){
+    if(frontUltrasonic != null)
+      return backLeftUltrasonic.getDistance(angle);
     else
       return ULTRASONIC_ERROR_CODE;
   }
