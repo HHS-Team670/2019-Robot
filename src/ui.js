@@ -185,12 +185,18 @@ var allKeys = '';
 document.addEventListener("keyup", function(event) {
   var pressed = event.key.replace("Enter", "");
   allKeys += pressed;
-  var split = allKeys.split(" ");
-  var result = (split[split.length - 1]).toLowerCase();
-  document.getElementById('current-command-text').innerHTML = result;
+  var result = allKeys[allKeys.length - 1];
+  // var result = (split[split.length - 1]).toLowerCase();
+  NetworkTables.putValue('/SmartDashboard/current-command-text', result);
   var nextTask = getFromMap(result);
+  // NetworkTables.putValue('/SmartDashboard/current-command-text', '>>>'+nextTask+'<<<');
+
   if (nextTask != null) {
-    if (nextTask.toUpperCase() === nextTask) NetworkTables.putValue('/SmartDashboard/xkeys-armstates', nextTask);
+    NetworkTables.putValue('/SmartDashboard/current-command-text', '>>>'+nextTask+'<<<');
+    NetworkTables.putValue('/SmartDashboard/value-check', nextTask.toUpperCase() === nextTask);
+    if (nextTask.toUpperCase() === nextTask) {
+      NetworkTables.putValue('/SmartDashboard/xkeys-armstates', nextTask);
+    }
     else if (nextTask.includes("cancel")) NetworkTables.putValue('/SmartDashboard/xkeys-cancel', nextTask);
     else if (nextTask === "place" || nextTask === "grab") NetworkTables.putValue('/SmartDashboard/xkeys-placing', nextTask);
     else if (nextTask.includes("run_intake")) NetworkTables.putValue('/SmartDashboard/xkeys-intake', nextTask);
@@ -201,6 +207,8 @@ document.addEventListener("keyup", function(event) {
 
 // naming convention: UPPER_CASE for preset arm states, lower_case for other commands
 function getFromMap(key) { // mapping is more aligned with arm position on robot
+  NetworkTables.putValue('/SmartDashboard/current-command-text', '>>>'+key+'<<<');
+
   if (key === "x0d") return "READY_TO_CLIMB";
   if (key === "x03") return "set_climb_3";
   if (key === "x04") return "set_climb_2";
@@ -213,27 +221,26 @@ function getFromMap(key) { // mapping is more aligned with arm position on robot
   if (key === "x34") return "run_intake_in_with_IR";
   if (key === "x3e") return "auto_pickup_ball";
 
-  if (key === "x2e") return "place";
-  if (key === "x16") return "grab";
+  if (key === "9") return "place";
+  if (key === "w") return "grab";
 
-  if (key === "x12") return "READY_PLACE_HATCH_ROCKET_MIDDLE_BACK";
-  if (key === "x1a") return "READY_PLACE_BALL_ROCKET_MIDDLE_BACK";
-  if (key === "x22") return "READY_PLACE_BALL_ROCKET_MIDDLE_FORWARD";
-  if (key === "x2a") return "READY_PLACE_HATCH_ROCKET_MIDDLE_FORWARD";
+  if (key === "a") return "READY_PLACE_HATCH_ROCKET_MIDDLE_BACK";
+  if (key === "b") return "READY_PLACE_BALL_ROCKET_MIDDLE_BACK";
+  if (key === "d") return "READY_PLACE_HATCH_ROCKET_MIDDLE_FORWARD";
 
-  if (key === "x13") return "GRAB_BALL_LOADINGSTATION_BACK";
-  if (key === "x1b") return "PLACE_BALL_CARGOSHIP_BACK";
-  if (key === "x23") return "PLACE_BALL_CARGOSHIP_FORWARD";
-  if (key === "x2b") return "GRAB_BALL_LOADINGSTATION_FORWARD";
+  if (key === "j") return "GRAB_BALL_LOADINGSTATION_BACK";
+  if (key === "k") return "PLACE_BALL_CARGOSHIP_BACK";
+  if (key === "l") return "PLACE_BALL_CARGOSHIP_FORWARD";
+  if (key === "m") return "GRAB_BALL_LOADINGSTATION_FORWARD";
 
-  if (key === "x14") return "READY_LOW_HATCH_BACK";
-  if (key === "x1c") return "READY_PLACE_BALL_ROCKET_LOW_BACK";
-  if (key === "x24") return "READY_PLACE_BALL_ROCKET_LOW_FORWARD";
-  if (key === "x2c") return "READY_LOW_HATCH_FORWARD";
+  if (key === "s") return "READY_LOW_HATCH_BACK";
+  if (key === "t") return "READY_PLACE_BALL_ROCKET_LOW_BACK";
+  if (key === "u") return "READY_PLACE_BALL_ROCKET_LOW_FORWARD";
+  if (key === "v") return "READY_LOW_HATCH_FORWARD";
 
-  if (key === "x1d") return "GRAB_BALL_GROUND_BACK";
-  if (key === "x25") return "GRAB_BALL_INTAKE";
-  if (key === "x15") return "READY_GRAB_HATCH_GROUND_BACK";
+  if (key === "2") return "GRAB_BALL_GROUND_BACK";
+  if (key === "x32") return "GRAB_BALL_INTAKE";
+  if (key === "1") return "READY_GRAB_HATCH_GROUND_BACK";
   if (key === "x2d") return "STOW";
 
   if (key === "o") return "cancel_drive";
@@ -242,69 +249,74 @@ function getFromMap(key) { // mapping is more aligned with arm position on robot
   if (key === "m") return "cancel_arm_climb";
   if (key === "x0e") return "cancel_piston_climb";
   if (key === "rq" || key === "qr" || key === "q" || key === "r") return "cancel_all";
+
+  return null;
 }
 
+var auton = ["", "", "", "", "", "", ""];
+
 function readRadioButtons() {
-  var startDirection = document.forms['auto-chooser'].elements['start-direction'];
-  for (var i = 0, len = startChooser.length; i < len; i++) {
-    if (startChooser[i].checked) {
-      auton[0] = startDirection[i].value;
-      break;
-    }
-  }
   var startChooser = document.forms['auto-chooser'].elements['start'];
   for (var i = 0, len = startChooser.length; i < len; i++) {
     if (startChooser[i].checked) {
-      auton[1] = startChooser[i].value;
+      auton[0] = startChooser[i].value;
       break;
     }
   }
+
   var target1 = document.forms['auto-chooser'].elements['target1'];
   for (var i = 0, len = target1.length; i < len; i++) {
     if (target1[i].checked) {
-      auton[2] = target1[i].value;
+      auton[1] = target1[i].value;
       break;
     }
   }
+
   var height1 = document.forms['auto-chooser'].elements['height1'];
   for (var i = 0, len = height1.length; i < len; i++) {
     if (height1[i].checked) {
-      auton[3] = height1[i].value;
+      auton[2] = height1[i].value;
       break;
     }
   }
+
   var target2 = document.forms['auto-chooser'].elements['target2'];
   for (var i = 0, len = target2.length; i < len; i++) {
     if (target2[i].checked) {
-      auton[4] = target2[i].value;
+      auton[3] = target2[i].value;
       break;
     }
   }
+
   var height2 = document.forms['auto-chooser'].elements['height1'];
   for (var i = 0, len = height2.length; i < len; i++) {
     if (height2[i].checked) {
-      auton[5] = height2[i].value;
+      auton[4] = height2[i].value;
       break;
     }
   }
+
   var target3 = document.forms['auto-chooser'].elements['target2'];
   for (var i = 0, len = target3.length; i < len; i++) {
     if (target3[i].checked) {
-      auton[6] = target3[i].value;
+      auton[5] = target3[i].value;
       break;
     }
   }
+
   var height3 = document.forms['auto-chooser'].elements['height1'];
   for (var i = 0, len = height3.length; i < len; i++) {
     if (height3[i].checked) {
-      auton[7] = height3[i].value;
+      auton[6] = height3[i].value;
       break;
     }
   }
+
 }
 
-document.getElementById('confirm-button').onclick = function () {
+function sendAuton() {
+  document.getElementById('warnings').innerHTML = 'reading....';
   readRadioButtons();
-  document.getElementById('test').innerHTML = auton;
-  NetworkTables.putValue("autonSequence", auton);
+  document.getElementById('warnings').innerHTML = auton;
+  NetworkTables.putValue("auton-sequence", auton);
 }
