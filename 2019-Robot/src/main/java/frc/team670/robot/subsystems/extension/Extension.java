@@ -191,6 +191,10 @@ public class Extension extends BaseExtension {
     extensionMotor.set(ControlMode.MotionMagic, setpoint);
   }
 
+  public double getMotionMagicSetpoint() {
+    return extensionMotor.getClosedLoopTarget();
+  }
+
   /**
    * Converts inches for the intake into ticks
    */

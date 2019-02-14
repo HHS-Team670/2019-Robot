@@ -10,29 +10,49 @@ import edu.wpi.first.wpilibj.Ultrasonic;
 
 
 public class DIOUltrasonic {
-    private static DigitalOutput triggerPin;
-    private static DigitalInput echoPin;
-    private static Ultrasonic WPIUltrasonic;
+
+    private DigitalOutput triggerPin;
+    private DigitalInput echoPin;
+    private Ultrasonic ultrasonic;
+
+    private double horizontalOffset; // horizontal offset from the center of the robot on the side it is on. Left is negative, right is positive.
 
     public DIOUltrasonic(){
-        this(8,9); // Temporary values for Ultrasonic - move to RobotMap unless we want it like this for multiple sensors
+        this(8,9, 0); // Temporary values for Ultrasonic - move to RobotMap unless we want it like this for multiple sensors
     }
 
-    public DIOUltrasonic(int tPin, int ePin){
+    /**
+     * @param horizontalOffset horizontal offset from the center of the robot on the side it is on. Left is negative, right is positive.
+     */
+    public DIOUltrasonic(int tPin, int ePin, double horizontalOffset){
         triggerPin = new DigitalOutput(tPin);
         echoPin = new DigitalInput(ePin);
 
-        WPIUltrasonic =  new Ultrasonic(triggerPin, echoPin);
+        this.horizontalOffset = horizontalOffset;
 
-        WPIUltrasonic.setAutomaticMode(true);
+        ultrasonic =  new Ultrasonic(triggerPin, echoPin);
+
+        ultrasonic.setAutomaticMode(true);
     }
 
-    public double getUltrasonicValue(){
-        return WPIUltrasonic.getRangeInches();
+    /**
+     * Gets the ultrasonic distance in inches adjusted for the angle to target and offset of the ultrasonic from the center of the robot.
+     * 
+     * @param angle The angle to the target from the robot.
+     */
+    public double getDistance(double angle){
+
+        double distance = ultrasonic.getRangeInches();
+        // TODO do the math in here
+        return distance;
+    }
+
+    /**
+     * Gets the ultrasonic distance unadjusted for offset and angle to target
+     */
+    public double getUnadjustedDistance() {
+        return ultrasonic.getRangeInches();
     }
 
 
-    public Ultrasonic getWPIUltrasonicObject(){
-        return WPIUltrasonic;
-    }
 } 

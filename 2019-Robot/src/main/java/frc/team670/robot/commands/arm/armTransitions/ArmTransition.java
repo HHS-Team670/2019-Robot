@@ -41,6 +41,11 @@ public abstract class ArmTransition extends CommandGroup implements Edge {
     extension = arm.getExtension();
     this.intake = intake;
   }
+
+  @Override
+  protected void initialize() {
+    Arm.setState(getDest());
+  }
   
   /**
    * The LegalState that this Command will end at.
@@ -68,7 +73,7 @@ public abstract class ArmTransition extends CommandGroup implements Edge {
 
   @Override
   protected void end() {
-    Arm.setState(getDest());
+   
   }
 
   public abstract void initTransition();

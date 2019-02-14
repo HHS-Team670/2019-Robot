@@ -8,6 +8,7 @@
 package frc.team670.robot.commands.drive.purePursuit;
 
 import edu.wpi.first.wpilibj.command.Command;
+import frc.team670.robot.commands.drive.vision.VisionPurePursuit;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.utils.Logger;
@@ -70,6 +71,7 @@ public class PurePursuit extends Command {
   @Override
   protected void end() {
     Logger.consoleLog("Pose: %s ", poseEstimator.getPose());
+    VisionPurePursuit.disableArmRestriction();
     driveBase.setSparkVelocityControl(0,0);
     purePursuitTracker.stopNotifier();
     purePursuitTracker.reset();

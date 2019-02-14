@@ -177,7 +177,6 @@ public class MustangCoprocessor {
      * @param back true for back camera, false for front
      */
     public void setCamera(boolean back) {
-        SmartDashboard.putString("vision-camera", back ? "back" : "front");
         backCamera = back;
         if(back) {
             cameraHorizontalOffset = BACK_CAMERA_HORIZONTAL_OFFSET; //inches
@@ -200,7 +199,6 @@ public class MustangCoprocessor {
     public void setTargetHeight(boolean lowTarget) {
         this.lowTarget = lowTarget;
     }
-
     /**
      * Represents a set of vision data received from the coprocessor containing an array of doubles in the form [hangle, vangle, timestamp]
      */
