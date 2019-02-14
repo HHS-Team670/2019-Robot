@@ -8,6 +8,7 @@
 package frc.team670.robot.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.commands.arm.movement.MoveArmAfterDriveDistance;
 import frc.team670.robot.commands.arm.movement.PlaceOrGrab;
@@ -26,6 +27,7 @@ public class BuildAuton extends CommandGroup {
    * @param arm the arm object
    */
   public BuildAuton(String[] autonSequence, Arm arm) {
+    SmartDashboard.putString("current-command", "BuildAuton");
     String startDirection = autonSequence[0];
     String start = autonSequence[1];
     String target1 = autonSequence[2];

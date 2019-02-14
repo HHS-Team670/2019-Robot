@@ -23,14 +23,8 @@ public class ButtonRunIntake extends InstantCommand {
     this.intake = intake;
     this.runningIn = runningIn;
     this.power = power;
-  }
-
-  // Called once when the command executes
-  @Override
-  protected void initialize() {
     SmartDashboard.putString("current-command", "ButtonRunIntake");
 
     intake.runIntake(power, runningIn);
   }
-
 }

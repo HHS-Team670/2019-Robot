@@ -58,8 +58,9 @@ public class XKeys {
         table = instance.getTable("SmartDashboard");
         height = ClimbHeight.FLAT;
 
-        table.addEntryListener("autonSequence", (table2, key2, entry, value, flags) -> {
+        table.addEntryListener("auton-sequence", (table2, key2, entry, value, flags) -> {
             if (value.getType() != NetworkTableType.kStringArray) return;
+            SmartDashboard.putString("current-command", "building auton");
             autonCommand = new BuildAuton(value.getStringArray(), Robot.arm);
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-armstates", (table2, key2, entry, value, flags) -> {
@@ -134,10 +135,12 @@ public class XKeys {
 
     private void moveArm(ArmState state) {
         SmartDashboard.putString("current-command", "moveArm()");
+        SmartDashboard.putString("ARMSTATE", state.toString());
         Scheduler.getInstance().add(new MoveArm(state, Robot.arm));
     }
 
     private void placeOrGrab(boolean isPlacing) {
+        SmartDashboard.putString("current-command", "placeOrGrab()");
         Scheduler.getInstance().add(new PlaceOrGrab(isPlacing));
     }
 

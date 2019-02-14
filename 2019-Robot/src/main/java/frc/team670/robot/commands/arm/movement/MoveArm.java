@@ -24,19 +24,24 @@ public class MoveArm extends InstantCommand {
 
   public MoveArm(ArmState destination, Arm arm) {
     super();
+    SmartDashboard.putString("current-command", "MoveArm constructor");
     this.destination = destination;
     this.arm = arm;
+    System.out.println("........... done with MoveArm()");
+
+    System.out.println("...........MoveArm init()");
+    SmartDashboard.putString("current-command", "MoveArm");
+
+    CommandGroup moveArm = ArmPathGenerator.getPath(destination, arm);
+    System.out.println("...........got moveArm");
+    // TODO add stuff in here to store the path made based on the currentState and then do a lookup instead of a new search
+    Scheduler.getInstance().add(moveArm);
   }
 
   // Called once when the command executes
   @Override
   protected void initialize() {
-
-    SmartDashboard.putString("current-command", "MoveArm");
-
-    CommandGroup moveArm = ArmPathGenerator.getPath(destination, arm);
-    // TODO add stuff in here to store the path made based on the currentState and then do a lookup instead of a new search
-    Scheduler.getInstance().add(moveArm);
+    
     
   }
 
