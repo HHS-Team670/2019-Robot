@@ -17,14 +17,13 @@ import frc.team670.robot.subsystems.DriveBase;
 
 public class CancelAllCommands extends InstantCommand {
 
-  public CancelAllCommands(DriveBase driveBase, Arm arm, BaseIntake intake, Claw claw, Climber climber) {
+  public CancelAllCommands(DriveBase driveBase, Arm arm, BaseIntake intake, Claw claw) {
     requires(driveBase);
     requires(arm.getElbow());
     requires(arm.getExtension());
     requires(arm.getWrist());
     requires(intake);
     requires(claw);
-    requires(climber);
   }
 
   // Called just before this Command runs the first time

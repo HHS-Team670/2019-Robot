@@ -24,7 +24,6 @@ import frc.team670.robot.dataCollection.MustangCoprocessor;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Claw;
-import frc.team670.robot.subsystems.Climber;
 import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.subsystems.Intake;
 import frc.team670.robot.subsystems.MustangLEDs_2019;
@@ -55,7 +54,6 @@ public class Robot extends TimedRobot {
   public static Claw claw = new Claw();
   public static Arm arm = new Arm(elbow, wrist, extension, intake, claw);
 
-  public static Climber climber = new Climber(sensors);
   private Notifier updateArbitraryFeedForwards;
   private Notifier checkVisionLock;
 

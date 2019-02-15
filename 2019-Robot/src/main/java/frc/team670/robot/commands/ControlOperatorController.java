@@ -13,7 +13,6 @@ import frc.team670.robot.Robot;
 import frc.team670.robot.commands.arm.joystick.JoystickElbow;
 import frc.team670.robot.commands.arm.joystick.JoystickExtension;
 import frc.team670.robot.commands.arm.joystick.JoystickWrist;
-import frc.team670.robot.commands.climb.pistonClimb.JoystickPistonClimb;
 import frc.team670.robot.utils.MustangController;
 
 /**
@@ -40,9 +39,7 @@ public class ControlOperatorController extends Command {
     // Check for states
     if (controller.getAButton() && controller.getBButton() && controller.getXButton() && controller.getYButton()) {
       os = OperatorState.ARM;
-    } else if (controller.getStartButton() && controller.getBackButton()) {
-      os = OperatorState.CLIMB;
-    }
+    } 
 
     // If in arm state
     if (os == OperatorState.ARM) {
@@ -53,17 +50,17 @@ public class ControlOperatorController extends Command {
       Scheduler.getInstance().add(new JoystickExtension(Robot.arm, Robot.intake, Robot.arm.getExtension(), extensionPower));
     } 
     
-    // If in climb state
-    else if (os == OperatorState.CLIMB) {
-      Scheduler.getInstance().add(new JoystickPistonClimb(Robot.climber, controller.getLeftStickY() * controller.getLeftStickY(), controller.getRightStickY() * controller.getRightStickY()));
-    }
+    // // If in climb state
+    // else if (os == OperatorState.CLIMB) {
+    //   Scheduler.getInstance().add(new JoystickPistonClimb(Robot.climber, controller.getLeftStickY() * controller.getLeftStickY(), controller.getRightStickY() * controller.getRightStickY()));
+    // }
   }
 
   /**
    * An enum determining the state of the controler
    */
   public enum OperatorState {
-    ARM, CLIMB, NONE
+    ARM, NONE
   }
 
   @Override

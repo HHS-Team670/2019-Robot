@@ -35,7 +35,7 @@ public class MoveFrontPistonsToSetpoint extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    Logger.consoleLog("startFrontPistonPosition:%s", Robot.climber.getFrontTalonPositionInTicks());
+    Logger.consoleLog("startFrontPistonPosition:%s", climber.getFrontTalonPositionInTicks());
     climber.setFrontPIDControllerSetpoint(setpoint);
   }
 
