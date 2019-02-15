@@ -10,13 +10,13 @@ package frc.team670.robot.commands.drive.vision;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.Robot;
 import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.commands.drive.purePursuit.Path;
 import frc.team670.robot.commands.drive.purePursuit.PathGenerator;
 import frc.team670.robot.commands.drive.purePursuit.PoseEstimator;
 import frc.team670.robot.commands.drive.purePursuit.PurePursuit;
-import frc.team670.robot.commands.drive.purePursuit.PurePursuitTracker;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangCoprocessor;
 import frc.team670.robot.dataCollection.MustangSensors;
@@ -72,6 +72,7 @@ public class VisionPurePursuit extends InstantCommand {
     double horizontalAngle = coprocessor.getAngleToWallTarget();
     if (MathUtils.doublesEqual(horizontalAngle, RobotConstants.VISION_ERROR_CODE)) {
       Logger.consoleLog("No Valid Vision Data found, command quit.");
+      SmartDashboard.putString("vision-status", "error");
       return;
     }
 
@@ -98,6 +99,7 @@ public class VisionPurePursuit extends InstantCommand {
 
     if (straightDistance > 132) { // Distance is too far, must be invalid data.
       Logger.consoleLog("No Valid Vision Data or Ultrasonic Data found, command quit.");
+      SmartDashboard.putString("vision-status", "");
       return;
     }
 
@@ -105,8 +107,11 @@ public class VisionPurePursuit extends InstantCommand {
     if (straightDistance < 0) {
       System.out.println("Too close to target!");
       this.cancel();
+      SmartDashboard.putString("vision-status", "error");
       return;
     }
+
+    SmartDashboard.putString("vision-status", "engaged");
 
     System.out.println("Angle: " + coprocessor.getAngleToWallTarget());
     // horizontal distance - when going forward a positive horizontal distance is
