@@ -46,6 +46,7 @@ public class VisionPurePursuit extends InstantCommand {
   private static final double SPACING = 1; // Spacing Inches
   private double spaceFromTarget;
   private boolean isReversed;
+  private boolean lowTarget;
   private static Notifier restrictArmMovement;
 
   /**
@@ -60,14 +61,21 @@ public class VisionPurePursuit extends InstantCommand {
     this.driveBase = driveBase;
     this.spaceFromTarget = spaceFromTarget;
     this.isReversed = isReversed;
-
-    coprocessor.setTargetHeight(lowTarget);
+    this.lowTarget = lowTarget;
   }
 
   // Called once when the command executes
   @Override
   protected void initialize() {
     driveBase.initAutonDrive();
+    coprocessor.setTargetHeight(lowTarget);
+
+    coprocessor.setCamera(!isReversed);
+    try {
+      Thread.sleep(100);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
 
     double horizontalAngle = coprocessor.getAngleToWallTarget();
     if (MathUtils.doublesEqual(horizontalAngle, RobotConstants.VISION_ERROR_CODE)) {
@@ -126,20 +134,6 @@ public class VisionPurePursuit extends InstantCommand {
       straightDistance *= -1;
       horizontalDistance *= -1;
       oneEighthTargetY *= -1;
-
-      coprocessor.setCamera(true);
-      try {
-        Thread.sleep(100);
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
-    } else{
-      coprocessor.setCamera(false);
-      try {
-        Thread.sleep(100);
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
     }
 
     sensors.zeroYaw();
@@ -166,15 +160,14 @@ public class VisionPurePursuit extends InstantCommand {
     command = new PurePursuit(path, driveBase, sensors, poseEstimator, isReversed);
 
     if (straightDistance > 60) { // Protect arm until it is time to actually place
+      Scheduler.getInstance().add(new MoveArm(Arm.getArmState(LegalState.NEUTRAL), Robot.arm));
       restrictArmMovement = new Notifier(new Runnable() {
 
-        boolean movedToNeutral = false;
-        boolean reversed = isReversed;
+        private boolean reversed = isReversed;
 
         public void run() {
-
           double ultrasonicDistance;
-          if(!isReversed) {
+          if(!reversed) {
             ultrasonicDistance = sensors.getFrontUltrasonicDistance(horizontalAngle);
           }
           else {
@@ -188,11 +181,6 @@ public class VisionPurePursuit extends InstantCommand {
           if (ultrasonicDistance < 48) {
             Scheduler.getInstance().add(new MoveArm(Arm.getCurrentState(), Robot.arm));
             cancel();
-          } else {
-            if(!movedToNeutral) {
-              Scheduler.getInstance().add(new MoveArm(Arm.getArmState(LegalState.NEUTRAL), Robot.arm));
-              movedToNeutral = true;
-            }
           }
         }
       });
