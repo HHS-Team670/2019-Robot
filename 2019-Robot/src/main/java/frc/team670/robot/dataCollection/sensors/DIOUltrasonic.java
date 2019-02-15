@@ -45,7 +45,7 @@ public class DIOUltrasonic {
         double distance = getUnadjustedDistance();
         // Untested Math below
         double target_angle = 0; //Angle target is rotated at
-        double phi = target_angle + Robot.sensors.getYawDouble();
+        double phi = target_angle + Robot.sensors.getFieldCentricYaw();
         distance = horizontalOffset * Math.tan(Math.toRadians(phi)) + distance;
         return distance;
     }

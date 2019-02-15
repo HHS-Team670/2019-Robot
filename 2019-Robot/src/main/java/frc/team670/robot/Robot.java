@@ -205,6 +205,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+
+    sensors.resetNavX();
+
     SmartDashboard.putString("robot-state", "autonomousInit()");
 
     if(DriverStation.getInstance().getAlliance().equals(Alliance.Red)) {
