@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.Robot;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
-import frc.team670.robot.subsystems.DriveBase;
 
 /**
  * Add your docs here.
@@ -22,12 +21,15 @@ import frc.team670.robot.subsystems.DriveBase;
 public class MoveArmAfterDriveDistance extends InstantCommand {
   private int inchesToStart;
   private Notifier restrictArmMovement;
-  private int initialLeftDIOPosition;
+  private double initialLeftEncoderPosition;
   
-  public MoveArmAfterDriveDistance(ArmState destination, Arm arm, int inchesToStart, int initialLeftDIOPosition) {
+  /**
+   * @param initialLeftEncoderPosition Left Encoder position in inches
+   */
+  public MoveArmAfterDriveDistance(ArmState destination, Arm arm, int inchesToStart, double initialLeftEncoderPosition) {
     SmartDashboard.putString("current-command", "MoveArmAfterDriveDistance");
     this.inchesToStart = inchesToStart;
-    this.initialLeftDIOPosition = initialLeftDIOPosition;
+    this.initialLeftEncoderPosition = initialLeftEncoderPosition;
 
     restrictArmMovement = new Notifier(new Runnable() {
       public void run() {
@@ -46,7 +48,7 @@ public class MoveArmAfterDriveDistance extends InstantCommand {
   }
 
   private boolean hasDrivenDistance(){
-    return (Math.abs(Robot.driveBase.getLeftMustangEncoderPositionInInches() - initialLeftDIOPosition) > inchesToStart);
+    return (Math.abs(Robot.driveBase.getLeftMustangEncoderPositionInInches() - initialLeftEncoderPosition) > inchesToStart);
   }
 
 }
