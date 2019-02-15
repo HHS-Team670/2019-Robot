@@ -8,31 +8,32 @@
 package frc.team670.robot.commands.arm.movement;
 
 import edu.wpi.first.wpilibj.Notifier;
+import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.Robot;
-import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
+import frc.team670.robot.subsystems.DriveBase;
 
 /**
  * Add your docs here.
  */
-public class MoveArmAfterDriveDistance extends MoveArm {
+public class MoveArmAfterDriveDistance extends InstantCommand {
   private int inchesToStart;
   private Notifier restrictArmMovement;
+  private int initialLeftDIOPosition;
   
-  /**
-   * Add your docs here.
-   */
-  public MoveArmAfterDriveDistance(ArmState destination, Arm arm, int inchesToStart) {
-    super(destination, arm);
+  public MoveArmAfterDriveDistance(ArmState destination, Arm arm, int inchesToStart, int initialLeftDIOPosition) {
     SmartDashboard.putString("current-command", "MoveArmAfterDriveDistance");
     this.inchesToStart = inchesToStart;
+    this.initialLeftDIOPosition = initialLeftDIOPosition;
 
     restrictArmMovement = new Notifier(new Runnable() {
       public void run() {
-        if (checkDistanceBasedOnLeftEncoder()) {
-          initializeSuperclassAndStopNotifier();
+        if (hasDrivenDistance()) {
+          Scheduler.getInstance().add(new MoveArm(destination, arm));
+          restrictArmMovement.stop();
         }
       }
     });
@@ -44,13 +45,8 @@ public class MoveArmAfterDriveDistance extends MoveArm {
     restrictArmMovement.startPeriodic(0.02);
   }
 
-  private boolean checkDistanceBasedOnLeftEncoder(){
-    return (Robot.driveBase.getLeftDIOEncoderPosition() / RobotConstants.DIO_TICKS_PER_INCH < inchesToStart);
-  }
-
-  private void initializeSuperclassAndStopNotifier(){
-    super.initialize();
-    restrictArmMovement.stop();
+  private boolean hasDrivenDistance(){
+    return (Math.abs(Robot.driveBase.getLeftMustangEncoderPositionInInches() - initialLeftDIOPosition) > inchesToStart);
   }
 
 }
