@@ -10,6 +10,9 @@ document.getElementById('big-warning').style.display = "none";
 document.getElementById('climb-state-text').style.stroke = `rgb(90, 90, 90)`;
 document.getElementById('climb-level-text').style.stroke = `rgb(90, 90, 90)`;
 
+document.getElementById('auton-chooser').style.display = "none";
+ui.timer.style.color = `rgb(0, 200, 0)`;
+
 var angle = 0;
 var armLength = 110;
 document.getElementById('arm').style = "transform: rotate(" + angle + "deg)";
@@ -20,11 +23,11 @@ document.getElementById('arm-extension').style = "transform: translate(" + (Math
 document.getElementById('vline-right').setAttribute('x', 70+'%');
 document.getElementById('vline-left').setAttribute('x', 25+'%');
 
-// var cameras = ['Back', 'Front'];
-// var cameraIndex = 0;
-// multiCamSRC.innerHTML = cameras[cameraIndex];
+var cameras = ['Back', 'Front'];
+var cameraIndex = 0;
+multiCamSRC.innerHTML = cameras[cameraIndex];
 
-ui.timer.style.color = `rgb(0, 200, 0)`;
+document.getElementById('timer').style.color = 'rgb(0,200,0)';
 
 NetworkTables.addKeyListener('/SmartDashboard/game-time', (key, value) => {
   if (value == null) return;
@@ -32,6 +35,7 @@ NetworkTables.addKeyListener('/SmartDashboard/game-time', (key, value) => {
   var minutes = ~~(remaining / 60); // converts to integer
   var seconds = (remaining - 60*minutes) % 60;
   seconds = (seconds < 10) ? '0'+seconds : seconds;
+  ui.timer.style.color = `rgb(0, 200, 0)`;
 
   if (remaining < 135){
      ui.timer.style.color = `rgb(255, 255, 255)`;
@@ -50,8 +54,8 @@ NetworkTables.addKeyListener('/SmartDashboard/game-time', (key, value) => {
 NetworkTables.addKeyListener('/SmartDashboard/camera-source', (key, value) => {
   if (value == 'next') {
     window.webContents.reload();
-    // cameraIndex = (cameraIndex + 1) % cameras.length;
-    // multiCamSRC.innerHTML = cameras[cameraIndex];
+    cameraIndex = (cameraIndex + 1) % cameras.length;
+    multiCamSRC.innerHTML = cameras[cameraIndex];
   }
   NetworkTables.putValue('/SmartDashboard/camera-source', '');
 });
@@ -67,8 +71,6 @@ NetworkTables.addKeyListener('/SmartDashboard/robot-state', (key, value) => {
     document.getElementById('auton-status').style.stroke = "rgb(255,255,255)";
   }
 });
-
-document.getElementById('auton-chooser').style.display = "none";
 
 NetworkTables.addKeyListener('/SmartDashboard/warning', (key, value) => {
   document.getElementById('big-warning').style.display = "inline";
@@ -121,8 +123,8 @@ NetworkTables.addKeyListener('/SmartDashboard/elbow-angle', (key, value) => {
   }
   // document.getElementById('hline-left').setAttribute('y', frontHeight+'%');
   // document.getElementById('hline-right').setAttribute('y', backHeight+'%');
-  // if (multiCamSRC.innerHTML === 'Front') document.getElementById('hline').setAttribute('y', frontHeight+'%');
-  // if (multiCamSRC.innerHTML === 'Back') document.getElementById('hline').setAttribute('y', backHeight+'%');
+  if (multiCamSRC.innerHTML === 'Front') document.getElementById('hline').setAttribute('y', frontHeight+'%');
+  if (multiCamSRC.innerHTML === 'Back') document.getElementById('hline').setAttribute('y', backHeight+'%');
 });
 
 NetworkTables.addKeyListener('/SmartDashboard/intake-angle', (key, value) => {
@@ -196,11 +198,8 @@ document.addEventListener("keyup", function(event) {
   // var result = (split[split.length - 1]).toLowerCase();
   NetworkTables.putValue('/SmartDashboard/current-command-text', result);
   var nextTask = getFromMap(result);
-  // NetworkTables.putValue('/SmartDashboard/current-command-text', '>>>'+nextTask+'<<<');
 
   if (nextTask != null) {
-    NetworkTables.putValue('/SmartDashboard/current-command-text', '>>>'+nextTask+'<<<');
-    NetworkTables.putValue('/SmartDashboard/value-check', nextTask.toUpperCase() === nextTask);
     if (nextTask.toUpperCase() === nextTask) {
       NetworkTables.putValue('/SmartDashboard/xkeys-armstates', nextTask);
     }
@@ -215,13 +214,6 @@ document.addEventListener("keyup", function(event) {
 // naming convention: UPPER_CASE for preset arm states, lower_case for other commands
 function getFromMap(key) { // mapping is more aligned with arm position on robot
   NetworkTables.putValue('/SmartDashboard/current-command-text', '>>>'+key+'<<<');
-
-  if (key === "0") return "READY_TO_CLIMB";
-  if (key === "x03") return "set_climb_3";
-  if (key === "x04") return "set_climb_2";
-  if (key === "x05") return "set_climb_flat";
-  if (key === "x06") return "cycle_climb";
-  if (key === "x0a") return "piston_climb";
 
   if (key === "x3c") return "toggle_intake_in";
   if (key === "x3b") return "toggle_intake_out";
@@ -263,19 +255,12 @@ function getFromMap(key) { // mapping is more aligned with arm position on robot
 var auton = ["test", "", "", "", "", "", ""];
 
 function readRadioButtons() {
-  // document.getElementById('warnings').innerHTML = 'readRadioButtons()';
-
-  document.getElementById('warnings').innerHTML = '>>>' + getSelection('start') + '<<<';
   auton = new Array(7);
 
   var startChooser = document.forms["auto-chooser"].elements["start"];
   for (var i = 0, len = startChooser.length; i < len; i++) {
     if (startChooser[i].checked) {
-      document.getElementById('warnings').innerHTML = startChooser[i].value + "<--";
-
-      document.getElementById('warnings').innerHTML = '-->' + auton;
-      auton[0] = startChooser[i].value+"";
-      document.getElementById('warnings').innerHTML = auton;
+      auton[0] = startChooser[i].value;
       break;
     }
   }
@@ -327,12 +312,10 @@ function readRadioButtons() {
       break;
     }
   }
-
-  document.getElementById('warnings').innerHTML = 'readRadioButtons() done';
-
 }
 
 function sendAuton() {
   readRadioButtons();
-  NetworkTables.putValue("auton-sequence", auton);
+  document.getElementById('warnings').innerHTML = auton;
+  NetworkTables.putValue("/SmartDashboard/auton-sequence", auton);
 }
