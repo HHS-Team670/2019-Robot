@@ -10,6 +10,7 @@ package frc.team670.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.intake.ButtonRunIntake;
 import frc.team670.robot.commands.intake.MoveIntakeToSetpointAngle;
 import frc.team670.robot.commands.intake.RunIntakeInWithIR;
@@ -112,6 +113,7 @@ public class OI {
   }
 
   public Command getSelectedAutonCommand() {
+    SmartDashboard.putBoolean("auto-command", xkeys.getAutonCommand() == null);
     return xkeys.getAutonCommand();
   }
 }
