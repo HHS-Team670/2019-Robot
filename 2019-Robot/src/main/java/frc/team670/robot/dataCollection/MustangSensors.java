@@ -50,9 +50,25 @@ public class MustangSensors {
     try {
       frontUltrasonic = new DIOUltrasonic();
     } catch (RuntimeException ex) {
-      DriverStation.reportError("Error instantiating ultrasonic: " + ex.getMessage(), true);
-      SmartDashboard.putString("warning", "Error instantiating ultrasonic");
+      DriverStation.reportError("Error instantiating front ultrasonic: " + ex.getMessage(), true);
+      SmartDashboard.putString("warning", "Error instantiating front ultrasonic");
       frontUltrasonic = null;
+    }
+
+    try {
+      backLeftUltrasonic= new DIOUltrasonic();
+    } catch (RuntimeException ex) {
+      DriverStation.reportError("Error instantiating back left ultrasonic: " + ex.getMessage(), true);
+      SmartDashboard.putString("warning", "Error instantiating back left ultrasonic");
+      backLeftUltrasonic = null;
+    }
+
+    try {
+      backRightUltrasonic = new DIOUltrasonic();
+    } catch (RuntimeException ex) {
+      DriverStation.reportError("Error instantiating back right ultrasonic: " + ex.getMessage(), true);
+      SmartDashboard.putString("warning", "Error instantiating back right ultrasonic");
+      backRightUltrasonic = null;
     }
   }
 
@@ -80,7 +96,7 @@ public class MustangSensors {
    * Returns distance as given by ultrasonic
    */
   public double getBackRightUltrasonicUnadjustedDistance(){
-    if(frontUltrasonic != null)
+    if(backRightUltrasonic != null)
       return backRightUltrasonic.getUnadjustedDistance();
     else
       return ULTRASONIC_ERROR_CODE;
@@ -90,7 +106,7 @@ public class MustangSensors {
    * Returns adjusted distance as given by ultrasonic
    */
   public double getBackRightUltrasonicDistance(double angle){
-    if(frontUltrasonic != null)
+    if(backRightUltrasonic != null)
       return backRightUltrasonic.getDistance(angle);
     else
       return ULTRASONIC_ERROR_CODE;
@@ -100,7 +116,7 @@ public class MustangSensors {
    * Returns distance as given by ultrasonic
    */
   public double getBackLeftUltrasonicUnadjustedDistance(){
-    if(frontUltrasonic != null)
+    if(backLeftUltrasonic != null)
       return backLeftUltrasonic.getUnadjustedDistance();
     else
       return ULTRASONIC_ERROR_CODE;
@@ -110,7 +126,7 @@ public class MustangSensors {
    * Returns adjusted distance as given by ultrasonic
    */
   public double getBackLeftUltrasonicDistance(double angle){
-    if(frontUltrasonic != null)
+    if(backLeftUltrasonic != null)
       return backLeftUltrasonic.getDistance(angle);
     else
       return ULTRASONIC_ERROR_CODE;

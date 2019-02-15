@@ -3,6 +3,7 @@ package frc.team670.robot.dataCollection.sensors;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.Ultrasonic;
+import frc.team670.robot.Robot;
 /**
  *  import com.pi4j.io.gpio.*;
  *  ^ importing this would be useful
@@ -41,9 +42,11 @@ public class DIOUltrasonic {
      * @param angle The angle to the target from the robot.
      */
     public double getDistance(double angle){
-
-        double distance = ultrasonic.getRangeInches();
-        // TODO do the math in here
+        double distance = getUnadjustedDistance();
+        // Untested Math below
+        double target_angle = 0; //Angle target is rotated at
+        double phi = target_angle + Robot.sensors.getYawDouble();
+        distance = horizontalOffset * Math.tan(Math.toRadians(phi)) + distance;
         return distance;
     }
 
