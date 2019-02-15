@@ -31,7 +31,6 @@ import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
 import frc.team670.robot.subsystems.Arm.LegalState;
 import frc.team670.robot.subsystems.Arm.PlaceGrabState;
-import frc.team670.robot.subsystems.Climber;
 
 
 /**
@@ -45,14 +44,12 @@ public class XKeys {
     private NetworkTableInstance instance;
     private NetworkTable table;
     private Command autonCommand;
-    private ClimbHeight height;
     private boolean toggleIn = true, toggleOut = false;
 
     public XKeys() {
         SmartDashboard.putString("XKEYS", "XKeys constructor");
         instance = NetworkTableInstance.getDefault();
         table = instance.getTable("SmartDashboard");
-        height = ClimbHeight.FLAT;
 
         table.addEntryListener("auton-sequence", (table2, key2, entry, value, flags) -> {
             if (value.getType() != NetworkTableType.kStringArray) SmartDashboard.putString("auto-sequence", "not string array");
@@ -79,16 +76,6 @@ public class XKeys {
         table.addEntryListener("xkeys-autopickup", (table2, key2, entry, value, flags) -> {
             autoPickupBall();
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
-        // table.addEntryListener("xkeys-climber", (table2, key2, entry, value, flags) -> {
-        //     if (value.getType() != NetworkTableType.kString) return;
-        //     String s = value.getString();
-        //     if (s.equals("set_climb_flat")) height = ClimbHeight.FLAT;
-        //     else if (s.equals("set_climb_2")) height = ClimbHeight.LEVEL2;
-        //     else if (s.equals("set_climb_3")) height = ClimbHeight.LEVEL3;
-            
-        //     if (s.contains("cycle_climb")) nextStepArmClimb(height);
-        //     else if (s.equals("piston_climb")) pistonClimb(height);
-        // } , EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-visionDrive", (table2, key2, entry, value, flags) -> {
             visionDrive();
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
@@ -99,8 +86,6 @@ public class XKeys {
             if (s.equals("cancel_arm")) cancelArmMovement();
             if (s.equals("cancel_drive")) cancelDriveBase();
             if (s.equals("cancel_intake")) cancelIntakeRollers();
-            if (s.equals("cancel_arm_climb")) cancelArmClimb();
-            // if (s.equals("cancel_piston_climb")) cancelPistonClimb();
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
 
     }
@@ -111,7 +96,6 @@ public class XKeys {
 
     private ArmState getArmState(String in) {
         LegalState legalState = null;
-        if (in.equals("READY_TO_CLIMB")) legalState = LegalState.READY_TO_CLIMB;
         if (in.equals("READY_PLACE_HATCH_ROCKET_MIDDLE_BACK")) legalState = LegalState.READY_PLACE_HATCH_ROCKET_MIDDLE_BACK; 
         if (in.equals("READY_PLACE_HATCH_ROCKET_MIDDLE_FORWARD")) legalState = LegalState.READY_PLACE_HATCH_ROCKET_MIDDLE_FORWARD;
         if (in.equals("READY_PLACE_BALL_ROCKET_MIDDLE_BACK")) legalState = LegalState.READY_PLACE_BALL_ROCKET_MIDDLE_BACK;
@@ -181,22 +165,6 @@ public class XKeys {
         Scheduler.getInstance().add(new AutoPickupCargo(Robot.arm, Robot.intake, Robot.claw, Robot.sensors));
     }
 
-    // private void nextStepArmClimb(ClimbHeight height) {
-    //     int setpoint = 0;
-    //     if (height == ClimbHeight.FLAT) setpoint = Climber.PISTON_ENCODER_FLAT;
-    //     else if (height == ClimbHeight.LEVEL2) setpoint = Climber.PISTON_ENCODER_LEVEL_TWO;
-    //     else if (height == ClimbHeight.LEVEL3) setpoint = Climber.PISTON_ENCODER_LEVEL_THREE;
-    //     Scheduler.getInstance().add(new CycleClimb(Robot.arm, Robot.climber, Robot.sensors, setpoint));
-    // }
-
-    // private void pistonClimb(ClimbHeight height) {
-    //     int setpoint = 0;
-    //     if (height == ClimbHeight.FLAT) setpoint = Climber.PISTON_ENCODER_FLAT;
-    //     if (height == ClimbHeight.LEVEL2) setpoint = Climber.PISTON_ENCODER_LEVEL_TWO;
-    //     if (height == ClimbHeight.LEVEL3) setpoint = Climber.PISTON_ENCODER_LEVEL_THREE;
-    //     Scheduler.getInstance().add(new PistonClimbWithTiltControl(setpoint, Robot.climber, Robot.sensors));
-    // }
-
     private void cancelArmClimb() {
         Scheduler.getInstance().add(new CancelArmClimb(Robot.arm));
     }
@@ -235,9 +203,6 @@ public class XKeys {
 
         SmartDashboard.putString("vision-status", "");
         Scheduler.getInstance().add(new VisionPurePursuit(Robot.driveBase, Robot.coprocessor, Robot.sensors, distanceFromTarget, isReversed, isLow));
-    }
-    private enum ClimbHeight {
-        FLAT, LEVEL2, LEVEL3;
     }
 
 }
