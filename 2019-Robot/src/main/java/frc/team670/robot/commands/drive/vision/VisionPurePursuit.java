@@ -31,9 +31,12 @@ import frc.team670.robot.utils.math.Vector;
  * Starts a Pure Pursuit path based off vision data
  */
 public class VisionPurePursuit extends InstantCommand {
-  
+
   private static final double MAX_VEL = 16, MAX_ACC = 100, MAX_VELK = 1; // VELK = Curve Velocity (1-5)
-  //NOTE: Everything passed into the PurePursuit algorithm is in inches/s including constants above and output goes straight to the Spark Neos in inches/s as a velocity control - Check PurePursuitTracker Notifier for this output
+  // NOTE: Everything passed into the PurePursuit algorithm is in inches/s
+  // including constants above and output goes straight to the Spark Neos in
+  // inches/s as a velocity control - Check PurePursuitTracker Notifier for this
+  // output
   private static final double B = 0.9, A = 1 - B, TOLERANCE = 0.001;
 
   private PurePursuit command;
@@ -46,9 +49,11 @@ public class VisionPurePursuit extends InstantCommand {
   private static Notifier restrictArmMovement;
 
   /**
-   * @param isReversed True if using the back-facing camera on the robot to drive backwards
+   * @param isReversed True if using the back-facing camera on the robot to drive
+   *                   backwards
    */
-  public VisionPurePursuit(DriveBase driveBase, MustangCoprocessor coprocessor, MustangSensors sensors, double spaceFromTarget, boolean isReversed, boolean lowTarget) {
+  public VisionPurePursuit(DriveBase driveBase, MustangCoprocessor coprocessor, MustangSensors sensors,
+      double spaceFromTarget, boolean isReversed, boolean lowTarget) {
     super();
     this.coprocessor = coprocessor;
     this.sensors = sensors;
@@ -64,58 +69,72 @@ public class VisionPurePursuit extends InstantCommand {
   protected void initialize() {
     driveBase.initAutonDrive();
 
-    
-
     double horizontalAngle = coprocessor.getAngleToWallTarget();
-    if(MathUtils.doublesEqual(horizontalAngle, RobotConstants.VISION_ERROR_CODE)) {
+    if (MathUtils.doublesEqual(horizontalAngle, RobotConstants.VISION_ERROR_CODE)) {
       Logger.consoleLog("No Valid Vision Data found, command quit.");
       return;
     }
 
     double ultrasonicDistance;
-    if(!isReversed) {
+    if (!isReversed) {
       ultrasonicDistance = sensors.getFrontUltrasonicDistance(horizontalAngle);
-    }
-    else {
+    } else {
       double ultraLeft = sensors.getBackLeftUltrasonicDistance(horizontalAngle);
       double ultraRight = sensors.getBackRightUltrasonicDistance(horizontalAngle);
 
       ultrasonicDistance = (ultraLeft < ultraRight) ? ultraLeft : ultraRight; // Take the one that is least
     }
-    ultrasonicDistance *= Math.cos(Math.toRadians(horizontalAngle)); //use cosine to get the straight ultrasonic distance not the diagonal one
+    ultrasonicDistance *= Math.cos(Math.toRadians(horizontalAngle)); // use cosine to get the straight ultrasonic
+                                                                     // distance not the diagonal one
 
     double visionDistance = coprocessor.getDistanceToWallTarget();
 
     double straightDistance;
-    if(MathUtils.doublesEqual(visionDistance, RobotConstants.VISION_ERROR_CODE)) {
+    if (MathUtils.doublesEqual(visionDistance, RobotConstants.VISION_ERROR_CODE)) {
       straightDistance = ultrasonicDistance;
     } else {
       straightDistance = (visionDistance < ultrasonicDistance) ? visionDistance : ultrasonicDistance;
     }
 
-    if(straightDistance > 132) { // Distance is too far, must be invalid data.
+    if (straightDistance > 132) { // Distance is too far, must be invalid data.
       Logger.consoleLog("No Valid Vision Data or Ultrasonic Data found, command quit.");
       return;
     }
 
     straightDistance = straightDistance - spaceFromTarget;
-    if(straightDistance < 0){
+    if (straightDistance < 0) {
       System.out.println("Too close to target!");
       this.cancel();
       return;
     }
 
     System.out.println("Angle: " + coprocessor.getAngleToWallTarget());
-    //horizontal distance - when going forward a positive horizontal distance is right and negative is left
-    double horizontalDistance = -38;// straightDistance * Math.tan(Math.toRadians(coprocessor.getRealAngleToWallTarget())); // x = y * tan(theta)
-    double oneEighthTargetY = (straightDistance) * 1.0/8.0;
-
+    // horizontal distance - when going forward a positive horizontal distance is
+    // right and negative is left
+    double horizontalDistance = -38;// straightDistance *
+                                    // Math.tan(Math.toRadians(coprocessor.getRealAngleToWallTarget())); // x = y *
+                                    // tan(theta)
+    double oneEighthTargetY = (straightDistance) * 1.0 / 8.0;
 
     System.out.println("straightDist: " + straightDistance + ", horizontalDistance: " + horizontalDistance);
-    if(isReversed) { // Flip all of these to match our coord system when looking out the back
+    if (isReversed) { // Flip all of these to match our coord system when looking out the back
       straightDistance *= -1;
       horizontalDistance *= -1;
       oneEighthTargetY *= -1;
+
+      coprocessor.setCamera(true);
+      try {
+        Thread.sleep(100);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+    } else{
+      coprocessor.setCamera(false);
+      try {
+        Thread.sleep(100);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
     }
 
     sensors.zeroYaw();
