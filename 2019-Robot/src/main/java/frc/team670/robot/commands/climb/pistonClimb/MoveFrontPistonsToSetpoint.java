@@ -9,7 +9,6 @@ package frc.team670.robot.commands.climb.pistonClimb;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-import frc.team670.robot.Robot;
 import frc.team670.robot.subsystems.Climber;
 import frc.team670.robot.utils.Logger;
 

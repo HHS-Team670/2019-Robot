@@ -62,7 +62,7 @@ public class BuildAuton extends CommandGroup {
         // finds the file corresponding to the path the robot should take
         fileName = start + "_" + target1 + ".pf1.csv";
         // moves the arm to the destination while driving
-        addParallel(new MoveArmAfterDriveDistance(Arm.getArmState(destination), arm, 36));
+        addParallel(new MoveArmAfterDriveDistance(Arm.getArmState(destination), arm, 24));
         // drives along the path described by the file
         addSequential(new DriveMotionProfile(fileName, true));
         if (pivot) {

@@ -7,6 +7,7 @@
 
 package frc.team670.robot.commands.arm.movement;
 
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
@@ -18,6 +19,8 @@ import frc.team670.robot.subsystems.Arm.ArmState;
  */
 public class MoveArmAfterDriveDistance extends MoveArm {
   private int inchesToStart;
+  private Notifier restrictArmMovement;
+  
   /**
    * Add your docs here.
    */
@@ -25,18 +28,29 @@ public class MoveArmAfterDriveDistance extends MoveArm {
     super(destination, arm);
     SmartDashboard.putString("current-command", "MoveArmAfterDriveDistance");
     this.inchesToStart = inchesToStart;
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
+
+    restrictArmMovement = new Notifier(new Runnable() {
+      public void run() {
+        if (checkDistanceBasedOnLeftEncoder()) {
+          initializeSuperclassAndStopNotifier();
+        }
+      }
+    });
   }
 
   // Called once when the command executes
   @Override
   protected void initialize() {
-    while (Robot.driveBase.getLeftDIOEncoderPosition() / RobotConstants.DIO_TICKS_PER_INCH < inchesToStart) {
-      // do nothing
-    }
-    // do this after the loop exits
+    restrictArmMovement.startPeriodic(0.02);
+  }
+
+  private boolean checkDistanceBasedOnLeftEncoder(){
+    return (Robot.driveBase.getLeftDIOEncoderPosition() / RobotConstants.DIO_TICKS_PER_INCH < inchesToStart);
+  }
+
+  private void initializeSuperclassAndStopNotifier(){
     super.initialize();
+    restrictArmMovement.stop();
   }
 
 }
