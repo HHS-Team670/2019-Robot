@@ -233,6 +233,7 @@ public class XKeys {
         boolean isReversed = !placeGrabState.getIsFront();
         boolean isLow = placeGrabState.getIsLowTarget();
 
+        SmartDashboard.putString("vision-status", "");
         Scheduler.getInstance().add(new VisionPurePursuit(Robot.driveBase, Robot.coprocessor, Robot.sensors, distanceFromTarget, isReversed, isLow));
     }
     private enum ClimbHeight {

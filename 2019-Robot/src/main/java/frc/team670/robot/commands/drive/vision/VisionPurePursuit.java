@@ -10,13 +10,13 @@ package frc.team670.robot.commands.drive.vision;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.Robot;
 import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.commands.drive.purePursuit.Path;
 import frc.team670.robot.commands.drive.purePursuit.PathGenerator;
 import frc.team670.robot.commands.drive.purePursuit.PoseEstimator;
 import frc.team670.robot.commands.drive.purePursuit.PurePursuit;
-import frc.team670.robot.commands.drive.purePursuit.PurePursuitTracker;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangCoprocessor;
 import frc.team670.robot.dataCollection.MustangSensors;
@@ -46,6 +46,7 @@ public class VisionPurePursuit extends InstantCommand {
   private static final double SPACING = 1; // Spacing Inches
   private double spaceFromTarget;
   private boolean isReversed;
+  private boolean lowTarget;
   private static Notifier restrictArmMovement;
 
   /**
@@ -60,18 +61,26 @@ public class VisionPurePursuit extends InstantCommand {
     this.driveBase = driveBase;
     this.spaceFromTarget = spaceFromTarget;
     this.isReversed = isReversed;
-
-    coprocessor.setTargetHeight(lowTarget);
+    this.lowTarget = lowTarget;
   }
 
   // Called once when the command executes
   @Override
   protected void initialize() {
     driveBase.initAutonDrive();
+    coprocessor.setTargetHeight(lowTarget);
+
+    coprocessor.setCamera(!isReversed);
+    try {
+      Thread.sleep(100);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
 
     double horizontalAngle = coprocessor.getAngleToWallTarget();
     if (MathUtils.doublesEqual(horizontalAngle, RobotConstants.VISION_ERROR_CODE)) {
       Logger.consoleLog("No Valid Vision Data found, command quit.");
+      SmartDashboard.putString("vision-status", "error");
       return;
     }
 
@@ -98,6 +107,7 @@ public class VisionPurePursuit extends InstantCommand {
 
     if (straightDistance > 132) { // Distance is too far, must be invalid data.
       Logger.consoleLog("No Valid Vision Data or Ultrasonic Data found, command quit.");
+      SmartDashboard.putString("vision-status", "");
       return;
     }
 
@@ -105,8 +115,11 @@ public class VisionPurePursuit extends InstantCommand {
     if (straightDistance < 0) {
       System.out.println("Too close to target!");
       this.cancel();
+      SmartDashboard.putString("vision-status", "error");
       return;
     }
+
+    SmartDashboard.putString("vision-status", "engaged");
 
     System.out.println("Angle: " + coprocessor.getAngleToWallTarget());
     // horizontal distance - when going forward a positive horizontal distance is
@@ -121,20 +134,6 @@ public class VisionPurePursuit extends InstantCommand {
       straightDistance *= -1;
       horizontalDistance *= -1;
       oneEighthTargetY *= -1;
-
-      coprocessor.setCamera(true);
-      try {
-        Thread.sleep(100);
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
-    } else{
-      coprocessor.setCamera(false);
-      try {
-        Thread.sleep(100);
-      } catch (InterruptedException e) {
-        e.printStackTrace();
-      }
     }
 
     sensors.zeroYaw();
@@ -161,15 +160,14 @@ public class VisionPurePursuit extends InstantCommand {
     command = new PurePursuit(path, driveBase, sensors, poseEstimator, isReversed);
 
     if (straightDistance > 60) { // Protect arm until it is time to actually place
+      Scheduler.getInstance().add(new MoveArm(Arm.getArmState(LegalState.NEUTRAL), Robot.arm));
       restrictArmMovement = new Notifier(new Runnable() {
 
-        boolean movedToNeutral = false;
-        boolean reversed = isReversed;
+        private boolean reversed = isReversed;
 
         public void run() {
-
           double ultrasonicDistance;
-          if(!isReversed) {
+          if(!reversed) {
             ultrasonicDistance = sensors.getFrontUltrasonicDistance(horizontalAngle);
           }
           else {
@@ -183,11 +181,6 @@ public class VisionPurePursuit extends InstantCommand {
           if (ultrasonicDistance < 48) {
             Scheduler.getInstance().add(new MoveArm(Arm.getCurrentState(), Robot.arm));
             cancel();
-          } else {
-            if(!movedToNeutral) {
-              Scheduler.getInstance().add(new MoveArm(Arm.getArmState(LegalState.NEUTRAL), Robot.arm));
-              movedToNeutral = true;
-            }
           }
         }
       });

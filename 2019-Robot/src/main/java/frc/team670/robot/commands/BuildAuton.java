@@ -69,11 +69,11 @@ public class BuildAuton extends CommandGroup {
             addSequential(new NavXPivot(180));
             isRobotFacingBack = !isRobotFacingBack;
             pivot = false;
-        }
-        // drives to target using vision
-        addInVisionDriveCommandSequential();
+        }        
         // makes sure the arm is not above the robot
         if (destination != LegalState.NEUTRAL) {
+            // drives to target using vision
+            addInVisionDriveCommandSequential();
             // places the element the robot is carrying
             addSequential(new PlaceOrGrab(true));
         }
@@ -89,9 +89,10 @@ public class BuildAuton extends CommandGroup {
             pivot = false;
         }
 
-        addInVisionDriveCommandSequential();
-        if (destination != LegalState.NEUTRAL)
+        if (destination != LegalState.NEUTRAL) {
+            addInVisionDriveCommandSequential();
             addSequential(new PlaceOrGrab(false));
+        }
 
         // repeat for third target with original robot direction
         destination = getLegalState(target2, target3, height3);
@@ -104,9 +105,10 @@ public class BuildAuton extends CommandGroup {
             pivot = false;
         }
 
-        addInVisionDriveCommandSequential();
-        if (destination != LegalState.NEUTRAL)
+        if (destination != LegalState.NEUTRAL) {
+            addInVisionDriveCommandSequential();
             addSequential(new PlaceOrGrab(true));
+        }
     }
 
   /**

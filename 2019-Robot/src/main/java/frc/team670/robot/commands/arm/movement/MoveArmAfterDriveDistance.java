@@ -7,6 +7,7 @@
 
 package frc.team670.robot.commands.arm.movement;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.subsystems.Arm;
@@ -22,6 +23,7 @@ public class MoveArmAfterDriveDistance extends MoveArm {
    */
   public MoveArmAfterDriveDistance(ArmState destination, Arm arm, int inchesToStart) {
     super(destination, arm);
+    SmartDashboard.putString("current-command", "MoveArmAfterDriveDistance");
     this.inchesToStart = inchesToStart;
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
