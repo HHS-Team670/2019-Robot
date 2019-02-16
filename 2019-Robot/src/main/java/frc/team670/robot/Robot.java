@@ -145,10 +145,7 @@ public class Robot extends TimedRobot {
    *
    * <p>This runs after the mode specific periodic functions, but before
    * LiveWindow and SmartDashboard integrated updating.
-   */
-  int counter = 0;
-  
-
+   */  
  @Override
   public void robotPeriodic() {
     SmartDashboard.putNumber("gyro", (int) sensors.getAngle() % 360);
@@ -246,10 +243,10 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-    // if (autonomousCommand != null) {
-    //   autonomousCommand.cancel();
+    if (autonomousCommand != null) {
+      autonomousCommand.cancel();
     }
-    // leds.socketSetup(RobotConstants.LED_PORT);
+  }
 
   /**
    * This function is called periodically during operator control.
