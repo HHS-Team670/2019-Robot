@@ -42,16 +42,18 @@ public class Extension extends BaseExtension {
   public static final int EXTENSION_IN_POS = 0; // TODO Set These
   public static final int EXTENSION_OUT_POS = 8475; // TODO Set this in ticks
   public static final double EXTENSION_OUT_IN_INCHES = 12.75;
-  public static final int FORWARD_SOFT_LIMIT = EXTENSION_IN_POS - 100, REVERSE_SOFT_LIMIT = EXTENSION_OUT_POS + 100; // TODO figure out the values in rotations
+  public static final int FORWARD_SOFT_LIMIT = EXTENSION_OUT_POS - 100, REVERSE_SOFT_LIMIT = EXTENSION_IN_POS + 100; // TODO figure out the values in rotations
  
-  private static final double MM_F = 0, MM_P = 0.1, MM_I = 0, MM_D = 0; //TODO figure out what these are. Motion Magic Constants
-  private static final int MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 900; // TODO set this
+  private static final double MM_F = 0, MM_P = 0.54, MM_I = 0, MM_D = 0.5; //TODO figure out what these are. Motion Magic Constants
+  private static final int MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 800; // TODO set this
   private static final int EXTMOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS = 6000; // TODO set this
   public static final int QUAD_ENCODER_MAX = FORWARD_SOFT_LIMIT + 200, QUAD_ENCODER_MIN = REVERSE_SOFT_LIMIT - 200; //TODO Set these values based on forward and back soft limits (especially the addition/subtraction)
 
-  private static final double ARBITRARY_FEEDFORWARD_CONSTANT = 0;
+  private static final double ARBITRARY_FEEDFORWARD_CONSTANT = 0.055;
   public static final double MAX_EXTENSION_OUTPUT = 0.4;
 
+
+  private static final int CLOSED_LOOP_ALLOWABLE_ERROR = 10;
   private double setpoint;
   private static final double NO_SETPOINT = 99999;
 
@@ -74,6 +76,8 @@ public class Extension extends BaseExtension {
     extensionMotor.configMotionCruiseVelocity(MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
 		extensionMotor.configMotionAcceleration(EXTMOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
  
+
+    extensionMotor.configAllowableClosedloopError(MOTION_MAGIC_SLOT, CLOSED_LOOP_ALLOWABLE_ERROR);
     // These thresholds stop the motor when limit is reached
     extensionMotor.configForwardSoftLimitThreshold(FORWARD_SOFT_LIMIT);
     extensionMotor.configReverseSoftLimitThreshold(REVERSE_SOFT_LIMIT);

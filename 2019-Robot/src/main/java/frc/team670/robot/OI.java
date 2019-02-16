@@ -63,9 +63,9 @@ public class OI {
     measureFeedForward.whenPressed(new MeasureArbitraryFeedforward(Robot.arm.getExtension()));
 
     runForward = new JoystickButton(driverController, XboxButtons.B);
-    runForward.whenPressed(new MoveExtension(Robot.arm.getExtension(), 2));
+    runForward.whenPressed(new MoveExtension(Robot.arm.getExtension(), 1));
     runBackward = new JoystickButton(driverController, XboxButtons.A);
-    runBackward.whenPressed(new MoveExtension(Robot.arm.getExtension(), 8));
+    runBackward.whenPressed(new MoveExtension(Robot.arm.getExtension(), 10));
 
     // runIntakeIn = new JoystickButton(operatorController, XboxButtons.RIGHT_BUMPER);
     // runIntakeIn.whenPressed(new ButtonRunIntake(Robot.intake, RunIntakeInWithIR.RUNNING_POWER, true));

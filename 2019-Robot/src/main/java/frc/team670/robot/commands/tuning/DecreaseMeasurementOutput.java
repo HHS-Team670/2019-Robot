@@ -26,7 +26,7 @@ public class DecreaseMeasurementOutput extends InstantCommand {
   // Called once when the command executes
   @Override
   protected void initialize() {
-    MeasureArbitraryFeedforward.output -= 0.005;
+    MeasureArbitraryFeedforward.output -= 0.025;
     SmartDashboard.putNumber("ArbitraryFeedForwardOutput", MeasureArbitraryFeedforward.output);
   }
 
