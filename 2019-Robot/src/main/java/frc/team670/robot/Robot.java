@@ -106,7 +106,6 @@ public class Robot extends TimedRobot {
     autonomousCommand = oi.getSelectedAutonCommand();
     timer = new Timer();
 
-    autonomousCommand = new DriveMotionProfile("10ft-straight.pf1.csv", false);
     operatorControl = new ControlOperatorController(oi.getOperatorController());
     updateArbitraryFeedForwards = new Notifier(new Runnable() {
       public void run() {
