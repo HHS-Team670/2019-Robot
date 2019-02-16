@@ -124,13 +124,8 @@ body.login #login {
 #login > button {
     margin-left: 5px;
 }
-#front-camera-text {
+#camera-src {
   bottom: 0vh;
-  z-index: 1;
-}
-#back-camera-text {
-  bottom: 0vh;
-  left: 30vw;
   z-index: 1;
 }
 #robot-info {

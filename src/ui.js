@@ -7,6 +7,7 @@ var ui = {
 var date = new Date();
 document.getElementById('big-warning').style.display = "none";
 
+
 document.getElementById('climb-state-text').style.stroke = `rgb(90, 90, 90)`;
 document.getElementById('climb-level-text').style.stroke = `rgb(90, 90, 90)`;
 
@@ -20,12 +21,9 @@ document.getElementById('claw').style = "transform: translate(" + (Math.sin(angl
 document.getElementById('intake').style = "transform: rotate(" + 0 + "deg)";
 document.getElementById('arm-extension').style = "transform: translate(" + (Math.sin((angle) * Math.PI / 180) * armLength) + "px, " + (armLength - (Math.sin((angle+90) * Math.PI / 180) * armLength)) + "px) rotate(" + (angle + 180) + "deg)";
 
-document.getElementById('vline-right').setAttribute('x', 70+'%');
-document.getElementById('vline-left').setAttribute('x', 25+'%');
-
 var cameras = ['Back', 'Front'];
 var cameraIndex = 0;
-multiCamSRC.innerHTML = cameras[cameraIndex];
+document.getElementById('camera-text').innerHTML = cameras[cameraIndex];
 
 document.getElementById('timer').style.color = 'rgb(0,200,0)';
 
@@ -195,11 +193,11 @@ document.addEventListener("keyup", function(event) {
   var pressed = event.key.replace("Enter", "");
   allKeys += pressed;
   var result = allKeys[allKeys.length - 1];
-  // var result = (split[split.length - 1]).toLowerCase();
-  NetworkTables.putValue('/SmartDashboard/current-command-text', result);
+  // document.getElementById('current-command-text').innerHTML = result;
   var nextTask = getFromMap(result);
 
   if (nextTask != null) {
+    // document.getElementById('current-command-text').innerHTML = nextTask;
     if (nextTask.toUpperCase() === nextTask) {
       NetworkTables.putValue('/SmartDashboard/xkeys-armstates', nextTask);
     }
@@ -208,6 +206,9 @@ document.addEventListener("keyup", function(event) {
     else if (nextTask.includes("run_intake")) NetworkTables.putValue('/SmartDashboard/xkeys-intake', nextTask);
     else if (nextTask === "auto_pickup_ball") NetworkTables.putValue('/SmartDashboard/xkeys-autopickup', nextTask);
     else if (nextTask.includes("climb")) NetworkTables.putValue('/SmartDashboard/xkeys-climber', nextTask);
+    else if (nextTask.includes("vision")) NetworkTables.putValue('/SmartDashboard/xkeys-visiondrive', nextTask);
+  } else {
+
   }
 });
 
@@ -215,39 +216,40 @@ document.addEventListener("keyup", function(event) {
 function getFromMap(key) { // mapping is more aligned with arm position on robot
   NetworkTables.putValue('/SmartDashboard/current-command-text', '>>>'+key+'<<<');
 
-  if (key === "x3c") return "toggle_intake_in";
-  if (key === "x3b") return "toggle_intake_out";
-  if (key === "x34") return "run_intake_in_with_IR";
-  if (key === "x3e") return "auto_pickup_ball";
+  if (key === "w") return "toggle_intake_in";
+  if (key === "y") return "toggle_intake_out";
+  if (key === "t") return "run_intake_in_with_IR";
+  if (key === "v") return "auto_pickup_ball";
 
-  if (key === "w") return "place";
-  if (key === "9") return "grab";
+  if (key === "p") return "place";
+  if (key === "c") return "grab";
 
-  if (key === "a") return "READY_PLACE_HATCH_ROCKET_MIDDLE_BACK";
-  if (key === "b") return "READY_PLACE_BALL_ROCKET_MIDDLE_BACK";
-  if (key === "c") return "READY_PLACE_HATCH_ROCKET_MIDDLE_FORWARD";
+  if (key === "g") return "READY_PLACE_HATCH_ROCKET_MIDDLE_BACK";
+  if (key === "k") return "READY_PLACE_BALL_ROCKET_MIDDLE_BACK";
+  if (key === "n") return "READY_PLACE_HATCH_ROCKET_MIDDLE_FORWARD";
+  if (key === "a") return "NEUTRAL";
 
-  if (key === "j") return "GRAB_BALL_LOADINGSTATION_BACK";
-  if (key === "k") return "PLACE_BALL_CARGOSHIP_BACK";
-  if (key === "l") return "PLACE_BALL_CARGOSHIP_FORWARD";
-  if (key === "m") return "GRAB_BALL_LOADINGSTATION_FORWARD";
+  if (key === "f") return "GRAB_BALL_LOADINGSTATION_BACK";
+  if (key === "j") return "PLACE_BALL_CARGOSHIP_BACK";
+  if (key === "m") return "PLACE_BALL_CARGOSHIP_FORWARD";
+  if (key === "r") return "GRAB_BALL_LOADINGSTATION_FORWARD";
 
-  if (key === "s") return "READY_LOW_HATCH_BACK";
-  if (key === "t") return "READY_PLACE_BALL_ROCKET_LOW_BACK";
-  if (key === "u") return "READY_PLACE_BALL_ROCKET_LOW_FORWARD";
-  if (key === "v") return "READY_LOW_HATCH_FORWARD";
+  if (key === "e") return "READY_LOW_HATCH_BACK";
+  if (key === "i") return "READY_PLACE_BALL_ROCKET_LOW_BACK";
+  if (key === "l") return "READY_PLACE_BALL_ROCKET_LOW_FORWARD";
+  if (key === "q") return "READY_LOW_HATCH_FORWARD";
 
-  if (key === "2") return "GRAB_BALL_GROUND_BACK";
-  if (key === "x32") return "GRAB_BALL_INTAKE";
-  if (key === "1") return "READY_GRAB_HATCH_GROUND_BACK";
-  if (key === "x2d") return "STOW";
+  if (key === "h") return "GRAB_BALL_GROUND_BACK";
+  if (key === "x") return "GRAB_BALL_INTAKE";
+  if (key === "d") return "READY_GRAB_HATCH_GROUND_BACK";
+  if (key === "b") return "STOW";
 
-  if (key === "o") return "cancel_drive";
-  if (key === "p") return "cancel_intake";
-  if (key === "d") return "cancel_arm";
-  if (key === "m") return "cancel_arm_climb";
-  if (key === "x0e") return "cancel_piston_climb";
-  if (key === "rq" || key === "qr" || key === "q" || key === "r") return "cancel_all";
+  if (key === "s") return "cancel_drive";
+  if (key === "u") return "cancel_intake";
+  if (key === "o") return "cancel_arm";
+  if (key === "z") return "cancel_all";
+
+  if (key === "0") return "vision_drive";
 
   return null;
 }
