@@ -70,7 +70,7 @@ public class VisionPurePursuit extends InstantCommand {
     driveBase.initAutonDrive();
     coprocessor.setTargetHeight(lowTarget);
 
-    coprocessor.setCamera(!isReversed);
+    coprocessor.setCamera(isReversed);
     try {
       Thread.sleep(100);
     } catch (InterruptedException e) {
