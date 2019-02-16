@@ -160,17 +160,6 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("intake-ir-sensor", sensors.getIntakeIROutput());
     SmartDashboard.putNumber("extension-actual-length" , extension.getLengthInches());
     SmartDashboard.putNumber("arm-extension" , extension.getLengthInches() / Extension.EXTENSION_OUT_IN_INCHES);
-    leds.setClimbingData(true);//we climb
-    // intake.sendDataToDashboard(); 
-    SmartDashboard.putNumber("NavX Yaw", sensors.getYawDouble());
-
-    elbow.sendDataToDashboard();
-    
-    if (counter % 10 == 0) {
-      leds.setForwardData(true);
-    } else
-      leds.changeAlliance(false);
-    counter++;
   }
   /**
    * This function is called once each time the robot enters Disabled mode.
