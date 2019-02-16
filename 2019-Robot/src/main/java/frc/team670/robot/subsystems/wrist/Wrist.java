@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
@@ -25,21 +26,21 @@ public class Wrist extends BaseWrist {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
   
-  public static double WRIST_START_POS = 6000; //TODO Set this in ticks
-
   private static final int CONTINUOUS_CURRENT_LIMIT = 20, PEAK_CURRENT_LIMIT = 0;
 
   // Motion Magic
   private static final int kPIDLoopIdx = 0, MOTION_MAGIC_SLOT = 0, kTimeoutMs = 0;
-  private static final double MM_F = 0, MM_P = 0, MM_I = 0, MM_D = 0; //TODO figure out what these are
-  private static final double ARBITRARY_FEEDFORWARD = 0; // TODO set this
+  private static final double MM_F = 0, MM_P = 1.05, MM_I = 0, MM_D = 50; //TODO figure out what these are
+  private static final double ARBITRARY_FEEDFORWARD = 0.05; // TODO set this
   private static final double ARBITRARY_FEEDFORWARD_BALL = 0; // TODO set this
   private static final double ARBITRARY_FEEDFORWARD_HATCH = 0; // TODO set this
 
-  private static final int OFFSET_FROM_ENCODER_ZERO = 0; // TODO set this
-  private static final int WRIST_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 600; // TODO set this
+  private static final int OFFSET_FROM_ENCODER_ZERO = 3615; // TODO set this
+  private static final int WRIST_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 100; // TODO set this
   private static final int WRIST_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS = 6000; // TODO set this
-  public static final int FORWARD_SOFT_LIMIT = 850, REVERSE_SOFT_LIMIT = -940; // TODO set this
+  public static final int FORWARD_SOFT_LIMIT = 1230, REVERSE_SOFT_LIMIT = -1230; // TODO set this
+  public static final int CLOSED_LOOP_ALLOWABLE_ERROR = 10;
+  //Real limits are 1230 and -1230
   
   public static final int QUAD_ENCODER_MAX = FORWARD_SOFT_LIMIT + 200, QUAD_ENCODER_MIN = REVERSE_SOFT_LIMIT - 200; //TODO Set these values based on soft limits (especially add/subtract)
   public static final double MAX_WRIST_OUTPUT = 0.4;
@@ -60,6 +61,9 @@ public class Wrist extends BaseWrist {
     rotator.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
     rotator.configPeakOutputForward(MAX_WRIST_OUTPUT, RobotConstants.kTimeoutMs);
     rotator.configPeakOutputReverse(-MAX_WRIST_OUTPUT, RobotConstants.kTimeoutMs);
+    rotator.configAllowableClosedloopError(MOTION_MAGIC_SLOT, CLOSED_LOOP_ALLOWABLE_ERROR);
+
+    rotator.setSensorPhase(true);
 
     rotator.setNeutralMode(NeutralMode.Brake);
 
@@ -146,6 +150,13 @@ public class Wrist extends BaseWrist {
 
   public double getReverseSoftLimitAngle(){
     return convertWristTicksToDegrees(REVERSE_SOFT_LIMIT);
+  }
+
+  public void sendDataToDashboard() {
+    SmartDashboard.putNumber("Unadjusted Absolute Ticks", getUnadjustedPulseWidth());
+    SmartDashboard.putNumber("Absolute Ticks", getRotatorPulseWidth());
+    SmartDashboard.putNumber("Quadrature Ticks", getPositionTicks());
+    SmartDashboard.putNumber("Wrist Setpoint", setpoint);
   }
 
     /**

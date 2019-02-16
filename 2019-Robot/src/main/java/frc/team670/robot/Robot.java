@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.ControlOperatorController;
 import frc.team670.robot.commands.drive.DriveMotionProfile;
 import frc.team670.robot.commands.drive.teleop.XboxRocketLeagueDrive;
+import frc.team670.robot.commands.tuning.ResetPulseWidthEncoder;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangCoprocessor;
 import frc.team670.robot.dataCollection.MustangSensors;
@@ -103,10 +104,9 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("D", 0);
     SmartDashboard.putNumber("KA", 0);
 
-    autonomousCommand = oi.getSelectedAutonCommand();
+    // autonomousCommand = oi.getSelectedAutonCommand();
     timer = new Timer();
 
-    autonomousCommand = new DriveMotionProfile("10ft-straight.pf1.csv", false);
     operatorControl = new ControlOperatorController(oi.getOperatorController());
     updateArbitraryFeedForwards = new Notifier(new Runnable() {
       public void run() {
@@ -152,7 +152,7 @@ public class Robot extends TimedRobot {
  @Override
   public void robotPeriodic() {
     SmartDashboard.putNumber("gyro", (int) sensors.getAngle() % 360);
-    // SmartDashboard.putString("current-command", Scheduler.getInstance().getName());
+    SmartDashboard.putString("current-command", Scheduler.getInstance().getName());
     SmartDashboard.putString("current-arm-state", Arm.getCurrentState().toString());
     SmartDashboard.putNumber("intake-angle", intake.getAngleInDegrees());
     SmartDashboard.putNumber("elbow-angle", elbow.getAngleInDegrees());
@@ -160,11 +160,6 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("intake-ir-sensor", sensors.getIntakeIROutput());
     SmartDashboard.putNumber("extension-actual-length" , extension.getLengthInches());
     SmartDashboard.putNumber("arm-extension" , extension.getLengthInches() / Extension.EXTENSION_OUT_IN_INCHES);
-    intake.sendDataToDashboard(); 
-    SmartDashboard.putNumber("NavX Yaw", sensors.getYawDouble());
-
-    intake.sendDataToDashboard();
-    
   }
   /**
    * This function is called once each time the robot enters Disabled mode.
@@ -175,7 +170,7 @@ public class Robot extends TimedRobot {
   public void disabledInit() {
     SmartDashboard.putString("robot-state", "disabledInit()");
     Logger.consoleLog("Robot Disabled");
-    autonomousCommand = oi.getSelectedAutonCommand();
+    // autonomousCommand = oi.getSelectedAutonCommand();
     intake.stop();
     timer.stop();
     intake.stop();
@@ -217,7 +212,8 @@ public class Robot extends TimedRobot {
     Logger.consoleLog("Auton Started");
     timer.start();
 
-    autonomousCommand = oi.getSelectedAutonCommand();
+    // TODO: robot crashing when trying to load path
+    // autonomousCommand = oi.getSelectedAutonCommand();
     // autonomousCommand = new RunIntake(intake, sensors, true);
     // schedule the autonomous command (example)
     if (autonomousCommand != null) {
@@ -234,9 +230,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-    SmartDashboard.putString("robot-state", "autonomousPeriodic()");
-    SmartDashboard.putNumber("game-time", (int) timer.get());
-    Scheduler.getInstance().run();
+    // SmartDashboard.putString("robot-state", "autonomousPeriodic()");
+    // SmartDashboard.putNumber("game-time", (int) timer.get());
+    // Scheduler.getInstance().run();
   }
 
   @Override
@@ -250,12 +246,10 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-    if (autonomousCommand != null) {
-      autonomousCommand.cancel();
+    // if (autonomousCommand != null) {
+    //   autonomousCommand.cancel();
     }
     // leds.socketSetup(RobotConstants.LED_PORT);
-    
-  }
 
   /**
    * This function is called periodically during operator control.
@@ -265,8 +259,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("robot-state", "teleopPeriodic()");
     SmartDashboard.putNumber("game-time", (int) timer.get());
     if (Robot.oi.getDriverController().getYButton()) {
-      // Scheduler.getInstance().add(new ResetPulseWidthEncoder(intake));
-      // intake.zeroPulseWidthEncoder();
+      Scheduler.getInstance().add(new ResetPulseWidthEncoder(wrist));
     }
     Scheduler.getInstance().run();
   }
