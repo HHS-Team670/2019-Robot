@@ -76,7 +76,7 @@ public class XKeys {
         table.addEntryListener("xkeys-autopickup", (table2, key2, entry, value, flags) -> {
             autoPickupBall();
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
-        table.addEntryListener("xkeys-visionDrive", (table2, key2, entry, value, flags) -> {
+        table.addEntryListener("xkeys-visiondrive", (table2, key2, entry, value, flags) -> {
             visionDrive();
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-cancel", (table2, key2, entry, value, flags) -> {
