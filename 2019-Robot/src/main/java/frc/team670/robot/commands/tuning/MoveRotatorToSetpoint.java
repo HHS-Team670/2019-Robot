@@ -37,7 +37,8 @@ public class MoveRotatorToSetpoint extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return MathUtils.isWithinTolerance(setpointAngle, rotatingSubsystem.getAngleInDegrees(), 8);
+    //Need to change this if you want to stop
+    return false;
   }
 
   // Called once after isFinished returns true

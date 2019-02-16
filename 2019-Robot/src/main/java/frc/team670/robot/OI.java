@@ -11,13 +11,12 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team670.robot.commands.intake.ButtonRunIntake;
-import frc.team670.robot.commands.intake.MoveIntakeToSetpointAngle;
-import frc.team670.robot.commands.intake.RunIntakeInWithIR;
-import frc.team670.robot.commands.intake.StopIntakeRollers;
+import frc.team670.robot.commands.arm.movement.MoveExtension;
+import frc.team670.robot.commands.arm.movement.MoveWrist;
 import frc.team670.robot.commands.tuning.DecreaseMeasurementOutput;
 import frc.team670.robot.commands.tuning.IncreaseMeasurementOutput;
 import frc.team670.robot.commands.tuning.MeasureArbitraryFeedforward;
+import frc.team670.robot.commands.tuning.MoveRotatorToSetpoint;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.dataCollection.XKeys;
 import frc.team670.robot.utils.MustangController;
@@ -61,12 +60,12 @@ public class OI {
     decFeedForward = new JoystickButton(driverController, XboxButtons.BACK);
     decFeedForward.whenPressed(new DecreaseMeasurementOutput());
     measureFeedForward = new JoystickButton(driverController, XboxButtons.X);
-    measureFeedForward.whenPressed(new MeasureArbitraryFeedforward(Robot.intake));
+    measureFeedForward.whenPressed(new MeasureArbitraryFeedforward(Robot.arm.getExtension()));
 
     runForward = new JoystickButton(driverController, XboxButtons.B);
-    runForward.whenPressed(new MoveIntakeToSetpointAngle(80, Robot.intake));
+    runForward.whenPressed(new MoveExtension(Robot.arm.getExtension(), 2));
     runBackward = new JoystickButton(driverController, XboxButtons.A);
-    runBackward.whenPressed(new MoveIntakeToSetpointAngle(-80, Robot.intake));
+    runBackward.whenPressed(new MoveExtension(Robot.arm.getExtension(), 8));
 
     // runIntakeIn = new JoystickButton(operatorController, XboxButtons.RIGHT_BUMPER);
     // runIntakeIn.whenPressed(new ButtonRunIntake(Robot.intake, RunIntakeInWithIR.RUNNING_POWER, true));
