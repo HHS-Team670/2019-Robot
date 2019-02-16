@@ -165,8 +165,8 @@ public class Robot extends TimedRobot {
     // intake.sendDataToDashboard(); 
     SmartDashboard.putNumber("NavX Yaw", sensors.getYawDouble());
 
-
-    extension.sendDataToDashboard();
+    elbow.sendDataToDashboard();
+    
     if (counter % 10 == 0) {
       leds.setForwardData(true);
     } else

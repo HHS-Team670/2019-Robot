@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team670.robot.commands.arm.movement.MoveElbow;
 import frc.team670.robot.commands.arm.movement.MoveExtension;
 import frc.team670.robot.commands.arm.movement.MoveWrist;
 import frc.team670.robot.commands.tuning.DecreaseMeasurementOutput;
@@ -60,12 +61,12 @@ public class OI {
     decFeedForward = new JoystickButton(driverController, XboxButtons.BACK);
     decFeedForward.whenPressed(new DecreaseMeasurementOutput());
     measureFeedForward = new JoystickButton(driverController, XboxButtons.X);
-    measureFeedForward.whenPressed(new MeasureArbitraryFeedforward(Robot.arm.getExtension()));
+    measureFeedForward.whenPressed(new MeasureArbitraryFeedforward(Robot.arm.getElbow()));
 
     runForward = new JoystickButton(driverController, XboxButtons.B);
-    runForward.whenPressed(new MoveExtension(Robot.arm.getExtension(), 1));
+    runForward.whenPressed(new MoveElbow(Robot.arm.getElbow(), -90));
     runBackward = new JoystickButton(driverController, XboxButtons.A);
-    runBackward.whenPressed(new MoveExtension(Robot.arm.getExtension(), 10));
+    runBackward.whenPressed(new MoveElbow(Robot.arm.getElbow(), 90));
 
     // runIntakeIn = new JoystickButton(operatorController, XboxButtons.RIGHT_BUMPER);
     // runIntakeIn.whenPressed(new ButtonRunIntake(Robot.intake, RunIntakeInWithIR.RUNNING_POWER, true));

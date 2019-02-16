@@ -42,8 +42,8 @@ public class RobotMap {
 
   // Arm
   public static final int ARM_TRANSLATION_MOTOR = 4;
-  public static final int ARM_EXTENSION_MOTOR = 8;
-  public static final int ARM_ELBOW_ROTATION_MOTOR_TALON = 6;
+  public static final int ARM_EXTENSION_MOTOR = 5;
+  public static final int ARM_ELBOW_ROTATION_MOTOR_TALON = 8;
   public static final int ARM_ELBOW_ROTATION_MOTOR_VICTOR = 7;
   public static final int ARM_WRIST_ROTATION = 9;
 

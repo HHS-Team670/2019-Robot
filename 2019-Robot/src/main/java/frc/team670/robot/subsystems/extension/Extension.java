@@ -235,7 +235,7 @@ public class Extension extends BaseExtension {
   }
 
   private double getArbitraryFeedForwardAngleMultiplier() {
-    double angle = -90; //Robot.arm.getElbow().getAngleInDegrees();
+    double angle = Robot.arm.getElbow().getAngleInDegrees();
     double output = Math.cos(Math.toRadians(angle));
     return output;
   }
