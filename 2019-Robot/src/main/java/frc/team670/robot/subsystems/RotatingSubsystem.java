@@ -126,7 +126,7 @@ public abstract class RotatingSubsystem extends Subsystem implements TunableSubs
         return rotatorSensorCollection.getPulseWidthPosition();
     }
 
-    protected double getMotionMagicSetpoint(){
+    public double getMotionMagicSetpoint(){
         return rotator.getClosedLoopTarget();
     }
 

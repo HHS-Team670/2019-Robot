@@ -16,12 +16,12 @@ import java.io.FileNotFoundException;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.command.Command;
-
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
+import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.functions.MathUtils;
-import frc.team670.robot.subsystems.DriveBase;
 import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Trajectory;
 import jaci.pathfinder.Waypoint;
@@ -94,6 +94,7 @@ public class DriveMotionProfile extends Command {
   public DriveMotionProfile(String fileName, boolean isReversed) {
     try {
       this.isReversed = isReversed;
+      SmartDashboard.putString("current-command", "DriveMotionProfile");
 
       String binary = "traj";
       String csv = "csv";

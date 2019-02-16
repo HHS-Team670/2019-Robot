@@ -26,4 +26,6 @@ public abstract class BaseExtension extends Subsystem implements ExtensionInterf
   public abstract double getForwardSoftLimitInInches();
 
   public abstract double getReverseSoftLimitInInches();
+
+  public abstract double getMotionMagicSetpoint();
 }

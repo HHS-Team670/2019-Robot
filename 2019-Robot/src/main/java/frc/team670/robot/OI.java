@@ -10,6 +10,7 @@ package frc.team670.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.intake.ButtonRunIntake;
 import frc.team670.robot.commands.intake.MoveIntakeToSetpointAngle;
 import frc.team670.robot.commands.intake.RunIntakeInWithIR;
@@ -67,12 +68,12 @@ public class OI {
     runBackward = new JoystickButton(driverController, XboxButtons.A);
     runBackward.whenPressed(new MoveIntakeToSetpointAngle(-80, Robot.intake));
 
-    runIntakeIn = new JoystickButton(operatorController, XboxButtons.RIGHT_BUMPER);
-    runIntakeIn.whenPressed(new ButtonRunIntake(Robot.intake, RunIntakeInWithIR.RUNNING_POWER, true));
-    runIntakeIn.whenReleased(new StopIntakeRollers(Robot.intake));
-    runIntakeOut = new JoystickButton(operatorController, XboxButtons.LEFT_BUMPER);
-    runIntakeOut.whenPressed(new ButtonRunIntake(Robot.intake, RunIntakeInWithIR.RUNNING_POWER, false));
-    runIntakeOut.whenReleased(new StopIntakeRollers(Robot.intake));
+    // runIntakeIn = new JoystickButton(operatorController, XboxButtons.RIGHT_BUMPER);
+    // runIntakeIn.whenPressed(new ButtonRunIntake(Robot.intake, RunIntakeInWithIR.RUNNING_POWER, true));
+    // runIntakeIn.whenReleased(new StopIntakeRollers(Robot.intake));
+    // runIntakeOut = new JoystickButton(operatorController, XboxButtons.LEFT_BUMPER);
+    // runIntakeOut.whenPressed(new ButtonRunIntake(Robot.intake, RunIntakeInWithIR.RUNNING_POWER, false));
+    // runIntakeOut.whenReleased(new StopIntakeRollers(Robot.intake));
   }
 
   /**
@@ -112,6 +113,7 @@ public class OI {
   }
 
   public Command getSelectedAutonCommand() {
+    SmartDashboard.putBoolean("auto-command", xkeys.getAutonCommand() == null);
     return xkeys.getAutonCommand();
   }
 }

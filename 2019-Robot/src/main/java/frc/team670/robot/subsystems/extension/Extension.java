@@ -35,7 +35,6 @@ public class Extension extends BaseExtension {
   private static final int CONTINUOUS_CURRENT_LIMIT = 20, PEAK_CURRENT_LIMIT = 0;
 
   private static final int START_POSITION_TICKS = 0; // TODO set this. Start position needed since extension has no absolute encoder
-  public static final int MAX_POSITION_TICKS = 0; // TODO set this
 
   // Motion Magic
   private static final int kPIDLoopIdx = 0, MOTION_MAGIC_SLOT = 0, kTimeoutMs = 0;
@@ -87,6 +86,13 @@ public class Extension extends BaseExtension {
     extensionMotor.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
     extensionMotor.configPeakOutputForward(MAX_EXTENSION_OUTPUT, RobotConstants.kTimeoutMs);
     extensionMotor.configPeakOutputReverse(-MAX_EXTENSION_OUTPUT, RobotConstants.kTimeoutMs);
+
+    if(extensionMotor.getSensorCollection().isRevLimitSwitchClosed()) {
+      extensionMotor.setSelectedSensorPosition(EXTENSION_IN_POS);
+    }
+    else if(extensionMotor.getSensorCollection().isFwdLimitSwitchClosed()) {
+      extensionMotor.setSelectedSensorPosition(EXTENSION_OUT_POS);
+    }
 
     //Tuning stuff
     setpoint = NO_SETPOINT;
@@ -183,6 +189,10 @@ public class Extension extends BaseExtension {
     extensionMotor.selectProfileSlot(MOTION_MAGIC_SLOT, kPIDLoopIdx);
     setpoint = convertExtensionInchesToTicks(extensionSetpointInInches);
     extensionMotor.set(ControlMode.MotionMagic, setpoint);
+  }
+
+  public double getMotionMagicSetpoint() {
+    return extensionMotor.getClosedLoopTarget();
   }
 
   /**

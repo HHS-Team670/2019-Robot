@@ -10,7 +10,6 @@ package frc.team670.robot.commands.arm.joystick;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.BaseIntake;
-import frc.team670.robot.subsystems.Intake;
 import frc.team670.robot.subsystems.extension.BaseExtension;
 import frc.team670.robot.subsystems.extension.Extension;
 

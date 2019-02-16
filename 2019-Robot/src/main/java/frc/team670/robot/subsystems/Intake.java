@@ -58,6 +58,13 @@ public class Intake extends BaseIntake {
     rotator.setInverted(true);
     rotator.setSensorPhase(false); // Positive is inwards movement, negative is outward
 
+    if(rotatorSensorCollection.isRevLimitSwitchClosed()) {
+      rotator.setSelectedSensorPosition(REVERSE_SOFT_LIMIT);
+    }
+    else if(rotatorSensorCollection.isFwdLimitSwitchClosed()) {
+      rotator.setSelectedSensorPosition(FORWARD_SOFT_LIMIT);
+    }
+
     stop();
     setMotionMagicPIDValues();
   }

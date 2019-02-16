@@ -29,7 +29,6 @@ public class ButtonRunIntake extends InstantCommand {
   @Override
   protected void initialize() {
     SmartDashboard.putString("current-command", "ButtonRunIntake");
-
     intake.runIntake(power, runningIn);
   }
 

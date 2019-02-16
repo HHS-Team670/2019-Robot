@@ -9,11 +9,9 @@ package frc.team670.robot.commands.arm.movement;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.BaseIntake;
 import frc.team670.robot.subsystems.Claw;
-import frc.team670.robot.subsystems.elbow.BaseElbow;
-import frc.team670.robot.subsystems.extension.BaseExtension;
-import frc.team670.robot.subsystems.wrist.BaseWrist;
 
 /**
  * Stops all non-drive base movement on the robot
@@ -24,10 +22,10 @@ public class CancelArmMovement extends InstantCommand {
   /**
    * Add your docs here.
    */
-  public CancelArmMovement(BaseElbow elbow, BaseExtension extension, BaseWrist wrist, BaseIntake intake, Claw claw) {
-    requires(wrist);
-    requires(elbow);
-    requires(extension);
+  public CancelArmMovement(Arm arm, BaseIntake intake, Claw claw) {
+    requires(arm.getWrist());
+    requires(arm.getElbow());
+    requires(arm.getExtension());
     requires(intake);
     requires(claw);
 

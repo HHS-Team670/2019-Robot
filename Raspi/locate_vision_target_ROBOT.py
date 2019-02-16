@@ -25,27 +25,26 @@ logger = logging.getLogger('logger')
 DEBUG_MODE = False # NOTE MAKE this @FALSE TO MAKE NO SCREENS APPEAR
 ERROR = -99999
 
-# TODO SET THESE to correct values
-ROBORIO_IP = "10.6.70.2" # TODO set this to roborio ip of network table
-NETWORK_TABLE_NAME = "raspberryPi" # TODO set this to network table name
-NETWORK_KEY = "reflect_tape_vision_data" # TODO key for Shaylan's robot code vision tuple -- what??
+ROBORIO_IP = "10.6.70.2"
+NETWORK_TABLE_NAME = "SmartDashboard"
+NETWORK_KEY = "reflect_tape_vision_data"
 
 # Variables (These should be changed to reflect the camera)
-capture_source = 0 # Number of port for camera, file path for video
-known_object_height = 31  # Height of the tape from the ground (in inches)
-known_camera_height = 8.75 
+front_capture_source = 0 # Number of USB port for front camera
+back_capture_source = 0 # Number of USB port for back camera, file path for video
 camera_fov_vertical = 39.7  # FOV of the camera (in degrees)
 camera_fov_horizontal = 60.0
 image_width = 1080  # Desired width of inputted image (for processing speed)
 screen_resize = 1  # Scale that the GUI image should be scaled to
-calibrate_angle = 0  # Test to calibrate the angle and see if that works
 timestamp = round(time.time() * 1000) # time in milliseconds
 camera_vertical_angle = 0.0 # camera angle offset up or down (positive=up, negative=down)
 camera_horizontal_angle = 0.0 # camera angle offset right left
-camera_horizontal_offset = 0.0 # camera horizontal offset distancewise in inches
+
+# Keys for network table entries
+camera_key = "vision-camera"
 
 # HSV Values to detect
-min_hsv = [50, 220, 80]
+min_hsv = [50, 220, 80] # Need to change according to practice field data
 max_hsv = [70, 255, 210]
 
 # Min area to make sure not to pick up noise
@@ -67,20 +66,32 @@ def main():
     NetworkTables.initialize(server=ROBORIO_IP)
     print("init nt")
     table = NetworkTables.getTable(NETWORK_TABLE_NAME)
+
     print("get table")
     print(table)
     #Video capture / resizing stuff
-    vs = ThreadedVideo(screen_resize, capture_source).start()
+    vs_front = ThreadedVideo(screen_resize, front_capture_source).start()
+    vs_back = ThreadedVideo(screen_resize, back_capture_source).start()
 
     # resize_value = get_resize_values(vs.stream, image_width) # uncomment if screen resize is desired
 
     # This may not need to be calculated, can use Andra's precalculated values
-    vert_focal_length = find_vert_focal_length(vs.raw_read()[0], camera_fov_vertical)
-    hor_focal_length = find_hor_focal_length(vs.raw_read()[0], camera_fov_horizontal)
+    vert_focal_length = find_vert_focal_length(vs_front.raw_read()[0], camera_fov_vertical)
+    hor_focal_length = find_hor_focal_length(vs_front.raw_read()[0], camera_fov_horizontal)
 
     startTime = time.time()
     frameCount = 0
     while True:
+
+        # gets which camera to use (front or back)
+        camera = table.getEntry(camera_key).getString("back")
+
+        vs = None
+        if camera is "front":
+            vs = vs_front
+        else:
+            vs = vs_back
+
         try:
             print(frameCount/(time.time() - startTime))
             frameCount += 1
@@ -134,8 +145,12 @@ def main():
                 # find_vert_angle finds the depth / angle of the object
                 # find_hor_angle finds horizontal angle to object
                 rect_x_midpoint, high_point = find_rectangle_highpoint(object_rects)
-                vangle = find_vert_angle(input_image, high_point, vert_focal_length) # vangle - 'V'ertical angle
-                hangle = find_vert_angle(input_image, rect_x_midpoint, hor_focal_length, vertical=False) # hangle - 'H'orizontal angle
+                if camera is "front":
+                    vangle = find_angle(input_image, high_point, vert_focal_length) # vangle - 'V'ertical angle
+                    hangle = find_angle(input_image, rect_x_midpoint, hor_focal_length, vertical=False) # hangle - 'H'orizontal angle
+                else:
+                    vangle = find_angle(input_image, high_point, vert_focal_length) # vangle - 'V'ertical angle
+                    hangle = find_angle(input_image, rect_x_midpoint, hor_focal_length, vertical=False) # hangle - 'H'orizontal angle
                 returns = [hangle, vangle, timestamp]
             else:
               returns = [ERROR, ERROR, timestamp]
@@ -145,8 +160,7 @@ def main():
 
             # Create output image to display in debug mode
             if DEBUG_MODE:
-                output_image = draw_output_image(input_image,
-                                                 object_rects,
+                output_image = draw_output_image(input_image, object_rects,
                                                  0,
                                                  vangle,
                                                  hangle,
@@ -211,6 +225,14 @@ class ThreadedVideo:
     def raw_read(self):
         '''Returns the raw frame with the original video input's image size.'''
         return self.grabbed
+
+    def stream(self):
+        '''Returns the OpenCV stream'''
+        return self.stream
+
+    def opened(self):
+        '''Returns a boolean if the OpenCV stream is open'''
+        return self.stream.isOpened()
 
     def update(self):
         '''Grabs new video images from the current video stream.'''
@@ -404,7 +426,7 @@ def find_hor_focal_length(image, hor_fov):
     return calc_focal_length
 
 
-def find_vert_angle(image, y, focal_length, vertical=True):
+def find_angle(image, coord, focal_length, vertical=True):
     '''
     Returns the vertical/horizontal angle of the given y/x point in an image.
     This is the angle that the robot needs to look up / down in order to
@@ -413,24 +435,27 @@ def find_vert_angle(image, y, focal_length, vertical=True):
     '''
 
     # Find center y point
-    image_height = 0
-    _offset = 0 # if camera is tilted
+    angle = ERROR
     if vertical:
         image_height = image.shape[:2][0]
-        _offset = camera_vertical_angle
+
+        # Find center x point
+        center_y = image_height / 2
+        y_from_bottom = image_height - coord
+
+        # Calculate the angle using fancy formula
+        angle = -1 * math.degrees(math.atan((y_from_bottom - center_y) / focal_length))
     else:
-        image_height = image.shape[:2][1]
-        _offset = camera_horizontal_angle
+        image_width = image.shape[:2][1]
 
-    # Find center y point
-#    image_height = image.shape[:2][0]
-    center_y = image_height / 2
-    y_from_bottom = image_height-y
+        # Find center x point
+        center_x = image_width / 2
+        x_from_bottom = image_width - coord
 
-    # Calculate the angle using fancy formula
-    _angle = -1 * math.degrees(math.atan((y_from_bottom - center_y) / focal_length))
-    _angle -= _offset
-    return _angle
+        # Calculate the angle using fancy formula
+        angle = -1 * math.degrees(math.atan((x_from_bottom - center_x) / focal_length))
+
+    return angle
 
 # Debug mode methods
 def mouse_click_handler(event, x, y, flags, params):

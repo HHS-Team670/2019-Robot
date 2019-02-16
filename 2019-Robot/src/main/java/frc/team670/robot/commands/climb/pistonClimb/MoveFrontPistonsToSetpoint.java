@@ -9,7 +9,6 @@ package frc.team670.robot.commands.climb.pistonClimb;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-import frc.team670.robot.Robot;
 import frc.team670.robot.subsystems.Climber;
 import frc.team670.robot.utils.Logger;
 
@@ -35,7 +34,7 @@ public class MoveFrontPistonsToSetpoint extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    Logger.consoleLog("startFrontPistonPosition:%s", Robot.climber.getFrontTalonPositionInTicks());
+    Logger.consoleLog("startFrontPistonPosition:%s", climber.getFrontTalonPositionInTicks());
     climber.setFrontPIDControllerSetpoint(setpoint);
   }
 

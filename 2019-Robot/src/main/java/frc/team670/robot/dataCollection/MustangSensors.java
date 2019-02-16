@@ -2,7 +2,6 @@ package frc.team670.robot.dataCollection;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.dataCollection.sensors.DIOUltrasonic;
@@ -23,9 +22,10 @@ public class MustangSensors {
   private boolean isNavXNull;
   private DigitalInput intakeIRSensor;
   public static final double NAVX_ERROR_CODE = -40001;
+  public static final double ULTRASONIC_ERROR_CODE = 99999;
 
    //Ultrasonic
-   private DIOUltrasonic ultrasonic = null;
+   private DIOUltrasonic frontUltrasonic, backLeftUltrasonic, backRightUltrasonic;
 
 
   public MustangSensors(){
@@ -47,21 +47,89 @@ public class MustangSensors {
       intakeIRSensor = null;
     }
 
-    ultrasonic = new DIOUltrasonic();
+    try {
+      frontUltrasonic = new DIOUltrasonic();
+    } catch (RuntimeException ex) {
+      DriverStation.reportError("Error instantiating front ultrasonic: " + ex.getMessage(), true);
+      SmartDashboard.putString("warning", "Error instantiating front ultrasonic");
+      frontUltrasonic = null;
+    }
+
+    try {
+      backLeftUltrasonic= new DIOUltrasonic();
+    } catch (RuntimeException ex) {
+      DriverStation.reportError("Error instantiating back left ultrasonic: " + ex.getMessage(), true);
+      SmartDashboard.putString("warning", "Error instantiating back left ultrasonic");
+      backLeftUltrasonic = null;
+    }
+
+    try {
+      backRightUltrasonic = new DIOUltrasonic();
+    } catch (RuntimeException ex) {
+      DriverStation.reportError("Error instantiating back right ultrasonic: " + ex.getMessage(), true);
+      SmartDashboard.putString("warning", "Error instantiating back right ultrasonic");
+      backRightUltrasonic = null;
+    }
   }
 
   /*
    * Returns distance as given by ultrasonic
    */
-  public double getUltrasonicDistance(){
-    return ultrasonic.getUltrasonicValue();
+  public double getFrontUltrasonicUnadjustedDistance(){
+    if(frontUltrasonic != null)
+      return frontUltrasonic.getUnadjustedDistance();
+    else
+      return ULTRASONIC_ERROR_CODE;
   }
 
   /*
-   * Returns ultrasonic object
+   * Returns adjusted distance as given by ultrasonic
    */
-  public Ultrasonic getUltrasonic(){
-    return ultrasonic.getWPIUltrasonicObject();
+  public double getFrontUltrasonicDistance(double angle){
+    if(frontUltrasonic != null)
+      return frontUltrasonic.getDistance(angle);
+    else
+      return ULTRASONIC_ERROR_CODE;
+  }
+
+  /*
+   * Returns distance as given by ultrasonic
+   */
+  public double getBackRightUltrasonicUnadjustedDistance(){
+    if(backRightUltrasonic != null)
+      return backRightUltrasonic.getUnadjustedDistance();
+    else
+      return ULTRASONIC_ERROR_CODE;
+  }
+
+  /*
+   * Returns adjusted distance as given by ultrasonic
+   */
+  public double getBackRightUltrasonicDistance(double angle){
+    if(backRightUltrasonic != null)
+      return backRightUltrasonic.getDistance(angle);
+    else
+      return ULTRASONIC_ERROR_CODE;
+  }
+
+  /*
+   * Returns distance as given by ultrasonic
+   */
+  public double getBackLeftUltrasonicUnadjustedDistance(){
+    if(backLeftUltrasonic != null)
+      return backLeftUltrasonic.getUnadjustedDistance();
+    else
+      return ULTRASONIC_ERROR_CODE;
+  }
+
+  /*
+   * Returns adjusted distance as given by ultrasonic
+   */
+  public double getBackLeftUltrasonicDistance(double angle){
+    if(backLeftUltrasonic != null)
+      return backLeftUltrasonic.getDistance(angle);
+    else
+      return ULTRASONIC_ERROR_CODE;
   }
 
   /**

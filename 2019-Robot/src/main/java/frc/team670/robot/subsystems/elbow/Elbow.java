@@ -41,12 +41,12 @@ public class Elbow extends BaseElbow {
   public static final double MAX_ELBOW_OUTPUT = 0.4;
   private static final double NO_EXTENSION_ARBITRARY_FEEDFORWARD = 0; // Arbitrary Feedforward at no extension. TODO SET THIS
   private static final double ARBITARY_FEEDFORWARD_FULL_EXTENSION = 0; // Arbitrary Feedforward when elbow is fully extended TODO SET THIS
-  private static final double ARBITRARY_FEEDFORWARD_EXTENSION_LENGTH_SCALAR = (ARBITARY_FEEDFORWARD_FULL_EXTENSION - NO_EXTENSION_ARBITRARY_FEEDFORWARD) / Extension.MAX_POSITION_TICKS; // Extra Feedforward per extension tick
+  private static final double ARBITRARY_FEEDFORWARD_EXTENSION_LENGTH_SCALAR = (ARBITARY_FEEDFORWARD_FULL_EXTENSION - NO_EXTENSION_ARBITRARY_FEEDFORWARD) / Extension.EXTENSION_OUT_POS; // Extra Feedforward per extension tick
 
   public static final int FORWARD_LIMIT_SWITCH_TICKS = 0; // TODO set this
   public static final int REVERSE_LIMIT_SWITCH_TICKS = 0; // TODO set this
 
-  private static final int ELBOW_TICKS_PER_ROTATION = (int) (4096 * 1.2); //1 encoder rotation = 0.8333 arm rotations, so one arm rotation = 1.2 encoder rotations. The arm max range is 300 degrees, so this remains inside that.
+  private static final int ELBOW_TICKS_PER_ROTATION = (int) (4096 / 1.2); //1 encoder rotation = 0.8333 arm rotations, so one arm rotation = 1.2 encoder rotations. The arm max range is 300 degrees, so this remains inside that.
 
 
   public Elbow() {
