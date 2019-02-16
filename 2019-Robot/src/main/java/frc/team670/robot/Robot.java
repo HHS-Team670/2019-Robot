@@ -207,33 +207,33 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
-    // sensors.resetNavX();
+    sensors.resetNavX();
 
-    // SmartDashboard.putString("robot-state", "autonomousInit()");
+    SmartDashboard.putString("robot-state", "autonomousInit()");
 
-    // if(DriverStation.getInstance().getAlliance().equals(Alliance.Red)) {
-    //   leds.changeAlliance(false);
-    // } else if (DriverStation.getInstance().getAlliance().equals(Alliance.Blue)) {
-    //   leds.changeAlliance(true);
-    // } else {
-    //   leds.changeAlliance(true);
-    // }
+    if(DriverStation.getInstance().getAlliance().equals(Alliance.Red)) {
+      leds.changeAlliance(false);
+    } else if (DriverStation.getInstance().getAlliance().equals(Alliance.Blue)) {
+      leds.changeAlliance(true);
+    } else {
+      leds.changeAlliance(true);
+    }
 
-    // sensors.resetNavX(); // Reset NavX completely, zero the field centric based on how robot faces from start of game.
-    // Logger.consoleLog("Auton Started");
-    // timer.start();
+    sensors.resetNavX(); // Reset NavX completely, zero the field centric based on how robot faces from start of game.
+    Logger.consoleLog("Auton Started");
+    timer.start();
 
     // TODO: robot crashing when trying to load path
     // autonomousCommand = oi.getSelectedAutonCommand();
     // autonomousCommand = new RunIntake(intake, sensors, true);
     // schedule the autonomous command (example)
-    // if (autonomousCommand != null) {
-    //   autonomousCommand.start();
-    // }
+    if (autonomousCommand != null) {
+      autonomousCommand.start();
+    }
 
-    // if (operatorControl != null) {
-    //   operatorControl.start();
-    // }
+    if (operatorControl != null) {
+      operatorControl.start();
+    }
   }
 
   /**
