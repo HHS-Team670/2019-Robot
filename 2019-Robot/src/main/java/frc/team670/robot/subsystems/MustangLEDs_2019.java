@@ -34,7 +34,7 @@ public class MustangLEDs_2019 {
 	// final byte[] solidGreen = {'1','L'};
 	// final byte[] solidRed = {'2','L'};
 	// final byte[] solidPurple = {'3','L'};
-	// final byte[] climbingGreenLights = {'4','L'};
+	// final byte[] GreenLights = {'4','L'};
 	// final byte[] Strobe = {'5','L'};
 	// final byte[] randomStrobe = {'6','L'};
 	// final byte[] bounceBackground = {'7','L'};
@@ -139,7 +139,7 @@ public class MustangLEDs_2019 {
 					}
 				}
 
-				System.out.println(allianceData+""+stateData);
+				System.out.println(allianceData + "" + stateData);
 
 				// Sends data to the Arduino/Ethernet Shield
 				try {
