@@ -1,7 +1,11 @@
 // Define UI elements
 var ui = {
     multiCamSRC: document.getElementById('multicam-src'),
-    timer: document.getElementById('timer')
+    timer: document.getElementById('timer'),
+    camera: {
+      viewer: document.getElementById('camera'),
+      src: 'http://10.6.70.191:80/?action=stream'
+    }
 };
 
 var date = new Date();
@@ -13,6 +17,9 @@ document.getElementById('climb-level-text').style.stroke = `rgb(90, 90, 90)`;
 
 document.getElementById('auton-chooser').style.display = "none";
 ui.timer.style.color = `rgb(0, 200, 0)`;
+
+// ui.camera.viewer.style.backgroundImage = 'url(' + ui.camera.src + ')';
+// document.getElementById('camera').style = "background-color: rgb(39, 163, 39)";
 
 var angle = 90;
 var armLength = 110;
@@ -56,6 +63,10 @@ NetworkTables.addKeyListener('/SmartDashboard/camera-source', (key, value) => {
     multiCamSRC.innerHTML = cameras[cameraIndex];
   }
   NetworkTables.putValue('/SmartDashboard/camera-source', '');
+});
+
+NetworkTables.addKeyListener('/SmartDashboard/LeftEncoder', (key, value) => {
+  document.getElementById('current-command-text').innerHTML = value;
 });
 
 NetworkTables.addKeyListener('/SmartDashboard/robot-state', (key, value) => {
@@ -191,11 +202,9 @@ document.addEventListener("keyup", function(event) {
   var pressed = event.key.replace("Enter", "");
   allKeys += pressed;
   var result = allKeys[allKeys.length - 1];
-  // document.getElementById('current-command-text').innerHTML = result;
   var nextTask = getFromMap(result);
 
   if (nextTask != null) {
-    // document.getElementById('current-command-text').innerHTML = nextTask;
     if (nextTask.toUpperCase() === nextTask) {
       NetworkTables.putValue('/SmartDashboard/xkeys-armstates', nextTask);
     }
@@ -212,7 +221,6 @@ document.addEventListener("keyup", function(event) {
 
 // naming convention: UPPER_CASE for preset arm states, lower_case for other commands
 function getFromMap(key) { // mapping is more aligned with arm position on robot
-  NetworkTables.putValue('/SmartDashboard/current-command-text', '>>>'+key+'<<<');
 
   if (key === "w") return "toggle_intake_in";
   if (key === "y") return "toggle_intake_out";

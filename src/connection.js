@@ -32,6 +32,7 @@ function onRobotConnection(connected) {
   if (connected) {
     // On connect hide the connect popup
     document.body.classList.toggle('login', false);
+    document.getElementById('login').style.display = "none";
     loginShown = false;
   } else if (loginShown) {
     setLogin();
@@ -44,10 +45,10 @@ function setLogin() {
   connect.textContent = 'Connect';
   // Add the default address and select xxxx
 
-  // address.value = '10.0.0.231'; // for testing at home
   address.value = '10.6.70.2'; // while on network 670
+  // address.disabled = connect.disabled = true;
+
   ipc.send('connect', address.value);
-  address.disabled = connect.disabled = true;
 
 
   // address.focus();
