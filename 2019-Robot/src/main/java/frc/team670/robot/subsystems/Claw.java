@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.team670.robot.constants.RobotMap;
 
 /**
  * Represents the claw mechanism of the robot. Release Ball: hard open, push
@@ -33,30 +34,30 @@ public class Claw extends Subsystem {
 
   public Claw() {
     try {
-      // compressor = new Compressor(RobotMap.PC_MODULE);
-      // compressor.setClosedLoopControl(true);
+      compressor = new Compressor(RobotMap.PC_MODULE);
+      compressor.setClosedLoopControl(true);
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error instantiating compressor: " + ex.getMessage(), true);
       compressor = null;
     }
 
     try {
-      // openClose = new Solenoid(RobotMap.HARD_GRIP_SOLENOID);
+      openClose = new Solenoid(RobotMap.HARD_GRIP_SOLENOID);
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error instantiating openClose solenoid: " + ex.getMessage(), true);
       openClose = null;
     }
 
     try {
-      // hardSoft = new Solenoid(RobotMap.SOFT_GRIP_SOLENOID);
+      hardSoft = new Solenoid(RobotMap.SOFT_GRIP_SOLENOID);
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error instantiating hardSoft solenoid: " + ex.getMessage(), true);
       hardSoft = null;
     }
 
     try {
-      // push = new Solenoid(RobotMap.CLAW_PUSH_SOLENOID);
-      // push.setPulseDuration(PULSE_DURATION);
+      push = new Solenoid(RobotMap.CLAW_PUSH_SOLENOID);
+      push.setPulseDuration(PULSE_DURATION);
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error instantiating push solenoid: " + ex.getMessage(), true);
       push = null;
