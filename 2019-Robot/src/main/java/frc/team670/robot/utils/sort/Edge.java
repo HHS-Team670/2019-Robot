@@ -3,7 +3,7 @@ package frc.team670.robot.utils.sort;
 /**
  * Represents an edge that connects nodes. 
  */
-public interface Edge{
+public interface Edge extends Comparable<Edge> {
     /**
      * @return the "cost" of travelling over this edge
      */
@@ -18,4 +18,5 @@ public interface Edge{
      * @return the destination node (where this edge ends)
      */        
     public Node getDest();
+
 }

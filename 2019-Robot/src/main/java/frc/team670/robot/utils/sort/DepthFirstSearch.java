@@ -19,7 +19,7 @@ import java.util.TreeSet;
  */
 public class DepthFirstSearch {
 
-    public DepthFirstSearch() {
+    private DepthFirstSearch() {
 
     }
 

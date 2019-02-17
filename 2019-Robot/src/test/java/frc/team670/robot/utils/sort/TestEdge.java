@@ -36,5 +36,10 @@ public class TestEdge implements Edge{
         this.dest = dest;
     }
 
+    @Override
+    public int compareTo(Edge o) {
+        return (this == o) ? 0 : 1;
+    }
+
 
 }

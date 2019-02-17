@@ -38,4 +38,9 @@ public class TestNode implements Node{
     public void setEdges(Edge[] edges){
         this.edges = edges;
     }
+
+    @Override
+    public int compareTo(Node o) {
+        return (this == o) ? 0 : 1;
+    }
 }

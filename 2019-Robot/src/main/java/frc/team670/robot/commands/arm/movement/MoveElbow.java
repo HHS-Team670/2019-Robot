@@ -43,7 +43,7 @@ public class MoveElbow extends Command {
   protected void initialize() {
     elbow.setMotionMagicSetpointAngle(elbowSetpointInDegrees);
     executeCount = 0;
-    Logger.consoleLog("angleSetpoint: %s", elbowSetpointInDegrees);
+    // Logger.consoleLog("angleSetpoint: %s", elbowSetpointInDegrees);
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -61,7 +61,7 @@ public class MoveElbow extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Logger.consoleLog("targetAngle: %s, endingAngle: %s", elbowSetpointInDegrees, elbow.getAngleInDegrees());
+    // Logger.consoleLog("targetAngle: %s, endingAngle: %s", elbowSetpointInDegrees, elbow.getAngleInDegrees());
   }
 
   // Called when another command which requires one or more of the same

@@ -38,13 +38,13 @@ public class MoveIntakeToSetpointAngle extends Command {
   protected void initialize() {
     intake.setRotatorNeutralMode(NeutralMode.Brake);
     intake.setMotionMagicSetpointAngle(setpointInDegrees);
-    Logger.consoleLog("startIntakeAngle:%s", intake.getAngleInDegrees());
+    // Logger.consoleLog("startIntakeAngle:%s", intake.getAngleInDegrees());
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Logger.consoleLog("currentIntakeAngle:%s", intake.getAngleInDegrees());
+    // Logger.consoleLog("currentIntakeAngle:%s", intake.getAngleInDegrees());
 
     loggingIterationCounter++;
   }
@@ -65,7 +65,7 @@ public class MoveIntakeToSetpointAngle extends Command {
     intake.stop();
     intake.setRotatorNeutralMode(NeutralMode.Coast);
     // Logger.consoleLog("endIntakeAngle:%s", intake.getAngleInDegrees());
-    System.out.println("FINISHED MOVE INTAKE");
+    // System.out.println("FINISHED MOVE INTAKE");
   }
 
   // Called when another command which requires one or more of the same

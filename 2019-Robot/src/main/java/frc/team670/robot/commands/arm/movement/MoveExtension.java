@@ -43,7 +43,7 @@ public class MoveExtension extends Command {
   protected void initialize() {
     extension.setMotionMagicSetpointInInches(extensionSetpointInInches);
     executeCount = 0;
-    Logger.consoleLog("extensionSetpointInInches: %s", extensionSetpointInInches);
+    // Logger.consoleLog("extensionSetpointInInches: %s", extensionSetpointInInches);
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -61,7 +61,7 @@ public class MoveExtension extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Logger.consoleLog("extensionSetpointInInches: %s, endingPositionInInches: %s", extensionSetpointInInches, extension.getLengthInches());
+    // Logger.consoleLog("extensionSetpointInInches: %s, endingPositionInInches: %s", extensionSetpointInInches, extension.getLengthInches());
   }
 
   // Called when another command which requires one or more of the same

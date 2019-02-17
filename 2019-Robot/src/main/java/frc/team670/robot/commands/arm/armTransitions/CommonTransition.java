@@ -17,6 +17,7 @@ import frc.team670.robot.subsystems.Arm.ArmState;
 import frc.team670.robot.subsystems.Arm.LegalState;
 import frc.team670.robot.subsystems.BaseIntake;
 import frc.team670.robot.subsystems.Intake;
+import frc.team670.robot.utils.sort.Edge;
 
 /**
  * A common transition that can be used to move the arm straight to any
@@ -153,4 +154,10 @@ public class CommonTransition extends ArmTransition {
     commonTransitionCommand.initTransition();
     return commonTransitionCommand;
   }
+
+  @Override
+  public int compareTo(Edge o) {
+    return (this == o) ? 0 : 1;
+  }
+
 }
