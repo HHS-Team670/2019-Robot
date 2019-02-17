@@ -25,7 +25,7 @@ public class Claw extends Subsystem {
   public static final double TIME_TO_MOVE = 0.35;
 
   private static final double PULSE_DURATION = 0.4; // In seconds
-  public static final double MAX_CLAW_OPEN_DIAMETER = 19.5; //Set distance
+  public static final double MAX_CLAW_OPEN_DIAMETER = 20; //Set distance
   // Used to find lowest point on arm (so that intake doesn't crash into it). If claw is angled up, the extension tip is lowest point.
 
   private Compressor compressor;

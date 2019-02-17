@@ -25,7 +25,7 @@ public class Intake extends BaseIntake {
   private static final int ROLLER_CONTINUOUS_CURRENT = 30, ROLLER_PEAK_CURRENT = 0;
 
   public static final int INTAKE_ANGLE_IN = -90, INTAKE_ANGLE_DEPLOYED = 90;
-  public static final double INTAKE_FIXED_LENGTH_IN_INCHES = 0, INTAKE_ROTATING_LENGTH_IN_INCHES = 0; //TODO set actual value
+  public static final double INTAKE_FIXED_LENGTH_IN_INCHES = 11.25, INTAKE_ROTATING_LENGTH_IN_INCHES = 14;
   private static final double MAX_BASE_OUTPUT = 0.75;
   private static final double kF = 0, kP = 0.35, kI = 0, kD = 0;
 
@@ -138,8 +138,6 @@ public class Intake extends BaseIntake {
   private static int convertIntakeDegreesToTicks(double degrees) {
     //If straight up is 0 and going forward is positive
     // percentage * half rotation
-    // TODO - Fix this. This is not going to make 0 at the top if the absolute encoder is not zero there.
-    // Offset the quadrature readings accordingly in the constructor?
     return (int)((degrees / 360) * TICKS_PER_ROTATION);
   }
 
@@ -148,8 +146,6 @@ public class Intake extends BaseIntake {
    */
   private static double convertIntakeTicksToDegrees(double ticks) {
     //If straight up is 0 and going forward is positive
-    // TODO - Fix this. This is not going to make 0 at the top if the absolute encoder is not zero there.
-    // Offset the quadrature readings accordingly in the constructor?
     return ((360 * ticks) / TICKS_PER_ROTATION);
   }
 
