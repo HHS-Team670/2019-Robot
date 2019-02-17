@@ -32,8 +32,8 @@ public class MustangSensors {
 
   public MustangSensors(){
     try {
-      // navXMicro = new NavX(RobotMap.NAVX_PORT); 
-      // isNavXNull = false;
+      navXMicro = new NavX(RobotMap.NAVX_PORT); 
+      isNavXNull = false;
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
       SmartDashboard.putString("warning", "Error instantiating navX-MXP");
@@ -44,32 +44,32 @@ public class MustangSensors {
     try {
       intakeIRSensor = new DigitalInput(RobotMap.INTAKE_IR_DIO_PORT);
     } catch (RuntimeException ex) {
-      DriverStation.reportError("Error instantiating intakeIRSensor: " + ex.getMessage(), true);
-      SmartDashboard.putString("warning", "Error instantiating intakeIRSensor");
+      // DriverStation.reportError("Error instantiating intakeIRSensor: " + ex.getMessage(), true);
+      // SmartDashboard.putString("warning", "Error instantiating intakeIRSensor");
       intakeIRSensor = null;
     }
 
     try {
       frontUltrasonic = new DIOUltrasonic(RobotMap.FRONT_ULTRASONIC_TRIGGER_PIN, RobotMap.FRONT_ULTRASONIC_ECHO_PIN, FRONT_ULTRA_OFFSET);
     } catch (RuntimeException ex) {
-      DriverStation.reportError("Error instantiating front ultrasonic: " + ex.getMessage(), true);
-      SmartDashboard.putString("warning", "Error instantiating front ultrasonic");
+      // DriverStation.reportError("Error instantiating front ultrasonic: " + ex.getMessage(), true);
+      // SmartDashboard.putString("warning", "Error instantiating front ultrasonic");
       frontUltrasonic = null;
     }
 
     try {
       backLeftUltrasonic= new DIOUltrasonic(RobotMap.BACK_LEFT_ULTRASONIC_TRIGGER_PIN, RobotMap.BACK_LEFT_ULTRASONIC_ECHO_PIN, BACK_LEFT_ULTRA_OFFSET);
     } catch (RuntimeException ex) {
-      DriverStation.reportError("Error instantiating back left ultrasonic: " + ex.getMessage(), true);
-      SmartDashboard.putString("warning", "Error instantiating back left ultrasonic");
+      // DriverStation.reportError("Error instantiating back left ultrasonic: " + ex.getMessage(), true);
+      // SmartDashboard.putString("warning", "Error instantiating back left ultrasonic");
       backLeftUltrasonic = null;
     }
 
     try {
       backRightUltrasonic = new DIOUltrasonic(RobotMap.BACK_RIGHT_ULTRASONIC_TRIGGER_PIN, RobotMap.BACK_RIGHT_ULTRASONIC_ECHO_PIN, BACK_RIGHT_ULTRA_OFFSET);
     } catch (RuntimeException ex) {
-      DriverStation.reportError("Error instantiating back right ultrasonic: " + ex.getMessage(), true);
-      SmartDashboard.putString("warning", "Error instantiating back right ultrasonic");
+      // DriverStation.reportError("Error instantiating back right ultrasonic: " + ex.getMessage(), true);
+      // SmartDashboard.putString("warning", "Error instantiating back right ultrasonic");
       backRightUltrasonic = null;
     }
   }
