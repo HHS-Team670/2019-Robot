@@ -186,7 +186,7 @@ NetworkTables.addKeyListener('/SmartDashboard/vision-status', (key, value) => {
   if (value === 'engaged') {
     document.getElementById('vision-status').style.fill = "rgb(0,255,0)";
     document.getElementById('vision-status').style.stroke = "rgb(0,255,0)";
-  } else if (value === 'error') {
+  } else if (value === 'error' || value === -99999) {
     document.getElementById('vision-status').style.fill = "rgb(255,0,0)";
     document.getElementById('vision-status').style.stroke = "rgb(255,0,0)";
   } else {
