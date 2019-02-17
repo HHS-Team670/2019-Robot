@@ -20,10 +20,6 @@ public class DIOUltrasonic {
 
     private double horizontalOffset; // horizontal offset from the center of the robot on the side it is on. Left is negative, right is positive.
 
-    public DIOUltrasonic(){
-        this(8,9, 0); // Temporary values for Ultrasonic - move to RobotMap unless we want it like this for multiple sensors
-    }
-
     /**
      * @param horizontalOffset horizontal offset from the center of the robot on the side it is on. Left is negative, right is positive.
      */
