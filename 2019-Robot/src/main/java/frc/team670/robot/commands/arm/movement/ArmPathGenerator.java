@@ -12,6 +12,7 @@ import java.util.List;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.team670.robot.commands.RumbleOperatorController;
 import frc.team670.robot.commands.arm.armTransitions.ArmTransition;
+import frc.team670.robot.commands.arm.armTransitions.CommonTransition;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
 import frc.team670.robot.utils.Logger;
@@ -65,7 +66,7 @@ public class ArmPathGenerator {
     // searched.put(currentState, transitions); //Stores current path in instance variable
     }
     for (ArmTransition t : transitions) {
-      movements.addSequential(t);
+      movements.addSequential(t.getCommand());
     }
 
     // movements.addSequential(new RumbleOperatorController(Robot.oi, 0.5, 0.25));

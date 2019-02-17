@@ -9,6 +9,7 @@ package frc.team670.robot.commands.arm.armTransitions;
 
 import java.awt.geom.Point2D;
 
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
@@ -28,6 +29,7 @@ public abstract class ArmTransition extends CommandGroup implements Edge {
 
   private LegalState source, dest;
 
+  private Arm arm;
   protected BaseElbow elbow;
   protected BaseWrist wrist;
   protected BaseExtension extension;
@@ -40,6 +42,7 @@ public abstract class ArmTransition extends CommandGroup implements Edge {
     wrist = arm.getWrist();
     extension = arm.getExtension();
     this.intake = intake;
+    this.arm = arm;
   }
 
   @Override
@@ -77,5 +80,7 @@ public abstract class ArmTransition extends CommandGroup implements Edge {
   }
 
   public abstract void initTransition();
+
+  public abstract CommandGroup getCommand();
 
 }
