@@ -24,7 +24,7 @@ public class MustangSensors {
   public static final double NAVX_ERROR_CODE = -40001;
   public static final double ULTRASONIC_ERROR_CODE = 99999;
 
-  private static final int FRONT_ULTRA_OFFSET = 0, BACK_LEFT_ULTRA_OFFSET = 0, BACK_RIGHT_ULTRA_OFFSET = 0; // TODO set these
+  private static final double FRONT_ULTRA_OFFSET = -12.25, BACK_LEFT_ULTRA_OFFSET = -9.25, BACK_RIGHT_ULTRA_OFFSET = 9.25; // TODO set these
 
    //Ultrasonic
    private DIOUltrasonic frontUltrasonic, backLeftUltrasonic, backRightUltrasonic;
