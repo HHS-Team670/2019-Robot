@@ -21,7 +21,7 @@ public class MoveElbow extends Command {
   private BaseElbow elbow;
   private double elbowSetpointInDegrees;
 
-  private static final double DEGREE_TOLERANCE = 0.5;
+  private static final double DEGREE_TOLERANCE = 5;
 
   private long executeCount;
 
@@ -35,6 +35,7 @@ public class MoveElbow extends Command {
     this.elbow = elbow;
     this.elbowSetpointInDegrees = elbowSetpointInDegrees;
     requires(elbow);
+    super.setInterruptible(true);
   }
 
   // Called just before this Command runs the first time

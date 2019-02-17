@@ -19,7 +19,7 @@ import frc.team670.robot.subsystems.extension.Extension;
  */
 public class MoveExtension extends Command {
 
-  private static final double DISTANCE_TOLERANCE = 0.5;
+  private static final double DISTANCE_TOLERANCE = 1.5;
 
   private BaseExtension extension;
   private double extensionSetpointInInches;
@@ -35,6 +35,7 @@ public class MoveExtension extends Command {
     this.extension = extension;
     this.extensionSetpointInInches = extensionSetpointInInches;
     requires(extension);
+    super.setInterruptible(true);
   }
 
   // Called just before this Command runs the first time

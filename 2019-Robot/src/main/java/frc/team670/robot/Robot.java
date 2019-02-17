@@ -149,7 +149,7 @@ public class Robot extends TimedRobot {
  @Override
   public void robotPeriodic() {
     SmartDashboard.putNumber("gyro", (int) sensors.getAngle() % 360);
-    SmartDashboard.putString("current-command", Scheduler.getInstance().getName());
+    // SmartDashboard.putString("current-command", Scheduler.getInstance().getName());
     SmartDashboard.putString("current-arm-state", Arm.getCurrentState().toString());
     SmartDashboard.putNumber("intake-angle", intake.getAngleInDegrees());
     SmartDashboard.putNumber("elbow-angle", elbow.getAngleInDegrees());
