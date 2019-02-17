@@ -32,8 +32,8 @@ public class Wrist extends BaseWrist {
   private static final int kPIDLoopIdx = 0, MOTION_MAGIC_SLOT = 0, kTimeoutMs = 0;
   private static final double MM_F = 0, MM_P = 1.05, MM_I = 0, MM_D = 50; //TODO figure out what these are
   private static final double ARBITRARY_FEEDFORWARD = 0.05; // TODO set this
-  private static final double ARBITRARY_FEEDFORWARD_BALL = 0; // TODO set this
-  private static final double ARBITRARY_FEEDFORWARD_HATCH = 0; // TODO set this
+  private static final double ARBITRARY_FEEDFORWARD_BALL = ARBITRARY_FEEDFORWARD; // TODO set this
+  private static final double ARBITRARY_FEEDFORWARD_HATCH = ARBITRARY_FEEDFORWARD; // TODO set this
 
   private static final int OFFSET_FROM_ENCODER_ZERO = 3615; // TODO set this
   private static final int WRIST_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 100; // TODO set this
