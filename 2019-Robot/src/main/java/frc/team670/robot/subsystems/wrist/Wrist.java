@@ -153,9 +153,9 @@ public class Wrist extends BaseWrist {
   }
 
   public void sendDataToDashboard() {
-    SmartDashboard.putNumber("Unadjusted Absolute Ticks", getUnadjustedPulseWidth());
-    SmartDashboard.putNumber("Absolute Ticks", getRotatorPulseWidth());
-    SmartDashboard.putNumber("Quadrature Ticks", getPositionTicks());
+    SmartDashboard.putNumber("Wrist Unadjusted Absolute Ticks", getUnadjustedPulseWidth());
+    SmartDashboard.putNumber("Wrist Absolute Ticks", getRotatorPulseWidth());
+    SmartDashboard.putNumber("Wrist Quadrature Ticks", getPositionTicks());
     SmartDashboard.putNumber("Wrist Setpoint", setpoint);
   }
 

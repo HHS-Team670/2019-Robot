@@ -157,6 +157,11 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("intake-ir-sensor", sensors.getIntakeIROutput());
     SmartDashboard.putNumber("extension-actual-length" , extension.getLengthInches());
     SmartDashboard.putNumber("arm-extension" , extension.getLengthInches() / Extension.EXTENSION_OUT_IN_INCHES);
+
+    elbow.sendDataToDashboard();
+    extension.sendDataToDashboard();
+    wrist.sendDataToDashboard();
+
   }
   /**
    * This function is called once each time the robot enters Disabled mode.

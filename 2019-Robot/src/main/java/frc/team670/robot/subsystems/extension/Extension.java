@@ -270,9 +270,9 @@ public class Extension extends BaseExtension {
   }
 
   public void sendDataToDashboard() {
-    SmartDashboard.putNumber("Unadjusted Absolute Ticks", getUnadjustedPulseWidth());
-    SmartDashboard.putNumber("Absolute Ticks", getRotatorPulseWidth());
-    SmartDashboard.putNumber("Quadrature Ticks", getPositionTicks());
+    SmartDashboard.putNumber("Extension Unadjusted Absolute Ticks", getUnadjustedPulseWidth());
+    SmartDashboard.putNumber("Extension Absolute Ticks", getRotatorPulseWidth());
+    SmartDashboard.putNumber("Extension Quadrature Ticks", getPositionTicks());
     SmartDashboard.putNumber("Extension Setpoint", setpoint);
   }
 

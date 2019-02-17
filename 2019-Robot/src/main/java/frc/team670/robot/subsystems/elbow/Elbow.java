@@ -155,9 +155,9 @@ public class Elbow extends BaseElbow {
   }
 
   public void sendDataToDashboard() {
-    SmartDashboard.putNumber("Unadjusted Absolute Ticks", getUnadjustedPulseWidth());
-    SmartDashboard.putNumber("Absolute Ticks", getRotatorPulseWidth());
-    SmartDashboard.putNumber("Quadrature Ticks", getPositionTicks());
+    SmartDashboard.putNumber("Elbow Unadjusted Absolute Ticks", getUnadjustedPulseWidth());
+    SmartDashboard.putNumber("Elbow Absolute Ticks", getRotatorPulseWidth());
+    SmartDashboard.putNumber("Elbow Quadrature Ticks", getPositionTicks());
     SmartDashboard.putNumber("Elbow Angle", getAngleInDegrees());
     SmartDashboard.putNumber("Elbow Setpoint", setpoint);
   }
