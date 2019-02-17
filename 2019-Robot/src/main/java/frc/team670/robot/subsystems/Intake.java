@@ -48,7 +48,7 @@ public class Intake extends BaseIntake {
   public Intake() {
     super(new TalonSRX(RobotMap.INTAKE_BASE_TALON), ARBITRARY_FEED_FORWARD, FORWARD_SOFT_LIMIT, REVERSE_SOFT_LIMIT, true, QUAD_ENCODER_MIN, QUAD_ENCODER_MAX, CONTINUOUS_CURRENT_LIMIT, PEAK_CURRENT_LIMIT, OFFSET_FROM_ENCODER_ZERO);
     
-    roller = new TalonSRX(RobotMap.INTAKE_ROLLER_VICTOR);
+    roller = new TalonSRX(RobotMap.INTAKE_ROLLER_TALON);
 
     roller.setInverted(true);
     roller.setNeutralMode(NeutralMode.Coast);

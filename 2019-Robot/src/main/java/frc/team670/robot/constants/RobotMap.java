@@ -36,15 +36,11 @@ public class RobotMap {
   public static final int LEFT_ENCODER_CHANNEL_B = 1;
   public static final int RIGHT_ENCODER_CHANNEL_A = 2;
   public static final int RIGHT_ENCODER_CHANNEL_B = 3;
-      //Intake
-  public static final int INTAKE_BASE_ENCODER_CHANNEL_A = 0; //TODO Set these
-  public static final int INTAKE_BASE_ENCODER_CHANNEL_B = 0;
 
   // Arm
-  public static final int ARM_TRANSLATION_MOTOR = 4;
-  public static final int ARM_EXTENSION_MOTOR = 5;
-  public static final int ARM_ELBOW_ROTATION_MOTOR_TALON = 8;
-  public static final int ARM_ELBOW_ROTATION_MOTOR_VICTOR = 7;
+  public static final int ARM_EXTENSION_MOTOR = 8;
+  public static final int ARM_ELBOW_ROTATION_MOTOR_TALON = 6;
+  public static final int ARM_ELBOW_ROTATION_MOTOR_VICTOR = 5;
   public static final int ARM_WRIST_ROTATION = 9;
 
   // Claw
@@ -59,17 +55,24 @@ public class RobotMap {
   public static final int FRONT_CLIMBER_PISTON_CONTROLLER = 15;
   
   // Sensors
-  public final static Port NAVX_PORT = SerialPort.Port.kUSB;
-  public final static int INTAKE_IR_DIO_PORT = 0; // TODO set this
-  public final static int CLAW_IR_DIO_PORT = 0; // TODO set this
+  public final static Port NAVX_PORT = SerialPort.Port.kUSB;  
+
+  public static final int FRONT_ULTRASONIC_TRIGGER_PIN = 4; // TODO set these
+  public static final int FRONT_ULTRASONIC_ECHO_PIN = 5;
+  public static final int BACK_LEFT_ULTRASONIC_TRIGGER_PIN = 6;
+  public static final int BACK_LEFT_ULTRASONIC_ECHO_PIN = 7;
+  public static final int BACK_RIGHT_ULTRASONIC_TRIGGER_PIN = 8;
+  public static final int BACK_RIGHT_ULTRASONIC_ECHO_PIN = 9;
+  public final static int INTAKE_IR_DIO_PORT = 10;
+
 
   // Joysticks
   public static final int DRIVER_CONTROLLER_PORT = 0;
   public static final int OPERATOR_CONTROLLER_PORT = 1;
 
   //Intake
-  public static final int INTAKE_BASE_TALON = 0;//8; // TODO Set these
-  public static final int INTAKE_ROLLER_VICTOR = 0;
+  public static final int INTAKE_BASE_TALON = 7;
+  public static final int INTAKE_ROLLER_TALON = 4;
 
 
 }
