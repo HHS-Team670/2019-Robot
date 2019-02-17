@@ -24,6 +24,8 @@ public class MustangSensors {
   public static final double NAVX_ERROR_CODE = -40001;
   public static final double ULTRASONIC_ERROR_CODE = 99999;
 
+  private static final double FRONT_ULTRA_OFFSET = -12.25, BACK_LEFT_ULTRA_OFFSET = -9.25, BACK_RIGHT_ULTRA_OFFSET = 9.25; // TODO set these
+
    //Ultrasonic
    private DIOUltrasonic frontUltrasonic, backLeftUltrasonic, backRightUltrasonic;
 
@@ -48,7 +50,7 @@ public class MustangSensors {
     }
 
     try {
-      frontUltrasonic = new DIOUltrasonic();
+      frontUltrasonic = new DIOUltrasonic(RobotMap.FRONT_ULTRASONIC_TRIGGER_PIN, RobotMap.FRONT_ULTRASONIC_ECHO_PIN, FRONT_ULTRA_OFFSET);
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error instantiating front ultrasonic: " + ex.getMessage(), true);
       SmartDashboard.putString("warning", "Error instantiating front ultrasonic");
@@ -56,7 +58,7 @@ public class MustangSensors {
     }
 
     try {
-      backLeftUltrasonic= new DIOUltrasonic();
+      backLeftUltrasonic= new DIOUltrasonic(RobotMap.BACK_LEFT_ULTRASONIC_TRIGGER_PIN, RobotMap.BACK_LEFT_ULTRASONIC_ECHO_PIN, BACK_LEFT_ULTRA_OFFSET);
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error instantiating back left ultrasonic: " + ex.getMessage(), true);
       SmartDashboard.putString("warning", "Error instantiating back left ultrasonic");
@@ -64,7 +66,7 @@ public class MustangSensors {
     }
 
     try {
-      backRightUltrasonic = new DIOUltrasonic();
+      backRightUltrasonic = new DIOUltrasonic(RobotMap.BACK_RIGHT_ULTRASONIC_TRIGGER_PIN, RobotMap.BACK_RIGHT_ULTRASONIC_ECHO_PIN, BACK_RIGHT_ULTRA_OFFSET);
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error instantiating back right ultrasonic: " + ex.getMessage(), true);
       SmartDashboard.putString("warning", "Error instantiating back right ultrasonic");
