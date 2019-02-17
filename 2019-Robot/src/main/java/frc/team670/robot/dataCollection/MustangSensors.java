@@ -226,6 +226,52 @@ public class MustangSensors {
     }
   }
 
+
+  /*
+   * Gets the angle needed to turn to the nearest target - based on navx fieldcentric angle and fieldcentric angle of the
+   * target to determine which target you're looking at realistically - uses this for offset calculations on camera/ultrasonic
+   */
+  public double getAngleToTarget(){
+    double target_angle = 0;
+    double fieldCentricAngle = getAngle() % 360;
+
+    //Rocket 1 - Right
+    if (fieldCentricAngle >= 15.9 && fieldCentricAngle <= 41.9) {
+      target_angle = 28.9;
+    }
+    //Rocket 3 - Right
+    else if (fieldCentricAngle >= 138.1 && fieldCentricAngle <= 164.1) {
+      target_angle = 151.1;
+    }
+    //Rocket 3 - Left
+    else if (fieldCentricAngle >= 195.9 && fieldCentricAngle <= 221.9) {
+      target_angle = 208.9;
+    }
+    //Rocket 1 - Left 
+    else if (fieldCentricAngle >= 318.1 && fieldCentricAngle <= 344.1) {
+      target_angle = 331.1;
+    }
+
+    // Cargo Ship side targets
+    else if (fieldCentricAngle >= 257 && fieldCentricAngle <= 283) {
+      target_angle = 270;
+    } else if (fieldCentricAngle >= 77 && fieldCentricAngle <= 103) {
+      target_angle = 90;
+    }
+
+    // Exchange 
+    else if (fieldCentricAngle >= 167 && fieldCentricAngle <= 193) {
+      target_angle = 180;
+    }
+
+    // Front cargo ship
+    else if(fieldCentricAngle >= 347 && fieldCentricAngle <= 13){
+      target_angle = 0;
+    }
+
+    return target_angle - fieldCentricAngle;
+  }
+
   /**
    * Returns a PIDSource with the NavX Yaw corresponding to the last zero (not field centric).
    * @return Zeroable NavX Yaw Source, null if the navX could not be instantiated!
