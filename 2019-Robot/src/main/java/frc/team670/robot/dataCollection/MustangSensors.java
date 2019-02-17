@@ -24,6 +24,8 @@ public class MustangSensors {
   public static final double NAVX_ERROR_CODE = -40001;
   public static final double ULTRASONIC_ERROR_CODE = 99999;
 
+  private static final double FRONT_ULTRA_OFFSET = -12.25, BACK_LEFT_ULTRA_OFFSET = -9.25, BACK_RIGHT_ULTRA_OFFSET = 9.25; // TODO set these
+
    //Ultrasonic
    private DIOUltrasonic frontUltrasonic, backLeftUltrasonic, backRightUltrasonic;
 
@@ -48,7 +50,7 @@ public class MustangSensors {
     }
 
     try {
-      frontUltrasonic = new DIOUltrasonic();
+      frontUltrasonic = new DIOUltrasonic(RobotMap.FRONT_ULTRASONIC_TRIGGER_PIN, RobotMap.FRONT_ULTRASONIC_ECHO_PIN, FRONT_ULTRA_OFFSET);
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error instantiating front ultrasonic: " + ex.getMessage(), true);
       SmartDashboard.putString("warning", "Error instantiating front ultrasonic");
@@ -56,7 +58,7 @@ public class MustangSensors {
     }
 
     try {
-      backLeftUltrasonic= new DIOUltrasonic();
+      backLeftUltrasonic= new DIOUltrasonic(RobotMap.BACK_LEFT_ULTRASONIC_TRIGGER_PIN, RobotMap.BACK_LEFT_ULTRASONIC_ECHO_PIN, BACK_LEFT_ULTRA_OFFSET);
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error instantiating back left ultrasonic: " + ex.getMessage(), true);
       SmartDashboard.putString("warning", "Error instantiating back left ultrasonic");
@@ -64,7 +66,7 @@ public class MustangSensors {
     }
 
     try {
-      backRightUltrasonic = new DIOUltrasonic();
+      backRightUltrasonic = new DIOUltrasonic(RobotMap.BACK_RIGHT_ULTRASONIC_TRIGGER_PIN, RobotMap.BACK_RIGHT_ULTRASONIC_ECHO_PIN, BACK_RIGHT_ULTRA_OFFSET);
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error instantiating back right ultrasonic: " + ex.getMessage(), true);
       SmartDashboard.putString("warning", "Error instantiating back right ultrasonic");
@@ -224,6 +226,52 @@ public class MustangSensors {
     } else {
       return NAVX_ERROR_CODE;
     }
+  }
+
+
+  /*
+   * Gets the angle needed to turn to the nearest target - based on navx fieldcentric angle and fieldcentric angle of the
+   * target to determine which target you're looking at realistically - uses this for offset calculations on camera/ultrasonic
+   */
+  public double getAngleToTarget(){
+    double target_angle = 0;
+    double fieldCentricAngle = getAngle() % 360;
+
+    //Rocket 1 - Right
+    if (fieldCentricAngle >= 15.9 && fieldCentricAngle <= 41.9) {
+      target_angle = 28.9;
+    }
+    //Rocket 3 - Right
+    else if (fieldCentricAngle >= 138.1 && fieldCentricAngle <= 164.1) {
+      target_angle = 151.1;
+    }
+    //Rocket 3 - Left
+    else if (fieldCentricAngle >= 195.9 && fieldCentricAngle <= 221.9) {
+      target_angle = 208.9;
+    }
+    //Rocket 1 - Left 
+    else if (fieldCentricAngle >= 318.1 && fieldCentricAngle <= 344.1) {
+      target_angle = 331.1;
+    }
+
+    // Cargo Ship side targets
+    else if (fieldCentricAngle >= 257 && fieldCentricAngle <= 283) {
+      target_angle = 270;
+    } else if (fieldCentricAngle >= 77 && fieldCentricAngle <= 103) {
+      target_angle = 90;
+    }
+
+    // Exchange 
+    else if (fieldCentricAngle >= 167 && fieldCentricAngle <= 193) {
+      target_angle = 180;
+    }
+
+    // Front cargo ship
+    else if(fieldCentricAngle >= 347 && fieldCentricAngle <= 13){
+      target_angle = 0;
+    }
+
+    return target_angle - fieldCentricAngle;
   }
 
   /**

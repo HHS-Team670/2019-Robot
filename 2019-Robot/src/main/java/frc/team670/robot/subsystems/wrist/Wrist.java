@@ -153,9 +153,9 @@ public class Wrist extends BaseWrist {
   }
 
   public void sendDataToDashboard() {
-    SmartDashboard.putNumber("Unadjusted Absolute Ticks", getUnadjustedPulseWidth());
-    SmartDashboard.putNumber("Absolute Ticks", getRotatorPulseWidth());
-    SmartDashboard.putNumber("Quadrature Ticks", getPositionTicks());
+    SmartDashboard.putNumber("Wrist Unadjusted Absolute Ticks", getUnadjustedPulseWidth());
+    SmartDashboard.putNumber("Wrist Absolute Ticks", getRotatorPulseWidth());
+    SmartDashboard.putNumber("Wrist Quadrature Ticks", getPositionTicks());
     SmartDashboard.putNumber("Wrist Setpoint", setpoint);
   }
 
@@ -181,6 +181,7 @@ public class Wrist extends BaseWrist {
 
   @Override
   public void setMotionMagicSetpointAngle(double angle) {
+    SmartDashboard.putString("current-command", "wrist motion magic setpoint set");
     setpoint = convertWristDegreesToTicks(angle);
     rotator.set(ControlMode.MotionMagic, setpoint);
   }

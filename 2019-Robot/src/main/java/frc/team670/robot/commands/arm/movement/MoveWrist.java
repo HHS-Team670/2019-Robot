@@ -21,7 +21,7 @@ public class MoveWrist extends Command {
 
   private BaseWrist wrist;
 
-  private static final double DEGREE_TOLERANCE = 1;
+  private static final double DEGREE_TOLERANCE = 5;
 
   private double wristSetpointAngle;
 
@@ -37,6 +37,7 @@ public class MoveWrist extends Command {
     this.wrist = wrist;
     wristSetpointAngle = angle;
     requires(wrist);
+    super.setInterruptible(true);
   }
 
   // Called just before this Command runs the first time

@@ -60,7 +60,7 @@ public class ArmPathGenerator {
       return movements;
     } catch (IllegalArgumentException e) {
       // Logger.logException(e);
-      Logger.consoleLog("Passed in bad argument");
+      Logger.consoleLog("Passed in bad argument: " + e.getMessage());
       movements.cancel();
       return movements;
     // searched.put(currentState, transitions); //Stores current path in instance variable
@@ -71,6 +71,7 @@ public class ArmPathGenerator {
 
     // movements.addSequential(new RumbleOperatorController(Robot.oi, 0.5, 0.25));
 
+    Logger.consoleLog("movements: " + movements);
     return movements;
   }
 

@@ -149,7 +149,7 @@ public class Robot extends TimedRobot {
  @Override
   public void robotPeriodic() {
     SmartDashboard.putNumber("gyro", (int) sensors.getAngle() % 360);
-    SmartDashboard.putString("current-command", Scheduler.getInstance().getName());
+    // SmartDashboard.putString("current-command", Scheduler.getInstance().getName());
     SmartDashboard.putString("current-arm-state", Arm.getCurrentState().toString());
     SmartDashboard.putNumber("intake-angle", intake.getAngleInDegrees());
     SmartDashboard.putNumber("elbow-angle", elbow.getAngleInDegrees());
@@ -157,6 +157,11 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("intake-ir-sensor", sensors.getIntakeIROutput());
     SmartDashboard.putNumber("extension-actual-length" , extension.getLengthInches());
     SmartDashboard.putNumber("arm-extension" , extension.getLengthInches() / Extension.EXTENSION_OUT_IN_INCHES);
+
+    elbow.sendDataToDashboard();
+    extension.sendDataToDashboard();
+    wrist.sendDataToDashboard();
+
   }
   /**
    * This function is called once each time the robot enters Disabled mode.

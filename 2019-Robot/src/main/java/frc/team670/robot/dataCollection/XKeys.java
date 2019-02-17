@@ -58,7 +58,7 @@ public class XKeys {
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-armstates", (table2, key2, entry, value, flags) -> {
             if (value.getType() != NetworkTableType.kString) return;
-            moveArm(getArmState(value.getString()));
+            moveArm(getArmState(value.getString()));    
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-placing", (table2, key2, entry, value, flags) -> {
             if (value.getType() != NetworkTableType.kString) return;

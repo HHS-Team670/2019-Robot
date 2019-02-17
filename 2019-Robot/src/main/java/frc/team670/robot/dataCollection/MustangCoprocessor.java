@@ -124,8 +124,7 @@ public class MustangCoprocessor {
         }
         double depth_offset = getOffsetDepth();
         double real_depth = depth_offset;
-        double target_angle = 0; //Set to angle of the target as set by field
-        double phi = target_angle + Robot.sensors.getYawDouble();
+        double phi = Robot.sensors.getAngleToTarget();
         double alpha = 90 - hangle_offset - phi;
         double y = (depth_offset * Math.tan(hangle_offset_radians) * Math.sin(Math.toRadians(phi)))/ (Math.sin(Math.toRadians(alpha)));
         double diagonalOffsetToTarget = (depth_offset / Math.cos(hangle_offset_radians)) + y;
@@ -162,27 +161,7 @@ public class MustangCoprocessor {
             return RobotConstants.VISION_ERROR_CODE;
         }
         double depth_offset = getOffsetDepth();
-        double target_angle = 0; //Set to angle of the target as set by field
-        double fieldCentricAngle = Robot.sensors.getAngle() % 360;
-        // rocket hatch targets
-        if (fieldCentricAngle >= 18.9 && fieldCentricAngle <= 38.9) {
-            target_angle = 28.9;
-        } else if (fieldCentricAngle >= 141.1 && fieldCentricAngle <= 161.1) {
-            target_angle = 131.1;
-        } else if (fieldCentricAngle >= 198.9 && fieldCentricAngle <= 218.9) {
-            target_angle = 208.9;
-        } else if (fieldCentricAngle >= 321.1 && fieldCentricAngle <= 341.1) {
-            target_angle = 331.1;
-        }
-        // rocket ball and cargo ship side targets
-        else if (fieldCentricAngle >= 260 && fieldCentricAngle <= 280) {
-            target_angle = 270;
-        } else if (fieldCentricAngle >= 80 && fieldCentricAngle <= 100) {
-            target_angle = 90;
-        } else if (fieldCentricAngle >= 170 && fieldCentricAngle <= 190) {
-            target_angle = 180;
-        }
-        double phi = target_angle - fieldCentricAngle;
+        double phi = Robot.sensors.getAngleToTarget();
         double alpha = 90 - hangle_offset - phi;
         double y = (depth_offset * Math.tan(hangle_offset_radians) * Math.sin(Math.toRadians(phi)))/ (Math.sin(Math.toRadians(alpha)));
         double diagonalOffsetToTarget = (depth_offset / Math.cos(hangle_offset_radians)) + y;

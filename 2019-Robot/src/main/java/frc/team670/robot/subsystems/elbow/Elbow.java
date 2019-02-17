@@ -57,6 +57,7 @@ public class Elbow extends BaseElbow {
     super(new TalonSRX(RobotMap.ARM_ELBOW_ROTATION_MOTOR_TALON), NO_EXTENSION_ARBITRARY_FEEDFORWARD, FORWARD_SOFT_LIMIT, REVERSE_SOFT_LIMIT, false, QUAD_ENCODER_MIN, QUAD_ENCODER_MAX, NORMAL_CONTINUOUS_CURRENT_LIMIT, PEAK_CURRENT_LIMIT, OFFSET_FROM_ENCODER_ZERO);
    
     elbowRotationSlave = new VictorSPX(RobotMap.ARM_ELBOW_ROTATION_MOTOR_VICTOR);
+    elbowRotationSlave.configFactoryDefault();
     elbowRotationSlave.follow(rotator);
     // elbowRotationSlave.set(ControlMode.Follower, RobotMap.ARM_ELBOW_ROTATION_MOTOR_TALON);  
 
@@ -155,9 +156,9 @@ public class Elbow extends BaseElbow {
   }
 
   public void sendDataToDashboard() {
-    SmartDashboard.putNumber("Unadjusted Absolute Ticks", getUnadjustedPulseWidth());
-    SmartDashboard.putNumber("Absolute Ticks", getRotatorPulseWidth());
-    SmartDashboard.putNumber("Quadrature Ticks", getPositionTicks());
+    SmartDashboard.putNumber("Elbow Unadjusted Absolute Ticks", getUnadjustedPulseWidth());
+    SmartDashboard.putNumber("Elbow Absolute Ticks", getRotatorPulseWidth());
+    SmartDashboard.putNumber("Elbow Quadrature Ticks", getPositionTicks());
     SmartDashboard.putNumber("Elbow Angle", getAngleInDegrees());
     SmartDashboard.putNumber("Elbow Setpoint", setpoint);
   }
