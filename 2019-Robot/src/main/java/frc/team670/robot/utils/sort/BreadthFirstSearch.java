@@ -67,6 +67,7 @@ public class BreadthFirstSearch {
                     if(!explored.contains(edge)) {
                         parentNodes.put(edge, current);
                         queue.add(edge);
+                        explored.add(edge);
                     }
                 }
             }
