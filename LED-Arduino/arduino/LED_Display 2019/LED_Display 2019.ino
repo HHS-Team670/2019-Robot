@@ -495,7 +495,7 @@ void loop()
   {
     setClimbingGreenLights();
   }
-  else if (stateData.equals(stillDrive))
+  else
   {
     setRunningAllianceColors();
   }
