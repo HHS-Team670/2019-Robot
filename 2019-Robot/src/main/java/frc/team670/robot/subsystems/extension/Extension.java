@@ -42,6 +42,7 @@ public class Extension extends BaseExtension {
   public static final int EXTENSION_IN_POS = 0; // TODO Set These
   public static final int EXTENSION_OUT_POS = 8475; // TODO Set this in ticks
   public static final double EXTENSION_OUT_IN_INCHES = 12.75;
+  public static final double FIXED_LENGTH = 19.75;
   public static final int FORWARD_SOFT_LIMIT = EXTENSION_OUT_POS - 100, REVERSE_SOFT_LIMIT = EXTENSION_IN_POS + 100; // TODO figure out the values in rotations
  
   private static final double MM_F = 0, MM_P = 0.54, MM_I = 0, MM_D = 0.5; //TODO figure out what these are. Motion Magic Constants
