@@ -25,7 +25,7 @@ import frc.team670.robot.utils.MustangController.XboxButtons;
 public class OI {
 
   // Controllers/Joysticks
-  private Joystick rightStick, arcadeButtons;
+  // private Joystick rightStick, arcadeButtons;
   private MustangController driverController, operatorController;
 
   private XKeys xkeys;
@@ -33,10 +33,10 @@ public class OI {
   // Buttons
   private JoystickButton toggleReverseDrive;
   private JoystickButton flipCameras;
-  private JoystickButton flipArmDriverControlState;
+  // private JoystickButton flipArmDriverControlState;
 
-  private JoystickButton incFeedForward, decFeedForward, measureFeedForward, runForward, runBackward;
-  private JoystickButton runIntakeIn, runIntakeOut;
+  // private JoystickButton incFeedForward, decFeedForward, measureFeedForward, runForward, runBackward;
+  // private JoystickButton runIntakeIn, runIntakeOut;
 
 
   public OI() {

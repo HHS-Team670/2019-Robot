@@ -119,6 +119,7 @@ public class XKeys {
     private void moveArm(ArmState state) {
         SmartDashboard.putString("current-command", "moveArm()");
         SmartDashboard.putString("ARMSTATE", state.toString());
+        System.out.println(".................MoveArm called");
         Scheduler.getInstance().add(new MoveArm(state, Robot.arm));
     }
 
