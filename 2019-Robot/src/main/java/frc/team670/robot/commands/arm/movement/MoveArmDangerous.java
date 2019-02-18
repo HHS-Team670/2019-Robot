@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.command.WaitForChildren;
 import frc.team670.robot.commands.intake.MoveIntakeToSetpointAngle;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
+import frc.team670.robot.subsystems.BaseIntake;
 import frc.team670.robot.subsystems.Intake;
 import frc.team670.robot.subsystems.elbow.BaseElbow;
 import frc.team670.robot.subsystems.extension.BaseExtension;
@@ -35,8 +36,9 @@ public class MoveArmDangerous extends CommandGroup {
 
   private ArmState dest;
 
-  public MoveArmDangerous(ArmState state, Arm arm, Intake intake) {
+  public MoveArmDangerous(ArmState state, Arm arm, BaseIntake intake) {
     super();
+    targetState = state;
     elbow = arm.getElbow();
     wrist = arm.getWrist();
     extension = arm.getExtension();
@@ -55,7 +57,7 @@ public class MoveArmDangerous extends CommandGroup {
     }
     addSequential(new MoveElbow(elbow, targetState.getElbowAngle()));
     addSequential(new WaitForChildren());
-    Logger.consoleLog();
+    // Logger.consoleLog();
   }
 
   @Override

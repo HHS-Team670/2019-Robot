@@ -4,7 +4,7 @@ package frc.team670.robot.utils.sort;
 * Models a node on a graph. Needed for A* sort 
 * https://www.geeksforgeeks.org/a-search-algorithm/ 
 */
-public interface Node {  
+public interface Node extends Comparable<Node> {  
     
     /**
      * @return a list of the edges that hit this node

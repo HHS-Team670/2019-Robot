@@ -2,6 +2,7 @@ package frc.team670.robot.dataCollection.sensors;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DigitalOutput;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import frc.team670.robot.Robot;
 /**
@@ -15,12 +16,9 @@ public class DIOUltrasonic {
     private DigitalOutput triggerPin;
     private DigitalInput echoPin;
     private Ultrasonic ultrasonic;
+    public static final double ULTRASONIC_ERROR_CODE = 99999;
 
     private double horizontalOffset; // horizontal offset from the center of the robot on the side it is on. Left is negative, right is positive.
-
-    public DIOUltrasonic(){
-        this(8,9, 0); // Temporary values for Ultrasonic - move to RobotMap unless we want it like this for multiple sensors
-    }
 
     /**
      * @param horizontalOffset horizontal offset from the center of the robot on the side it is on. Left is negative, right is positive.
@@ -31,7 +29,12 @@ public class DIOUltrasonic {
 
         this.horizontalOffset = horizontalOffset;
 
-        ultrasonic =  new Ultrasonic(triggerPin, echoPin);
+        try {
+             ultrasonic =  new Ultrasonic(triggerPin, echoPin);
+        } catch (RuntimeException ex){
+            ultrasonic = null;
+            DriverStation.reportError("Ultrasonic error", true);
+        }
 
         ultrasonic.setAutomaticMode(true);
     }
@@ -44,8 +47,7 @@ public class DIOUltrasonic {
     public double getDistance(double angle){
         double distance = getUnadjustedDistance();
         // Untested Math below
-        double target_angle = 0; //Angle target is rotated at
-        double phi = target_angle + Robot.sensors.getFieldCentricYaw();
+        double phi = Robot.sensors.getAngleToTarget();
         distance = horizontalOffset * Math.tan(Math.toRadians(phi)) + distance;
         return distance;
     }
@@ -54,7 +56,11 @@ public class DIOUltrasonic {
      * Gets the ultrasonic distance unadjusted for offset and angle to target
      */
     public double getUnadjustedDistance() {
+        if (ultrasonic != null){
         return ultrasonic.getRangeInches();
+        }   else {
+            return ULTRASONIC_ERROR_CODE;
+        }
     }
 
 

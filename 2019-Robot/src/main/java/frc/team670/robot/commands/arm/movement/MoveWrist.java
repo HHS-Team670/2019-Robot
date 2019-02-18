@@ -21,7 +21,7 @@ public class MoveWrist extends Command {
 
   private BaseWrist wrist;
 
-  private static final double DEGREE_TOLERANCE = 1;
+  private static final double DEGREE_TOLERANCE = 5;
 
   private double wristSetpointAngle;
 
@@ -37,6 +37,7 @@ public class MoveWrist extends Command {
     this.wrist = wrist;
     wristSetpointAngle = angle;
     requires(wrist);
+    super.setInterruptible(true);
   }
 
   // Called just before this Command runs the first time
@@ -44,13 +45,12 @@ public class MoveWrist extends Command {
   protected void initialize() {
     wrist.setMotionMagicSetpointAngle(wristSetpointAngle);
     executeCount = 0;
-    Logger.consoleLog("angleSetpoint: %s", wristSetpointAngle);
+    // Logger.consoleLog("angleSetpoint: %s", wristSetpointAngle);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-
     executeCount++;
   }
 
@@ -63,7 +63,7 @@ public class MoveWrist extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    Logger.consoleLog("targetAngleValue: %s, endingAngleValue: %s", wristSetpointAngle, wrist.getAngleInDegrees());
+    // Logger.consoleLog("targetAngleValue: %s, endingAngleValue: %s", wristSetpointAngle, wrist.getAngleInDegrees());
   }
 
   // Called when another command which requires one or more of the same

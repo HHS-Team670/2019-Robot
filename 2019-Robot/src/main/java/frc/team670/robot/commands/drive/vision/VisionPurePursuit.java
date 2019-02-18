@@ -70,7 +70,7 @@ public class VisionPurePursuit extends InstantCommand {
     driveBase.initAutonDrive();
     coprocessor.setTargetHeight(lowTarget);
 
-    coprocessor.setCamera(!isReversed);
+    coprocessor.setCamera(isReversed);
     try {
       Thread.sleep(100);
     } catch (InterruptedException e) {
@@ -124,16 +124,14 @@ public class VisionPurePursuit extends InstantCommand {
     System.out.println("Angle: " + coprocessor.getAngleToWallTarget());
     // horizontal distance - when going forward a positive horizontal distance is
     // right and negative is left
-    double horizontalDistance = -38;// straightDistance *
-                                    // Math.tan(Math.toRadians(coprocessor.getRealAngleToWallTarget())); // x = y *
-                                    // tan(theta)
-    double oneEighthTargetY = (straightDistance) * 1.0 / 8.0;
+    double horizontalDistance = straightDistance * Math.tan(Math.toRadians(coprocessor.getAngleToWallTarget())); // x = y * tan(theta)
+    double partialDistanceY = (straightDistance) * 2.0 / 5.0;
 
     System.out.println("straightDist: " + straightDistance + ", horizontalDistance: " + horizontalDistance);
     if (isReversed) { // Flip all of these to match our coord system when looking out the back
       straightDistance *= -1;
       horizontalDistance *= -1;
-      oneEighthTargetY *= -1;
+      partialDistanceY *= -1;
     }
 
     sensors.zeroYaw();
@@ -143,16 +141,16 @@ public class VisionPurePursuit extends InstantCommand {
     // Make this start with the Pose Estimator and get its position at this poitn for starting coords.
     Vector startPose = poseEstimator.getPose();
     double startX = startPose.x, startY = startPose.y;
-    Vector oneQuarter = new Vector(startX + horizontalDistance, startY + oneEighthTargetY);
+    Vector partialDistance = new Vector(startX + horizontalDistance, startY + partialDistanceY);
     Vector endPoint = new Vector(startX + horizontalDistance, startY + (straightDistance));
 
     PathGenerator generator = new PathGenerator(SPACING);
     generator.setVelocities(MAX_VEL, MAX_ACC, MAX_VELK);
     generator.setSmoothingParameters(A, B, TOLERANCE);
-    generator.addPoints(startPose, oneQuarter, endPoint); // Right Angle Segment. All of these are negative since we are driving 2018 Robot backwards.
+    generator.addPoints(startPose, partialDistance, endPoint); // Right Angle Segment. All of these are negative since we are driving 2018 Robot backwards.
     
     System.out.println(startPose);
-    System.out.println(oneQuarter);
+    System.out.println(partialDistance);
     System.out.println(endPoint);
     
     Path path = generator.generatePath(isReversed);

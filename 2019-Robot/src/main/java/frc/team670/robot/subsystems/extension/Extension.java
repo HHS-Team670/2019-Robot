@@ -13,6 +13,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
@@ -39,20 +40,25 @@ public class Extension extends BaseExtension {
   // Motion Magic
   private static final int kPIDLoopIdx = 0, MOTION_MAGIC_SLOT = 0, kTimeoutMs = 0;
   public static final int EXTENSION_IN_POS = 0; // TODO Set These
-  public static final int EXTENSION_OUT_POS = 12000; // TODO Set this in ticks
+  public static final int EXTENSION_OUT_POS = 8475; // TODO Set this in ticks
   public static final double EXTENSION_OUT_IN_INCHES = 12.75;
-  public static final int FORWARD_SOFT_LIMIT = EXTENSION_IN_POS - 100, REVERSE_SOFT_LIMIT = EXTENSION_OUT_POS + 100; // TODO figure out the values in rotations
+  public static final double FIXED_LENGTH = 19.75;
+  public static final int FORWARD_SOFT_LIMIT = EXTENSION_OUT_POS - 100, REVERSE_SOFT_LIMIT = EXTENSION_IN_POS + 100;
  
-  private static final double MM_F = 0, MM_P = 0, MM_I = 0, MM_D = 0; //TODO figure out what these are. Motion Magic Constants
-  private static final int MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 90; // TODO set this
-  private static final int EXTMOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS = 400; // TODO set this
-  public static final int QUAD_ENCODER_MAX = FORWARD_SOFT_LIMIT + 200, QUAD_ENCODER_MIN = REVERSE_SOFT_LIMIT - 200; //TODO Set these values based on forward and back soft limits (especially the addition/subtraction)
+  private static final double MM_F = 0, MM_P = 0.54, MM_I = 0, MM_D = 0.5; 
+  private static final int MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 800; 
+  private static final int EXTMOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS = 6000; 
+  public static final int QUAD_ENCODER_MAX = FORWARD_SOFT_LIMIT + 200, QUAD_ENCODER_MIN = REVERSE_SOFT_LIMIT - 200; 
 
-  private static final double ARBITRARY_FEEDFORWARD_CONSTANT = 0.3;
+  private static final double ARBITRARY_FEEDFORWARD_CONSTANT = 0.055;
   public static final double MAX_EXTENSION_OUTPUT = 0.4;
 
+
+  private static final int CLOSED_LOOP_ALLOWABLE_ERROR = 10;
   private double setpoint;
   private static final double NO_SETPOINT = 99999;
+
+  private static final int OFFSET_FROM_ENCODER_ZERO = 0;
 
 
   public Extension() {
@@ -61,6 +67,8 @@ public class Extension extends BaseExtension {
     extensionMotor.configFactoryDefault();
     extensionMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
     
+
+    extensionMotor.setInverted(true);
     extensionMotor.selectProfileSlot(MOTION_MAGIC_SLOT, kPIDLoopIdx);
 		extensionMotor.config_kF(MOTION_MAGIC_SLOT, MM_F, kTimeoutMs);
 		extensionMotor.config_kP(MOTION_MAGIC_SLOT, MM_P, kTimeoutMs);
@@ -69,6 +77,8 @@ public class Extension extends BaseExtension {
     extensionMotor.configMotionCruiseVelocity(MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
 		extensionMotor.configMotionAcceleration(EXTMOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
  
+
+    extensionMotor.configAllowableClosedloopError(MOTION_MAGIC_SLOT, CLOSED_LOOP_ALLOWABLE_ERROR);
     // These thresholds stop the motor when limit is reached
     extensionMotor.configForwardSoftLimitThreshold(FORWARD_SOFT_LIMIT);
     extensionMotor.configReverseSoftLimitThreshold(REVERSE_SOFT_LIMIT);
@@ -93,6 +103,9 @@ public class Extension extends BaseExtension {
     else if(extensionMotor.getSensorCollection().isFwdLimitSwitchClosed()) {
       extensionMotor.setSelectedSensorPosition(EXTENSION_OUT_POS);
     }
+
+    extensionMotor.setSelectedSensorPosition(0); // TODO: Remove after limit switches are wired
+
 
     //Tuning stuff
     setpoint = NO_SETPOINT;
@@ -256,5 +269,23 @@ public class Extension extends BaseExtension {
     setpoint = NO_SETPOINT;
     extensionMotor.set(ControlMode.PercentOutput, output);
   }
+
+  public void sendDataToDashboard() {
+    SmartDashboard.putNumber("Extension Unadjusted Absolute Ticks", getUnadjustedPulseWidth());
+    SmartDashboard.putNumber("Extension Absolute Ticks", getRotatorPulseWidth());
+    SmartDashboard.putNumber("Extension Quadrature Ticks", getPositionTicks());
+    SmartDashboard.putNumber("Extension Setpoint", setpoint);
+  }
+
+  
+  private int getRotatorPulseWidth(){
+    return getUnadjustedPulseWidth() - OFFSET_FROM_ENCODER_ZERO;
+  }
+
+  private int getUnadjustedPulseWidth() {
+    return extensionMotor.getSensorCollection().getPulseWidthPosition();
+  }
+
+
 
 }

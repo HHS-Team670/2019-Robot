@@ -58,7 +58,7 @@ public class XKeys {
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-armstates", (table2, key2, entry, value, flags) -> {
             if (value.getType() != NetworkTableType.kString) return;
-            moveArm(getArmState(value.getString()));
+            moveArm(getArmState(value.getString()));    
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-placing", (table2, key2, entry, value, flags) -> {
             if (value.getType() != NetworkTableType.kString) return;
@@ -76,7 +76,7 @@ public class XKeys {
         table.addEntryListener("xkeys-autopickup", (table2, key2, entry, value, flags) -> {
             autoPickupBall();
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
-        table.addEntryListener("xkeys-visionDrive", (table2, key2, entry, value, flags) -> {
+        table.addEntryListener("xkeys-visiondrive", (table2, key2, entry, value, flags) -> {
             visionDrive();
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-cancel", (table2, key2, entry, value, flags) -> {
@@ -119,6 +119,7 @@ public class XKeys {
     private void moveArm(ArmState state) {
         SmartDashboard.putString("current-command", "moveArm()");
         SmartDashboard.putString("ARMSTATE", state.toString());
+        System.out.println(".................MoveArm called");
         Scheduler.getInstance().add(new MoveArm(state, Robot.arm));
     }
 

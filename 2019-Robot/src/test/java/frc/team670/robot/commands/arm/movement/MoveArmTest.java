@@ -13,6 +13,7 @@ import java.awt.geom.Point2D;
 
 import org.junit.Test;
 
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team670.robot.subsystems.Arm;
@@ -36,51 +37,46 @@ public class MoveArmTest {
         TestIntake intake = new TestIntake();
         Claw claw = new Claw();
         Arm arm = new Arm(elbow, wrist, extension, intake, claw);
-        Arm.setState(Arm.getArmState(LegalState.NEUTRAL));
-        ArmState dest = Arm.getArmState(LegalState.LOW_HATCH_FORWARD);
-
-        CommandGroup moveArm = ArmPathGenerator.getPath(dest, arm);
-
-        Scheduler.getInstance().add(moveArm);  
-        moveArm.setRunWhenDisabled(true); // Must be true or it won't run       
-        moveArm.start();   
-        while(!moveArm.isCompleted()) {
-            Scheduler.getInstance().run();
-        }
         
+        for(ArmState state : Arm.getStates().values()) {
+            for(ArmState dest : Arm.getStates().values()) {
 
-        Point2D.Double armCoord = Arm.getCoordPosition(elbow.getAngleInDegrees(), wrist.getAngleInDegrees(), extension.getLengthInches());
-        assertEquals(dest.getCoordPosition().x, armCoord.x, 0.3);
-        assertEquals(dest.getCoordPosition().y, armCoord.y, 0.3);
-        double isIntakeDeployed;
-        if(dest.isIntakeDeployed()) {
-            isIntakeDeployed = Intake.INTAKE_ANGLE_DEPLOYED;
-        } else {
-            isIntakeDeployed = Intake.INTAKE_ANGLE_IN;
-        }
+                Command moveArmToStart = new MoveArmDangerous(state, arm, intake);
+                Scheduler.getInstance().add(moveArmToStart);  
+                moveArmToStart.setRunWhenDisabled(true); // Must be true or it won't run       
+                moveArmToStart.start();   
+                while(!moveArmToStart.isCompleted()) {
+                    Scheduler.getInstance().run();
+                }
 
+                CommandGroup moveArm = ArmPathGenerator.getPath(dest, arm);
+
+                Scheduler.getInstance().add(moveArm);  
+                moveArm.setRunWhenDisabled(true); // Must be true or it won't run       
+                moveArm.start();   
+                while(!moveArm.isCompleted()) {
+                    Scheduler.getInstance().run();
+                }
         
-        assertEquals(true, MathUtils.isWithinTolerance(isIntakeDeployed, intake.getAngleInDegrees(), 0.3));
-
-        Arm.setState(Arm.getArmState(LegalState.LOW_HATCH_FORWARD));
-        dest = Arm.getArmState(LegalState.NEUTRAL);
-        moveArm = ArmPathGenerator.getPath(dest, arm);
-        
-        Scheduler.getInstance().add(moveArm);  
-        moveArm.setRunWhenDisabled(true); // Must be true or it won't run       
-        moveArm.start();   
-        while(!moveArm.isCompleted()) {
-            Scheduler.getInstance().run();
+                Point2D.Double armCoord = Arm.getCoordPosition(elbow.getAngleInDegrees(), wrist.getAngleInDegrees(), extension.getLengthInches());
+                assertEquals(dest, Arm.getCurrentState());
+                try {
+                    // System.out.println("start: " + state.getClass().getName() + ", dest: " + dest.getClass().getName());
+                    assertEquals(dest.getCoordPosition().x, armCoord.x, 0.5);
+                    assertEquals(dest.getCoordPosition().y, armCoord.y, 0.5); 
+                }
+                catch(OutOfMemoryError e) {
+                    throw new AssertionError("Start: " + state.getClass().getName() + ", Dest: " + dest.getClass().getName());
+                }
+                double expectedIntakeAngle;
+                if(dest.isIntakeDeployed()) {
+                    expectedIntakeAngle = Intake.INTAKE_ANGLE_DEPLOYED;
+                } else {
+                    expectedIntakeAngle = Intake.INTAKE_ANGLE_IN;
+                }
+                assertEquals(true, MathUtils.isWithinTolerance(expectedIntakeAngle, intake.getAngleInDegrees(), 0.5));
+            }
         }
-        armCoord = Arm.getCoordPosition(elbow.getAngleInDegrees(), wrist.getAngleInDegrees(), extension.getLengthInches());
-        assertEquals(dest.getCoordPosition().x, armCoord.x, 0.3);
-        assertEquals(dest.getCoordPosition().y, armCoord.y, 0.3);
-        if(dest.isIntakeDeployed()) {
-            isIntakeDeployed = Intake.INTAKE_ANGLE_DEPLOYED;
-        } else {
-            isIntakeDeployed = Intake.INTAKE_ANGLE_IN;
-        }
-        assertEquals(true, MathUtils.isWithinTolerance(isIntakeDeployed, intake.getAngleInDegrees(), 0.3));
     }
 
 }

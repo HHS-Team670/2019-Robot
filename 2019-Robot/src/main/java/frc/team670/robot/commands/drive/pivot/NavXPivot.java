@@ -22,7 +22,6 @@ public class NavXPivot extends Command {
 	private double finalAngle, startAngle, angle, leftSpeed, rightSpeed;
 	protected double endingSpeed = 0.2;
 	private PIDController pivotController;
-	// TODO find PID constants
 	private static final double P = 0.0055, I = 0.00001, D = 0;
 
 	private int onTargetCount;

@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.ControlOperatorController;
 import frc.team670.robot.commands.drive.DriveMotionProfile;
 import frc.team670.robot.commands.drive.teleop.XboxRocketLeagueDrive;
+import frc.team670.robot.commands.tuning.ResetPulseWidthEncoder;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangCoprocessor;
 import frc.team670.robot.dataCollection.MustangSensors;
@@ -103,10 +104,9 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("D", 0);
     SmartDashboard.putNumber("KA", 0);
 
-    autonomousCommand = oi.getSelectedAutonCommand();
+    // autonomousCommand = oi.getSelectedAutonCommand();
     timer = new Timer();
 
-    autonomousCommand = new DriveMotionProfile("10ft-straight.pf1.csv", false);
     operatorControl = new ControlOperatorController(oi.getOperatorController());
     updateArbitraryFeedForwards = new Notifier(new Runnable() {
       public void run() {
@@ -145,10 +145,7 @@ public class Robot extends TimedRobot {
    *
    * <p>This runs after the mode specific periodic functions, but before
    * LiveWindow and SmartDashboard integrated updating.
-   */
-  int counter = 0;
-  
-
+   */  
  @Override
   public void robotPeriodic() {
     SmartDashboard.putNumber("gyro", (int) sensors.getAngle() % 360);
@@ -160,16 +157,11 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("intake-ir-sensor", sensors.getIntakeIROutput());
     SmartDashboard.putNumber("extension-actual-length" , extension.getLengthInches());
     SmartDashboard.putNumber("arm-extension" , extension.getLengthInches() / Extension.EXTENSION_OUT_IN_INCHES);
-    leds.setClimbingData(true);//we climb
-    intake.sendDataToDashboard(); 
-    SmartDashboard.putNumber("NavX Yaw", sensors.getYawDouble());
 
-    intake.sendDataToDashboard();
-    if (counter % 10 == 0) {
-      leds.setForwardData(true);
-    } else
-      leds.changeAlliance(false);
-    counter++;
+    elbow.sendDataToDashboard();
+    extension.sendDataToDashboard();
+    wrist.sendDataToDashboard();
+
   }
   /**
    * This function is called once each time the robot enters Disabled mode.
@@ -180,7 +172,7 @@ public class Robot extends TimedRobot {
   public void disabledInit() {
     SmartDashboard.putString("robot-state", "disabledInit()");
     Logger.consoleLog("Robot Disabled");
-    autonomousCommand = oi.getSelectedAutonCommand();
+    // autonomousCommand = oi.getSelectedAutonCommand();
     intake.stop();
     timer.stop();
     intake.stop();
@@ -222,7 +214,8 @@ public class Robot extends TimedRobot {
     Logger.consoleLog("Auton Started");
     timer.start();
 
-    autonomousCommand = oi.getSelectedAutonCommand();
+    // TODO: robot crashing when trying to load path
+    // autonomousCommand = oi.getSelectedAutonCommand();
     // autonomousCommand = new RunIntake(intake, sensors, true);
     // schedule the autonomous command (example)
     if (autonomousCommand != null) {
@@ -239,9 +232,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-    SmartDashboard.putString("robot-state", "autonomousPeriodic()");
-    SmartDashboard.putNumber("game-time", (int) timer.get());
-    Scheduler.getInstance().run();
+    // SmartDashboard.putString("robot-state", "autonomousPeriodic()");
+    // SmartDashboard.putNumber("game-time", (int) timer.get());
+    // Scheduler.getInstance().run();
   }
 
   @Override
@@ -258,8 +251,6 @@ public class Robot extends TimedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
-    // leds.socketSetup(RobotConstants.LED_PORT);
-    
   }
 
   /**
@@ -270,8 +261,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("robot-state", "teleopPeriodic()");
     SmartDashboard.putNumber("game-time", (int) timer.get());
     if (Robot.oi.getDriverController().getYButton()) {
-      // Scheduler.getInstance().add(new ResetPulseWidthEncoder(intake));
-      // intake.zeroPulseWidthEncoder();
+      Scheduler.getInstance().add(new ResetPulseWidthEncoder(wrist));
     }
     Scheduler.getInstance().run();
   }

@@ -22,6 +22,7 @@ public class MoveIntakeToSetpointAngle extends Command {
   private BaseIntake intake;
   private int loggingIterationCounter, setpointInDegrees;
   private static final int TOLERANCE_IN_DEGREES = 5;
+  private static final double TIMEOUT = 3;
 
   /**
    * @param setpoint angle in degrees that the intake is moving to
@@ -29,6 +30,7 @@ public class MoveIntakeToSetpointAngle extends Command {
    */
   public MoveIntakeToSetpointAngle(int setpointInDegrees, BaseIntake intake) {
     requires(intake);
+    setTimeout(TIMEOUT);
     this.intake = intake;
     this.setpointInDegrees = setpointInDegrees;
   }
@@ -38,13 +40,13 @@ public class MoveIntakeToSetpointAngle extends Command {
   protected void initialize() {
     intake.setRotatorNeutralMode(NeutralMode.Brake);
     intake.setMotionMagicSetpointAngle(setpointInDegrees);
-    Logger.consoleLog("startIntakeAngle:%s", intake.getAngleInDegrees());
+    // Logger.consoleLog("startIntakeAngle:%s", intake.getAngleInDegrees());
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Logger.consoleLog("currentIntakeAngle:%s", intake.getAngleInDegrees());
+    // Logger.consoleLog("currentIntakeAngle:%s", intake.getAngleInDegrees());
 
     loggingIterationCounter++;
   }
@@ -52,6 +54,9 @@ public class MoveIntakeToSetpointAngle extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
+    if(isTimedOut()) {
+      return true;
+    }
     if(setpointInDegrees > 0) {
       return (intake.getAngleInDegrees() > setpointInDegrees - TOLERANCE_IN_DEGREES);
     } else {
@@ -65,7 +70,7 @@ public class MoveIntakeToSetpointAngle extends Command {
     intake.stop();
     intake.setRotatorNeutralMode(NeutralMode.Coast);
     // Logger.consoleLog("endIntakeAngle:%s", intake.getAngleInDegrees());
-    System.out.println("FINISHED MOVE INTAKE");
+    // System.out.println("FINISHED MOVE INTAKE");
   }
 
   // Called when another command which requires one or more of the same

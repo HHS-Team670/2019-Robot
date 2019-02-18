@@ -10,9 +10,9 @@ import edu.wpi.first.networktables.NetworkTableType;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team670.robot.utils.functions.MathUtils;
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
+import frc.team670.robot.utils.functions.MathUtils;
 
 /**
  * Stores values off of NetworkTables for easy retrieval and gives them Listeners to update the stored values
@@ -124,8 +124,7 @@ public class MustangCoprocessor {
         }
         double depth_offset = getOffsetDepth();
         double real_depth = depth_offset;
-        double target_angle = 0; //Set to angle of the target as set by field
-        double phi = target_angle + Robot.sensors.getYawDouble();
+        double phi = Robot.sensors.getAngleToTarget();
         double alpha = 90 - hangle_offset - phi;
         double y = (depth_offset * Math.tan(hangle_offset_radians) * Math.sin(Math.toRadians(phi)))/ (Math.sin(Math.toRadians(alpha)));
         double diagonalOffsetToTarget = (depth_offset / Math.cos(hangle_offset_radians)) + y;
@@ -162,8 +161,7 @@ public class MustangCoprocessor {
             return RobotConstants.VISION_ERROR_CODE;
         }
         double depth_offset = getOffsetDepth();
-        double target_angle = 0; //Set to angle of the target as set by field
-        double phi = target_angle + Robot.sensors.getYawDouble();
+        double phi = Robot.sensors.getAngleToTarget();
         double alpha = 90 - hangle_offset - phi;
         double y = (depth_offset * Math.tan(hangle_offset_radians) * Math.sin(Math.toRadians(phi)))/ (Math.sin(Math.toRadians(alpha)));
         double diagonalOffsetToTarget = (depth_offset / Math.cos(hangle_offset_radians)) + y;
