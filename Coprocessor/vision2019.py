@@ -2,10 +2,14 @@
 Arjun Sampath || Kyle Fu || Rishab Borah || Navaneet Kadaba || Eshan Jain || Harinandan K
 Usage notes:
 Set DEBUG_MODE to True in order to make screens appear showing what robot sees
-Depth detection is reliant on constants--the known object height, the known camera's height, the camera's FOV, and focal length
+Angle calculations are reliant on constants--the camera's FOV and focal length
+Depth code has been moved to the roboRIO
+Uses 2 cameras and automatically sets ports to video source 50 and 51 and resets the symlinks everytime the program runs
+Sets timestamp to VISION_ERROR_CODE and vision-status to error on SmartDashboard if the camera being used is not connected
+Automatically reconnects in code if unplug and replug camera
 You can click on a point on the output image to print out the hsv value of
 that point in debug mode. Useful for finding specific hsv color ranges.
-Pushes a tuple (angle, distance, timestamp) to network tables--for Shaylan's robot auton drive code
+Pushes an array (hangle, vangle, timestamp) to network tables--for PurePursuit and other Vision code to use
 copper goes to negative
 '''
 
@@ -51,14 +55,14 @@ def main():
     Main method, runs when program is run.
     '''
     #Resets the symlinks to vid source 50 and 51, connecting them to usb ports
-    os.system("sudo rm -f /dev/video50")
-    os.system("sudo rm -f /dev/video51")
-    os.system("sudo ln -s /dev/v4l/by-path/platform-xhci-hcd.3.auto-usb-0:1.1:1.0-video-index0 /dev/video50")
-    os.system("sudo ln -s /dev/v4l/by-path/platform-12110000.usb-usb-0:1:1.0-video-index0 /dev/video51")
+    os.system("sudo rm -f /dev/video" + `front_capture_source`)
+    os.system("sudo rm -f /dev/video" + `back_capture_source`)
+    os.system("sudo ln -s /dev/v4l/by-path/platform-xhci-hcd.3.auto-usb-0:1.1:1.0-video-index0 /dev/video"+ `front_capture_source`)
+    os.system("sudo ln -s /dev/v4l/by-path/platform-12110000.usb-usb-0:1:1.0-video-index0 /dev/video"+ `back_capture_source`)
     
     #Sets exposure and other camera properties for both cameras
-    os.system("v4l2-ctl -d /dev/video50 -c exposure_auto=1 -c exposure_absolute=.01 -c brightness=0 -c white_balance_temperature_auto=0 -c backlight_compensation=0 -c contrast=10 -c saturation=200")
-    os.system("v4l2-ctl -d /dev/video51 -c exposure_auto=1 -c exposure_absolute=.01 -c brightness=0 -c white_balance_temperature_auto=0 -c backlight_compensation=0 -c contrast=10 -c saturation=200")
+    os.system("v4l2-ctl -d /dev/video" + `front_capture_source` + " -c exposure_auto=1 -c exposure_absolute=.01 -c brightness=0 -c white_balance_temperature_auto=0 -c backlight_compensation=0 -c contrast=10 -c saturation=200")
+    os.system("v4l2-ctl -d /dev/video" + `back_capture_source` + " -c exposure_auto=1 -c exposure_absolute=.01 -c brightness=0 -c white_balance_temperature_auto=0 -c backlight_compensation=0 -c contrast=10 -c saturation=200")
 
     #Uncomment when saving images
     #os.system("rm -rf output")
@@ -80,8 +84,6 @@ def main():
         # gets which camera to use (front or back)
         camera = table.getEntry(camera_key).getString("back")
         
-        print(camera)    
-
         vs = None
 
         if camera == "front":
@@ -100,7 +102,7 @@ def main():
             # Read input image from video
             input_raw = vs.raw_read()
             if input_raw is None:
-                print("Error: Capture source not found or broken.")
+                #print("Error: Capture source not found or broken.")
                 returns = [ERROR, ERROR, ERROR]
                 push_network_table(table, returns)
                 table.putString("vision-status", "error")
@@ -183,7 +185,7 @@ def main():
                                     {"input_image": input_image,
                                     "screen_resize": screen_resize})
         except Exception as e:
-            print(e)
+            #print(e)
            
     # Release & close when done
     vs.stop()
@@ -240,7 +242,7 @@ class ThreadedVideo:
             cameraOpen = True
         except OSError:
             #Releases a stream if its camera is disconnected
-            print("Camera with source " + `self.src` + " is not connected!")
+            #print("Camera with source " + `self.src` + " is not connected!")
             self.stream.release()
             cameraOpen = False
 
@@ -264,7 +266,7 @@ def push_network_table(table, return_list):
     table.putNumberArray(NETWORK_KEY, return_list)
 
     if DEBUG_MODE:
-        print(return_list)
+        #print(return_list)
 
 def get_resize_values(capture, width=1920):
     '''
@@ -481,7 +483,7 @@ def mouse_click_handler(event, x, y, flags, params):
             hsv_image = cv2.cvtColor(params["input_image"], cv2.COLOR_BGR2HSV)
             screen_resize = params["screen_resize"]
         except NameError:
-            print("Input image not found!")
+            #print("Input image not found!")
         norm_x, norm_y = round(x/screen_resize), round(y/screen_resize)
         h, s, v = hsv_image[norm_y][norm_x]
         print("HSV value of point ({}, {}) is ({}, {}, {})".format(norm_x, norm_y, h, s, v))
