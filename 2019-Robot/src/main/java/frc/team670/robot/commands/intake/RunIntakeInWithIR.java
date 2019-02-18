@@ -10,7 +10,9 @@ package frc.team670.robot.commands.intake;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.dataCollection.MustangSensors;
+import frc.team670.robot.dataCollection.XKeys;
 import frc.team670.robot.subsystems.BaseIntake;
+import frc.team670.robot.subsystems.Intake;
 import frc.team670.robot.utils.Logger;
 
 public class RunIntakeInWithIR extends Command {
@@ -18,13 +20,13 @@ public class RunIntakeInWithIR extends Command {
   private BaseIntake intake;
   private MustangSensors sensors;
 
-  public static final double RUNNING_POWER = 0.30;
   private boolean hasBeenTriggered;
 
   public RunIntakeInWithIR(BaseIntake intake, MustangSensors sensors) {
     requires(intake);
     this.intake = intake;
     this.sensors = sensors;
+    XKeys.setToggleIn(true);
   }
 
   // Called just before this Command runs the first time
@@ -38,7 +40,7 @@ public class RunIntakeInWithIR extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    intake.runIntake(RUNNING_POWER, true);
+    intake.runIntake(Intake.RUNNING_POWER, true);
 
     // If the IR sensor has been tripped and it is for the first time
     if (!sensors.isIntakeIRSensorNull() && sensors.getIntakeIROutput() && !hasBeenTriggered) {

@@ -36,7 +36,7 @@ public class PurePursuit extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    driveBase.initAutonDrive();
+    driveBase.initBrakeMode();
     sensors.zeroYaw();
     purePursuitTracker.reset();
     Logger.consoleLog();

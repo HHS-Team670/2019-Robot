@@ -35,6 +35,7 @@ import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
 import frc.team670.robot.subsystems.Arm.LegalState;
 import frc.team670.robot.subsystems.Arm.PlaceGrabState;
+import frc.team670.robot.subsystems.Intake;
 
 
 /**
@@ -48,7 +49,7 @@ public class XKeys {
     private NetworkTableInstance instance;
     private NetworkTable table;
     private Command autonCommand;
-    private boolean toggleIn = true, toggleOut = false;
+    private static boolean toggleIn = true, toggleOut = false;
 
     public XKeys() {
         SmartDashboard.putString("XKEYS", "XKeys constructor");
@@ -146,16 +147,16 @@ public class XKeys {
     private void runIntakeIn() {
         toggleIn = !toggleIn;
 
-        if(toggleOut){
+        if(toggleIn){
             toggleIn = true;
             toggleOut = false;
         }
 
         if (toggleIn) {
             System.out.println("Run Intake In command called");
-            Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, RunIntakeInWithIR.RUNNING_POWER, true));
+            Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, Intake.RUNNING_POWER, true));
         } else {
-            System.out.println("Run Intake In command canceld");
+            System.out.println("Run Intake In command canceled");
             Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, 0, true));
         }
     }
@@ -163,13 +164,13 @@ public class XKeys {
     private void runIntakeOut() {
         toggleOut = !toggleOut;
 
-        if(toggleIn){
+        if(toggleOut){
             toggleIn = false;
             toggleOut = true;
         }
         
         if (toggleOut) {
-            Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, RunIntakeInWithIR.RUNNING_POWER, false));
+            Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, Intake.RUNNING_POWER, false));
         } else {
             Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, 0, false));
         }
@@ -229,6 +230,14 @@ public class XKeys {
 
     private void closeClaw() {
         Scheduler.getInstance().add(new CloseClaw(Robot.claw));
+    public static void setToggleIn(boolean toggleInBoolean){
+        toggleIn = toggleInBoolean;
+        toggleOut = !toggleInBoolean;
+    }
+
+    public static void setToggleOut(boolean toggleOutBoolean){
+        toggleOut = toggleOutBoolean;
+        toggleIn = !toggleOutBoolean;
     }
 
 

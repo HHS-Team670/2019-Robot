@@ -37,9 +37,6 @@ public class XboxRocketLeagueDrive extends InstantCommand {
     double speed = -1 * (Robot.oi.getDriverController().getLeftTriggerAxis() - Robot.oi.getDriverController().getRightTriggerAxis()); 
     double steer = Robot.oi.getDriverController().getLeftStickX(); 
 
-    steer = 0;
-    speed = 0; // DISABLED FROM DRIVING TODO REENABLE THIS
-
     // Decides whether or not to smooth the Steering and Trigger. Smoothing helps reduce jerkiness when driving.
     // tankDrive actually does this for us automatically, so no need to do it ourselves
     // if(smoothRocketLeagueSteer){

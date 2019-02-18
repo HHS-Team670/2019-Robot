@@ -115,4 +115,24 @@ public class TestExtension extends BaseExtension {
 
   }
 
+  @Override
+  public boolean getForwardLimitSwitchTripped() {
+    return false;
+  }
+
+  @Override
+  public boolean getReverseLimitSwitchTripped() {
+    return false;
+  }
+
+  @Override
+  public double getArbitraryFeedForwardAngleMultiplier() {
+    return 0;
+  }
+
+  @Override
+  public void resetPositionBasedOnLimitSwitchTripping() {
+
+  }
+
 }

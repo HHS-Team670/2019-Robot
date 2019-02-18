@@ -33,11 +33,11 @@ public class Intake extends BaseIntake {
 
   // Motion Magic
   private static final int kPIDLoopIdx = 0, MOTION_MAGIC_SLOT = 0, kTimeoutMs = 0;
-  private static final int OFFSET_FROM_ENCODER_ZERO = -260;
-  private static final int FORWARD_SOFT_LIMIT = 850, REVERSE_SOFT_LIMIT = -940;
+  private static final int OFFSET_FROM_ENCODER_ZERO = 426;
+  private static final int FORWARD_SOFT_LIMIT = 932, REVERSE_SOFT_LIMIT = -979;
   private static final int CONTINUOUS_CURRENT_LIMIT = 20, PEAK_CURRENT_LIMIT = 0;
   private final static int INTAKE_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 120,  INTAKE_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_SECOND = 400;
-  private static final int QUAD_ENCODER_MAX = FORWARD_SOFT_LIMIT + 200, QUAD_ENCODER_MIN = REVERSE_SOFT_LIMIT - 200;
+  private static final int QUAD_ENCODER_MAX = FORWARD_SOFT_LIMIT + 300, QUAD_ENCODER_MIN = REVERSE_SOFT_LIMIT - 300;
 
   private static final double ARBITRARY_FEED_FORWARD = 0.175;
 
@@ -46,6 +46,8 @@ public class Intake extends BaseIntake {
   private TalonSRX roller;
   
   private Point2D.Double intakeCoord;
+
+  public static final double RUNNING_POWER = 0.30;
 
   public Intake() {
     super(new TalonSRX(RobotMap.INTAKE_BASE_TALON), ARBITRARY_FEED_FORWARD, FORWARD_SOFT_LIMIT, REVERSE_SOFT_LIMIT, true, QUAD_ENCODER_MIN, QUAD_ENCODER_MAX, CONTINUOUS_CURRENT_LIMIT, PEAK_CURRENT_LIMIT, OFFSET_FROM_ENCODER_ZERO);
@@ -58,13 +60,15 @@ public class Intake extends BaseIntake {
     intakeCoord = new Point2D.Double();
 
     rotator.setInverted(true);
-    rotator.setSensorPhase(false); // Positive is inwards movement, negative is outward
+    // rotator.setSensorPhase(true); // Positive is inwards movement, negative is outward
 
     if(rotatorSensorCollection.isRevLimitSwitchClosed()) {
-      rotator.setSelectedSensorPosition(REVERSE_SOFT_LIMIT);
+      System.out.println("Rev limit hit");
+      rotator.setSelectedSensorPosition(REVERSE_SOFT_LIMIT + 50);
     }
     else if(rotatorSensorCollection.isFwdLimitSwitchClosed()) {
-      rotator.setSelectedSensorPosition(FORWARD_SOFT_LIMIT);
+      System.out.println("Fwd limit hit");
+      rotator.setSelectedSensorPosition(FORWARD_SOFT_LIMIT - 50);
     }
 
     stop();

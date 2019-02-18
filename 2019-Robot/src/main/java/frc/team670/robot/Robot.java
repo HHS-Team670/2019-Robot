@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.ControlOperatorController;
+import frc.team670.robot.commands.arm.movement.MoveExtensionBackUntilHitsLimitSwitch;
 import frc.team670.robot.commands.drive.teleop.XboxRocketLeagueDrive;
 import frc.team670.robot.commands.tuning.MeasureArbitraryFeedforward;
 import frc.team670.robot.commands.tuning.ResetPulseWidthEncoder;
@@ -208,6 +209,8 @@ public class Robot extends TimedRobot {
 
     sensors.resetNavX();
 
+    driveBase.initBrakeMode();
+
     SmartDashboard.putString("robot-state", "autonomousInit()");
 
     if(DriverStation.getInstance().getAlliance().equals(Alliance.Red)) {
@@ -221,6 +224,8 @@ public class Robot extends TimedRobot {
     sensors.resetNavX(); // Reset NavX completely, zero the field centric based on how robot faces from start of game.
     Logger.consoleLog("Auton Started");
     timer.start();
+
+    Scheduler.getInstance().add(new MoveExtensionBackUntilHitsLimitSwitch(extension));
 
     // TODO: robot crashing when trying to load path
     // autonomousCommand = oi.getSelectedAutonCommand();
@@ -248,6 +253,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     SmartDashboard.putString("robot-state", "teleopInit()");
+
+    driveBase.initBrakeMode();
 
     leds.setForwardData(true);
 

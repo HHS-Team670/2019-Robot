@@ -51,8 +51,15 @@ public class BuildAuton extends CommandGroup {
         // button
         boolean isRobotFacingBack = true;
 
-        if (startHolding.equals("Ball")) arm.setHeldItem(HeldItem.BALL);
-        else arm.setHeldItem(HeldItem.HATCH);
+        if (startHolding.equals("Ball")) {
+            arm.setHeldItem(HeldItem.BALL);
+        }
+        else if (startHolding.equals("Hatch")) {
+            arm.setHeldItem(HeldItem.HATCH);
+        } 
+        else {
+            arm.setHeldItem(HeldItem.NONE);
+        }
 
         /*
          * if the robot starts facing back, the first path and arm command will be going
