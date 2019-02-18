@@ -209,6 +209,8 @@ public class Robot extends TimedRobot {
 
     sensors.resetNavX();
 
+    driveBase.initBrakeMode();
+
     SmartDashboard.putString("robot-state", "autonomousInit()");
 
     if(DriverStation.getInstance().getAlliance().equals(Alliance.Red)) {
@@ -251,6 +253,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     SmartDashboard.putString("robot-state", "teleopInit()");
+
+    driveBase.initBrakeMode();
 
     leds.setForwardData(true);
 

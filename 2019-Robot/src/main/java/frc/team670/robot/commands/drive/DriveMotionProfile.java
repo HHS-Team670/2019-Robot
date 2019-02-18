@@ -157,7 +157,7 @@ public class DriveMotionProfile extends Command {
         rightTrajectory = Pathfinder.readFromCSV(new File(Filesystem.getDeployDirectory() + "/output/DriveOffPlatform.right.pf1"));
       }
       catch(IOException e) {
-        
+
       }
       // super.cancel();
       // return;
@@ -206,7 +206,7 @@ public class DriveMotionProfile extends Command {
     Logger.consoleLog("initial encoders: " + initialLeftEncoder + ", " + initialRightEncoder);
 
     // Set up Robot for Auton Driving
-    Robot.driveBase.initAutonDrive();
+    Robot.driveBase.initBrakeMode();
     Logger.consoleLog("PID values: " + P + ", " + I + ", " + D + ", " + (1.0/MAX_VELOCITY) + ", " + KA);
 
     // The first argument is the proportional gain. Usually this will be quite high

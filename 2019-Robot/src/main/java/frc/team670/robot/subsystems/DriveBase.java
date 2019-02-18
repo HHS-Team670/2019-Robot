@@ -143,7 +143,7 @@ public class DriveBase extends Subsystem {
     tankDrive(leftSpeed, rightSpeed, false);
   }
 
-  public void initAutonDrive() {
+  public void initBrakeMode() {
     setMotorsBrakeMode(allMotors, IdleMode.kBrake);
   }
 
