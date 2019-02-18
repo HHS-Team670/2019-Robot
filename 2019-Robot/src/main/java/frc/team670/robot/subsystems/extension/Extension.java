@@ -137,6 +137,16 @@ public class Extension extends BaseExtension {
   }
 
   @Override
+  public void enableCoastMode() {
+    extensionMotor.setNeutralMode(NeutralMode.Coast);
+  }
+
+  @Override
+  public void enableBrakeMode() {
+    extensionMotor.setNeutralMode(NeutralMode.Brake);
+  }
+
+  @Override
   public void disableCurrentLimit() {
     extensionMotor.enableCurrentLimit(false);
   }
@@ -201,6 +211,7 @@ public class Extension extends BaseExtension {
   public synchronized void setMotionMagicSetpointInInches(double extensionSetpointInInches) {
     extensionMotor.selectProfileSlot(MOTION_MAGIC_SLOT, kPIDLoopIdx);
     setpoint = convertExtensionInchesToTicks(extensionSetpointInInches);
+    enableBrakeMode();
     extensionMotor.set(ControlMode.MotionMagic, setpoint);
   }
 

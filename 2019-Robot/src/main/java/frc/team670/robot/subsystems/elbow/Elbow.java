@@ -145,6 +145,7 @@ public class Elbow extends BaseElbow {
   public void setMotionMagicSetpointAngle(double elbowSetpointAngle) {
     setpoint = convertElbowDegreesToTicks(elbowSetpointAngle);
     rotator.selectProfileSlot(MOTION_MAGIC_SLOT, kPIDLoopIdx);
+    enableBrakeMode();
     rotator.set(ControlMode.MotionMagic, setpoint);
   }
 

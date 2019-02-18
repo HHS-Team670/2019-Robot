@@ -99,6 +99,7 @@ public class Intake extends BaseIntake {
   public void setMotionMagicSetpointAngle(double intakeAngle) {
     setpoint = convertIntakeDegreesToTicks(intakeAngle);
     SmartDashboard.putNumber("MotionMagicSetpoint", setpoint);
+    enableBrakeMode();
     rotator.set(ControlMode.MotionMagic, setpoint);
     roller.set(ControlMode.PercentOutput, 0);
   }
