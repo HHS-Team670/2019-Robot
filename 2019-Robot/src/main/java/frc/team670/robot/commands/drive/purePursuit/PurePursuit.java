@@ -8,6 +8,8 @@
 package frc.team670.robot.commands.drive.purePursuit;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.Scheduler;
+import frc.team670.robot.commands.drive.pivot.NavXPivot;
 import frc.team670.robot.commands.drive.vision.VisionPurePursuit;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.DriveBase;
@@ -21,12 +23,14 @@ public class PurePursuit extends Command {
   private PoseEstimator poseEstimator;
   private DriveBase driveBase;
   private MustangSensors sensors;
+  private double finalAngle;
   private int executeCount;
 
-  public PurePursuit(Path path, DriveBase driveBase, MustangSensors sensors, PoseEstimator estimator, boolean isReversed) {
+  public PurePursuit(Path path, DriveBase driveBase, MustangSensors sensors, PoseEstimator estimator, boolean isReversed, double finalAngle) {
    this.driveBase = driveBase;
    this.sensors = sensors;
    this.poseEstimator = estimator;
+   this.finalAngle = finalAngle;
   
    purePursuitTracker = new PurePursuitTracker(poseEstimator, driveBase, sensors, isReversed);
    purePursuitTracker.setPath(path, LOOKAHEAD_DISTANCE);
@@ -64,7 +68,7 @@ public class PurePursuit extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return purePursuitTracker.isDone();// || Robot.sensors.getUltrasonicDistance() < 15;
+    return purePursuitTracker.isDone();
   }
 
   // Called once after isFinished returns true
@@ -72,6 +76,8 @@ public class PurePursuit extends Command {
   protected void end() {
     Logger.consoleLog("Pose: %s ", poseEstimator.getPose());
     VisionPurePursuit.disableArmRestriction();
+    double currentAngle = sensors.getFieldCentricYaw() % 360;
+    Scheduler.getInstance().add(new NavXPivot(finalAngle - currentAngle));
     driveBase.setSparkVelocityControl(0,0);
     purePursuitTracker.stopNotifier();
     purePursuitTracker.reset();

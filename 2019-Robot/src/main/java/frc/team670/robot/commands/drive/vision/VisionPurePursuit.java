@@ -77,9 +77,10 @@ public class VisionPurePursuit extends InstantCommand {
       e.printStackTrace();
     }
 
+    // Camera is unplugged if timestamp is Vision Error Code
     try {
       if(MathUtils.doublesEqual(coprocessor.getVisionValues()[2], RobotConstants.VISION_ERROR_CODE)) {
-        SmartDashboard.putString("warnings", "Coprocess Camera Unplugged: Vision Down");
+        SmartDashboard.putString("warnings", "Coprocessor Camera Unplugged: Vision Down");
         return;
       } 
     } catch(IndexOutOfBoundsException e) {
@@ -87,21 +88,19 @@ public class VisionPurePursuit extends InstantCommand {
     }
 
     double horizontalAngle = coprocessor.getAngleToWallTarget();
+    double finalAngle = (sensors.getFieldCentricYaw() % 360) + horizontalAngle; // Finds field centric angle the robot should be at after finishing PurePursuit
     if (MathUtils.doublesEqual(horizontalAngle, RobotConstants.VISION_ERROR_CODE)) {
       Logger.consoleLog("No Valid Vision Data found, command quit.");
-      SmartDashboard.putString("vision-status", "error");
+      SmartDashboard.putString("vision-status", "error"); //MAKE THIS A WARNING
       SmartDashboard.putString("warnings", "Vision Target Not Found");
       return;
     }
 
     double ultrasonicDistance;
     if (!isReversed) {
-      ultrasonicDistance = sensors.getFrontUltrasonicDistance(horizontalAngle);
+      ultrasonicDistance = sensors.getFrontUltrasonicDistance();
     } else {
-      double ultraLeft = sensors.getBackLeftUltrasonicDistance(horizontalAngle);
-      double ultraRight = sensors.getBackRightUltrasonicDistance(horizontalAngle);
-
-      ultrasonicDistance = (ultraLeft < ultraRight) ? ultraLeft : ultraRight; // Take the one that is least
+      ultrasonicDistance = sensors.getAdjustedBackUltrasonicDistance();
     }
     ultrasonicDistance *= Math.cos(Math.toRadians(horizontalAngle)); // use cosine to get the straight ultrasonic
                                                                      // distance not the diagonal one
@@ -125,7 +124,7 @@ public class VisionPurePursuit extends InstantCommand {
     if (straightDistance < 0) {
       System.out.println("Too close to target!");
       this.cancel();
-      SmartDashboard.putString("vision-status", "error");
+      SmartDashboard.putString("vision-status", "error"); //MAKE THIS A WARNING
       return;
     }
 
@@ -133,9 +132,9 @@ public class VisionPurePursuit extends InstantCommand {
 
     System.out.println("Angle: " + coprocessor.getAngleToWallTarget());
     // horizontal distance - when going forward a positive horizontal distance is
-    // right and negative is left
+    // right and negative is left - right is positive and left is negative no matter what since it gets flipped if isReversed
     double horizontalDistance = straightDistance * Math.tan(Math.toRadians(coprocessor.getAngleToWallTarget())); // x = y * tan(theta)
-    double partialDistanceY = (straightDistance) * 2.0 / 5.0;
+    double partialDistanceY = (straightDistance) * 2.0 / 5.0; //make a waypoint
 
     System.out.println("straightDist: " + straightDistance + ", horizontalDistance: " + horizontalDistance);
     if (isReversed) { // Flip all of these to match our coord system when looking out the back
@@ -148,7 +147,7 @@ public class VisionPurePursuit extends InstantCommand {
 
     PoseEstimator poseEstimator = new PoseEstimator(driveBase, sensors);
 
-    // Make this start with the Pose Estimator and get its position at this poitn for starting coords.
+    // Make this start with the Pose Estimator and get its position at this point for starting coords.
     Vector startPose = poseEstimator.getPose();
     double startX = startPose.x, startY = startPose.y;
     Vector partialDistance = new Vector(startX + horizontalDistance, startY + partialDistanceY);
@@ -157,7 +156,7 @@ public class VisionPurePursuit extends InstantCommand {
     PathGenerator generator = new PathGenerator(SPACING);
     generator.setVelocities(MAX_VEL, MAX_ACC, MAX_VELK);
     generator.setSmoothingParameters(A, B, TOLERANCE);
-    generator.addPoints(startPose, partialDistance, endPoint); // Right Angle Segment. All of these are negative since we are driving 2018 Robot backwards.
+    generator.addPoints(startPose, partialDistance, endPoint); // Right Angle Segment
     
     System.out.println(startPose);
     System.out.println(partialDistance);
@@ -165,7 +164,7 @@ public class VisionPurePursuit extends InstantCommand {
     
     Path path = generator.generatePath(isReversed);
 
-    command = new PurePursuit(path, driveBase, sensors, poseEstimator, isReversed);
+    command = new PurePursuit(path, driveBase, sensors, poseEstimator, isReversed, finalAngle);
 
     if (straightDistance > 60) { // Protect arm until it is time to actually place
       Scheduler.getInstance().add(new MoveArm(Arm.getArmState(LegalState.NEUTRAL), Robot.arm));
@@ -176,13 +175,10 @@ public class VisionPurePursuit extends InstantCommand {
         public void run() {
           double ultrasonicDistance;
           if(!reversed) {
-            ultrasonicDistance = sensors.getFrontUltrasonicDistance(horizontalAngle);
+            ultrasonicDistance = sensors.getFrontUltrasonicDistance();
           }
           else {
-            double ultraLeft = sensors.getBackLeftUltrasonicDistance(horizontalAngle);
-            double ultraRight = sensors.getBackRightUltrasonicDistance(horizontalAngle);
-      
-            ultrasonicDistance = (ultraLeft < ultraRight) ? ultraLeft : ultraRight; // Take the one that is least
+            ultrasonicDistance = sensors.getAdjustedBackUltrasonicDistance();
           }
           ultrasonicDistance *= Math.cos(Math.toRadians(horizontalAngle)); //use cosine to get the straight ultrasonic distance not the diagonal one
       
