@@ -67,16 +67,6 @@ public class Robot extends TimedRobot {
   private Timer timer;
 
   public Robot() {
-
-    oi = new OI();
-
-    try
-    {
-        Logger.CustomLogger.setup();
-    }
-    catch (Throwable e) { Logger.logException(e);}
-    
-    Logger.consoleLog();
   }
 
   /**
@@ -87,6 +77,18 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // auton_chooser.addDefault("Default Auto", new TimeDrive());
     // chooser.addObject("My Auto", new MyAutoCommand());
+
+
+    oi = new OI();
+
+    try
+    {
+        Logger.CustomLogger.setup();
+    }
+    catch (Throwable e) { Logger.logException(e);}
+    
+    Logger.consoleLog();
+
     SmartDashboard.putData("Auto mode", auton_chooser);
     Logger.consoleLog();
     System.out.println("Robot init");
