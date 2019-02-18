@@ -231,7 +231,7 @@ document.addEventListener("keyup", function(event) {
     }
     else if (nextTask.includes("cancel")) NetworkTables.putValue('/SmartDashboard/xkeys-cancel', nextTask);
     else if (nextTask === "place" || nextTask === "grab" || nextTask === "drop_held_item" || nextTask === "toggle_held_item") NetworkTables.putValue('/SmartDashboard/xkeys-placing', nextTask);
-    else if (nextTask.includes("run_intake")) NetworkTables.putValue('/SmartDashboard/xkeys-intake', nextTask);
+    else if (nextTask.includes("toggle_intake") || nextTask.includes("run_intake")) NetworkTables.putValue('/SmartDashboard/xkeys-intake', nextTask);
     else if (nextTask === "auto_pickup_ball") NetworkTables.putValue('/SmartDashboard/xkeys-autopickup', nextTask);
     else if (nextTask.includes("climb")) NetworkTables.putValue('/SmartDashboard/xkeys-climber', nextTask);
     else if (nextTask.includes("vision")) NetworkTables.putValue('/SmartDashboard/xkeys-visiondrive', nextTask);
