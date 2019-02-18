@@ -230,7 +230,7 @@ document.addEventListener("keyup", function(event) {
       NetworkTables.putValue('/SmartDashboard/xkeys-armstates', nextTask);
     }
     else if (nextTask.includes("cancel")) NetworkTables.putValue('/SmartDashboard/xkeys-cancel', nextTask);
-    else if (nextTask === "place" || nextTask === "grab" || nextTask === "drop_held_item") NetworkTables.putValue('/SmartDashboard/xkeys-placing', nextTask);
+    else if (nextTask === "place" || nextTask === "grab" || nextTask === "drop_held_item" || nextTask === "toggle_held_item") NetworkTables.putValue('/SmartDashboard/xkeys-placing', nextTask);
     else if (nextTask.includes("run_intake")) NetworkTables.putValue('/SmartDashboard/xkeys-intake', nextTask);
     else if (nextTask === "auto_pickup_ball") NetworkTables.putValue('/SmartDashboard/xkeys-autopickup', nextTask);
     else if (nextTask.includes("climb")) NetworkTables.putValue('/SmartDashboard/xkeys-climber', nextTask);
@@ -251,6 +251,7 @@ function getFromMap(key) { // mapping is more aligned with arm position on robot
   if (key === "p") return "place";
   if (key === "c") return "grab";
   if (key === "1") return "drop_held_item";
+  if (key === "4") return "toggle_held_item";
 
   if (key === "g") return "READY_PLACE_HATCH_ROCKET_MIDDLE_BACK";
   if (key === "k") return "READY_PLACE_BALL_ROCKET_MIDDLE_BACK";
