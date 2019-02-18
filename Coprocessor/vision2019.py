@@ -185,7 +185,7 @@ def main():
                                     {"input_image": input_image,
                                     "screen_resize": screen_resize})
         except Exception as e:
-            #print(e)
+            print(e)
            
     # Release & close when done
     vs.stop()
@@ -266,7 +266,7 @@ def push_network_table(table, return_list):
     table.putNumberArray(NETWORK_KEY, return_list)
 
     if DEBUG_MODE:
-        #print(return_list)
+        print(return_list)
 
 def get_resize_values(capture, width=1920):
     '''
@@ -483,7 +483,7 @@ def mouse_click_handler(event, x, y, flags, params):
             hsv_image = cv2.cvtColor(params["input_image"], cv2.COLOR_BGR2HSV)
             screen_resize = params["screen_resize"]
         except NameError:
-            #print("Input image not found!")
+            print("Input image not found!")
         norm_x, norm_y = round(x/screen_resize), round(y/screen_resize)
         h, s, v = hsv_image[norm_y][norm_x]
         print("HSV value of point ({}, {}) is ({}, {}, {})".format(norm_x, norm_y, h, s, v))
