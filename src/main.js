@@ -46,7 +46,7 @@ function createWindow() {
     client.start((con, err) => {
 
         let connectFunc = () => {
-            console.log('Sending status');
+            console.log('---Sending status');
             mainWindow.webContents.send('connected', con);
 
             // Listens to the changes coming from the client
@@ -76,7 +76,7 @@ function createWindow() {
     ipc.on('connect', (ev, address, port) => {
         console.log(`Trying to connect to ${address}` + (port ? ':' + port : ''));
         let callback = (connected, err) => {
-            console.log('Sending status');
+            console.log('Sending status...');
             mainWindow.webContents.send('connected', connected);
         };
         if (port) {

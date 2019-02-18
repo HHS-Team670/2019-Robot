@@ -18,10 +18,7 @@ document.getElementById('climb-level-text').style.stroke = `rgb(90, 90, 90)`;
 document.getElementById('auton-chooser').style.display = "none";
 ui.timer.style.color = `rgb(0, 200, 0)`;
 
-// ui.camera.viewer.style.backgroundImage = 'url(' + ui.camera.src + ')';
-// document.getElementById('camera').style = "background-color: rgb(39, 163, 39)";
-
-var angle = 90;
+var angle = 0;
 var armLength = 110;
 document.getElementById('arm').style = "transform: rotate(" + angle + "deg)";
 document.getElementById('claw').style = "transform: translate(" + (Math.sin(angle * Math.PI / 180) * (parseInt(document.getElementById('arm-extension').getAttribute('height')) + armLength)) + "px, " + (armLength - Math.sin((angle+90) * Math.PI / 180) * (parseInt(document.getElementById('arm-extension').getAttribute('height')) + armLength)) + "px)";
