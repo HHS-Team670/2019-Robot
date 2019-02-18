@@ -23,7 +23,7 @@ import frc.team670.robot.constants.RobotMap;
 public class Claw extends Subsystem {
 
   /** The amount of time to delay to allow the pneumatics to move in seconds */
-  public static final double TIME_TO_MOVE = 0.35;
+  public static final double TIME_TO_MOVE = 0.5;
 
   private static final double PULSE_DURATION = 0.4; // In seconds
   public static final double MAX_CLAW_OPEN_DIAMETER = 20; //Set distance

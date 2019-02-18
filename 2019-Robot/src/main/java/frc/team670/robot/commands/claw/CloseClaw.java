@@ -8,6 +8,8 @@
 package frc.team670.robot.commands.claw;
 
 import edu.wpi.first.wpilibj.command.TimedCommand;
+import frc.team670.robot.subsystems.Arm.HeldItem;
+import frc.team670.robot.Robot;
 import frc.team670.robot.subsystems.Claw;
 import frc.team670.robot.utils.Logger;
 
@@ -27,6 +29,7 @@ public class CloseClaw extends TimedCommand {
   @Override
   protected void initialize() {
     if(claw.isOpen()) {
+      Robot.arm.setHeldItem(HeldItem.NONE);
       claw.closeClaw();
     }
     Logger.consoleLog();

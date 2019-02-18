@@ -16,6 +16,7 @@ copper goes to negative
 import copy
 import math
 from threading import Thread
+from threading import Condition
 import cv2
 import numpy as np
 import time
@@ -49,6 +50,14 @@ MIN_AREA = 100
 
 # Network table (by default returns error codes, but changes in program)
 returns = [ERROR, ERROR, timestamp]
+cond = Condition()
+notified = [False]
+
+#Connection Listener for Network Tables
+def connectionListener(connected, info):
+    with cond:
+        notified[0] = True
+        cond.notify()
 
 def main():
     '''
@@ -59,7 +68,6 @@ def main():
     os.system("sudo rm -f /dev/video" + `back_capture_source`)
     os.system("sudo ln -s /dev/v4l/by-path/platform-xhci-hcd.3.auto-usb-0:1.1:1.0-video-index0 /dev/video"+ `front_capture_source`)
     os.system("sudo ln -s /dev/v4l/by-path/platform-12110000.usb-usb-0:1:1.0-video-index0 /dev/video"+ `back_capture_source`)
-    
     #Sets exposure and other camera properties for both cameras
     os.system("v4l2-ctl -d /dev/video" + `front_capture_source` + " -c exposure_auto=1 -c exposure_absolute=.01 -c brightness=0 -c white_balance_temperature_auto=0 -c backlight_compensation=0 -c contrast=10 -c saturation=200")
     os.system("v4l2-ctl -d /dev/video" + `back_capture_source` + " -c exposure_auto=1 -c exposure_absolute=.01 -c brightness=0 -c white_balance_temperature_auto=0 -c backlight_compensation=0 -c contrast=10 -c saturation=200")
@@ -68,7 +76,15 @@ def main():
     #os.system("rm -rf output")
     #os.system("mkdir output")
     
+    #Initializes connection to RIO
     NetworkTables.initialize(server=ROBORIO_IP)
+
+    NetworkTables.addConnectionListener(connectionListener, immediateNotify=True)
+    #Waits until RIO is connected before continuing
+    with cond:
+        if not notified[0]:
+            cond.wait()
+
     table = NetworkTables.getTable(NETWORK_TABLE_NAME)
 
     #Video capture / resizing stuff
@@ -82,7 +98,7 @@ def main():
     frameCount = 0
     while True:
         # gets which camera to use (front or back)
-        camera = table.getEntry(camera_key).getString("back")
+        camera = "front"#table.getEntry(camera_key).getString("back")
         
         vs = None
 
