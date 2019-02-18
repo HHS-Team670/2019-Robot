@@ -327,4 +327,24 @@ public class MustangSensors {
   public boolean isNavXNull() {
     return isNavXNull;
   }
+
+  public void sendUltrasonicDataToDashboard(){
+    if (frontUltrasonic != null && backLeftUltrasonic != null  && backRightUltrasonic != null) {
+      SmartDashboard.putNumber("Front Ultrasonic: ", frontUltrasonic.getUnadjustedDistance());
+      SmartDashboard.putNumber("Back Left Ultrasonic: ", backLeftUltrasonic.getUnadjustedDistance());
+      SmartDashboard.putNumber("Back Right Ultrasonic: ", backRightUltrasonic.getUnadjustedDistance());
+    } 
+  
+     
+    if (frontUltrasonic == null) {
+      SmartDashboard.putString("Front Ultrasonic: ", "FRONT ULTRASONIC IS NULL!");
+    } 
+    if (backLeftUltrasonic == null) {
+      SmartDashboard.putString("Back Left Ultrasonic: ", "BACK LEFT ULTRASONIC IS NULL!");
+    }
+
+    if (backRightUltrasonic == null) {
+      SmartDashboard.putString("Back RIGHT Ultrasonic: ", "BACK RIGHT ULTRASONIC IS NULL!");
+    }
+  }
 }

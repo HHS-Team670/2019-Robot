@@ -57,13 +57,13 @@ public class RobotMap {
   // Sensors
   public final static Port NAVX_PORT = SerialPort.Port.kUSB;  
 
-  public static final int FRONT_ULTRASONIC_TRIGGER_PIN = 4; // TODO set these
-  public static final int FRONT_ULTRASONIC_ECHO_PIN = 5;
-  public static final int BACK_LEFT_ULTRASONIC_TRIGGER_PIN = 6;
-  public static final int BACK_LEFT_ULTRASONIC_ECHO_PIN = 7;
-  public static final int BACK_RIGHT_ULTRASONIC_TRIGGER_PIN = 8;
-  public static final int BACK_RIGHT_ULTRASONIC_ECHO_PIN = 9;
-  public final static int INTAKE_IR_DIO_PORT = 10;
+  public static final int FRONT_ULTRASONIC_TRIGGER_PIN = 7; // TODO set these
+  public static final int FRONT_ULTRASONIC_ECHO_PIN = 8;
+  public static final int BACK_LEFT_ULTRASONIC_TRIGGER_PIN = 9;
+  public static final int BACK_LEFT_ULTRASONIC_ECHO_PIN = 10;
+  public static final int BACK_RIGHT_ULTRASONIC_TRIGGER_PIN = 11;
+  public static final int BACK_RIGHT_ULTRASONIC_ECHO_PIN = 12;
+  public final static int INTAKE_IR_DIO_PORT = 13;
 
 
   // Joysticks
