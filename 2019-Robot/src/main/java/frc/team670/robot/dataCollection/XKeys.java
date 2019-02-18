@@ -143,8 +143,10 @@ public class XKeys {
         }
 
         if (toggleIn) {
+            System.out.println("Run Intake In command called");
             Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, RunIntakeInWithIR.RUNNING_POWER, true));
         } else {
+            System.out.println("Run Intake In command canceld");
             Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, 0, true));
         }
     }
