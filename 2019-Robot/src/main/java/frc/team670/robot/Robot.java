@@ -161,6 +161,8 @@ public class Robot extends TimedRobot {
     elbow.sendDataToDashboard();
     extension.sendDataToDashboard();
     wrist.sendDataToDashboard();
+    sensors.sendUltrasonicDataToDashboard();
+    driveBase.sendDIOEncoderDataToDashboard();
 
   }
   /**
