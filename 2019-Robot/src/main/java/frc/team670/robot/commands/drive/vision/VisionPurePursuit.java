@@ -77,10 +77,20 @@ public class VisionPurePursuit extends InstantCommand {
       e.printStackTrace();
     }
 
+    try {
+      if(MathUtils.doublesEqual(coprocessor.getVisionValues()[2], RobotConstants.VISION_ERROR_CODE)) {
+        SmartDashboard.putString("warnings", "Coprocess Camera Unplugged: Vision Down");
+        return;
+      } 
+    } catch(IndexOutOfBoundsException e) {
+      return;
+    }
+
     double horizontalAngle = coprocessor.getAngleToWallTarget();
     if (MathUtils.doublesEqual(horizontalAngle, RobotConstants.VISION_ERROR_CODE)) {
       Logger.consoleLog("No Valid Vision Data found, command quit.");
       SmartDashboard.putString("vision-status", "error");
+      SmartDashboard.putString("warnings", "Vision Target Not Found");
       return;
     }
 
