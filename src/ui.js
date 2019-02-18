@@ -235,6 +235,7 @@ document.addEventListener("keyup", function(event) {
     else if (nextTask === "auto_pickup_ball") NetworkTables.putValue('/SmartDashboard/xkeys-autopickup', nextTask);
     else if (nextTask.includes("climb")) NetworkTables.putValue('/SmartDashboard/xkeys-climber', nextTask);
     else if (nextTask.includes("vision")) NetworkTables.putValue('/SmartDashboard/xkeys-visiondrive', nextTask);
+    else if (nextTask.includes("claw")) NetworkTables.putValue('/SmartDashboard/xkeys-claw', nextTask);
   } else {
 
   }
@@ -277,6 +278,9 @@ function getFromMap(key) { // mapping is more aligned with arm position on robot
   if (key === "u") return "cancel_intake";
   if (key === "o") return "cancel_arm";
   if (key === "z") return "cancel_all";
+
+  if (key === "5") return "open_claw";
+  if (key === "6") return "close_claw";
 
   if (key === "0") return "vision_drive";
 
