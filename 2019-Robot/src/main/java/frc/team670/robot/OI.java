@@ -10,6 +10,8 @@ package frc.team670.robot;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team670.robot.commands.arm.EnableArmBrakeMode;
+import frc.team670.robot.commands.arm.EnableArmCoastMode;
 import frc.team670.robot.commands.arm.movement.MoveWrist;
 import frc.team670.robot.commands.tuning.DecreaseMeasurementOutput;
 import frc.team670.robot.commands.tuning.IncreaseMeasurementOutput;
@@ -36,7 +38,7 @@ public class OI {
   private JoystickButton flipCameras;
 
   private JoystickButton incFeedForward, decFeedForward, measureFeedForward, runForward, runBackward;
-  private JoystickButton runIntakeIn, runIntakeOut;
+  private JoystickButton enableBrakeMode, enableCoastMode;
 
 
   public OI() {
@@ -61,12 +63,12 @@ public class OI {
     runBackward = new JoystickButton(driverController, XboxButtons.A);
     runBackward.whenPressed(new MoveWrist(Robot.arm.getWrist(), 90));
 
-    // runIntakeIn = new JoystickButton(operatorController, XboxButtons.RIGHT_BUMPER);
-    // runIntakeIn.whenPressed(new ButtonRunIntake(Robot.intake, RunIntakeInWithIR.RUNNING_POWER, true));
-    // runIntakeIn.whenReleased(new StopIntakeRollers(Robot.intake));
-    // runIntakeOut = new JoystickButton(operatorController, XboxButtons.LEFT_BUMPER);
-    // runIntakeOut.whenPressed(new ButtonRunIntake(Robot.intake, RunIntakeInWithIR.RUNNING_POWER, false));
-    // runIntakeOut.whenReleased(new StopIntakeRollers(Robot.intake));
+
+
+    enableBrakeMode = new JoystickButton(operatorController, XboxButtons.RIGHT_BUMPER);
+    enableBrakeMode.whenPressed(new EnableArmBrakeMode(Robot.arm));
+    enableCoastMode = new JoystickButton(operatorController, XboxButtons.LEFT_BUMPER);
+    enableCoastMode.whenPressed(new EnableArmCoastMode(Robot.arm));
   }
 
   /**
