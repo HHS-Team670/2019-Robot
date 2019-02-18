@@ -12,6 +12,7 @@ package frc.team670.robot.commands.drive;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -150,11 +151,19 @@ public class DriveMotionProfile extends Command {
         right = new EncoderFollower(leftTrajectory);
       }
     } catch (FileNotFoundException ex) {
-      DriverStation.reportError("Error reading in File for DriveMotionProfile" + ex.getMessage(), true);
-      leftTrajectory = Pathfinder.readFromCSV(new File(Filesystem.getDeployDirectory() + "/output/DriveOffPlatform.left.pf1"));
-      rightTrajectory = Pathfinder.readFromCSV(new File(Filesystem.getDeployDirectory() + "/output/DriveOffPlatform.right.pf1"));
+      try {
+        DriverStation.reportError("Error reading in File for DriveMotionProfile" + ex.getMessage(), true);
+        leftTrajectory = Pathfinder.readFromCSV(new File(Filesystem.getDeployDirectory() + "/output/DriveOffPlatform.left.pf1"));
+        rightTrajectory = Pathfinder.readFromCSV(new File(Filesystem.getDeployDirectory() + "/output/DriveOffPlatform.right.pf1"));
+      }
+      catch(IOException e) {
+        
+      }
       // super.cancel();
       // return;
+    }
+    catch(IOException e) {
+
     }
   }
 

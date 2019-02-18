@@ -55,9 +55,9 @@ public class OI {
     flipCameras = new JoystickButton(driverController, XboxButtons.B);
     flipCameras.whenPressed(new FlipCamera());
 
-    openClaw = new JoystickButton(driverController, XboxButtons.START);
+    openClaw = new JoystickButton(driverController, XboxButtons.X);
     openClaw.whenPressed(new OpenClaw(Robot.claw));
-    closeClaw = new JoystickButton(driverController, XboxButtons.BACK);
+    closeClaw = new JoystickButton(driverController, XboxButtons.Y);
     closeClaw.whenPressed(new CloseClaw(Robot.claw));
 
     // flipIntakeIn = new JoystickButton(driverController, XboxButtons.A);
