@@ -35,8 +35,15 @@ public class Claw extends Subsystem {
   public static final double LENGTH_IN_INCHES = 12;
 
   private Compressor compressor;
-  private Solenoid openClose, hardSoft, push;
+  private Solenoid sol0, sol1, push;
 
+  /*
+   * Hold hatch plate when disabled, so false = open, true = closed
+   * 
+   * Solenoid 0 when off puts air pushing out
+   * Soleonid 1 when on puts air pushing in
+   * 
+   */
   public Claw() {
     try {
       compressor = new Compressor(RobotMap.PC_MODULE);
@@ -47,17 +54,17 @@ public class Claw extends Subsystem {
     }
 
     try {
-      openClose = new Solenoid(RobotMap.HARD_GRIP_SOLENOID);
+      sol0 = new Solenoid(RobotMap.SOLENOID_0);
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error instantiating openClose solenoid: " + ex.getMessage(), true);
-      openClose = null;
+      sol0 = null;
     }
 
     try {
-      hardSoft = new Solenoid(RobotMap.SOFT_GRIP_SOLENOID);
+      sol1 = new Solenoid(RobotMap.SOLENOID_1);
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error instantiating hardSoft solenoid: " + ex.getMessage(), true);
-      hardSoft = null;
+      sol1 = null;
     }
 
     try {
@@ -67,51 +74,40 @@ public class Claw extends Subsystem {
       DriverStation.reportError("Error instantiating push solenoid: " + ex.getMessage(), true);
       push = null;
     }
-
   }
 
   /**
    * Toggles the claw grip based on closed and soft.
    */
   public void toggleGrip() {
-    if (openClose != null)
-      updateClaw(!openClose.get(), true);
+    if (sol1 != null) {
+      changeSolenoid(!sol1.get());
+    }
   }
 
   /**
    * Closes the claw.
    */
   public void closeClaw(boolean isSoft) {
-    updateClaw(true, isSoft);
+    changeSolenoid(false);
   }
 
   /**
    * Opens the claw.
    */
-  public void openClaw(boolean isSoft) {
-    updateClaw(false, isSoft);
+  public void openClaw() {
+    changeSolenoid(true);
   }
 
-  /**
-   * Returns whether the  claw is open or not. If the solenoid isn't connected it will just return false (closed).
-   */
-  public boolean isOpen() {
-    if (openClose != null)
-      return openClose.get();
-    else
-      return false;
-  }
 
   /**
-   * Returns whether the claw is set to hard or soft. If solenoid is not connect, will output false (hard).
-   * 
-   * @return true if soft, false if hard.
+   * @param open true to open, false to close
    */
-  public boolean isSoft() {
-    if (openClose != null)
-      return hardSoft.get();
-    else
-      return false;
+  private void changeSolenoid(boolean open) {
+    if(sol1 != null && sol0 != null) {
+      sol0.set(!open);
+      sol1.set(open);
+    }
   }
 
   /**
@@ -123,11 +119,14 @@ public class Claw extends Subsystem {
     }
   }
 
-  private void updateClaw(boolean isClosed, boolean isSoft) {
-    if (openClose != null)
-      openClose.set(isClosed);
-    if (hardSoft != null)
-      hardSoft.set(isSoft);
+  public boolean isOpen() {
+    if(sol1 != null) {
+      return sol1.get();
+    }
+    else if (sol0 != null) {
+      return !sol0.get();
+    }
+    return true;
   }
 
   @Override

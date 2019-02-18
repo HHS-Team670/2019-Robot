@@ -44,9 +44,9 @@ public class RobotMap {
   public static final int ARM_WRIST_ROTATION = 9;
 
   // Claw
-  public static final int HARD_GRIP_SOLENOID = 9;
-  public static final int SOFT_GRIP_SOLENOID = 10;
-  public static final int CLAW_PUSH_SOLENOID = 11;
+  public static final int SOLENOID_0 = 0;
+  public static final int SOLENOID_1 = 1;
+  public static final int CLAW_PUSH_SOLENOID = 2;
 
   public static final int PC_MODULE = 12;
 

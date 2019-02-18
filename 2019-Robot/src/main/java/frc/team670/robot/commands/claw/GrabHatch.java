@@ -31,7 +31,7 @@ public class GrabHatch extends TimedCommand {
   // Called once when the command executes
   @Override
   protected void initialize() {
-    claw.openClaw(false);
+    claw.openClaw();
     Logger.consoleLog();
   }
 

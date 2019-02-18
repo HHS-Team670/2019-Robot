@@ -31,7 +31,7 @@ public class DropBall extends TimedCommand {
   // Called once when the command executes
   @Override
   protected void initialize() {
-    claw.openClaw(false);
+    claw.openClaw();
     claw.push();
     Logger.consoleLog();
   }
