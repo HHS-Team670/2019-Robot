@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.arm.EnableArmBrakeMode;
 import frc.team670.robot.commands.arm.EnableArmCoastMode;
 import frc.team670.robot.commands.arm.ToggleHeldItem;
+import frc.team670.robot.commands.cameras.FlipCamera;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.dataCollection.XKeys;
 import frc.team670.robot.utils.MustangController;
@@ -48,8 +49,8 @@ public class OI {
     
     // toggleReverseDrive = new JoystickButton(driverController, XboxButtons.LEFT_BUMPER);
     // toggleReverseDrive.whenPressed(new FlipDriveAndCamera());
-    // flipCameras = new JoystickButton(driverController, XboxButtons.B);
-    // flipCameras.whenPressed(new FlipCamera());
+    flipCameras = new JoystickButton(driverController, XboxButtons.B);
+    flipCameras.whenPressed(new FlipCamera());
 
     // openClaw = new JoystickButton(driverController, XboxButtons.LEFT_BUMPER);
     // openClaw.whenPressed(new OpenClaw(Robot.claw));
