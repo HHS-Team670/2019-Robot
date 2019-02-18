@@ -32,4 +32,13 @@ public abstract class BaseExtension extends Subsystem implements ExtensionInterf
   public abstract void enableBrakeMode();
   
   public abstract void enableCoastMode();
+
+  public abstract boolean getForwardLimitSwitchTripped();
+
+  public abstract boolean getReverseLimitSwitchTripped();
+
+  public abstract double getArbitraryFeedForwardAngleMultiplier();
+
+  public abstract void resetPositionBasedOnLimitSwitchTripping();
+
 }
