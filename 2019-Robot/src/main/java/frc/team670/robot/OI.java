@@ -48,11 +48,6 @@ public class OI {
     driverController = new MustangController(RobotMap.DRIVER_CONTROLLER_PORT);
     // operatorController = new MustangController(RobotMap.OPERATOR_CONTROLLER_PORT);
     xkeys = new XKeys();
-    
-    // toggleReverseDrive = new JoystickButton(driverController, XboxButtons.LEFT_BUMPER);
-    // toggleReverseDrive.whenPressed(new FlipDriveAndCamera());
-    flipCameras = new JoystickButton(driverController, XboxButtons.B);
-    flipCameras.whenPressed(new FlipCamera());
 
     // openClaw = new JoystickButton(driverController, XboxButtons.LEFT_BUMPER);
     // openClaw.whenPressed(new OpenClaw(Robot.claw));

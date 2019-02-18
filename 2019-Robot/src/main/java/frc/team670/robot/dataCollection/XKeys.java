@@ -230,6 +230,8 @@ public class XKeys {
 
     private void closeClaw() {
         Scheduler.getInstance().add(new CloseClaw(Robot.claw));
+    }
+    
     public static void setToggleIn(boolean toggleInBoolean){
         toggleIn = toggleInBoolean;
         toggleOut = !toggleInBoolean;
