@@ -477,7 +477,7 @@ public class Arm {
 
   private class GrabBallIntake extends ArmState {
     private GrabBallIntake(Arm arm, BaseIntake intake) {
-      super(-30, 7, 0, true, new ArmTransition[] { new CommonTransition(LegalState.GRAB_BALL_INTAKE, LegalState.NEUTRAL, arm, intake)});
+      super(85, 85, 6.5, true, new ArmTransition[] { new CommonTransition(LegalState.GRAB_BALL_INTAKE, LegalState.NEUTRAL, arm, intake)});
     }
   }
 

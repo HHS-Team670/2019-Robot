@@ -8,6 +8,7 @@
 package frc.team670.robot.commands.arm.movement;
 
 import edu.wpi.first.wpilibj.Notifier;
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -34,7 +35,8 @@ public class MoveArmAfterDriveDistance extends InstantCommand {
     restrictArmMovement = new Notifier(new Runnable() {
       public void run() {
         if (hasDrivenDistance()) {
-          Scheduler.getInstance().add(new MoveArm(destination, arm));
+          Command moveArm = ArmPathGenerator.getPath(destination, arm);
+          Scheduler.getInstance().add(moveArm);
           restrictArmMovement.stop();
         }
       }
