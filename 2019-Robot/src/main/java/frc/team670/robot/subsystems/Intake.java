@@ -166,9 +166,9 @@ public class Intake extends BaseIntake {
   }
 
   public void sendDataToDashboard() {
-    SmartDashboard.putNumber("Unadjusted Absolute Ticks", getUnadjustedPulseWidth());
-    SmartDashboard.putNumber("Absolute Ticks", getRotatorPulseWidth());
-    SmartDashboard.putNumber("Quadrature Ticks", getPositionTicks());
+    SmartDashboard.putNumber("Intake Unadjusted Absolute Ticks", getUnadjustedPulseWidth());
+    SmartDashboard.putNumber("Intake Absolute Ticks", getRotatorPulseWidth());
+    SmartDashboard.putNumber("Intake Quadrature Ticks", getPositionTicks());
   }
 
   @Override

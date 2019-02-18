@@ -27,7 +27,7 @@ public class CloseClaw extends TimedCommand {
   @Override
   protected void initialize() {
     if(claw.isOpen()) {
-      claw.closeClaw(true);
+      claw.closeClaw();
     }
     Logger.consoleLog();
   }

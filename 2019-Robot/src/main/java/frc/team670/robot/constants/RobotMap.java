@@ -22,7 +22,7 @@ public class RobotMap {
 
   // Do not put Talon or other CTRE things to CAN ID 0 because that's the PDP. CAN conflicts are only within device families.
 
-  public static int PDP_ID = 0;
+  public static final int PDP_ID = 0;
 
   // Drive Base
   public static final int SPARK_LEFT_MOTOR_1 = 0; // These are properly set.
@@ -48,7 +48,7 @@ public class RobotMap {
   public static final int SOLENOID_1 = 1;
   public static final int CLAW_PUSH_SOLENOID = 2;
 
-  public static final int PC_MODULE = 12;
+  public static final int PCM_MODULE = 12;
 
   // Climber
   public static final int BACK_CLIMBER_PISTON_CONTROLLER = 14;

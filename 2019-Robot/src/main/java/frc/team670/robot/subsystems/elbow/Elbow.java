@@ -42,9 +42,7 @@ public class Elbow extends BaseElbow {
   private static final int QUAD_ENCODER_MIN = -1932 - 300, QUAD_ENCODER_MAX = 1484 + 300;
   public static final double MAX_ELBOW_OUTPUT = 0.4;
   private static final double NO_EXTENSION_ARBITRARY_FEEDFORWARD = 0.05; // Arbitrary Feedforward at no extension. 
-  private static final double ARBITARY_FEEDFORWARD_FULL_EXTENSION = 0.05; // Hopefully don't need this since linearly scaling replaces it. Arbitrary Feedforward when elbow is fully extended
-  private static final double ARBITRARY_FEEDFORWARD_EXTENSION_LENGTH_SCALAR = NO_EXTENSION_ARBITRARY_FEEDFORWARD + NO_EXTENSION_ARBITRARY_FEEDFORWARD * Extension.FIXED_LENGTH / (Extension.FIXED_LENGTH + Extension.EXTENSION_OUT_IN_INCHES) ; //(ARBITARY_FEEDFORWARD_FULL_EXTENSION - NO_EXTENSION_ARBITRARY_FEEDFORWARD) / Extension.EXTENSION_OUT_POS; // Extra Feedforward per extension tick
-
+  
   public static final int FORWARD_LIMIT_SWITCH_TICKS = 0; // TODO set this
   public static final int REVERSE_LIMIT_SWITCH_TICKS = 0; // TODO set this
 
@@ -187,7 +185,7 @@ public class Elbow extends BaseElbow {
   @Override
   public synchronized void updateArbitraryFeedForward() {
     if(setpoint != NO_SETPOINT) {
-      double value = getArbitraryFeedForwardAngleMultiplier() * (ARBITRARY_FEEDFORWARD_EXTENSION_LENGTH_SCALAR * Robot.arm.getExtension().getLengthTicks() + arbitraryFeedForwardConstant);
+      double value = arbitraryFeedForwardConstant * getArbitraryFeedForwardAngleMultiplier() * (Robot.arm.getExtension().getLengthInches() + Extension.FIXED_LENGTH) / Extension.FIXED_LENGTH; //* (ARBITRARY_FEEDFORWARD_EXTENSION_LENGTH_SCALAR * Robot.arm.getExtension().getLengthTicks() + arbitraryFeedForwardConstant);
       rotator.set(ControlMode.MotionMagic, setpoint, DemandType.ArbitraryFeedForward, value);
     }
   }

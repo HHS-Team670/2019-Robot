@@ -40,13 +40,11 @@ public class Claw extends Subsystem {
   /*
    * Hold hatch plate when disabled, so false = open, true = closed
    * 
-   * Solenoid 0 when off puts air pushing out
-   * Soleonid 1 when on puts air pushing in
-   * 
    */
   public Claw() {
+
     try {
-      compressor = new Compressor(RobotMap.PC_MODULE);
+      compressor = new Compressor(RobotMap.PCM_MODULE);
       compressor.setClosedLoopControl(true);
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error instantiating compressor: " + ex.getMessage(), true);
@@ -54,21 +52,21 @@ public class Claw extends Subsystem {
     }
 
     try {
-      sol0 = new Solenoid(RobotMap.SOLENOID_0);
+      sol0 = new Solenoid(RobotMap.PCM_MODULE, RobotMap.SOLENOID_0);
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error instantiating openClose solenoid: " + ex.getMessage(), true);
       sol0 = null;
     }
 
     try {
-      sol1 = new Solenoid(RobotMap.SOLENOID_1);
+      sol1 = new Solenoid(RobotMap.PCM_MODULE, RobotMap.SOLENOID_1);
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error instantiating hardSoft solenoid: " + ex.getMessage(), true);
       sol1 = null;
     }
 
     try {
-      push = new Solenoid(RobotMap.CLAW_PUSH_SOLENOID);
+      push = new Solenoid(RobotMap.PCM_MODULE, RobotMap.CLAW_PUSH_SOLENOID);
       push.setPulseDuration(PULSE_DURATION);
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error instantiating push solenoid: " + ex.getMessage(), true);
@@ -88,25 +86,27 @@ public class Claw extends Subsystem {
   /**
    * Closes the claw.
    */
-  public void closeClaw(boolean isSoft) {
-    changeSolenoid(false);
+  public void closeClaw() {
+    changeSolenoid(true);
+    System.out.println("Close Claw Called");
   }
 
   /**
    * Opens the claw.
    */
   public void openClaw() {
-    changeSolenoid(true);
+    changeSolenoid(false);
+    System.out.println("Open Claw Called");
   }
 
 
   /**
-   * @param open true to open, false to close
+   * @param closed true to open, false to close
    */
-  private void changeSolenoid(boolean open) {
+  private void changeSolenoid(boolean closed) {
     if(sol1 != null && sol0 != null) {
-      sol0.set(!open);
-      sol1.set(open);
+      sol0.set(closed);
+      sol1.set(closed);
     }
   }
 
@@ -121,7 +121,7 @@ public class Claw extends Subsystem {
 
   public boolean isOpen() {
     if(sol1 != null) {
-      return sol1.get();
+      return !sol1.get();
     }
     else if (sol0 != null) {
       return !sol0.get();
