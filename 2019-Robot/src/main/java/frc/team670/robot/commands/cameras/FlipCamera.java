@@ -22,6 +22,7 @@ public class FlipCamera extends InstantCommand{
     @Override
     protected void initialize(){
         flipCameraDirection();
+        SmartDashboard.putString("current-command", "FlipCamera");
         Robot.oi.rumbleDriverController(0.4, 0.1);
     }
 

@@ -7,6 +7,7 @@
 
 package frc.team670.robot.commands.intake;
 
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.arm.movement.ArmPathGenerator;

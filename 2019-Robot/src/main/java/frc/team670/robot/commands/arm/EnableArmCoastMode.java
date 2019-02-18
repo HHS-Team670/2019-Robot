@@ -26,8 +26,11 @@ public class EnableArmCoastMode extends InstantCommand {
   @Override
   protected void initialize() {
     arm.getElbow().enableCoastMode();
+    arm.getElbow().stop();
     arm.getWrist().enableCoastMode();
+    arm.getWrist().stop();
     arm.getExtension().enableCoastMode();
+    arm.getExtension().stop();
   }
 
 }

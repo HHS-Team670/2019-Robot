@@ -7,8 +7,9 @@
 
 package frc.team670.robot.commands.claw;
 
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import frc.team670.robot.commands.arm.movement.MoveArm;
+import frc.team670.robot.commands.arm.movement.ArmPathGenerator;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.HeldItem;
 import frc.team670.robot.subsystems.Arm.LegalState;
@@ -17,7 +18,8 @@ import frc.team670.robot.subsystems.Claw;
 public class YeetHeldItem extends CommandGroup {
 
   public YeetHeldItem(Claw claw, Arm arm) {
-    addSequential(new MoveArm(Arm.getArmState(LegalState.GRAB_BALL_GROUND_BACK), arm));
+    Command moveArm = ArmPathGenerator.getPath(Arm.getArmState(LegalState.GRAB_BALL_GROUND_BACK), arm);
+    addSequential(moveArm);
     if(arm.getHeldItem().equals(HeldItem.BALL)) {
       addSequential(new DropBall(claw, arm));
     } else {
