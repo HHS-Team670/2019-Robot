@@ -183,7 +183,7 @@ NetworkTables.addKeyListener('/SmartDashboard/vision-status', (key, value) => {
   if (value === 'engaged') {
     document.getElementById('vision-status').style.fill = "rgb(0,255,0)";
     document.getElementById('vision-status').style.stroke = "rgb(0,255,0)";
-  } else if (value === 'error') {
+  } else if (value === 'error' || value === -99999) {
     document.getElementById('vision-status').style.fill = "rgb(255,0,0)";
     document.getElementById('vision-status').style.stroke = "rgb(255,0,0)";
   } else {
@@ -206,7 +206,7 @@ document.addEventListener("keyup", function(event) {
       NetworkTables.putValue('/SmartDashboard/xkeys-armstates', nextTask);
     }
     else if (nextTask.includes("cancel")) NetworkTables.putValue('/SmartDashboard/xkeys-cancel', nextTask);
-    else if (nextTask === "place" || nextTask === "grab") NetworkTables.putValue('/SmartDashboard/xkeys-placing', nextTask);
+    else if (nextTask === "place" || nextTask === "grab" || nextTask === "drop_held_item") NetworkTables.putValue('/SmartDashboard/xkeys-placing', nextTask);
     else if (nextTask.includes("run_intake")) NetworkTables.putValue('/SmartDashboard/xkeys-intake', nextTask);
     else if (nextTask === "auto_pickup_ball") NetworkTables.putValue('/SmartDashboard/xkeys-autopickup', nextTask);
     else if (nextTask.includes("climb")) NetworkTables.putValue('/SmartDashboard/xkeys-climber', nextTask);
@@ -226,6 +226,7 @@ function getFromMap(key) { // mapping is more aligned with arm position on robot
 
   if (key === "p") return "place";
   if (key === "c") return "grab";
+  if (key === "1") return "drop_held_item";
 
   if (key === "g") return "READY_PLACE_HATCH_ROCKET_MIDDLE_BACK";
   if (key === "k") return "READY_PLACE_BALL_ROCKET_MIDDLE_BACK";
@@ -260,12 +261,20 @@ function getFromMap(key) { // mapping is more aligned with arm position on robot
 var auton = ["test", "", "", "", "", "", ""];
 
 function readRadioButtons() {
-  auton = new Array(7);
+  auton = new Array(8);
+
+  var startHolding = document.forms["auto-chooser"].elements["start-holding"];
+  for (var i = 0, len = startHolding.length; i < len; i++) {
+    if (startHolding[i].checked) {
+      auton[0] = startHolding[i].value;
+      break;
+    }
+  }
 
   var startChooser = document.forms["auto-chooser"].elements["start"];
   for (var i = 0, len = startChooser.length; i < len; i++) {
     if (startChooser[i].checked) {
-      auton[0] = startChooser[i].value;
+      auton[1] = startChooser[i].value;
       break;
     }
   }
@@ -273,7 +282,7 @@ function readRadioButtons() {
   var target1 = document.forms['auto-chooser'].elements['target1'];
   for (var i = 0, len = target1.length; i < len; i++) {
     if (target1[i].checked) {
-      auton[1] = target1[i].value;
+      auton[2] = target1[i].value;
       break;
     }
   }
@@ -281,7 +290,7 @@ function readRadioButtons() {
   var height1 = document.forms['auto-chooser'].elements['height1'];
   for (var i = 0, len = height1.length; i < len; i++) {
     if (height1[i].checked) {
-      auton[2] = height1[i].value;
+      auton[3] = height1[i].value;
       break;
     }
   }
@@ -289,7 +298,7 @@ function readRadioButtons() {
   var target2 = document.forms['auto-chooser'].elements['target2'];
   for (var i = 0, len = target2.length; i < len; i++) {
     if (target2[i].checked) {
-      auton[3] = target2[i].value;
+      auton[4] = target2[i].value;
       break;
     }
   }
@@ -297,7 +306,7 @@ function readRadioButtons() {
   var height2 = document.forms['auto-chooser'].elements['height2'];
   for (var i = 0, len = height2.length; i < len; i++) {
     if (height2[i].checked) {
-      auton[4] = height2[i].value;
+      auton[5] = height2[i].value;
       break;
     }
   }
@@ -305,7 +314,7 @@ function readRadioButtons() {
   var target3 = document.forms['auto-chooser'].elements['target2'];
   for (var i = 0, len = target3.length; i < len; i++) {
     if (target3[i].checked) {
-      auton[5] = target3[i].value;
+      auton[6] = target3[i].value;
       break;
     }
   }
@@ -313,8 +322,7 @@ function readRadioButtons() {
   var height3 = document.forms['auto-chooser'].elements['height3'];
   for (var i = 0, len = height3.length; i < len; i++) {
     if (height3[i].checked) {
-      auton[6] = height3[i].value;
-      break;
+      auton[7] = height3[i].value;
     }
   }
 }
