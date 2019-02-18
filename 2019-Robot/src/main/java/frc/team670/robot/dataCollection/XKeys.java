@@ -137,7 +137,7 @@ public class XKeys {
     private void runIntakeIn() {
         toggleIn = !toggleIn;
 
-        if(toggleOut){
+        if(toggleIn){
             toggleIn = true;
             toggleOut = false;
         }
@@ -146,7 +146,7 @@ public class XKeys {
             System.out.println("Run Intake In command called");
             Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, RunIntakeInWithIR.RUNNING_POWER, true));
         } else {
-            System.out.println("Run Intake In command canceld");
+            System.out.println("Run Intake In command canceled");
             Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, 0, true));
         }
     }
@@ -154,7 +154,7 @@ public class XKeys {
     private void runIntakeOut() {
         toggleOut = !toggleOut;
 
-        if(toggleIn){
+        if(toggleOut){
             toggleIn = false;
             toggleOut = true;
         }
