@@ -22,6 +22,7 @@ public class MoveIntakeToSetpointAngle extends Command {
   private BaseIntake intake;
   private int loggingIterationCounter, setpointInDegrees;
   private static final int TOLERANCE_IN_DEGREES = 5;
+  private static final double TIMEOUT = 3;
 
   /**
    * @param setpoint angle in degrees that the intake is moving to
@@ -29,6 +30,7 @@ public class MoveIntakeToSetpointAngle extends Command {
    */
   public MoveIntakeToSetpointAngle(int setpointInDegrees, BaseIntake intake) {
     requires(intake);
+    setTimeout(TIMEOUT);
     this.intake = intake;
     this.setpointInDegrees = setpointInDegrees;
   }
@@ -52,6 +54,9 @@ public class MoveIntakeToSetpointAngle extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
+    if(isTimedOut()) {
+      return true;
+    }
     if(setpointInDegrees > 0) {
       return (intake.getAngleInDegrees() > setpointInDegrees - TOLERANCE_IN_DEGREES);
     } else {
@@ -72,7 +77,6 @@ public class MoveIntakeToSetpointAngle extends Command {
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
-    intake.setMotionMagicSetpointAngle(intake.getAngleInDegrees());
     end();
     Logger.consoleLog();
   }

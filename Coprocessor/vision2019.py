@@ -2,26 +2,26 @@
 Arjun Sampath || Kyle Fu || Rishab Borah || Navaneet Kadaba || Eshan Jain || Harinandan K
 Usage notes:
 Set DEBUG_MODE to True in order to make screens appear showing what robot sees
-Depth detection is reliant on constants--the known object height, the known camera's height, the camera's FOV, and focal length
+Angle calculations are reliant on constants--the camera's FOV and focal length
+Depth code has been moved to the roboRIO
+Uses 2 cameras and automatically sets ports to video source 50 and 51 and resets the symlinks everytime the program runs
+Sets timestamp to VISION_ERROR_CODE and vision-status to error on SmartDashboard if the camera being used is not connected
+Automatically reconnects in code if unplug and replug camera
 You can click on a point on the output image to print out the hsv value of
 that point in debug mode. Useful for finding specific hsv color ranges.
-Pushes a tuple (angle, distance, timestamp) to network tables--for Shaylan's robot auton drive code
+Pushes an array (hangle, vangle, timestamp) to network tables--for PurePursuit and other Vision code to use
 copper goes to negative
 '''
 
 import copy
-import logging
 import math
 from threading import Thread
 import cv2
-import imutils
 import numpy as np
 import time
 from networktables import NetworkTables
 import os
 
-logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger('logger')
 DEBUG_MODE = False # NOTE MAKE this @FALSE TO MAKE NO SCREENS APPEAR
 ERROR = -99999
 
@@ -30,20 +30,17 @@ NETWORK_TABLE_NAME = "SmartDashboard"
 NETWORK_KEY = "reflect_tape_vision_data"
 
 # Variables (These should be changed to reflect the camera)
-front_capture_source = 0 # Number of USB port for front camera
-back_capture_source = 0 # Number of USB port for back camera, file path for video
+front_capture_source = 50 # Video source number for front camera
+back_capture_source = 51 # Video source number for back camera
 camera_fov_vertical = 39.7  # FOV of the camera (in degrees)
 camera_fov_horizontal = 60.0
-image_width = 1080  # Desired width of inputted image (for processing speed)
 screen_resize = 1  # Scale that the GUI image should be scaled to
 timestamp = round(time.time() * 1000) # time in milliseconds
-camera_vertical_angle = 0.0 # camera angle offset up or down (positive=up, negative=down)
-camera_horizontal_angle = 0.0 # camera angle offset right left
 
 # Keys for network table entries
 camera_key = "vision-camera"
 
-# HSV Values to detect
+# HSV Values to detect - DEFAULT is Front
 min_hsv = [50, 220, 80] # Need to change according to practice field data
 max_hsv = [70, 255, 210]
 
@@ -57,65 +54,74 @@ def main():
     '''
     Main method, runs when program is run.
     '''
-    # initialize network tables
+    #Resets the symlinks to vid source 50 and 51, connecting them to usb ports
+    os.system("sudo rm -f /dev/video" + `front_capture_source`)
+    os.system("sudo rm -f /dev/video" + `back_capture_source`)
+    os.system("sudo ln -s /dev/v4l/by-path/platform-xhci-hcd.3.auto-usb-0:1.1:1.0-video-index0 /dev/video"+ `front_capture_source`)
+    os.system("sudo ln -s /dev/v4l/by-path/platform-12110000.usb-usb-0:1:1.0-video-index0 /dev/video"+ `back_capture_source`)
+    
+    #Sets exposure and other camera properties for both cameras
+    os.system("v4l2-ctl -d /dev/video" + `front_capture_source` + " -c exposure_auto=1 -c exposure_absolute=.01 -c brightness=0 -c white_balance_temperature_auto=0 -c backlight_compensation=0 -c contrast=10 -c saturation=200")
+    os.system("v4l2-ctl -d /dev/video" + `back_capture_source` + " -c exposure_auto=1 -c exposure_absolute=.01 -c brightness=0 -c white_balance_temperature_auto=0 -c backlight_compensation=0 -c contrast=10 -c saturation=200")
 
-    os.system("v4l2-ctl -d /dev/video0 -c exposure_auto=1 -c exposure_absolute=.01 -c brightness=0 -c white_balance_temperature_auto=0 -c backlight_compensation=0 -c contrast=10 -c saturation=200")
-    os.system("rm -rf output")
-    os.system("mkdir output")
-    print("start")
+    #Uncomment when saving images
+    #os.system("rm -rf output")
+    #os.system("mkdir output")
+    
     NetworkTables.initialize(server=ROBORIO_IP)
-    print("init nt")
     table = NetworkTables.getTable(NETWORK_TABLE_NAME)
 
-    print("get table")
-    print(table)
     #Video capture / resizing stuff
     vs_front = ThreadedVideo(screen_resize, front_capture_source).start()
-    vs_back = ThreadedVideo(screen_resize, back_capture_source).start()
-
-    # resize_value = get_resize_values(vs.stream, image_width) # uncomment if screen resize is desired
+    vs_back = ThreadedVideo(screen_resize, back_capture_source).start() 
 
     # This may not need to be calculated, can use Andra's precalculated values
     vert_focal_length = find_vert_focal_length(vs_front.raw_read()[0], camera_fov_vertical)
     hor_focal_length = find_hor_focal_length(vs_front.raw_read()[0], camera_fov_horizontal)
 
-    startTime = time.time()
     frameCount = 0
     while True:
-
         # gets which camera to use (front or back)
         camera = table.getEntry(camera_key).getString("back")
-
+        
         vs = None
-        if camera is "front":
-            vs = vs_front
-        else:
-            vs = vs_back
+
+        if camera == "front":
+            vs=vs_front
+            #HSV Values to detect with front LED
+            min_hsv = [50, 220, 80] # Need to change according to practice field data
+            max_hsv = [70, 255, 210]
+        elif camera == "back":
+            vs=vs_back
+            #HSV Values to detect with back LED
+            min_hsv = [50, 220, 80] # Need to change according to practice field data
+            max_hsv = [70, 255, 210]
 
         try:
-            print(frameCount/(time.time() - startTime))
             frameCount += 1
             # Read input image from video
             input_raw = vs.raw_read()
+            if input_raw is None:
+                #print("Error: Capture source not found or broken.")
+                returns = [ERROR, ERROR, ERROR]
+                push_network_table(table, returns)
+                table.putString("vision-status", "error")
+
+                continue
+            else:
+                table.putString("vision-status", "")
+
             input_image = input_raw[0]
             timestamp = input_raw[1]
-            if input_image is None:
-                print("Error: Capture source not found or broken.")
-                returns = [ERROR, ERROR, timestamp]
-                push_network_table(table, returns)
 
-                #Debug mode code
-                if DEBUG_MODE:
-                    key = cv2.waitKey(1) & 0xFF
-                    if key == ord('q'):
-                        # Quit if q key is pressed
-                        break
-                continue
             # Find colored object / box it with a rectangle
             masked_image = find_colored_object(input_image, debug=DEBUG_MODE)
 
             object_rects = find_two_important_contours(masked_image, debug=DEBUG_MODE)
             object_rect, object_rect_2 = object_rects
+
+            '''
+            Uncomment below if you want to save images to output for debugging
 
             if frameCount % 10 == 0:
                 cv2.imwrite("output/mask_%d.jpg"%frameCount, masked_image)
@@ -125,6 +131,7 @@ def main():
                     box_points = np.int0(box_points)
                     cv2.drawContours(input_image, [box_points], 0, (0, 255, 0), 2)
                 cv2.imwrite("output/boxed_%d.jpg"%frameCount,input_image) # Take out later to speed up
+            '''
 
             # DEBUG mode code
             if object_rect is -1 and object_rect_2 is -1:
@@ -145,12 +152,8 @@ def main():
                 # find_vert_angle finds the depth / angle of the object
                 # find_hor_angle finds horizontal angle to object
                 rect_x_midpoint, high_point = find_rectangle_highpoint(object_rects)
-                if camera is "front":
-                    vangle = find_angle(input_image, high_point, vert_focal_length) # vangle - 'V'ertical angle
-                    hangle = find_angle(input_image, rect_x_midpoint, hor_focal_length, vertical=False) # hangle - 'H'orizontal angle
-                else:
-                    vangle = find_angle(input_image, high_point, vert_focal_length) # vangle - 'V'ertical angle
-                    hangle = find_angle(input_image, rect_x_midpoint, hor_focal_length, vertical=False) # hangle - 'H'orizontal angle
+                vangle = find_angle(input_image, high_point, vert_focal_length) # vangle - 'V'ertical angle
+                hangle = find_angle(input_image, rect_x_midpoint, hor_focal_length, vertical=False) # hangle - 'H'orizontal angle
                 returns = [hangle, vangle, timestamp]
             else:
               returns = [ERROR, ERROR, timestamp]
@@ -198,10 +201,12 @@ class ThreadedVideo:
         video capture image.
         '''
         self.stream = cv2.VideoCapture(src)
+        self.src = src
         self.width = 1000
-        self.grabbed = (read_video_image(self.stream, resize_value), round(time.time()*1000))
-        self.frame = imutils.resize(self.grabbed[0], width=self.width)
+        if self.opened():
+            self.grabbed = (read_video_image(self.stream, resize_value), round(time.time()*1000))
         self.stopped = False
+        self.frameCount = 0
         self.resize = resize_value
 
     def start(self):
@@ -218,10 +223,6 @@ class ThreadedVideo:
         '''
         self.stopped = True
 
-    def read(self):
-        '''Returns the resized frame. Unnecessary for the actual robot'''
-        return self.frame
-
     def raw_read(self):
         '''Returns the raw frame with the original video input's image size.'''
         return self.grabbed
@@ -232,15 +233,29 @@ class ThreadedVideo:
 
     def opened(self):
         '''Returns a boolean if the OpenCV stream is open'''
-        return self.stream.isOpened()
+        cameraOpen = False;
+        try:
+            #Checks if a camera is connected if symlink is not broken - if it is throws error and caught below
+            os.stat("/dev/video" + `self.src`)
+            #Reopens stream so camera reconnects
+            self.stream.open(self.src)
+            cameraOpen = True
+        except OSError:
+            #Releases a stream if its camera is disconnected
+            #print("Camera with source " + `self.src` + " is not connected!")
+            self.stream.release()
+            cameraOpen = False
+
+        return cameraOpen
 
     def update(self):
         '''Grabs new video images from the current video stream.'''
         while not self.stopped:
-            if not self.stopped:
-                self.grabbed = (read_video_image(self.stream, self.resize), round(time.time()*1000))
-           #     if self.grabbed[0] is not None:
-           #         self.frame = imutils.resize(self.grabbed[0], width=self.width)
+            self.frameCount += 1
+            if self.opened():
+                self.grabbed = (read_video_image(self.stream), round(time.time()*1000))
+            else:
+                self.grabbed = None
 
 # Methods
 def push_network_table(table, return_list):
@@ -248,7 +263,6 @@ def push_network_table(table, return_list):
     Pushes a tuple to the network table
     prints the table in Debug mode
     '''
-    #push_tuple = tuple(return_list)
     table.putNumberArray(NETWORK_KEY, return_list)
 
     if DEBUG_MODE:
@@ -271,8 +285,8 @@ def read_video_image(capture, scale=1):
     Does some blurring to make the image easier to use.
     '''
     main_image = capture.read()[1]
-    if main_image is not None:
-        main_image = cv2.resize(main_image, (0, 0), fx=scale, fy=scale)
+    #if main_image is not None:
+    #    main_image = cv2.resize(main_image, (0, 0), fx=scale, fy=scale)
     return main_image
 
 

@@ -22,7 +22,7 @@ public class RobotMap {
 
   // Do not put Talon or other CTRE things to CAN ID 0 because that's the PDP. CAN conflicts are only within device families.
 
-  public static int PDP_ID = 0;
+  public static final int PDP_ID = 0;
 
   // Drive Base
   public static final int SPARK_LEFT_MOTOR_1 = 0; // These are properly set.
@@ -44,26 +44,26 @@ public class RobotMap {
   public static final int ARM_WRIST_ROTATION = 9;
 
   // Claw
-  public static final int HARD_GRIP_SOLENOID = 9;
-  public static final int SOFT_GRIP_SOLENOID = 10;
-  public static final int CLAW_PUSH_SOLENOID = 11;
+  public static final int SOLENOID_0 = 0;
+  public static final int SOLENOID_1 = 1;
+  public static final int CLAW_PUSH_SOLENOID = 2;
 
-  public static final int PC_MODULE = 12;
+  public static final int PCM_MODULE = 12;
 
-  // Climber
+// Climber
   public static final int BACK_CLIMBER_PISTON_CONTROLLER = 14;
   public static final int FRONT_CLIMBER_PISTON_CONTROLLER = 15;
   
   // Sensors
   public final static Port NAVX_PORT = SerialPort.Port.kUSB;  
 
-  public static final int FRONT_ULTRASONIC_TRIGGER_PIN = 4; // TODO set these
-  public static final int FRONT_ULTRASONIC_ECHO_PIN = 5;
-  public static final int BACK_LEFT_ULTRASONIC_TRIGGER_PIN = 6;
-  public static final int BACK_LEFT_ULTRASONIC_ECHO_PIN = 7;
-  public static final int BACK_RIGHT_ULTRASONIC_TRIGGER_PIN = 8;
-  public static final int BACK_RIGHT_ULTRASONIC_ECHO_PIN = 9;
-  public final static int INTAKE_IR_DIO_PORT = 10;
+  public static final int FRONT_ULTRASONIC_TRIGGER_PIN = 17; // TODO set these
+  public static final int FRONT_ULTRASONIC_ECHO_PIN = 18;
+  public static final int BACK_LEFT_ULTRASONIC_TRIGGER_PIN = 19;
+  public static final int BACK_LEFT_ULTRASONIC_ECHO_PIN = 20;
+  public static final int BACK_RIGHT_ULTRASONIC_TRIGGER_PIN = 0;
+  public static final int BACK_RIGHT_ULTRASONIC_ECHO_PIN = 1;
+  public final static int INTAKE_IR_DIO_PORT = 23;
 
 
   // Joysticks

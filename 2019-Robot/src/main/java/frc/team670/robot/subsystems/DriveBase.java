@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.drive.teleop.XboxRocketLeagueDrive;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
@@ -620,5 +621,18 @@ public class DriveBase extends Subsystem {
    */
   public double getRightMustangEncoderVelocityInInchesPerSecond(){
     return rightMustangEncoder.getVelocityInches();
+  }
+
+  public void sendDIOEncoderDataToDashboard() {
+    if (leftDIOEncoder != null && rightDIOEncoder != null) {
+      SmartDashboard.putNumber("Left DIO Encoder: ", leftDIOEncoder.get());
+      SmartDashboard.putNumber("Right DIO Encoder: ", rightDIOEncoder.get());
+    } 
+    
+    if (leftDIOEncoder == null) {
+      SmartDashboard.putString("Left DIO Encoder: ", "LEFT DIO ENCODER IS NULL!");
+    } else{
+      SmartDashboard.putString("Right DIO Encoder: ", "RIGHT DIO ENCODER IS NULL!");
+    }
   }
 }

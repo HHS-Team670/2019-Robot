@@ -20,6 +20,7 @@ import frc.team670.robot.commands.CancelAllCommands;
 import frc.team670.robot.commands.arm.movement.CancelArmMovement;
 import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.commands.arm.movement.PlaceOrGrab;
+import frc.team670.robot.commands.claw.YeetHeldItem;
 import frc.team670.robot.commands.climb.armClimb.CancelArmClimb;
 import frc.team670.robot.commands.drive.vision.CancelDriveBase;
 import frc.team670.robot.commands.drive.vision.VisionPurePursuit;
@@ -65,6 +66,7 @@ public class XKeys {
             String s = value.getString();
             if (s.equals("place")) placeOrGrab(true);
             else if (s.equals("grab")) placeOrGrab(false);
+            else if (s.equals("drop_held_item")) dropHeldItem();
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-intake", (table2, key2, entry, value, flags) -> {
             if (value.getType() != NetworkTableType.kString) return;
@@ -141,8 +143,10 @@ public class XKeys {
         }
 
         if (toggleIn) {
+            System.out.println("Run Intake In command called");
             Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, RunIntakeInWithIR.RUNNING_POWER, true));
         } else {
+            System.out.println("Run Intake In command canceld");
             Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, 0, true));
         }
     }
@@ -205,5 +209,10 @@ public class XKeys {
         SmartDashboard.putString("vision-status", "");
         Scheduler.getInstance().add(new VisionPurePursuit(Robot.driveBase, Robot.coprocessor, Robot.sensors, distanceFromTarget, isReversed, isLow));
     }
+
+    private void dropHeldItem() {
+        Scheduler.getInstance().add(new YeetHeldItem(Robot.claw, Robot.arm));
+    }
+
 
 }

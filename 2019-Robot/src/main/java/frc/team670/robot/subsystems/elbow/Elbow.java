@@ -32,19 +32,17 @@ public class Elbow extends BaseElbow {
   private static final double CURRENT_P = 0.2, CURRENT_I = 0.0, CURRENT_D = 0.0, CURRENT_F = 0.0; // TODO Check these constants
   // Motion Magic
   private static final int kPIDLoopIdx = 0, MOTION_MAGIC_SLOT = 0, kTimeoutMs = 0;
-  private static final double MM_F = 0, MM_P = 0.95, MM_I = 0.01, MM_D = 0; //TODO figure out what these are
+  private static final double MM_F = 0, MM_P = 0.95, MM_I = 0.01, MM_D = 0; 
   private static final int MM_I_ZONE = 75;
-  private static final int ELBOW_VELOCITY_SENSOR_UNITS_PER_100_MS = 250; // TODO set this
-  private static final int ELBOW_ACCELERATION_SENSOR_UNITS_PER_SEC = 3000; // TODO set this
-  private static final int OFFSET_FROM_ENCODER_ZERO = 2904; // TODO set this
-  public static final int REVERSE_SOFT_LIMIT = -1700, FORWARD_SOFT_LIMIT = 1200; // SET THIS
+  private static final int ELBOW_VELOCITY_SENSOR_UNITS_PER_100_MS = 250;
+  private static final int ELBOW_ACCELERATION_SENSOR_UNITS_PER_SEC = 3000; 
+  private static final int OFFSET_FROM_ENCODER_ZERO = 2904; 
+  public static final int REVERSE_SOFT_LIMIT = -1700, FORWARD_SOFT_LIMIT = 1200; 
   
-  private static final int QUAD_ENCODER_MIN = -1932 - 300, QUAD_ENCODER_MAX = 1484 + 300;// SET THIS BASED ON FORWARD AND REVERSE
+  private static final int QUAD_ENCODER_MIN = -1932 - 300, QUAD_ENCODER_MAX = 1484 + 300;
   public static final double MAX_ELBOW_OUTPUT = 0.4;
-  private static final double NO_EXTENSION_ARBITRARY_FEEDFORWARD = 0.05; // Arbitrary Feedforward at no extension. TODO SET THIS
-  private static final double ARBITARY_FEEDFORWARD_FULL_EXTENSION = 0.05; // Arbitrary Feedforward when elbow is fully extended TODO SET THIS
-  private static final double ARBITRARY_FEEDFORWARD_EXTENSION_LENGTH_SCALAR = (ARBITARY_FEEDFORWARD_FULL_EXTENSION - NO_EXTENSION_ARBITRARY_FEEDFORWARD) / Extension.EXTENSION_OUT_POS; // Extra Feedforward per extension tick
-
+  private static final double NO_EXTENSION_ARBITRARY_FEEDFORWARD = 0.05; // Arbitrary Feedforward at no extension. 
+  
   public static final int FORWARD_LIMIT_SWITCH_TICKS = 0; // TODO set this
   public static final int REVERSE_LIMIT_SWITCH_TICKS = 0; // TODO set this
 
@@ -145,6 +143,7 @@ public class Elbow extends BaseElbow {
   public void setMotionMagicSetpointAngle(double elbowSetpointAngle) {
     setpoint = convertElbowDegreesToTicks(elbowSetpointAngle);
     rotator.selectProfileSlot(MOTION_MAGIC_SLOT, kPIDLoopIdx);
+    enableBrakeMode();
     rotator.set(ControlMode.MotionMagic, setpoint);
   }
 
@@ -186,8 +185,7 @@ public class Elbow extends BaseElbow {
   @Override
   public synchronized void updateArbitraryFeedForward() {
     if(setpoint != NO_SETPOINT) {
-      double value = getArbitraryFeedForwardAngleMultiplier() * (ARBITRARY_FEEDFORWARD_EXTENSION_LENGTH_SCALAR * Robot.arm.getExtension().getLengthTicks() + arbitraryFeedForwardConstant);
-      // double value = getArbitraryFeedForwardAngleMultiplier() * NO_EXTENSION_ARBITRARY_FEEDFORWARD;
+      double value = arbitraryFeedForwardConstant * getArbitraryFeedForwardAngleMultiplier() * (Robot.arm.getExtension().getLengthInches() + Extension.FIXED_LENGTH) / Extension.FIXED_LENGTH; //* (ARBITRARY_FEEDFORWARD_EXTENSION_LENGTH_SCALAR * Robot.arm.getExtension().getLengthTicks() + arbitraryFeedForwardConstant);
       rotator.set(ControlMode.MotionMagic, setpoint, DemandType.ArbitraryFeedForward, value);
     }
   }

@@ -77,21 +77,28 @@ public class VisionPurePursuit extends InstantCommand {
       e.printStackTrace();
     }
 
+    try {
+      if(MathUtils.doublesEqual(coprocessor.getVisionValues()[2], RobotConstants.VISION_ERROR_CODE)) {
+        SmartDashboard.putString("warnings", "Coprocess Camera Unplugged: Vision Down");
+        return;
+      } 
+    } catch(IndexOutOfBoundsException e) {
+      return;
+    }
+
     double horizontalAngle = coprocessor.getAngleToWallTarget();
     if (MathUtils.doublesEqual(horizontalAngle, RobotConstants.VISION_ERROR_CODE)) {
       Logger.consoleLog("No Valid Vision Data found, command quit.");
       SmartDashboard.putString("vision-status", "error");
+      SmartDashboard.putString("warnings", "Vision Target Not Found");
       return;
     }
 
     double ultrasonicDistance;
     if (!isReversed) {
-      ultrasonicDistance = sensors.getFrontUltrasonicDistance(horizontalAngle);
+      ultrasonicDistance = sensors.getFrontUltrasonicDistance();
     } else {
-      double ultraLeft = sensors.getBackLeftUltrasonicDistance(horizontalAngle);
-      double ultraRight = sensors.getBackRightUltrasonicDistance(horizontalAngle);
-
-      ultrasonicDistance = (ultraLeft < ultraRight) ? ultraLeft : ultraRight; // Take the one that is least
+      ultrasonicDistance = sensors.getAdjustedBackUltrasonicDistance();
     }
     ultrasonicDistance *= Math.cos(Math.toRadians(horizontalAngle)); // use cosine to get the straight ultrasonic
                                                                      // distance not the diagonal one
@@ -166,13 +173,10 @@ public class VisionPurePursuit extends InstantCommand {
         public void run() {
           double ultrasonicDistance;
           if(!reversed) {
-            ultrasonicDistance = sensors.getFrontUltrasonicDistance(horizontalAngle);
+            ultrasonicDistance = sensors.getFrontUltrasonicDistance();
           }
           else {
-            double ultraLeft = sensors.getBackLeftUltrasonicDistance(horizontalAngle);
-            double ultraRight = sensors.getBackRightUltrasonicDistance(horizontalAngle);
-      
-            ultrasonicDistance = (ultraLeft < ultraRight) ? ultraLeft : ultraRight; // Take the one that is least
+            ultrasonicDistance = sensors.getAdjustedBackUltrasonicDistance();
           }
           ultrasonicDistance *= Math.cos(Math.toRadians(horizontalAngle)); //use cosine to get the straight ultrasonic distance not the diagonal one
       

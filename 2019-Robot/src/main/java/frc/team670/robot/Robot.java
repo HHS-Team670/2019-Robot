@@ -17,8 +17,8 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.ControlOperatorController;
-import frc.team670.robot.commands.drive.DriveMotionProfile;
 import frc.team670.robot.commands.drive.teleop.XboxRocketLeagueDrive;
+import frc.team670.robot.commands.tuning.MeasureArbitraryFeedforward;
 import frc.team670.robot.commands.tuning.ResetPulseWidthEncoder;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangCoprocessor;
@@ -67,16 +67,6 @@ public class Robot extends TimedRobot {
   private Timer timer;
 
   public Robot() {
-
-    oi = new OI();
-
-    try
-    {
-        Logger.CustomLogger.setup();
-    }
-    catch (Throwable e) { Logger.logException(e);}
-    
-    Logger.consoleLog();
   }
 
   /**
@@ -87,6 +77,18 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // auton_chooser.addDefault("Default Auto", new TimeDrive());
     // chooser.addObject("My Auto", new MyAutoCommand());
+
+
+    oi = new OI();
+
+    try
+    {
+        Logger.CustomLogger.setup();
+    }
+    catch (Throwable e) { Logger.logException(e);}
+    
+    Logger.consoleLog();
+
     SmartDashboard.putData("Auto mode", auton_chooser);
     Logger.consoleLog();
     System.out.println("Robot init");
@@ -157,10 +159,16 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("intake-ir-sensor", sensors.getIntakeIROutput());
     SmartDashboard.putNumber("extension-actual-length" , extension.getLengthInches());
     SmartDashboard.putNumber("arm-extension" , extension.getLengthInches() / Extension.EXTENSION_OUT_IN_INCHES);
+    SmartDashboard.putNumber("Arbitrary Feedforward Measurement", MeasureArbitraryFeedforward.output);
+
+    SmartDashboard.putString("Held Item", arm.getHeldItem().toString());
 
     elbow.sendDataToDashboard();
     extension.sendDataToDashboard();
     wrist.sendDataToDashboard();
+    intake.sendDataToDashboard();
+    sensors.sendUltrasonicDataToDashboard();
+    driveBase.sendDIOEncoderDataToDashboard();
 
   }
   /**

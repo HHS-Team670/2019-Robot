@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.command.WaitForChildren;
 import frc.team670.robot.commands.arm.movement.MoveElbow;
 import frc.team670.robot.commands.arm.movement.MoveExtension;
 import frc.team670.robot.commands.arm.movement.MoveWrist;
+import frc.team670.robot.commands.intake.MoveIntakeToSetpointAngle;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
 import frc.team670.robot.subsystems.Arm.LegalState;
@@ -28,6 +29,9 @@ public class CommonTransition extends ArmTransition {
   private Arm arm;
   private LegalState start, destination;
   private BaseIntake intake;
+
+  // Wooden Piece height above the intake
+  private static final double INTAKE_STICKING_OUT_HEIGHT = 2.5;
 
   /**
    * @param start       The start ArmState (the ArmState that holds this
@@ -52,15 +56,10 @@ public class CommonTransition extends ArmTransition {
     ArmState dest = getDest();
 
     double intakeHighPoint = Intake.INTAKE_FIXED_LENGTH_IN_INCHES + Intake.INTAKE_ROTATING_LENGTH_IN_INCHES;
-    double intakeQuarterPoint = Intake.INTAKE_FIXED_LENGTH_IN_INCHES
-        + Intake.INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(Math.toRadians(45));
+    double intakeQuarterPoint = Intake.INTAKE_FIXED_LENGTH_IN_INCHES + Intake.INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(Math.toRadians(45));
 
     double intakeSourceY = intake.getIntakeCoordinates().getY();
-    double intakeDestY = (dest.isIntakeDeployed())
-        ? (Intake.INTAKE_FIXED_LENGTH_IN_INCHES
-            + Intake.INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(Intake.INTAKE_ANGLE_DEPLOYED))
-        : (Intake.INTAKE_FIXED_LENGTH_IN_INCHES
-            + Intake.INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(Intake.INTAKE_ANGLE_IN));
+    double intakeDestY = Intake.INTAKE_FIXED_LENGTH_IN_INCHES + INTAKE_STICKING_OUT_HEIGHT;
     double sourceY = source.getMaximumLowestPointOnClaw();
     double destY = dest.getMaximumLowestPointOnClaw();
     double sourceX = source.getCoordPosition().getX();
@@ -69,68 +68,61 @@ public class CommonTransition extends ArmTransition {
     boolean moveIntakeSecond = false;
     boolean intakeMovementsAddedSequential = false;
 
-    double currentArmX = Arm
-        .getCoordPosition(elbow.getAngleInDegrees(), wrist.getAngleInDegrees(), extension.getLengthInches()).getX();
-    double currentArmY = Arm.getCurrentLowestPointOnArm(elbow.getAngleInDegrees(), wrist.getAngleInDegrees(),
-        extension.getLengthInches());
+    double currentArmX = Arm.getCoordPosition(elbow.getAngleInDegrees(), wrist.getAngleInDegrees(), extension.getLengthInches()).getX();
+    double currentArmY = Arm.getCurrentLowestPointOnArm(elbow.getAngleInDegrees(), wrist.getAngleInDegrees(), extension.getLengthInches());
 
     // Only reason why intake would have to move second is if the movement of the
     // intake would hit the arm
 
     // If intake has to move from in to deployed or from deployed to in
-    // if (source.isIntakeDeployed() != dest.isIntakeDeployed()) {
-    // //If a point along the intake's trajectory is in between the Y coordinates of
-    // the arm's start and end
-    // if ((intakeSourceY > destY && intakeSourceY < sourceY) ||
-    // (intakeHighPoint > destY && intakeHighPoint < sourceY) ||
-    // (intakeQuarterPoint > destY && intakeQuarterPoint < sourceY) ||
-    // (intakeDestY > destY && intakeDestY < sourceY)){
-    // moveIntakeSecond = true;
-    // }
+    if (source.isIntakeDeployed() != dest.isIntakeDeployed() && intake.isDeployed() != dest.isIntakeDeployed() && !(sourceX < 0 && destX < 0)) {
+      // If a point along the intake's trajectory is in between the Y coordinates of
+      // the arm's start and end
 
-    // //If a point along the intake's trajectory is in between the Y coordinates of
-    // the arm's start and end
-    // if ((intakeSourceY > sourceY && intakeSourceY < destY) ||
-    // (intakeHighPoint > sourceY && intakeHighPoint < destY) ||
-    // (intakeQuarterPoint > sourceY && intakeQuarterPoint < destY) ||
-    // (intakeDestY > sourceY && intakeDestY < destY)){
-    // moveIntakeSecond = true;
-    // }
+      if ((intakeSourceY > destY && intakeSourceY < sourceY) || (intakeHighPoint > destY && intakeHighPoint < sourceY)
+          || (intakeQuarterPoint > destY && intakeQuarterPoint < sourceY)
+          || (intakeDestY > destY && intakeDestY < sourceY)) {
+        moveIntakeSecond = true;
+      }
 
-    // if (intakeHighPoint > currentArmY && currentArmX >
-    // intake.getIntakeCoordinates().getX() && currentArmX <
-    // intake.getIntakeCoordinates().getX()){
-    // moveIntakeSecond = true;
-    // }
+      // If a point along the intake's trajectory is in between the Y coordinates of
+      // the arm's start and end
+      if ((intakeSourceY > sourceY && intakeSourceY < destY) || (intakeHighPoint > sourceY && intakeHighPoint < destY)
+          || (intakeQuarterPoint > sourceY && intakeQuarterPoint < destY)
+          || (intakeDestY > sourceY && intakeDestY < destY)) {
+        moveIntakeSecond = true;
+      }
 
-    // If arm doesn't even come near the intake, then there's no point adding the
-    // command sequentially
-    // if((intakeHighPoint >= destY && intakeHighPoint <= sourceY) ||
-    // (intakeHighPoint >= sourceY && intakeHighPoint <= destY) && (sourceX > 0 ||
-    // destX > 0)){
-    // intakeMovementsAddedSequential = true;
-    // }
-    // }
+      if (intakeHighPoint > currentArmY && currentArmX > intake.getIntakeCoordinates().getX()
+          && currentArmX < intake.getIntakeCoordinates().getX()) {
+        moveIntakeSecond = true;
+      }
 
-    // // Redundant code most likely, will run here if boolean says to not run
+      // If arm doesn't even come near the intake, then there's no point adding the
+      // command sequentially
+      if ((intakeHighPoint >= destY && intakeHighPoint <= sourceY)
+          || (intakeHighPoint >= sourceY && intakeHighPoint <= destY) && (sourceX > 0 || destX > 0)) {
+        intakeMovementsAddedSequential = true;
+      }
+    }
+
+    // Redundant code most likely, will run here if boolean says to not run
     // second
-    // if (!moveIntakeSecond) {
-    // if (intakeMovementsAddedSequential) {
-    // if (dest.isIntakeDeployed()) {
-    // addSequential(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_DEPLOYED,
-    // intake));
-    // } else {
-    // addSequential(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_IN, intake));
-    // }
-    // } else {
-    // if (dest.isIntakeDeployed()) {
-    // addParallel(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_DEPLOYED,
-    // intake));
-    // } else {
-    // addParallel(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_IN, intake));
-    // }
-    // }
-    // }
+    if (!moveIntakeSecond) {
+      if (intakeMovementsAddedSequential) {
+        if (dest.isIntakeDeployed()) {
+          addSequential(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_DEPLOYED, intake));
+        } else {
+          addSequential(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_IN, intake));
+        }
+      } else {
+        if (dest.isIntakeDeployed()) {
+          addParallel(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_DEPLOYED, intake));
+        } else {
+          addParallel(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_IN, intake));
+        }
+      }
+    }
 
     addParallel(new MoveWrist(wrist, dest.getWristAngle()));
     addParallel(new MoveExtension(extension, dest.getExtensionLength()));
@@ -138,14 +130,13 @@ public class CommonTransition extends ArmTransition {
     addSequential(new WaitForChildren());
 
     // Redundant code most likely, will run here if boolean says to run second
-    // if (intakeMovementsAddedSequential) {
-    // if (dest.isIntakeDeployed()) {
-    // addSequential(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_DEPLOYED,
-    // intake));
-    // } else {
-    // addSequential(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_IN, intake));
-    // }
-    // }
+    if (intakeMovementsAddedSequential) {
+      if (dest.isIntakeDeployed()) {
+        addSequential(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_DEPLOYED, intake));
+      } else {
+        addSequential(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_IN, intake));
+      }
+    }
   }
 
   @Override

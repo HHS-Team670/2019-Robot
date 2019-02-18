@@ -105,4 +105,14 @@ public class TestExtension extends BaseExtension {
     return 0;
   }
 
+  @Override
+  public void enableBrakeMode() {
+
+  }
+
+  @Override
+  public void enableCoastMode() {
+
+  }
+
 }

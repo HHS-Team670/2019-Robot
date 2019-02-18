@@ -66,7 +66,7 @@ public class ArmClimb extends Command {
   @Override
   protected void execute() {
 
-    double deltaSetPointInInches = (heightInInches/(Math.cos(Math.toRadians(elbow.getAngleInDegrees())))) - Arm.FIXED_ARM_LENGTH_IN_INCHES;
+    double deltaSetPointInInches = (heightInInches/(Math.cos(Math.toRadians(elbow.getAngleInDegrees())))) - Extension.FIXED_LENGTH;
 
     extension.setPIDControllerSetpointInInches(Extension.EXTENSION_OUT_IN_INCHES - deltaSetPointInInches); // Changes the setpoint
     

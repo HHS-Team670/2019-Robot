@@ -44,7 +44,7 @@ public class DIOUltrasonic {
      * 
      * @param angle The angle to the target from the robot.
      */
-    public double getDistance(double angle){
+    public double getDistance(){
         double distance = getUnadjustedDistance();
         // Untested Math below
         double phi = Robot.sensors.getAngleToTarget();

@@ -32,7 +32,7 @@ public class OpenClaw extends TimedCommand {
   @Override
   protected void initialize() {
     if(!claw.isOpen()) {
-      claw.openClaw(true);
+      claw.openClaw();
     }
     Logger.consoleLog();
   }

@@ -24,7 +24,7 @@ public class MustangSensors {
   public static final double NAVX_ERROR_CODE = -40001;
   public static final double ULTRASONIC_ERROR_CODE = 99999;
 
-  private static final double FRONT_ULTRA_OFFSET = -12.25, BACK_LEFT_ULTRA_OFFSET = -9.25, BACK_RIGHT_ULTRA_OFFSET = 9.25; // TODO set these
+  private static final double FRONT_ULTRA_OFFSET = -12.25, BACK_LEFT_ULTRA_OFFSET = -9.25, BACK_RIGHT_ULTRA_OFFSET = 9.25;
 
    //Ultrasonic
    private DIOUltrasonic frontUltrasonic, backLeftUltrasonic, backRightUltrasonic;
@@ -32,8 +32,8 @@ public class MustangSensors {
 
   public MustangSensors(){
     try {
-      // navXMicro = new NavX(RobotMap.NAVX_PORT); 
-      // isNavXNull = false;
+      navXMicro = new NavX(RobotMap.NAVX_PORT); 
+      isNavXNull = false;
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
       SmartDashboard.putString("warning", "Error instantiating navX-MXP");
@@ -44,32 +44,32 @@ public class MustangSensors {
     try {
       intakeIRSensor = new DigitalInput(RobotMap.INTAKE_IR_DIO_PORT);
     } catch (RuntimeException ex) {
-      DriverStation.reportError("Error instantiating intakeIRSensor: " + ex.getMessage(), true);
-      SmartDashboard.putString("warning", "Error instantiating intakeIRSensor");
+      // DriverStation.reportError("Error instantiating intakeIRSensor: " + ex.getMessage(), true);
+      // SmartDashboard.putString("warning", "Error instantiating intakeIRSensor");
       intakeIRSensor = null;
     }
 
     try {
       frontUltrasonic = new DIOUltrasonic(RobotMap.FRONT_ULTRASONIC_TRIGGER_PIN, RobotMap.FRONT_ULTRASONIC_ECHO_PIN, FRONT_ULTRA_OFFSET);
     } catch (RuntimeException ex) {
-      DriverStation.reportError("Error instantiating front ultrasonic: " + ex.getMessage(), true);
-      SmartDashboard.putString("warning", "Error instantiating front ultrasonic");
+      // DriverStation.reportError("Error instantiating front ultrasonic: " + ex.getMessage(), true);
+      // SmartDashboard.putString("warning", "Error instantiating front ultrasonic");
       frontUltrasonic = null;
     }
 
     try {
       backLeftUltrasonic= new DIOUltrasonic(RobotMap.BACK_LEFT_ULTRASONIC_TRIGGER_PIN, RobotMap.BACK_LEFT_ULTRASONIC_ECHO_PIN, BACK_LEFT_ULTRA_OFFSET);
     } catch (RuntimeException ex) {
-      DriverStation.reportError("Error instantiating back left ultrasonic: " + ex.getMessage(), true);
-      SmartDashboard.putString("warning", "Error instantiating back left ultrasonic");
+      // DriverStation.reportError("Error instantiating back left ultrasonic: " + ex.getMessage(), true);
+      // SmartDashboard.putString("warning", "Error instantiating back left ultrasonic");
       backLeftUltrasonic = null;
     }
 
     try {
       backRightUltrasonic = new DIOUltrasonic(RobotMap.BACK_RIGHT_ULTRASONIC_TRIGGER_PIN, RobotMap.BACK_RIGHT_ULTRASONIC_ECHO_PIN, BACK_RIGHT_ULTRA_OFFSET);
     } catch (RuntimeException ex) {
-      DriverStation.reportError("Error instantiating back right ultrasonic: " + ex.getMessage(), true);
-      SmartDashboard.putString("warning", "Error instantiating back right ultrasonic");
+      // DriverStation.reportError("Error instantiating back right ultrasonic: " + ex.getMessage(), true);
+      // SmartDashboard.putString("warning", "Error instantiating back right ultrasonic");
       backRightUltrasonic = null;
     }
   }
@@ -85,11 +85,11 @@ public class MustangSensors {
   }
 
   /*
-   * Returns adjusted distance as given by ultrasonic
+   * Returns adjusted distance as given by ultrasonic - accounts for offset
    */
-  public double getFrontUltrasonicDistance(double angle){
+  public double getFrontUltrasonicDistance(){
     if(frontUltrasonic != null)
-      return frontUltrasonic.getDistance(angle);
+      return frontUltrasonic.getDistance();
     else
       return ULTRASONIC_ERROR_CODE;
   }
@@ -105,11 +105,11 @@ public class MustangSensors {
   }
 
   /*
-   * Returns adjusted distance as given by ultrasonic
+   * Returns adjusted distance as given by ultrasonic - accounts for offset
    */
-  public double getBackRightUltrasonicDistance(double angle){
+  public double getBackRightUltrasonicDistance(){
     if(backRightUltrasonic != null)
-      return backRightUltrasonic.getDistance(angle);
+      return backRightUltrasonic.getDistance();
     else
       return ULTRASONIC_ERROR_CODE;
   }
@@ -125,13 +125,36 @@ public class MustangSensors {
   }
 
   /*
-   * Returns adjusted distance as given by ultrasonic
+   * Returns adjusted distance as given by ultrasonic - accounts for offset
    */
-  public double getBackLeftUltrasonicDistance(double angle){
+  public double getBackLeftUltrasonicDistance(){
     if(backLeftUltrasonic != null)
-      return backLeftUltrasonic.getDistance(angle);
+      return backLeftUltrasonic.getDistance();
     else
       return ULTRASONIC_ERROR_CODE;
+  }
+
+  /*
+   * Returns the adjusted distance, taking into account both the back ultrasonics
+   * If both ultrasonics have similar data it averages; if only one has "good" data it uses the adjusted distance
+   */
+  public double getAdjustedBackUltrasonicDistance(){
+    double backLeft = getBackLeftUltrasonicUnadjustedDistance();
+    double backRight = getBackRightUltrasonicUnadjustedDistance();
+    double adjustedDistance = (backLeft < backRight) ? backLeft : backRight; // Take the one that is least;
+
+    if(Math.abs(backRight-backLeft) <= 10){
+      adjustedDistance = (backLeft+backRight)/2.0; //average both if they're essentially the same
+    }
+    // Below see if one sensor is getting generally valid data - then use the adjusted distance from that ultrasonic
+    else if(backLeft > 132 && backRight <= 120){
+      adjustedDistance = getBackRightUltrasonicDistance();
+    }
+    else if(backRight > 132 && backLeft <= 120){
+      adjustedDistance = getBackLeftUltrasonicDistance();
+    }
+
+    return adjustedDistance;
   }
 
   /**
@@ -326,5 +349,25 @@ public class MustangSensors {
    */
   public boolean isNavXNull() {
     return isNavXNull;
+  }
+
+  public void sendUltrasonicDataToDashboard(){
+    if (frontUltrasonic != null){
+      SmartDashboard.putNumber("Front Ultrasonic: ", frontUltrasonic.getUnadjustedDistance());
+    } else if (frontUltrasonic == null) {
+      SmartDashboard.putString("Front Ultrasonic: ", "FRONT ULTRASONIC IS NULL!");
+    }
+
+    if(backLeftUltrasonic != null){
+      SmartDashboard.putNumber("Back Left Ultrasonic: ", backLeftUltrasonic.getUnadjustedDistance());
+    } else if (backLeftUltrasonic == null) {
+      SmartDashboard.putString("Back Left Ultrasonic: ", "BACK LEFT ULTRASONIC IS NULL!");
+    }
+
+    if(backRightUltrasonic != null) { 
+      SmartDashboard.putNumber("Back Right Ultrasonic: ", backRightUltrasonic.getUnadjustedDistance());
+    } else if (backRightUltrasonic == null) {
+      SmartDashboard.putString("Back RIGHT Ultrasonic: ", "BACK RIGHT ULTRASONIC IS NULL!");
+    }
   }
 }

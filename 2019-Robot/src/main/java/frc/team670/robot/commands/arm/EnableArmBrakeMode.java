@@ -5,29 +5,29 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.commands.tuning;
+package frc.team670.robot.commands.arm;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team670.robot.subsystems.Arm;
 
 /**
  * Add your docs here.
  */
-public class DecreaseMeasurementOutput extends InstantCommand {
-  /**
-   * Add your docs here.
-   */
-  public DecreaseMeasurementOutput() {
+public class EnableArmBrakeMode extends InstantCommand {
+  
+  private Arm arm;
+
+  public EnableArmBrakeMode(Arm arm) {
     super();
-    // Use requires() here to declare subsystem dependencies
-    // eg. requires(chassis);
+    this.arm = arm;
   }
 
   // Called once when the command executes
   @Override
   protected void initialize() {
-    MeasureArbitraryFeedforward.output -= 0.005;
-    SmartDashboard.putNumber("ArbitraryFeedForwardOutput", MeasureArbitraryFeedforward.output);
+    arm.getElbow().enableBrakeMode();
+    arm.getWrist().enableBrakeMode();
+    arm.getExtension().enableBrakeMode();
   }
 
 }

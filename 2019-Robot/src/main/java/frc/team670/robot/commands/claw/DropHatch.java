@@ -31,7 +31,7 @@ public class DropHatch extends TimedCommand {
   // Called once when the command executes
   @Override
   protected void initialize() {
-    claw.closeClaw(false);
+    claw.closeClaw();
     Logger.consoleLog();
   }
 
