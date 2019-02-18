@@ -14,6 +14,8 @@ import java.util.HashMap;
 import frc.team670.robot.subsystems.extension.Extension;
 import frc.team670.robot.commands.arm.armTransitions.ArmTransition;
 import frc.team670.robot.commands.arm.armTransitions.CommonTransition;
+import frc.team670.robot.commands.arm.armTransitions.GrabBallIntakeToNeutral;
+import frc.team670.robot.commands.arm.armTransitions.NeutralToGrabBallIntake;
 import frc.team670.robot.subsystems.elbow.BaseElbow;
 import frc.team670.robot.subsystems.extension.BaseExtension;
 import frc.team670.robot.subsystems.wrist.BaseWrist;
@@ -406,7 +408,7 @@ public class Arm {
       new CommonTransition(LegalState.NEUTRAL, LegalState.START_EMPTY, arm, intake),
       new CommonTransition(LegalState.NEUTRAL, LegalState.READY_GRAB_HATCH_GROUND_BACK, arm, intake),
       new CommonTransition(LegalState.NEUTRAL, LegalState.GRAB_BALL_GROUND_BACK, arm, intake),
-      new CommonTransition(LegalState.NEUTRAL, LegalState.GRAB_BALL_INTAKE, arm, intake),
+      new NeutralToGrabBallIntake(arm, intake),
       new CommonTransition(LegalState.NEUTRAL, LegalState.READY_LOW_HATCH_FORWARD, arm, intake), 
       new CommonTransition(LegalState.NEUTRAL, LegalState.READY_LOW_HATCH_BACK, arm, intake),
       new CommonTransition(LegalState.NEUTRAL, LegalState.PLACE_BALL_CARGOSHIP_FORWARD, arm, intake),
@@ -477,7 +479,7 @@ public class Arm {
 
   private class GrabBallIntake extends ArmState {
     private GrabBallIntake(Arm arm, BaseIntake intake) {
-      super(85, 85, 6.5, true, new ArmTransition[] { new CommonTransition(LegalState.GRAB_BALL_INTAKE, LegalState.NEUTRAL, arm, intake)});
+      super(85, 85, 6.5, true, new ArmTransition[] { new GrabBallIntakeToNeutral(arm, intake)});
     }
   }
 

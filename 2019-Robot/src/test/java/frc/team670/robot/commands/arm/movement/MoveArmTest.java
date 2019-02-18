@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
-import frc.team670.robot.subsystems.Arm.LegalState;
 import frc.team670.robot.subsystems.Claw;
 import frc.team670.robot.subsystems.Intake;
 import frc.team670.robot.utils.functions.MathUtils;
