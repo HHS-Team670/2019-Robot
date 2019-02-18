@@ -50,7 +50,7 @@ public class RobotMap {
 
   public static final int PCM_MODULE = 12;
 
-  // Climber
+// Climber
   public static final int BACK_CLIMBER_PISTON_CONTROLLER = 14;
   public static final int FRONT_CLIMBER_PISTON_CONTROLLER = 15;
   
@@ -61,8 +61,8 @@ public class RobotMap {
   public static final int FRONT_ULTRASONIC_ECHO_PIN = 18;
   public static final int BACK_LEFT_ULTRASONIC_TRIGGER_PIN = 19;
   public static final int BACK_LEFT_ULTRASONIC_ECHO_PIN = 20;
-  public static final int BACK_RIGHT_ULTRASONIC_TRIGGER_PIN = 21;
-  public static final int BACK_RIGHT_ULTRASONIC_ECHO_PIN = 22;
+  public static final int BACK_RIGHT_ULTRASONIC_TRIGGER_PIN = 0;
+  public static final int BACK_RIGHT_ULTRASONIC_ECHO_PIN = 1;
   public final static int INTAKE_IR_DIO_PORT = 23;
 
 

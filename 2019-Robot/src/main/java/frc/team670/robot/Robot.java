@@ -159,6 +159,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("arm-extension" , extension.getLengthInches() / Extension.EXTENSION_OUT_IN_INCHES);
     SmartDashboard.putNumber("Arbitrary Feedforward Measurement", MeasureArbitraryFeedforward.output);
 
+    SmartDashboard.putString("Held Item", arm.getHeldItem().toString());
+
     elbow.sendDataToDashboard();
     extension.sendDataToDashboard();
     wrist.sendDataToDashboard();

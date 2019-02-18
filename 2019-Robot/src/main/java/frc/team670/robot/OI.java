@@ -10,11 +10,14 @@ package frc.team670.robot;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team670.robot.commands.cameras.FlipCamera;
+import frc.team670.robot.commands.arm.ToggleHeldItem;
+import frc.team670.robot.commands.arm.movement.MoveExtension;
+import frc.team670.robot.commands.arm.movement.MoveWrist;
 import frc.team670.robot.commands.claw.CloseClaw;
 import frc.team670.robot.commands.claw.OpenClaw;
-import frc.team670.robot.commands.drive.teleop.FlipDriveAndCamera;
-import frc.team670.robot.commands.intake.MoveIntakeToSetpointAngle;
+import frc.team670.robot.commands.tuning.DecreaseMeasurementOutput;
+import frc.team670.robot.commands.tuning.IncreaseMeasurementOutput;
+import frc.team670.robot.commands.tuning.MeasureArbitraryFeedforward;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.dataCollection.XKeys;
 import frc.team670.robot.utils.MustangController;
@@ -38,6 +41,7 @@ public class OI {
 
   private JoystickButton incFeedForward, decFeedForward, measureFeedForward, runForward, runBackward;
   private JoystickButton enableBrakeMode, enableCoastMode;
+  private JoystickButton setHeldItem;
 
   private JoystickButton openClaw, closeClaw, intakeOut, intakeIn;
 
@@ -47,33 +51,36 @@ public class OI {
     // operatorController = new MustangController(RobotMap.OPERATOR_CONTROLLER_PORT);
     xkeys = new XKeys();
     
-    toggleReverseDrive = new JoystickButton(driverController, XboxButtons.LEFT_BUMPER);
-    toggleReverseDrive.whenPressed(new FlipDriveAndCamera());
-    flipCameras = new JoystickButton(driverController, XboxButtons.B);
-    flipCameras.whenPressed(new FlipCamera());
+    // toggleReverseDrive = new JoystickButton(driverController, XboxButtons.LEFT_BUMPER);
+    // toggleReverseDrive.whenPressed(new FlipDriveAndCamera());
+    // flipCameras = new JoystickButton(driverController, XboxButtons.B);
+    // flipCameras.whenPressed(new FlipCamera());
 
-    openClaw = new JoystickButton(driverController, XboxButtons.Y);
+    openClaw = new JoystickButton(driverController, XboxButtons.LEFT_BUMPER);
     openClaw.whenPressed(new OpenClaw(Robot.claw));
-    closeClaw = new JoystickButton(driverController, XboxButtons.X);
+    closeClaw = new JoystickButton(driverController, XboxButtons.RIGHT_BUMPER);
     closeClaw.whenPressed(new CloseClaw(Robot.claw));
 
-    intakeIn = new JoystickButton(driverController, XboxButtons.START);
-    intakeIn.whenPressed(new MoveIntakeToSetpointAngle(70, Robot.intake));
-    intakeOut = new JoystickButton(driverController, XboxButtons.BACK);
-    intakeOut.whenPressed(new MoveIntakeToSetpointAngle(-70, Robot.intake));
+    // intakeIn = new JoystickButton(driverController, XboxButtons.START);
+    // intakeIn.whenPressed(new MoveIntakeToSetpointAngle(70, Robot.intake));
+    // intakeOut = new JoystickButton(driverController, XboxButtons.BACK);
+    // intakeOut.whenPressed(new MoveIntakeToSetpointAngle(-70, Robot.intake));
 
 
-    // incFeedForward = new JoystickButton(driverController, XboxButtons.START);
-    // incFeedForward.whenPressed(new IncreaseMeasurementOutput());
-    // decFeedForward = new JoystickButton(driverController, XboxButtons.BACK);
-    // decFeedForward.whenPressed(new DecreaseMeasurementOutput());
-    // measureFeedForward = new JoystickButton(driverController, XboxButtons.X);
-    // measureFeedForward.whenPressed(new MeasureArbitraryFeedforward(Robot.arm.getWrist()));
+    incFeedForward = new JoystickButton(driverController, XboxButtons.START);
+    incFeedForward.whenPressed(new IncreaseMeasurementOutput());
+    decFeedForward = new JoystickButton(driverController, XboxButtons.BACK);
+    decFeedForward.whenPressed(new DecreaseMeasurementOutput());
+    measureFeedForward = new JoystickButton(driverController, XboxButtons.X);
+    measureFeedForward.whenPressed(new MeasureArbitraryFeedforward(Robot.arm.getExtension()));
 
-    // runForward = new JoystickButton(driverController, XboxButtons.B);
-    // runForward.whenPressed(new MoveElbow(Robot.arm.getElbow(), -45));
-    // runBackward = new JoystickButton(driverController, XboxButtons.A);
-    // runBackward.whenPressed(new MoveElbow(Robot.arm.getElbow(), 45));
+    runForward = new JoystickButton(driverController, XboxButtons.B);
+    runForward.whenPressed(new MoveWrist(Robot.arm.getWrist(), 45));
+    runBackward = new JoystickButton(driverController, XboxButtons.A);
+    runBackward.whenPressed(new MoveWrist(Robot.arm.getWrist(), -45));
+
+    setHeldItem = new JoystickButton(driverController, XboxButtons.Y);
+    setHeldItem.whenPressed(new ToggleHeldItem(Robot.arm));
 
 
 
