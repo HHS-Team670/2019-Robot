@@ -24,9 +24,14 @@ public class NavXPivot extends Command {
 	private PIDController pivotController;
 	private static final double P = 0.0055, I = 0.00001, D = 0;
 
+	private AngleStorage changeableAngle;
+
 	private int onTargetCount;
 
   public NavXPivot(double angle) {
+
+	changeableAngle = null;
+
 	if(Robot.sensors.isNavXNull()){
 		super.cancel();
 		return;
@@ -44,24 +49,53 @@ public class NavXPivot extends Command {
 	requires(Robot.driveBase);
   }
 
+  public NavXPivot(AngleStorage angle) {
+
+	changeableAngle = angle;
+
+	if(Robot.sensors.isNavXNull()){
+		super.cancel();
+		return;
+	}
+
+	this.angle = angle.getAngle();
+	
+	pivotController = new PIDController(P, I, D, Robot.sensors.getZeroableNavXPIDSource(), new NullPIDOutput());
+
+	pivotController.setInputRange(-180, 180);
+	pivotController.setOutputRange(-1, 1);
+	pivotController.setAbsoluteTolerance(5);
+	pivotController.setContinuous(true);
+
+	requires(Robot.driveBase);
+  }
+
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-		startAngle = Robot.sensors.getYawDouble();
-		finalAngle = Pathfinder.boundHalfDegrees(startAngle + angle);
 
-		// Logger.consoleLog("StartAngle:%s FinalAngle:%s DegreesToTravel:%s", 
-		// 		startAngle, finalAngle, angle);
+	if(changeableAngle != null) {
+		angle = changeableAngle.getAngle();
+	}
 
-		pivotController.setSetpoint(finalAngle);
+	startAngle = Robot.sensors.getYawDouble();
+	finalAngle = Pathfinder.boundHalfDegrees(startAngle + angle);
 
-		pivotController.enable();
+	// Logger.consoleLog("StartAngle:%s FinalAngle:%s DegreesToTravel:%s", 
+	// 		startAngle, finalAngle, angle);
+
+	pivotController.setSetpoint(finalAngle);
+
+	pivotController.enable();
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-	
+	if(changeableAngle != null) {
+		angle = changeableAngle.getAngle();
+	}
+
 	double output = pivotController.get();
 	// System.out.println("Output: " + output);
 	Robot.driveBase.tankDrive(output, -output, false);
@@ -86,8 +120,8 @@ public class NavXPivot extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-		Robot.driveBase.stop();
-		Logger.consoleLog("CurrentAngle: %s, TargetAngle", Robot.sensors.getYawDouble(), finalAngle);
+	Robot.driveBase.stop();
+	Logger.consoleLog("CurrentAngle: %s, TargetAngle", Robot.sensors.getYawDouble(), finalAngle);
   }
 
   // Called when another command which requires one or more of the same
@@ -96,6 +130,22 @@ public class NavXPivot extends Command {
   protected void interrupted() {
 		end();
 		Logger.consoleLog();
+}
+
+	public class AngleStorage {
+		private double angle;
+
+		public AngleStorage(double angle) {
+			setAngle(angle);
+		}
+
+		public void setAngle(double angle) {
+			this.angle = angle;
+		}
+
+		public double getAngle() {
+			return angle;
+		}
 	}
 	
 }

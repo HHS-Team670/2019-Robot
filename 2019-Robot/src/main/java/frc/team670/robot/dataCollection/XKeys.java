@@ -23,7 +23,7 @@ import frc.team670.robot.commands.arm.movement.PlaceOrGrab;
 import frc.team670.robot.commands.claw.YeetHeldItem;
 import frc.team670.robot.commands.climb.armClimb.CancelArmClimb;
 import frc.team670.robot.commands.drive.vision.CancelDriveBase;
-import frc.team670.robot.commands.drive.vision.VisionPurePursuit;
+import frc.team670.robot.commands.drive.vision.VisionPurePursuitWithPivot;
 import frc.team670.robot.commands.intake.AutoPickupCargo;
 import frc.team670.robot.commands.intake.ButtonRunIntake;
 import frc.team670.robot.commands.intake.RunIntakeInWithIR;
@@ -205,7 +205,7 @@ public class XKeys {
         boolean isLow = placeGrabState.getIsLowTarget();
 
         SmartDashboard.putString("vision-status", "");
-        Scheduler.getInstance().add(new VisionPurePursuit(Robot.driveBase, Robot.coprocessor, Robot.sensors, distanceFromTarget, isReversed, isLow));
+        Scheduler.getInstance().add(new VisionPurePursuitWithPivot(Robot.driveBase, Robot.coprocessor, Robot.sensors, distanceFromTarget, isReversed, isLow));
     }
 
     private void dropHeldItem() {
