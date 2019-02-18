@@ -7,6 +7,7 @@
 
 package frc.team670.robot.commands.intake;
 
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.arm.movement.ArmPathGenerator;
@@ -33,8 +34,9 @@ public class AutoPickupCargo extends CommandGroup {
     CommandGroup moveArm = ArmPathGenerator.getPath(Arm.getStates().get(LegalState.GRAB_BALL_INTAKE), arm);
     addSequential(moveArm);
     addSequential(new RunIntakeInWithIR(intake, sensors));
-    addSequential(new TimedRunIntake(Claw.TIME_TO_MOVE, intake, true));
+    addParallel(new TimedRunIntake(Claw.TIME_TO_MOVE, Intake.PICKUP_RUNNING_POWER, intake, true));
     addSequential(new PickupBall(claw, arm));
+    addSequential(new StopIntakeRollers(intake));
     moveArm = ArmPathGenerator.getPath(Arm.getStates().get(LegalState.NEUTRAL), arm);
     addSequential(moveArm);
   }

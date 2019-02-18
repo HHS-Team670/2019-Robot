@@ -15,17 +15,17 @@ public class TimedRunIntake extends TimedCommand {
 
   private BaseIntake intake;
   private boolean runningIn;
-
-  private static final double RUNNING_POWER = 0.30;
+  private double power;
 
   /**
    * 
    * @param secondsToRun the time for the intake to run in seconds
    */
-  public TimedRunIntake(double secondsToRun, BaseIntake intake, boolean runningIn) {
+  public TimedRunIntake(double secondsToRun, double power, BaseIntake intake, boolean runningIn) {
     super(secondsToRun);
     requires(intake);
     this.intake = intake;
+    this.power = power;
     this.runningIn = runningIn;
   }
 
@@ -38,7 +38,7 @@ public class TimedRunIntake extends TimedCommand {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    intake.runIntake(RUNNING_POWER, runningIn);
+    intake.runIntake(power, runningIn);
   }
 
   // Called once after isFinished returns true

@@ -21,7 +21,7 @@ public class MoveWrist extends Command {
 
   private BaseWrist wrist;
 
-  private static final double DEGREE_TOLERANCE = 5;
+  private static final double DEGREE_TOLERANCE = 8;
 
   private double wristSetpointAngle;
 
