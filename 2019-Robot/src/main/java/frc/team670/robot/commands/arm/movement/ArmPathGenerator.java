@@ -7,25 +7,23 @@
 
 package frc.team670.robot.commands.arm.movement;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import frc.team670.robot.commands.RumbleOperatorController;
 import frc.team670.robot.commands.arm.armTransitions.ArmTransition;
-import frc.team670.robot.commands.arm.armTransitions.CommonTransition;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.sort.BreadthFirstSearch;
-import frc.team670.robot.utils.sort.DepthFirstSearch;
-import frc.team670.robot.Robot;
 
 /**
  * Move the arm if it is at a known ArmState by finding a path and using it to travel along ArmTransitions between ArmStates.
  * @author ctchen
  */
 public class ArmPathGenerator {
-  // private static Map<ArmState, List<ArmTransition>> searched = new HashMap<ArmState, List<ArmTransition>>();
+  private static Map<ArmState[], List<ArmTransition>> searched = new HashMap<ArmState[], List<ArmTransition>>();
 
   private ArmPathGenerator() {
 
@@ -51,26 +49,33 @@ public class ArmPathGenerator {
           Logger.consoleLog("Interrupted");
         }
     };
-    // List<ArmTransition> transitions = searched.get(currentState);
     List<ArmTransition> transitions = null;
-    try {
-      transitions = (List<ArmTransition>)(List<?>)(BreadthFirstSearch.search(currentState, destination));
-    } catch(ClassCastException e) {
-      Logger.logException(e);
-      Logger.consoleLog("Edge passed in was not an ArmTransition. Command canceling");
-      movements.cancel();
-      return movements;
-    } catch (IllegalArgumentException e) {
-      // Logger.logException(e);
-      Logger.consoleLog("Passed in bad argument: " + e.getMessage());
-      System.out.println("Passed in bad argument: " + e.getMessage());
-      movements.cancel();
-      return movements;
-    // searched.put(currentState, transitions); //Stores current path in instance variable
+    for(ArmState[] key : searched.keySet()) {
+      if(key[0] == currentState && key[1] == destination) {
+        transitions = searched.get(key);
+      }
+    }
+    if(transitions == null) {
+      try {
+        transitions = (List<ArmTransition>)(List<?>)(BreadthFirstSearch.search(currentState, destination));
+      } catch(ClassCastException e) {
+        Logger.logException(e);
+        Logger.consoleLog("Edge passed in was not an ArmTransition. Command canceling");
+        movements.cancel();
+        return movements;
+      } catch (IllegalArgumentException e) {
+        // Logger.logException(e);
+        Logger.consoleLog("Passed in bad argument: " + e.getMessage());
+        System.out.println("Passed in bad argument: " + e.getMessage());
+        movements.cancel();
+        return movements;
+      // searched.put(currentState, transitions); //Stores current path in instance variable
+      }
     }
     for (ArmTransition t : transitions) {
       movements.addSequential(t.getCommand());
     }
+    searched.put(new ArmState[] {currentState, destination}, transitions);
 
     // movements.addSequential(new RumbleOperatorController(Robot.oi, 0.5, 0.25));
 
