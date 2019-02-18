@@ -18,6 +18,7 @@ import frc.team670.robot.commands.drive.pivot.NavXPivot;
 import frc.team670.robot.commands.drive.vision.VisionPurePursuit;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.Robot;
+import frc.team670.robot.subsystems.Arm.HeldItem;
 import frc.team670.robot.subsystems.Arm.LegalState;
 import frc.team670.robot.subsystems.Arm.PlaceGrabState;
 
@@ -34,7 +35,7 @@ public class BuildAuton extends CommandGroup {
      */
     public BuildAuton(String[] autonSequence, Arm arm) {
         SmartDashboard.putString("current-command", "BuildAuton");
-        String startDirection = autonSequence[0];
+        String startHolding = autonSequence[0];
         String start = autonSequence[1];
         String target1 = autonSequence[2];
         String height1 = autonSequence[3];
@@ -49,6 +50,9 @@ public class BuildAuton extends CommandGroup {
         // determines whether the robot starts facing backwards based on the first radio
         // button
         boolean isRobotFacingBack = true;
+
+        if (startHolding.equals("Ball")) arm.setHeldItem(HeldItem.BALL);
+        else arm.setHeldItem(HeldItem.HATCH);
 
         /*
          * if the robot starts facing back, the first path and arm command will be going
