@@ -135,8 +135,10 @@ public class Intake extends BaseIntake {
    */
   public void runIntake(double power, boolean runningIn) {
     if(setpoint == NO_SETPOINT) {
+      System.out.println("Running motor in/out");
       power *= runningIn ? 1 : -1;
     } else {
+      System.out.println("Setpoint has not been cleared, so no power");
       power = 0;
     }
     roller.set(ControlMode.PercentOutput, power);
