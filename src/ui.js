@@ -21,19 +21,23 @@ ui.timer.style.color = `rgb(0, 200, 0)`;
 // ui.camera.viewer.style.backgroundImage = 'url(' + ui.camera.src + ')';
 // document.getElementById('camera').style = "background-color: rgb(39, 163, 39)";
 
-var angle = 90;
+// sets default positions for robot diagram
+var angle = 0;
 var armLength = 110;
 document.getElementById('arm').style = "transform: rotate(" + angle + "deg)";
 document.getElementById('claw').style = "transform: translate(" + (Math.sin(angle * Math.PI / 180) * (parseInt(document.getElementById('arm-extension').getAttribute('height')) + armLength)) + "px, " + (armLength - Math.sin((angle+90) * Math.PI / 180) * (parseInt(document.getElementById('arm-extension').getAttribute('height')) + armLength)) + "px)";
 document.getElementById('intake').style = "transform: rotate(" + 0 + "deg)";
 document.getElementById('arm-extension').style = "transform: translate(" + (Math.sin((angle) * Math.PI / 180) * armLength) + "px, " + (armLength - (Math.sin((angle+90) * Math.PI / 180) * armLength)) + "px) rotate(" + (angle + 180) + "deg)";
 
+// list of camera labels
 var cameras = ['Back', 'Front'];
 var cameraIndex = 0;
 document.getElementById('camera-text').innerHTML = cameras[cameraIndex];
 
+// sets the timer element to green color text
 document.getElementById('timer').style.color = 'rgb(0,200,0)';
 
+// listens for game-time which starts counting down on autonInit()
 NetworkTables.addKeyListener('/SmartDashboard/game-time', (key, value) => {
   if (value == null) return;
   var remaining = 150 - value;
@@ -42,6 +46,7 @@ NetworkTables.addKeyListener('/SmartDashboard/game-time', (key, value) => {
   seconds = (seconds < 10) ? '0'+seconds : seconds;
   ui.timer.style.color = `rgb(0, 200, 0)`;
 
+  // change color of timer based on remaining match time
   if (remaining < 135){
      ui.timer.style.color = `rgb(255, 255, 255)`;
   }
@@ -56,19 +61,23 @@ NetworkTables.addKeyListener('/SmartDashboard/game-time', (key, value) => {
   ui.timer.innerHTML = minutes + ':' + seconds;
 });
 
+// listens for camera-source 
 NetworkTables.addKeyListener('/SmartDashboard/camera-source', (key, value) => {
   if (value == 'next') {
     window.webContents.reload();
     cameraIndex = (cameraIndex + 1) % cameras.length;
+    document.getElementById('camera-text').innerHTML = cameras[cameraIndex];
     multiCamSRC.innerHTML = cameras[cameraIndex];
   }
   NetworkTables.putValue('/SmartDashboard/camera-source', '');
 });
 
-NetworkTables.addKeyListener('/SmartDashboard/LeftEncoder', (key, value) => {
-  document.getElementById('current-command-text').innerHTML = value;
+// listens for vision data for testing
+NetworkTables.addKeyListener('/SmartDashboard/reflect_tape_vision_data', (key, value) => {
+  document.getElementById('current-command-text').innerHTML = value[2];
 });
 
+// listens for robot-state and updates status lights and auton chooser accordingly
 NetworkTables.addKeyListener('/SmartDashboard/robot-state', (key, value) => {
   if (value === "autonomousInit()") {
     document.getElementById('auton-chooser').style.display = "none";
@@ -81,6 +90,7 @@ NetworkTables.addKeyListener('/SmartDashboard/robot-state', (key, value) => {
   }
 });
 
+// listens for warnings
 NetworkTables.addKeyListener('/SmartDashboard/warnings', (key, value) => {
   document.getElementById('big-warning').style.display = "inline";
   document.getElementById('warnings').innerHTML += (value + "\n");
@@ -96,23 +106,28 @@ NetworkTables.addKeyListener('/SmartDashboard/warnings', (key, value) => {
   }
 });
 
+// displays the currently running command on the dashboard
 NetworkTables.addKeyListener('/SmartDashboard/current-command', (key, value) => {
   if (value != 'undefined') document.getElementById('current-command').innerHTML = value;
   else document.getElementById('current-command').innerHTML = "NULL";
 });
 
+// displays the current climb state
 NetworkTables.addKeyListener('/SmartDashboard/climb-state', (key, value) => {
   if (value != null) document.getElementById('climb-state-text').innerHTML = value;
 });
 
+// displays the current climb level
 NetworkTables.addKeyListener('/SmartDashboard/climb-level', (key, value) => {
   if (value != null) document.getElementById('climb-level-text').innerHTML = value;
 });
 
+// displays the current arm state
 NetworkTables.addKeyListener('/SmartDashboard/current-arm-state', (key, value) => {
   if (value != null) document.getElementById('current-arm-state').innerHTML = value;
 });
 
+// updates the robot diagram based on the angle of the robot's elbow
 NetworkTables.addKeyListener('/SmartDashboard/elbow-angle', (key, value) => {
   if (value == null) return;
   var angle = value;
@@ -134,14 +149,17 @@ NetworkTables.addKeyListener('/SmartDashboard/elbow-angle', (key, value) => {
   if (multiCamSRC.innerHTML === 'Back') document.getElementById('hline').setAttribute('y', backHeight+'%');
 });
 
-NetworkTables.addKeyListener('/SmartDashboard/intake-angle', (key, value) => {
-  if (value != null) document.getElementById('intake').style = "transform: rotate(" + -1 * value + "deg)";
-});
-
+// updates the robot diagram with the extension of the arm
 NetworkTables.addKeyListener('/SmartDashboard/arm-extension', (key, value) => {
   if (value != null) document.getElementById('arm-extension').setAttribute('height', value * 60);
 });
 
+// updates the angle of the intake in the robot diagram
+NetworkTables.addKeyListener('/SmartDashboard/intake-angle', (key, value) => {
+  if (value != null) document.getElementById('intake').style = "transform: rotate(" + -1 * value + "deg)";
+});
+
+// updates status lights for claw ir
 NetworkTables.addKeyListener('/SmartDashboard/claw-ir-sensor', (key, value) => {
   if (value === 'holding-hatch') {
     document.getElementById('claw').style.stroke = "rgb(65, 169, 244)";
@@ -162,6 +180,7 @@ NetworkTables.addKeyListener('/SmartDashboard/claw-ir-sensor', (key, value) => {
   }
 });
 
+// updates status lights for intake ir
 NetworkTables.addKeyListener('/SmartDashboard/intake-ir-sensor', (key, value) => {
   if (value === true) {
     document.getElementById('intake-status').style.fill = "rgb(244, 160, 65)";
@@ -172,6 +191,7 @@ NetworkTables.addKeyListener('/SmartDashboard/intake-ir-sensor', (key, value) =>
   }
 });
 
+// updates status lights for intake
 NetworkTables.addKeyListener('/SmartDashboard/intake-status', (key, value) => {
   if (value === 'running-in') {
     document.getElementById('intake-status').style.fill = "rgb(0,255,0)";
@@ -182,6 +202,7 @@ NetworkTables.addKeyListener('/SmartDashboard/intake-status', (key, value) => {
   }
 });
 
+// updates status lights for vision
 NetworkTables.addKeyListener('/SmartDashboard/vision-status', (key, value) => {
   if (value === 'engaged') {
     document.getElementById('vision-status').style.fill = "rgb(0,255,0)";
@@ -195,8 +216,8 @@ NetworkTables.addKeyListener('/SmartDashboard/vision-status', (key, value) => {
   }
 });
 
+// listens for keystrokes from the external keypad and passes the corresponding values over networktables
 var keys = [];
-
 var allKeys = '';
 document.addEventListener("keyup", function(event) {
   var pressed = event.key.replace("Enter", "");
@@ -261,7 +282,8 @@ function getFromMap(key) { // mapping is more aligned with arm position on robot
   return null;
 }
 
-var auton = ["test", "", "", "", "", "", ""];
+// reads the radio buttons
+var auton = ["", "", "", "", "", "", "", ""];
 
 function readRadioButtons() {
   auton = new Array(8);
@@ -330,6 +352,7 @@ function readRadioButtons() {
   }
 }
 
+// sends auton chooser data over networktables
 function sendAuton() {
   readRadioButtons();
   document.getElementById('warnings').innerHTML = auton;
