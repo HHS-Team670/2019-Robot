@@ -20,7 +20,7 @@ import frc.team670.robot.commands.CancelAllCommands;
 import frc.team670.robot.commands.arm.movement.CancelArmMovement;
 import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.commands.arm.movement.PlaceOrGrab;
-import frc.team670.robot.commands.claw.DropHeldItem;
+import frc.team670.robot.commands.claw.YeetHeldItem;
 import frc.team670.robot.commands.climb.armClimb.CancelArmClimb;
 import frc.team670.robot.commands.drive.vision.CancelDriveBase;
 import frc.team670.robot.commands.drive.vision.VisionPurePursuit;
@@ -209,7 +209,7 @@ public class XKeys {
     }
 
     private void dropHeldItem() {
-        Scheduler.getInstance().add(new DropHeldItem(Robot.claw, Robot.arm));
+        Scheduler.getInstance().add(new YeetHeldItem(Robot.claw, Robot.arm));
     }
 
 

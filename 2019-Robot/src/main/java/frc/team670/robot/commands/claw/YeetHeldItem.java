@@ -7,20 +7,21 @@
 
 package frc.team670.robot.commands.claw;
 
-import edu.wpi.first.wpilibj.command.ConditionalCommand;
+import edu.wpi.first.wpilibj.command.CommandGroup;
+import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.subsystems.Arm;
-import frc.team670.robot.subsystems.Claw;
 import frc.team670.robot.subsystems.Arm.HeldItem;
+import frc.team670.robot.subsystems.Arm.LegalState;
+import frc.team670.robot.subsystems.Claw;
 
-public class DropHeldItem extends ConditionalCommand {
-  private Arm arm;
+public class YeetHeldItem extends CommandGroup {
 
-  public DropHeldItem(Claw claw, Arm arm) {
-    super(new DropBall(claw, arm), new DropHatch(claw, arm));
-    this.arm = arm;
-  }
-
-  protected boolean condition() {
-    return arm.getHeldItem().equals(HeldItem.BALL);
+  public YeetHeldItem(Claw claw, Arm arm) {
+    addSequential(new MoveArm(Arm.getArmState(LegalState.GRAB_BALL_GROUND_BACK), arm));
+    if(arm.getHeldItem().equals(HeldItem.BALL)) {
+      addSequential(new DropBall(claw, arm));
+    } else {
+      addSequential(new DropHatch(claw, arm));
+    }
   }
 }
