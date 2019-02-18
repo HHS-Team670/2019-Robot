@@ -1,3 +1,3 @@
-# 2018-Mustang-Pi
+# 2019-Mustang-Coprocessor
 
 All relevant code running on the Raspberry Pi related to camera streaming and vision processing.
