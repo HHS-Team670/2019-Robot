@@ -26,7 +26,6 @@ public class RunIntakeInWithIR extends Command {
     requires(intake);
     this.intake = intake;
     this.sensors = sensors;
-    XKeys.setToggleIn(true);
   }
 
   // Called just before this Command runs the first time
@@ -65,6 +64,7 @@ public class RunIntakeInWithIR extends Command {
   protected void end() {
     intake.runIntake(0, true);
     Logger.consoleLog();
+    XKeys.setToggleIn(false);
   }
 
   // Called when another command which requires one or more of the same
