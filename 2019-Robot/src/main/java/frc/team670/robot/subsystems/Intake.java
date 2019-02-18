@@ -100,6 +100,7 @@ public class Intake extends BaseIntake {
     setpoint = convertIntakeDegreesToTicks(intakeAngle);
     SmartDashboard.putNumber("MotionMagicSetpoint", setpoint);
     rotator.set(ControlMode.MotionMagic, setpoint);
+    roller.set(ControlMode.PercentOutput, 0);
   }
 
   /**
@@ -126,13 +127,17 @@ public class Intake extends BaseIntake {
   }
 
   /**
-   * Runs the intake at a given percent power
+   * Runs the intake at a given percent power. Will not run if intake is flipping.
    * 
    * @param percentOutput The desired percent power for the rollers to run at [-1,
    *                      1]
    */
   public void runIntake(double power, boolean runningIn) {
-    power *= runningIn ? 1 : -1;
+    if(setpoint == NO_SETPOINT) {
+      power *= runningIn ? 1 : -1;
+    } else {
+      power = 0;
+    }
     roller.set(ControlMode.PercentOutput, power);
   }
   /**
