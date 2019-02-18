@@ -19,8 +19,8 @@ public class MeasureArbitraryFeedforward extends Command {
 
   public MeasureArbitraryFeedforward(TunableSubsystem tunableSubsystem) {
     this.tunableSubsystem = tunableSubsystem;
-    if (tunableSubsystem.getTimeout())
-      setTimeout(0.35);
+    // if (tunableSubsystem.getTimeout())
+    //   setTimeout(0.35);
   }
 
   // Called just before this Command runs the first time
@@ -39,9 +39,9 @@ public class MeasureArbitraryFeedforward extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    if (tunableSubsystem.getTimeout())
-      return isTimedOut();
-    else 
+    // if (tunableSubsystem.getTimeout())
+    //   return isTimedOut();
+    // else 
       return false;
   }
 

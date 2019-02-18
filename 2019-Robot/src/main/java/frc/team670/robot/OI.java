@@ -10,11 +10,13 @@ package frc.team670.robot;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team670.robot.commands.arm.EnableArmBrakeMode;
+import frc.team670.robot.commands.arm.EnableArmCoastMode;
+import frc.team670.robot.commands.arm.ToggleHeldItem;
 import frc.team670.robot.commands.cameras.FlipCamera;
 import frc.team670.robot.commands.claw.CloseClaw;
 import frc.team670.robot.commands.claw.OpenClaw;
 import frc.team670.robot.commands.drive.teleop.FlipDriveAndCamera;
-import frc.team670.robot.commands.intake.MoveIntakeToSetpointAngle;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.dataCollection.XKeys;
 import frc.team670.robot.utils.MustangController;
@@ -38,8 +40,9 @@ public class OI {
 
   private JoystickButton incFeedForward, decFeedForward, measureFeedForward, runForward, runBackward;
   private JoystickButton enableBrakeMode, enableCoastMode;
+  private JoystickButton setHeldItem;
 
-  private JoystickButton openClaw, closeClaw, intakeOut, intakeIn;
+  private JoystickButton openClaw, closeClaw, flipIntakeOut, flipIntakeIn, runIntakeIn, runIntakeOut;
 
 
   public OI() {
@@ -52,15 +55,20 @@ public class OI {
     flipCameras = new JoystickButton(driverController, XboxButtons.B);
     flipCameras.whenPressed(new FlipCamera());
 
-    openClaw = new JoystickButton(driverController, XboxButtons.Y);
+    openClaw = new JoystickButton(driverController, XboxButtons.START);
     openClaw.whenPressed(new OpenClaw(Robot.claw));
-    closeClaw = new JoystickButton(driverController, XboxButtons.X);
+    closeClaw = new JoystickButton(driverController, XboxButtons.BACK);
     closeClaw.whenPressed(new CloseClaw(Robot.claw));
 
-    intakeIn = new JoystickButton(driverController, XboxButtons.START);
-    intakeIn.whenPressed(new MoveIntakeToSetpointAngle(70, Robot.intake));
-    intakeOut = new JoystickButton(driverController, XboxButtons.BACK);
-    intakeOut.whenPressed(new MoveIntakeToSetpointAngle(-70, Robot.intake));
+    // flipIntakeIn = new JoystickButton(driverController, XboxButtons.A);
+    // flipIntakeIn.whenPressed(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_IN, Robot.intake));
+    // flipIntakeOut = new JoystickButton(driverController, XboxButtons.B);
+    // flipIntakeOut.whenPressed(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_DEPLOYED, Robot.intake));
+    // runIntakeIn = new JoystickButton(driverController, XboxButtons.X);
+    // runIntakeIn.whenPressed(new ButtonRunIntake(Robot.intake, RunIntakeInWithIR.RUNNING_POWER, true));
+    // runIntakeOut = new JoystickButton(driverController, XboxButtons.Y);
+    // runIntakeOut.whenPressed(new ButtonRunIntake(Robot.intake, RunIntakeInWithIR.RUNNING_POWER, false));
+
 
 
     // incFeedForward = new JoystickButton(driverController, XboxButtons.START);
@@ -68,19 +76,22 @@ public class OI {
     // decFeedForward = new JoystickButton(driverController, XboxButtons.BACK);
     // decFeedForward.whenPressed(new DecreaseMeasurementOutput());
     // measureFeedForward = new JoystickButton(driverController, XboxButtons.X);
-    // measureFeedForward.whenPressed(new MeasureArbitraryFeedforward(Robot.arm.getWrist()));
+    // measureFeedForward.whenPressed(new MeasureArbitraryFeedforward(Robot.arm.getExtension()));
 
     // runForward = new JoystickButton(driverController, XboxButtons.B);
-    // runForward.whenPressed(new MoveElbow(Robot.arm.getElbow(), -45));
+    // runForward.whenPressed(new MoveWrist(Robot.arm.getWrist(), 45));
     // runBackward = new JoystickButton(driverController, XboxButtons.A);
-    // runBackward.whenPressed(new MoveElbow(Robot.arm.getElbow(), 45));
+    // runBackward.whenPressed(new MoveWrist(Robot.arm.getWrist(), -45));
+
+    setHeldItem = new JoystickButton(driverController, XboxButtons.Y);
+    setHeldItem.whenPressed(new ToggleHeldItem(Robot.arm));
 
 
 
-    // enableBrakeMode = new JoystickButton(operatorController, XboxButtons.RIGHT_BUMPER);
-    // enableBrakeMode.whenPressed(new EnableArmBrakeMode(Robot.arm));
-    // enableCoastMode = new JoystickButton(operatorController, XboxButtons.LEFT_BUMPER);
-    // enableCoastMode.whenPressed(new EnableArmCoastMode(Robot.arm));
+    enableBrakeMode = new JoystickButton(driverController, XboxButtons.START);
+    enableBrakeMode.whenPressed(new EnableArmBrakeMode(Robot.arm));
+    enableCoastMode = new JoystickButton(driverController, XboxButtons.BACK);
+    enableCoastMode.whenPressed(new EnableArmCoastMode(Robot.arm));
   }
 
   /**
