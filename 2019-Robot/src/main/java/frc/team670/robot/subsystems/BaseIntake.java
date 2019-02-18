@@ -41,4 +41,8 @@ public abstract class BaseIntake extends RotatingSubsystem {
    */
   public abstract void runIntake(double power, boolean runningIn);
 
+  public boolean isDeployed() {
+    return (getAngleInDegrees() > 0);
+  }
+
 }

@@ -22,6 +22,8 @@ import frc.team670.robot.constants.RobotMap;
  */
 public class Intake extends BaseIntake {
 
+  public static final double DISTANCE_FROM_ARM_ZERO = 28;
+
   private static final int ROLLER_CONTINUOUS_CURRENT = 30, ROLLER_PEAK_CURRENT = 0;
 
   public static final int INTAKE_ANGLE_IN = -90, INTAKE_ANGLE_DEPLOYED = 90;
@@ -116,8 +118,9 @@ public class Intake extends BaseIntake {
    * Returns the x, y coordinates of the top of the intake
    */
   public Point2D.Double getIntakeCoordinates(){
-    double x = INTAKE_ROTATING_LENGTH_IN_INCHES * Math.cos(getAngleInDegrees());
-    double y = INTAKE_FIXED_LENGTH_IN_INCHES + INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(getAngleInDegrees());
+    double angle = getAngleInDegrees();
+    double x = DISTANCE_FROM_ARM_ZERO + (INTAKE_ROTATING_LENGTH_IN_INCHES * ((angle > 0) ? 1 : -1) * Math.sin(Math.toRadians(angle))) - (angle < 0 ? 2 : 0);
+    double y = INTAKE_FIXED_LENGTH_IN_INCHES + INTAKE_ROTATING_LENGTH_IN_INCHES * Math.cos(angle);
     intakeCoord.setLocation(x, y);
     return intakeCoord;
   }

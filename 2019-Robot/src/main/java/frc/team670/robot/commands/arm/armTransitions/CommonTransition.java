@@ -30,6 +30,9 @@ public class CommonTransition extends ArmTransition {
   private LegalState start, destination;
   private BaseIntake intake;
 
+  // Wooden Piece height above the intake
+  private static final double INTAKE_STICKING_OUT_HEIGHT = 2.5;
+
   /**
    * @param start       The start ArmState (the ArmState that holds this
    *                    transitions)
@@ -56,7 +59,7 @@ public class CommonTransition extends ArmTransition {
     double intakeQuarterPoint = Intake.INTAKE_FIXED_LENGTH_IN_INCHES + Intake.INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(Math.toRadians(45));
 
     double intakeSourceY = intake.getIntakeCoordinates().getY();
-    double intakeDestY = (dest.isIntakeDeployed()) ? (Intake.INTAKE_FIXED_LENGTH_IN_INCHES + Intake.INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(Intake.INTAKE_ANGLE_DEPLOYED)) : (Intake.INTAKE_FIXED_LENGTH_IN_INCHES + Intake.INTAKE_ROTATING_LENGTH_IN_INCHES * Math.sin(Intake.INTAKE_ANGLE_IN));
+    double intakeDestY = Intake.INTAKE_FIXED_LENGTH_IN_INCHES + INTAKE_STICKING_OUT_HEIGHT;
     double sourceY = source.getMaximumLowestPointOnClaw();
     double destY = dest.getMaximumLowestPointOnClaw();
     double sourceX = source.getCoordPosition().getX();
@@ -72,9 +75,10 @@ public class CommonTransition extends ArmTransition {
     // intake would hit the arm
 
     // If intake has to move from in to deployed or from deployed to in
-    if (source.isIntakeDeployed() != dest.isIntakeDeployed()) {
+    if (source.isIntakeDeployed() != dest.isIntakeDeployed() && intake.isDeployed() != dest.isIntakeDeployed() && !(sourceX < 0 && destX < 0)) {
       // If a point along the intake's trajectory is in between the Y coordinates of
       // the arm's start and end
+
       if ((intakeSourceY > destY && intakeSourceY < sourceY) || (intakeHighPoint > destY && intakeHighPoint < sourceY)
           || (intakeQuarterPoint > destY && intakeQuarterPoint < sourceY)
           || (intakeDestY > destY && intakeDestY < sourceY)) {
@@ -102,7 +106,7 @@ public class CommonTransition extends ArmTransition {
       }
     }
 
-    // // Redundant code most likely, will run here if boolean says to not run
+    // Redundant code most likely, will run here if boolean says to not run
     // second
     if (!moveIntakeSecond) {
       if (intakeMovementsAddedSequential) {

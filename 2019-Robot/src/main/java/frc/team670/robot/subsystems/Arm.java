@@ -11,12 +11,14 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import frc.team670.robot.subsystems.extension.Extension;
 import frc.team670.robot.commands.arm.armTransitions.ArmTransition;
 import frc.team670.robot.commands.arm.armTransitions.CommonTransition;
 import frc.team670.robot.subsystems.elbow.BaseElbow;
 import frc.team670.robot.subsystems.extension.BaseExtension;
 import frc.team670.robot.subsystems.wrist.BaseWrist;
 import frc.team670.robot.utils.sort.Node;
+
 
 /**
  * Stores possible arm states. Does arm-related math Represents the arm
@@ -30,8 +32,6 @@ public class Arm {
   private HeldItem heldItem;
 
   public static final double ARM_HEIGHT_IN_INCHES = 5;
-  public static final double CLAW_LENGTH_IN_INCHES = 8;
-  public static final int FIXED_ARM_LENGTH_IN_INCHES = 0;
 
   // All of the states
   private static HashMap<LegalState, ArmState> states;
@@ -159,8 +159,8 @@ public class Arm {
    * of the arm.
    */
   public static Point2D.Double getCoordPosition(double elbowAngle, double wristAngle, double extensionLength) {
-    double x = (extensionLength + FIXED_ARM_LENGTH_IN_INCHES) * Math.sin(elbowAngle) + CLAW_LENGTH_IN_INCHES * Math.sin(wristAngle);
-    double y = (extensionLength + FIXED_ARM_LENGTH_IN_INCHES) * Math.cos(elbowAngle) + CLAW_LENGTH_IN_INCHES * Math.cos(wristAngle) + ARM_HEIGHT_IN_INCHES;
+    double x = (extensionLength + Extension.FIXED_LENGTH) * Math.sin(elbowAngle) + Claw.LENGTH_IN_INCHES * Math.sin(wristAngle + elbowAngle);
+    double y = (extensionLength + Extension.FIXED_LENGTH) * (elbowAngle < 0 ? -1 : 1) * Math.cos(elbowAngle) + Claw.LENGTH_IN_INCHES * (wristAngle + elbowAngle < 0 ? -1 : 1) * Math.cos(wristAngle + elbowAngle) + ARM_HEIGHT_IN_INCHES;
     return new Point2D.Double(x, y);
   }
 
@@ -304,7 +304,7 @@ public class Arm {
      * Returns the lowest point on the claw/arm which should be the place the intake is most likely to hit
      */
     public double getMaximumLowestPointOnClaw(){
-      double extraClearanceInInches = 2;
+      double extraClearanceInInches = 1.5;
       // If wrist angle is at 0, this should be the lowest point on the claw. If the
       // wrist is angled up, that does not change this calculation.
       // This should be relatively safe. It should not hit the pistons on the claw

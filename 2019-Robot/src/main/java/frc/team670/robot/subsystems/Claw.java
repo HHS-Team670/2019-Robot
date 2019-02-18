@@ -29,6 +29,11 @@ public class Claw extends Subsystem {
   public static final double MAX_CLAW_OPEN_DIAMETER = 20; //Set distance
   // Used to find lowest point on arm (so that intake doesn't crash into it). If claw is angled up, the extension tip is lowest point.
 
+  /**
+   * Distance from base of claw to the end if it is closed.
+   */
+  public static final double LENGTH_IN_INCHES = 12;
+
   private Compressor compressor;
   private Solenoid openClose, hardSoft, push;
 
