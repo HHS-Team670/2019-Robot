@@ -96,12 +96,9 @@ public class VisionPurePursuit extends InstantCommand {
 
     double ultrasonicDistance;
     if (!isReversed) {
-      ultrasonicDistance = sensors.getFrontUltrasonicDistance(horizontalAngle);
+      ultrasonicDistance = sensors.getFrontUltrasonicDistance();
     } else {
-      double ultraLeft = sensors.getBackLeftUltrasonicDistance(horizontalAngle);
-      double ultraRight = sensors.getBackRightUltrasonicDistance(horizontalAngle);
-
-      ultrasonicDistance = (ultraLeft < ultraRight) ? ultraLeft : ultraRight; // Take the one that is least
+      ultrasonicDistance = sensors.getAdjustedBackUltrasonicDistance();
     }
     ultrasonicDistance *= Math.cos(Math.toRadians(horizontalAngle)); // use cosine to get the straight ultrasonic
                                                                      // distance not the diagonal one
@@ -176,13 +173,10 @@ public class VisionPurePursuit extends InstantCommand {
         public void run() {
           double ultrasonicDistance;
           if(!reversed) {
-            ultrasonicDistance = sensors.getFrontUltrasonicDistance(horizontalAngle);
+            ultrasonicDistance = sensors.getFrontUltrasonicDistance();
           }
           else {
-            double ultraLeft = sensors.getBackLeftUltrasonicDistance(horizontalAngle);
-            double ultraRight = sensors.getBackRightUltrasonicDistance(horizontalAngle);
-      
-            ultrasonicDistance = (ultraLeft < ultraRight) ? ultraLeft : ultraRight; // Take the one that is least
+            ultrasonicDistance = sensors.getAdjustedBackUltrasonicDistance();
           }
           ultrasonicDistance *= Math.cos(Math.toRadians(horizontalAngle)); //use cosine to get the straight ultrasonic distance not the diagonal one
       

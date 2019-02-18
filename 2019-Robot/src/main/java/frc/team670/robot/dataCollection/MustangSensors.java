@@ -85,11 +85,11 @@ public class MustangSensors {
   }
 
   /*
-   * Returns adjusted distance as given by ultrasonic
+   * Returns adjusted distance as given by ultrasonic - accounts for offset
    */
-  public double getFrontUltrasonicDistance(double angle){
+  public double getFrontUltrasonicDistance(){
     if(frontUltrasonic != null)
-      return frontUltrasonic.getDistance(angle);
+      return frontUltrasonic.getDistance();
     else
       return ULTRASONIC_ERROR_CODE;
   }
@@ -105,11 +105,11 @@ public class MustangSensors {
   }
 
   /*
-   * Returns adjusted distance as given by ultrasonic
+   * Returns adjusted distance as given by ultrasonic - accounts for offset
    */
-  public double getBackRightUltrasonicDistance(double angle){
+  public double getBackRightUltrasonicDistance(){
     if(backRightUltrasonic != null)
-      return backRightUltrasonic.getDistance(angle);
+      return backRightUltrasonic.getDistance();
     else
       return ULTRASONIC_ERROR_CODE;
   }
@@ -125,13 +125,36 @@ public class MustangSensors {
   }
 
   /*
-   * Returns adjusted distance as given by ultrasonic
+   * Returns adjusted distance as given by ultrasonic - accounts for offset
    */
-  public double getBackLeftUltrasonicDistance(double angle){
+  public double getBackLeftUltrasonicDistance(){
     if(backLeftUltrasonic != null)
-      return backLeftUltrasonic.getDistance(angle);
+      return backLeftUltrasonic.getDistance();
     else
       return ULTRASONIC_ERROR_CODE;
+  }
+
+  /*
+   * Returns the adjusted distance, taking into account both the back ultrasonics
+   * If both ultrasonics have similar data it averages; if only one has "good" data it uses the adjusted distance
+   */
+  public double getAdjustedBackUltrasonicDistance(){
+    double backLeft = getBackLeftUltrasonicUnadjustedDistance();
+    double backRight = getBackRightUltrasonicUnadjustedDistance();
+    double adjustedDistance = (backLeft < backRight) ? backLeft : backRight; // Take the one that is least;
+
+    if(Math.abs(backRight-backLeft) <= 10){
+      adjustedDistance = (backLeft+backRight)/2.0; //average both if they're essentially the same
+    }
+    // Below see if one sensor is getting generally valid data - then use the adjusted distance from that ultrasonic
+    else if(backLeft > 132 && backRight <= 120){
+      adjustedDistance = getBackRightUltrasonicDistance();
+    }
+    else if(backRight > 132 && backLeft <= 120){
+      adjustedDistance = getBackLeftUltrasonicDistance();
+    }
+
+    return adjustedDistance;
   }
 
   /**
@@ -329,21 +352,21 @@ public class MustangSensors {
   }
 
   public void sendUltrasonicDataToDashboard(){
-    if (frontUltrasonic != null && backLeftUltrasonic != null  && backRightUltrasonic != null) {
+    if (frontUltrasonic != null){
       SmartDashboard.putNumber("Front Ultrasonic: ", frontUltrasonic.getUnadjustedDistance());
-      SmartDashboard.putNumber("Back Left Ultrasonic: ", backLeftUltrasonic.getUnadjustedDistance());
-      SmartDashboard.putNumber("Back Right Ultrasonic: ", backRightUltrasonic.getUnadjustedDistance());
-    } 
-  
-     
-    if (frontUltrasonic == null) {
+    } else if (frontUltrasonic == null) {
       SmartDashboard.putString("Front Ultrasonic: ", "FRONT ULTRASONIC IS NULL!");
-    } 
-    if (backLeftUltrasonic == null) {
+    }
+
+    if(backLeftUltrasonic != null){
+      SmartDashboard.putNumber("Back Left Ultrasonic: ", backLeftUltrasonic.getUnadjustedDistance());
+    } else if (backLeftUltrasonic == null) {
       SmartDashboard.putString("Back Left Ultrasonic: ", "BACK LEFT ULTRASONIC IS NULL!");
     }
 
-    if (backRightUltrasonic == null) {
+    if(backRightUltrasonic != null) { 
+      SmartDashboard.putNumber("Back Right Ultrasonic: ", backRightUltrasonic.getUnadjustedDistance());
+    } else if (backRightUltrasonic == null) {
       SmartDashboard.putString("Back RIGHT Ultrasonic: ", "BACK RIGHT ULTRASONIC IS NULL!");
     }
   }
