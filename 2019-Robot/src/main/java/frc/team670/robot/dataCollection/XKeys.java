@@ -17,9 +17,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.Robot;
 import frc.team670.robot.commands.BuildAuton;
 import frc.team670.robot.commands.CancelAllCommands;
+import frc.team670.robot.commands.arm.ToggleHeldItem;
 import frc.team670.robot.commands.arm.movement.CancelArmMovement;
 import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.commands.arm.movement.PlaceOrGrab;
+import frc.team670.robot.commands.claw.CloseClaw;
+import frc.team670.robot.commands.claw.OpenClaw;
 import frc.team670.robot.commands.claw.YeetHeldItem;
 import frc.team670.robot.commands.climb.armClimb.CancelArmClimb;
 import frc.team670.robot.commands.drive.vision.CancelDriveBase;
@@ -32,6 +35,7 @@ import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
 import frc.team670.robot.subsystems.Arm.LegalState;
 import frc.team670.robot.subsystems.Arm.PlaceGrabState;
+import frc.team670.robot.subsystems.Intake;
 
 
 /**
@@ -45,7 +49,7 @@ public class XKeys {
     private NetworkTableInstance instance;
     private NetworkTable table;
     private Command autonCommand;
-    private boolean toggleIn = true, toggleOut = false;
+    private static boolean toggleIn = true, toggleOut = false;
 
     public XKeys() {
         SmartDashboard.putString("XKEYS", "XKeys constructor");
@@ -67,6 +71,7 @@ public class XKeys {
             if (s.equals("place")) placeOrGrab(true);
             else if (s.equals("grab")) placeOrGrab(false);
             else if (s.equals("drop_held_item")) dropHeldItem();
+            else if (s.equals("toggle_held_item")) toggleHeldItem();
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-intake", (table2, key2, entry, value, flags) -> {
             if (value.getType() != NetworkTableType.kString) return;
@@ -80,6 +85,11 @@ public class XKeys {
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-visiondrive", (table2, key2, entry, value, flags) -> {
             visionDrive();
+        }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+        table.addEntryListener("xkeys-claw", (table2, key2, entry, value, flags) -> {
+            String s = value.getString();
+            if (s.equals("open_claw")) openClaw();
+            else if (s.equals("close_claw")) closeClaw();
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-cancel", (table2, key2, entry, value, flags) -> {
             if (value.getType() != NetworkTableType.kString) return;
@@ -144,7 +154,7 @@ public class XKeys {
 
         if (toggleIn) {
             System.out.println("Run Intake In command called");
-            Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, RunIntakeInWithIR.RUNNING_POWER, true));
+            Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, Intake.RUNNING_POWER, true));
         } else {
             System.out.println("Run Intake In command canceled");
             Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, 0, true));
@@ -160,7 +170,7 @@ public class XKeys {
         }
         
         if (toggleOut) {
-            Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, RunIntakeInWithIR.RUNNING_POWER, false));
+            Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, Intake.RUNNING_POWER, false));
         } else {
             Scheduler.getInstance().add(new ButtonRunIntake(Robot.intake, 0, false));
         }
@@ -182,9 +192,9 @@ public class XKeys {
         Scheduler.getInstance().add(new StopIntakeRollers(Robot.intake));
     }
 
-    // private void cancelPistonClimb(){
-    //     Scheduler.getInstance().add(new AbortRobotPistonClimb(Robot.climber, Robot.arm, Robot.sensors));
-    // }
+    private void toggleHeldItem() {
+        Scheduler.getInstance().add(new ToggleHeldItem(Robot.arm));
+    }
 
     private void cancelArmMovement(){
         Scheduler.getInstance().add(new CancelArmMovement(Robot.arm, Robot.intake, Robot.claw));
@@ -212,6 +222,22 @@ public class XKeys {
 
     private void dropHeldItem() {
         Scheduler.getInstance().add(new YeetHeldItem(Robot.claw, Robot.arm));
+    }
+
+    private void openClaw() {
+        Scheduler.getInstance().add(new OpenClaw(Robot.claw));
+    }
+
+    private void closeClaw() {
+        Scheduler.getInstance().add(new CloseClaw(Robot.claw));
+    public static void setToggleIn(boolean toggleInBoolean){
+        toggleIn = toggleInBoolean;
+        toggleOut = !toggleInBoolean;
+    }
+
+    public static void setToggleOut(boolean toggleOutBoolean){
+        toggleOut = toggleOutBoolean;
+        toggleIn = !toggleOutBoolean;
     }
 
 
