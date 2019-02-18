@@ -156,7 +156,7 @@ NetworkTables.addKeyListener('/SmartDashboard/arm-extension', (key, value) => {
 
 // updates the angle of the intake in the robot diagram
 NetworkTables.addKeyListener('/SmartDashboard/intake-angle', (key, value) => {
-  if (value != null) document.getElementById('intake').style = "transform: rotate(" + -1 * value + "deg)";
+  if (value != null) document.getElementById('intake').style = "transform: rotate(" + (value - 90) + "deg)";
 });
 
 // updates status lights for claw ir
@@ -260,9 +260,9 @@ function getFromMap(key) { // mapping is more aligned with arm position on robot
   if (key === "f") return "GRAB_BALL_LOADINGSTATION_BACK";
   if (key === "j") return "PLACE_BALL_CARGOSHIP_BACK";
   if (key === "m") return "PLACE_BALL_CARGOSHIP_FORWARD";
-  if (key === "r") return "GRAB_BALL_LOADINGSTATION_FORWARD";
+  if (key === "3") return "GRAB_BALL_LOADINGSTATION_FORWARD";
 
-  if (key === "e") return "READY_LOW_HATCH_BACK";
+  if (key === "2") return "READY_LOW_HATCH_BACK";
   if (key === "i") return "READY_PLACE_BALL_ROCKET_LOW_BACK";
   if (key === "l") return "READY_PLACE_BALL_ROCKET_LOW_FORWARD";
   if (key === "q") return "READY_LOW_HATCH_FORWARD";
