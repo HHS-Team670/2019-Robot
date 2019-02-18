@@ -61,8 +61,8 @@ public class Claw extends Subsystem {
     }
 
     try {
-      // push = new Solenoid(RobotMap.CLAW_PUSH_SOLENOID);
-      // push.setPulseDuration(PULSE_DURATION);
+      push = new Solenoid(RobotMap.CLAW_PUSH_SOLENOID);
+      push.setPulseDuration(PULSE_DURATION);
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error instantiating push solenoid: " + ex.getMessage(), true);
       push = null;
