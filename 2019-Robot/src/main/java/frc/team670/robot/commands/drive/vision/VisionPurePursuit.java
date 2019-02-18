@@ -67,7 +67,7 @@ public class VisionPurePursuit extends InstantCommand {
   // Called once when the command executes
   @Override
   protected void initialize() {
-    driveBase.initAutonDrive();
+    driveBase.initBrakeMode();
     coprocessor.setTargetHeight(lowTarget);
 
     coprocessor.setCamera(isReversed);
