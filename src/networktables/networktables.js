@@ -4,10 +4,10 @@ console.log('in networktables.js')
 
 var NetworkTables =
     (() => {
-        let keys = {}, connectionListeners = [], connected = false, globalListeners = [], keyListeners = {}, robotAddress = '10.0.0.231';
+        let keys = {}, connectionListeners = [], connected = false, globalListeners = [], keyListeners = {}, robotAddress = '10.6.70.2';
         ipc.send('ready');
         ipc.on('connected', (ev, con) => {
-          console.log('networktables connected')
+          console.log('networktables connected');
             connected = con;
             connectionListeners.map(e => e(con));
         });

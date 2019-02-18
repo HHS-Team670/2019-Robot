@@ -239,6 +239,10 @@ body.login #login {
     position: absolute;
     transform: translate(50vw, 0vh);
 }
+#h-crosshairs {
+    position: absolute;
+    transform: translate(0vw, 50vh);
+}
 
 #current-command {
     position: absolute;
