@@ -22,7 +22,7 @@ public class MoveIntakeToSetpointAngle extends Command {
   private BaseIntake intake;
   private int loggingIterationCounter, setpointInDegrees;
   private static final int TOLERANCE_IN_DEGREES = 5;
-  private static final double TIMEOUT = 3;
+  private static final double TIMEOUT = 1.75;
 
   /**
    * @param setpoint angle in degrees that the intake is moving to

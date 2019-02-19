@@ -226,6 +226,7 @@ public class Robot extends TimedRobot {
     timer.start();
 
     Scheduler.getInstance().add(new MoveExtensionBackUntilHitsLimitSwitch(extension));
+    arm.setCoastMode();
 
     // TODO: robot crashing when trying to load path
     // autonomousCommand = oi.getSelectedAutonCommand();

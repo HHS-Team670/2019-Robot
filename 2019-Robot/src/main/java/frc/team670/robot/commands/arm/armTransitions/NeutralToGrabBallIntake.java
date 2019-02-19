@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.command.WaitForChildren;
 import frc.team670.robot.commands.arm.movement.MoveElbow;
 import frc.team670.robot.commands.arm.movement.MoveExtension;
 import frc.team670.robot.commands.arm.movement.MoveWrist;
+import frc.team670.robot.commands.claw.OpenClaw;
 import frc.team670.robot.commands.intake.MoveIntakeToSetpointAngle;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
@@ -39,7 +40,7 @@ public class NeutralToGrabBallIntake extends ArmTransition {
    * @param intake      The Intake. Should be the static instance of Intake held
    *                    in Robot
    */
-  public NeutralToGrabBallIntake( Arm arm, BaseIntake intake) {
+  public NeutralToGrabBallIntake(Arm arm, BaseIntake intake) {
     super(LegalState.NEUTRAL, LegalState.GRAB_BALL_INTAKE, arm, intake);
     this.arm = arm;
     this.intake = intake;
@@ -48,6 +49,10 @@ public class NeutralToGrabBallIntake extends ArmTransition {
   @Override
   public void initTransition() {
     addSequential(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_DEPLOYED, intake));
+    if(!arm.getClaw().isOpen()){
+      addParallel(new OpenClaw(arm.getClaw()));
+    }
+
     addParallel(new MoveWrist(wrist, Arm.getStates().get(LegalState.GRAB_BALL_INTAKE).getWristAngle()));
     addParallel(new MoveElbow(elbow, Arm.getStates().get(LegalState.GRAB_BALL_INTAKE).getElbowAngle()));
     addParallel(new MoveExtension(extension, Arm.getStates().get(LegalState.GRAB_BALL_INTAKE).getExtensionLength()));

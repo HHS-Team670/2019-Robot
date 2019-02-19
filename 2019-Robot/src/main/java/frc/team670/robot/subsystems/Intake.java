@@ -47,7 +47,7 @@ public class Intake extends BaseIntake {
   
   private Point2D.Double intakeCoord;
 
-  public static final double RUNNING_POWER = 0.30;
+  public static final double RUNNING_POWER = 0.5;
   public static final double PICKUP_RUNNING_POWER = 0.1;
 
   public Intake() {

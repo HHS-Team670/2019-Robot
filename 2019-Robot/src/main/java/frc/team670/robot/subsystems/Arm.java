@@ -673,4 +673,26 @@ public class Arm {
         super(103, -105, 0, false, new ArmTransition[] { new CommonTransition(LegalState.STOW, LegalState.NEUTRAL, arm, intake)});
       } 
   }
+
+  public void setCoastMode(){
+    getElbow().enableCoastMode();
+    getElbow().stop();
+    getWrist().enableCoastMode();
+    getWrist().stop();
+    getExtension().enableCoastMode();
+    getExtension().stop();
+  }
+
+  public void setBrakeMode(){
+    getElbow().enableBrakeMode();
+    getElbow().stop();
+    getWrist().enableBrakeMode();
+    getWrist().stop();
+    getExtension().enableBrakeMode();
+    getExtension().stop();
+  }
+
+  public Claw getClaw(){
+    return claw;
+  }
 }
