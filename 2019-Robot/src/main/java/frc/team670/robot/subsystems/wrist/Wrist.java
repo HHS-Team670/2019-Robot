@@ -190,7 +190,6 @@ public class Wrist extends BaseWrist {
   @Override
   public void setMotionMagicSetpointAngle(double angle) {
     SmartDashboard.putNumber("Wrist MM Setpoint", angle);
-    SmartDashboard.putString("current-command", "wrist motion magic setpoint set");
     setpoint = convertWristDegreesToTicks(angle);
     enableBrakeMode();
     rotator.set(ControlMode.MotionMagic, setpoint);

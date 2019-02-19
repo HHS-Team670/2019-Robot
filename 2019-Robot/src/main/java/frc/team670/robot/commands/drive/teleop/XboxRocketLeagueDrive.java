@@ -8,6 +8,7 @@
 package frc.team670.robot.commands.drive.teleop;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.Robot;
 
  
@@ -92,6 +93,7 @@ public class XboxRocketLeagueDrive extends InstantCommand {
 
   public static void setDriveReversed(boolean reversed) {
     XboxRocketLeagueDrive.isReversed = reversed;
+    SmartDashboard.putBoolean("drive-reversed", reversed);
   }
 
 }

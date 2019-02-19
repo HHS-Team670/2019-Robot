@@ -8,6 +8,7 @@
 package frc.team670.robot.commands.claw;
 
 import edu.wpi.first.wpilibj.command.TimedCommand;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.HeldItem;
 import frc.team670.robot.subsystems.Claw;
@@ -31,6 +32,7 @@ public class DropBall extends TimedCommand {
   // Called once when the command executes
   @Override
   protected void initialize() {
+    SmartDashboard.putString("current-command", "DropBall");
     claw.openClaw();
     claw.push();
     Logger.consoleLog();

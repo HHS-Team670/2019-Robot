@@ -324,7 +324,7 @@ public class MustangSensors {
    */
   public boolean getIntakeIROutput(){
     if(intakeIRSensor != null){
-      return intakeIRSensor.get();
+      return !intakeIRSensor.get(); // .get() Returns true if triggered, false if not
     }
     return false;
   }
