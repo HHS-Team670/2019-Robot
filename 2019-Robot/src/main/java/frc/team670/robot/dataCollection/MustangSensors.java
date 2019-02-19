@@ -243,6 +243,9 @@ public class MustangSensors {
     }
   }
 
+  /**
+   * Gets fieldcentric angle of navX 
+   */
   public double getAngle() {
     if (navXMicro != null) {
       return navXMicro.getAngle();
@@ -293,6 +296,8 @@ public class MustangSensors {
     else if(fieldCentricAngle > 347 && fieldCentricAngle <= 14){
       target_angle = 0;
     }
+
+    SmartDashboard.putNumber("Target Angle", target_angle);
 
     return target_angle - fieldCentricAngle;
   }

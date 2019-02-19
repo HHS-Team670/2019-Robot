@@ -107,7 +107,7 @@ public class Robot extends TimedRobot {
     // autonomousCommand = oi.getSelectedAutonCommand();
     timer = new Timer();
 
-    operatorControl = new ControlOperatorController(oi.getOperatorController());
+    // operatorControl = new ControlOperatorController(oi.getOperatorController());
     updateArbitraryFeedForwards = new Notifier(new Runnable() {
       public void run() {
         wrist.updateArbitraryFeedForward();
@@ -160,7 +160,10 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Actual Extension" , extension.getLengthInches());
     SmartDashboard.putBoolean("drive-reversed-status", XboxRocketLeagueDrive.isDriveReversed());
 
-    SmartDashboard.putNumber("Angle", sensors.getYawDouble());
+    SmartDashboard.putNumber("Angle", sensors.getAngle());
+    SmartDashboard.putNumber("Phi", sensors.getAngleToTarget());
+    SmartDashboard.putNumber("Horizontal Angle", coprocessor.getAngleToWallTarget());
+    SmartDashboard.putNumber("Depth", coprocessor.getDistanceToWallTarget());
 
     // SmartDashboard.putNumber("Arbitrary Feedforward Measurement", MeasureArbitraryFeedforward.output);
 
@@ -235,7 +238,7 @@ public class Robot extends TimedRobot {
     // autonomousCommand = new RunIntake(intake, sensors, true);
     // schedule the autonomous command (example)
 
-    autonomousCommand = new VisionPurePursuitWithPivot(driveBase, coprocessor, sensors, 6, false, true);
+    autonomousCommand = new VisionPurePursuitWithPivot(driveBase, coprocessor, sensors, 6, true, true);
       // autonomousCommand = new TestVelocityDrive(20, 20);'
     // autonomousCommand = new NavXChangeableAnglePivot(new MutableDouble(15), driveBase, sensors);
 
