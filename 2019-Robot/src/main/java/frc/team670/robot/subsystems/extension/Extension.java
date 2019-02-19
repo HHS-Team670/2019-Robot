@@ -258,11 +258,10 @@ public class Extension extends BaseExtension {
   }
 
   public void warnifLimitHit() {
-    if (getReverseLimitSwitchTripped()) {
-      
-    } else if (getForwardLimitSwitchTripped()) {
-
-    }
+    if (getForwardLimitSwitchTripped())
+      SmartDashboard.putString("warning", "EXTENSION FORWARD LIMIT SWITCH TRIPPED");
+    if (getReverseLimitSwitchTripped())
+      SmartDashboard.putString("warning", "EXTENSION REVERSE LIMIT SWITCH TRIPPED");
   }
 
   public double getArbitraryFeedForwardAngleMultiplier() {
