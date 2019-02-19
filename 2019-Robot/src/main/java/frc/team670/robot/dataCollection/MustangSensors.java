@@ -261,36 +261,36 @@ public class MustangSensors {
     double fieldCentricAngle = getAngle() % 360;
 
     //Rocket 1 - Right
-    if (fieldCentricAngle >= 15.9 && fieldCentricAngle <= 41.9) {
+    if (fieldCentricAngle > 14 && fieldCentricAngle <= 65) {
       target_angle = 28.9;
     }
     //Rocket 3 - Right
-    else if (fieldCentricAngle >= 138.1 && fieldCentricAngle <= 164.1) {
+    else if (fieldCentricAngle > 115 && fieldCentricAngle <= 167) {
       target_angle = 151.1;
     }
     //Rocket 3 - Left
-    else if (fieldCentricAngle >= 195.9 && fieldCentricAngle <= 221.9) {
+    else if (fieldCentricAngle > 194 && fieldCentricAngle <= 255) {
       target_angle = 208.9;
     }
     //Rocket 1 - Left 
-    else if (fieldCentricAngle >= 318.1 && fieldCentricAngle <= 344.1) {
+    else if (fieldCentricAngle > 285 && fieldCentricAngle <= 347) {
       target_angle = 331.1;
     }
 
     // Cargo Ship side targets
-    else if (fieldCentricAngle >= 257 && fieldCentricAngle <= 283) {
+    else if (fieldCentricAngle > 255 && fieldCentricAngle <= 285) {
       target_angle = 270;
-    } else if (fieldCentricAngle >= 77 && fieldCentricAngle <= 103) {
+    } else if (fieldCentricAngle > 65 && fieldCentricAngle <= 115) {
       target_angle = 90;
     }
 
     // Exchange 
-    else if (fieldCentricAngle >= 167 && fieldCentricAngle <= 193) {
+    else if (fieldCentricAngle > 167 && fieldCentricAngle <= 194) {
       target_angle = 180;
     }
 
     // Front cargo ship
-    else if(fieldCentricAngle >= 347 && fieldCentricAngle <= 13){
+    else if(fieldCentricAngle > 347 && fieldCentricAngle <= 14){
       target_angle = 0;
     }
 
