@@ -87,10 +87,7 @@ public class XKeys {
             visionDrive();
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-claw", (table2, key2, entry, value, flags) -> {
-            String s = value.getString();
-            if (s.equals("toggle_claw")) { 
-                toggleClaw();
-            }
+            toggleClaw();
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-cancel", (table2, key2, entry, value, flags) -> {
             if (value.getType() != NetworkTableType.kString) return;
@@ -130,14 +127,12 @@ public class XKeys {
     }
 
     private void moveArm(ArmState state) {
-        SmartDashboard.putString("current-command", "moveArm()");
         SmartDashboard.putString("ARMSTATE", state.toString());
         System.out.println(".................MoveArm called");
         Scheduler.getInstance().add(new MoveArm(state, Robot.arm));
     }
 
     private void placeOrGrab(boolean isPlacing) {
-        SmartDashboard.putString("current-command", "placeOrGrab()");
         Scheduler.getInstance().add(new PlaceOrGrab(isPlacing));
     }
 
