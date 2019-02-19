@@ -163,6 +163,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("arm-extension" , extension.getLengthInches() / Extension.EXTENSION_OUT_IN_INCHES);
     SmartDashboard.putNumber("Actual Extension" , extension.getLengthInches());
     SmartDashboard.putBoolean("drive-reversed-status", XboxRocketLeagueDrive.isDriveReversed());
+    SmartDashboard.putString("claw-held-item", arm.getHeldItem().name());
 
     // SmartDashboard.putNumber("Arbitrary Feedforward Measurement", MeasureArbitraryFeedforward.output);
 
