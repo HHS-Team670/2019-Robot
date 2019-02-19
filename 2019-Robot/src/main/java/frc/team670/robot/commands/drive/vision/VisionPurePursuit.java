@@ -8,29 +8,23 @@
 package frc.team670.robot.commands.drive.vision;
 
 import edu.wpi.first.wpilibj.Notifier;
-import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team670.robot.Robot;
-import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.commands.drive.purePursuit.Path;
 import frc.team670.robot.commands.drive.purePursuit.PathGenerator;
 import frc.team670.robot.commands.drive.purePursuit.PoseEstimator;
 import frc.team670.robot.commands.drive.purePursuit.PurePursuit;
-import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangCoprocessor;
 import frc.team670.robot.dataCollection.MustangSensors;
-import frc.team670.robot.subsystems.Arm;
-import frc.team670.robot.subsystems.Arm.LegalState;
 import frc.team670.robot.subsystems.DriveBase;
-import frc.team670.robot.utils.Logger;
-import frc.team670.robot.utils.functions.MathUtils;
+import frc.team670.robot.utils.MutableDouble;
 import frc.team670.robot.utils.math.Vector;
 
 /**
  * Starts a Pure Pursuit path based off vision data
  */
-public class VisionPurePursuit extends InstantCommand {
+public class VisionPurePursuit extends CommandGroup {
 
   private static final double MAX_VEL = 16, MAX_ACC = 100, MAX_VELK = 1; // VELK = Curve Velocity (1-5)
   // NOTE: Everything passed into the PurePursuit algorithm is in inches/s
@@ -38,35 +32,17 @@ public class VisionPurePursuit extends InstantCommand {
   // inches/s as a velocity control - Check PurePursuitTracker Notifier for this
   // output
   private static final double B = 0.9, A = 1 - B, TOLERANCE = 0.001;
-
-  private PurePursuit command;
-  private MustangCoprocessor coprocessor;
-  private MustangSensors sensors;
-  private DriveBase driveBase;
   private static final double SPACING = 1; // Spacing Inches
-  private double spaceFromTarget;
-  private boolean isReversed;
-  private boolean lowTarget;
-  private static Notifier restrictArmMovement;
 
   /**
    * @param isReversed True if using the back-facing camera on the robot to drive
    *                   backwards
+   * @param finalAngle The mutable double for the desired final angle. Should be set by this command so a Pivot can finish it from the surrounding CommandGroup.
    */
   public VisionPurePursuit(DriveBase driveBase, MustangCoprocessor coprocessor, MustangSensors sensors,
-      double spaceFromTarget, boolean isReversed, boolean lowTarget) {
+      double spaceFromTarget, boolean isReversed, boolean lowTarget, MutableDouble finalAngle) {
     super();
-    this.coprocessor = coprocessor;
-    this.sensors = sensors;
-    this.driveBase = driveBase;
-    this.spaceFromTarget = spaceFromTarget;
-    this.isReversed = isReversed;
-    this.lowTarget = lowTarget;
-  }
 
-  // Called once when the command executes
-  @Override
-  protected void initialize() {
     // driveBase.initBrakeMode();
     // coprocessor.setTargetHeight(lowTarget);
 
@@ -146,7 +122,7 @@ public class VisionPurePursuit extends InstantCommand {
       partialDistanceY *= -1;
     }
 
-    sensors.zeroYaw();
+    sensors.zeroYaw(); // NEEDS to happen
 
     PoseEstimator poseEstimator = new PoseEstimator(driveBase, sensors);
 
@@ -167,15 +143,11 @@ public class VisionPurePursuit extends InstantCommand {
     
     Path path = generator.generatePath(isReversed);
 
-    command = new PurePursuit(path, driveBase, sensors, poseEstimator, isReversed);
+    finalAngle.setValue(horizontalAngle);
+    PurePursuit command = new PurePursuit(path, driveBase, sensors, poseEstimator, isReversed, finalAngle);
 
-
-    Scheduler.getInstance().add(command);
+    addSequential(command);
   }
 
-  public static void disableArmRestriction() {
-    if (restrictArmMovement != null)
-      restrictArmMovement.stop();
-  }
 
 }

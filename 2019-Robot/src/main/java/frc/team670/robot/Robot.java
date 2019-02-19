@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.ControlOperatorController;
 import frc.team670.robot.commands.drive.teleop.XboxRocketLeagueDrive;
 import frc.team670.robot.commands.drive.vision.VisionPurePursuit;
+import frc.team670.robot.commands.drive.vision.VisionPurePursuitWithPivot;
 import frc.team670.robot.commands.tuning.ResetPulseWidthEncoder;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangCoprocessor;
@@ -232,7 +233,7 @@ public class Robot extends TimedRobot {
     // autonomousCommand = new RunIntake(intake, sensors, true);
     // schedule the autonomous command (example)
 
-    autonomousCommand = new VisionPurePursuit(driveBase, coprocessor, sensors, 0, false, true);
+    autonomousCommand = new VisionPurePursuitWithPivot(driveBase, coprocessor, sensors, 0, false, true);
       // autonomousCommand = new TestVelocityDrive(20, 20);
 
     if (autonomousCommand != null) {

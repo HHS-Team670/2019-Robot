@@ -12,7 +12,7 @@ import frc.team670.robot.commands.drive.vision.VisionPurePursuit;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.utils.Logger;
-import frc.team670.robot.utils.functions.MathUtils;
+import frc.team670.robot.utils.MutableDouble;
 import frc.team670.robot.utils.math.DrivePower;
 
 public class PurePursuit extends Command {
@@ -24,11 +24,16 @@ public class PurePursuit extends Command {
   private DriveBase driveBase;
   private MustangSensors sensors;
   private int executeCount;
+  private MutableDouble finalAngle;
 
-  public PurePursuit(Path path, DriveBase driveBase, MustangSensors sensors, PoseEstimator estimator, boolean isReversed) {
+  /**
+   * @param finalAngle a MutableDouble object reference to the angle (using zeroed yaw) this PurePursuit command should end up at compared to the zeroed yaw.
+   */
+  public PurePursuit(Path path, DriveBase driveBase, MustangSensors sensors, PoseEstimator estimator, boolean isReversed, MutableDouble finalAngle) {
    this.driveBase = driveBase;
    this.sensors = sensors;
    this.poseEstimator = estimator;
+   this.finalAngle = finalAngle;
   
    purePursuitTracker = new PurePursuitTracker(poseEstimator, driveBase, sensors, isReversed);
    purePursuitTracker.setPath(path, LOOKAHEAD_DISTANCE);
@@ -73,8 +78,9 @@ public class PurePursuit extends Command {
   @Override
   protected void end() {
     Logger.consoleLog("Pose: %s ", poseEstimator.getPose());
-    VisionPurePursuit.disableArmRestriction();
+    // VisionPurePursuit.disableArmRestriction();
     driveBase.setSparkVelocityControl(0,0);
+    finalAngle.setValue(sensors.getYawDouble() + finalAngle.getValue());
     // purePursuitTracker.stopNotifier();
     purePursuitTracker.reset();
   }
