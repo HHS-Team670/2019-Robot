@@ -37,7 +37,7 @@ public class Arm {
 
   // All of the states
   private static HashMap<LegalState, ArmState> states;
-  private static ArmState currentState;
+  private static ArmState currentState, targetState;
 
   /** Value meant only for unit testing. Do not use this anywhere else! */
   public static double unitTestExtensionDist, unitTestElbowAngle, unitTestWristAngle;
@@ -259,6 +259,14 @@ public class Arm {
       return ID;
     }
   };
+
+  public static ArmState getTargetState() {
+    return targetState;
+  }
+
+  public static void setTargetState(ArmState state) {
+    targetState = state;
+  }
 
   /**
    * Represents a potential state for the arm including a wrist angle, elbow

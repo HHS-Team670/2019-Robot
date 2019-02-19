@@ -107,7 +107,7 @@ public class Robot extends TimedRobot {
     // autonomousCommand = oi.getSelectedAutonCommand();
     timer = new Timer();
 
-    operatorControl = new ControlOperatorController(oi.getOperatorController());
+    // operatorControl = new ControlOperatorController(oi.getOperatorController());
     updateArbitraryFeedForwards = new Notifier(new Runnable() {
       public void run() {
         wrist.updateArbitraryFeedForward();
