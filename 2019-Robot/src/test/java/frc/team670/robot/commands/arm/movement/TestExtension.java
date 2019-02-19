@@ -105,4 +105,34 @@ public class TestExtension extends BaseExtension {
     return 0;
   }
 
+  @Override
+  public void enableBrakeMode() {
+
+  }
+
+  @Override
+  public void enableCoastMode() {
+
+  }
+
+  @Override
+  public boolean getForwardLimitSwitchTripped() {
+    return false;
+  }
+
+  @Override
+  public boolean getReverseLimitSwitchTripped() {
+    return false;
+  }
+
+  @Override
+  public double getArbitraryFeedForwardAngleMultiplier() {
+    return 0;
+  }
+
+  @Override
+  public void resetPositionBasedOnLimitSwitchTripping() {
+
+  }
+
 }

@@ -7,15 +7,17 @@
 
 package frc.team670.robot.commands.claw;
 
+import edu.wpi.first.wpilibj.command.Command;
+import frc.team670.robot.Robot;
+import frc.team670.robot.subsystems.Arm.HeldItem;
 import frc.team670.robot.subsystems.Claw;
 import frc.team670.robot.utils.Logger;
-import edu.wpi.first.wpilibj.command.TimedCommand;
 
 /**
  * Opens the Claw using the "soft" grip
  * @author shaylandias
  */
-public class OpenClaw extends TimedCommand {
+public class OpenClaw extends Command {
 
   private Claw claw;
 
@@ -23,7 +25,7 @@ public class OpenClaw extends TimedCommand {
    * @param claw The Claw object
    */
   public OpenClaw(Claw claw) {
-    super(Claw.TIME_TO_MOVE);
+    setTimeout(Claw.TIME_TO_MOVE);
     requires(claw);
     this.claw = claw;
   }
@@ -32,9 +34,15 @@ public class OpenClaw extends TimedCommand {
   @Override
   protected void initialize() {
     if(!claw.isOpen()) {
-      claw.openClaw(true);
+      claw.openClaw();
+      Robot.arm.setHeldItem(HeldItem.NONE);
     }
     Logger.consoleLog();
+  }
+
+  @Override
+  protected boolean isFinished() {
+    return isTimedOut();
   }
 
 }

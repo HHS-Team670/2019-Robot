@@ -10,6 +10,7 @@ package frc.team670.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
@@ -82,6 +83,14 @@ public abstract class RotatingSubsystem extends Subsystem implements TunableSubs
      */
     public boolean getTimeout(){
         return timeout;
+    }
+
+    public void enableCoastMode() {
+        rotator.setNeutralMode(NeutralMode.Coast);
+    }
+
+    public void enableBrakeMode() {
+        rotator.setNeutralMode(NeutralMode.Brake);
     }
 
     /**

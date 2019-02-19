@@ -11,14 +11,15 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.BaseIntake;
+import frc.team670.robot.subsystems.Intake;
 import frc.team670.robot.utils.Logger;
+import frc.team670.robot.dataCollection.XKeys;
 
 public class RunIntakeInWithIR extends Command {
 
   private BaseIntake intake;
   private MustangSensors sensors;
 
-  public static final double RUNNING_POWER = 0.30;
   private boolean hasBeenTriggered;
 
   public RunIntakeInWithIR(BaseIntake intake, MustangSensors sensors) {
@@ -38,12 +39,12 @@ public class RunIntakeInWithIR extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    intake.runIntake(RUNNING_POWER, true);
+    intake.runIntake(Intake.RUNNING_POWER, true);
 
     // If the IR sensor has been tripped and it is for the first time
     if (!sensors.isIntakeIRSensorNull() && sensors.getIntakeIROutput() && !hasBeenTriggered) {
       hasBeenTriggered = true;
-      setTimeout(0.5 + timeSinceInitialized());
+      setTimeout(0.55 + timeSinceInitialized());
     }
   }
 
@@ -63,6 +64,7 @@ public class RunIntakeInWithIR extends Command {
   protected void end() {
     intake.runIntake(0, true);
     Logger.consoleLog();
+    XKeys.setBothToggles(false);
   }
 
   // Called when another command which requires one or more of the same
@@ -71,5 +73,6 @@ public class RunIntakeInWithIR extends Command {
   protected void interrupted() {
     intake.runIntake(0, true);
     Logger.consoleLog();
+    end();
   }
 }

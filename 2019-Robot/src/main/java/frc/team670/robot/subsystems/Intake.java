@@ -33,11 +33,11 @@ public class Intake extends BaseIntake {
 
   // Motion Magic
   private static final int kPIDLoopIdx = 0, MOTION_MAGIC_SLOT = 0, kTimeoutMs = 0;
-  private static final int OFFSET_FROM_ENCODER_ZERO = -260;
-  private static final int FORWARD_SOFT_LIMIT = 850, REVERSE_SOFT_LIMIT = -940;
+  private static final int OFFSET_FROM_ENCODER_ZERO = 426;
+  private static final int FORWARD_SOFT_LIMIT = 932, REVERSE_SOFT_LIMIT = -979;
   private static final int CONTINUOUS_CURRENT_LIMIT = 20, PEAK_CURRENT_LIMIT = 0;
   private final static int INTAKE_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 120,  INTAKE_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_SECOND = 400;
-  private static final int QUAD_ENCODER_MAX = FORWARD_SOFT_LIMIT + 200, QUAD_ENCODER_MIN = REVERSE_SOFT_LIMIT - 200;
+  private static final int QUAD_ENCODER_MAX = FORWARD_SOFT_LIMIT + 300, QUAD_ENCODER_MIN = REVERSE_SOFT_LIMIT - 300;
 
   private static final double ARBITRARY_FEED_FORWARD = 0.175;
 
@@ -46,6 +46,9 @@ public class Intake extends BaseIntake {
   private TalonSRX roller;
   
   private Point2D.Double intakeCoord;
+
+  public static final double RUNNING_POWER = 0.35;
+  public static final double PICKUP_RUNNING_POWER = 0.1;
 
   public Intake() {
     super(new TalonSRX(RobotMap.INTAKE_BASE_TALON), ARBITRARY_FEED_FORWARD, FORWARD_SOFT_LIMIT, REVERSE_SOFT_LIMIT, true, QUAD_ENCODER_MIN, QUAD_ENCODER_MAX, CONTINUOUS_CURRENT_LIMIT, PEAK_CURRENT_LIMIT, OFFSET_FROM_ENCODER_ZERO);
@@ -58,14 +61,14 @@ public class Intake extends BaseIntake {
     intakeCoord = new Point2D.Double();
 
     rotator.setInverted(true);
-    rotator.setSensorPhase(false); // Positive is inwards movement, negative is outward
+    // rotator.setSensorPhase(true); // Positive is inwards movement, negative is outward
 
-    if(rotatorSensorCollection.isRevLimitSwitchClosed()) {
-      rotator.setSelectedSensorPosition(REVERSE_SOFT_LIMIT);
-    }
-    else if(rotatorSensorCollection.isFwdLimitSwitchClosed()) {
-      rotator.setSelectedSensorPosition(FORWARD_SOFT_LIMIT);
-    }
+    // if(rotatorSensorCollection.isRevLimitSwitchClosed() && !rotatorSensorCollection.isFwdLimitSwitchClosed()) {
+    //   rotator.setSelectedSensorPosition(REVERSE_SOFT_LIMIT + 50);
+    // }
+    // else if(rotatorSensorCollection.isFwdLimitSwitchClosed() && !rotatorSensorCollection.isRevLimitSwitchClosed()) {
+    //   rotator.setSelectedSensorPosition(FORWARD_SOFT_LIMIT - 50);
+    // }
 
     stop();
     setMotionMagicPIDValues();
@@ -99,7 +102,9 @@ public class Intake extends BaseIntake {
   public void setMotionMagicSetpointAngle(double intakeAngle) {
     setpoint = convertIntakeDegreesToTicks(intakeAngle);
     SmartDashboard.putNumber("MotionMagicSetpoint", setpoint);
+    enableBrakeMode();
     rotator.set(ControlMode.MotionMagic, setpoint);
+    roller.set(ControlMode.PercentOutput, 0);
   }
 
   /**
@@ -126,14 +131,16 @@ public class Intake extends BaseIntake {
   }
 
   /**
-   * Runs the intake at a given percent power
+   * Runs the intake at a given percent power. Will not run if intake is flipping.
    * 
    * @param percentOutput The desired percent power for the rollers to run at [-1,
    *                      1]
    */
   public void runIntake(double power, boolean runningIn) {
-    power *= runningIn ? 1 : -1;
-    roller.set(ControlMode.PercentOutput, power);
+    if(getAngleInDegrees() > 0) {
+        power *= runningIn ? 1 : -1;
+        roller.set(ControlMode.PercentOutput, power);
+    }
   }
   /**
    * Converts an intake angle into ticks
@@ -160,9 +167,9 @@ public class Intake extends BaseIntake {
   }
 
   public void sendDataToDashboard() {
-    SmartDashboard.putNumber("Unadjusted Absolute Ticks", getUnadjustedPulseWidth());
-    SmartDashboard.putNumber("Absolute Ticks", getRotatorPulseWidth());
-    SmartDashboard.putNumber("Quadrature Ticks", getPositionTicks());
+    SmartDashboard.putNumber("Intake Unadjusted Absolute Ticks", getUnadjustedPulseWidth());
+    SmartDashboard.putNumber("Intake Absolute Ticks", getRotatorPulseWidth());
+    SmartDashboard.putNumber("Intake Quadrature Ticks", getPositionTicks());
   }
 
   @Override

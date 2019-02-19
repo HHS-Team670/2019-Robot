@@ -10,11 +10,18 @@ package frc.team670.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team670.robot.commands.arm.EnableArmBrakeMode;
+import frc.team670.robot.commands.arm.EnableArmCoastMode;
+import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.commands.cameras.FlipCamera;
-import frc.team670.robot.commands.drive.teleop.FlipDriveDirection;
+import frc.team670.robot.commands.drive.teleop.FlipDriveAndCamera;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.dataCollection.XKeys;
+import frc.team670.robot.subsystems.Arm;
+import frc.team670.robot.subsystems.Arm.LegalState;
 import frc.team670.robot.utils.MustangController;
 import frc.team670.robot.utils.MustangController.XboxButtons;
 
@@ -26,47 +33,31 @@ public class OI {
 
   // Controllers/Joysticks
   // private Joystick rightStick, arcadeButtons;
-  private MustangController driverController, operatorController;
+  private MustangController driverController;
 
   private XKeys xkeys;
 
   // Buttons
   private JoystickButton toggleReverseDrive;
-  private JoystickButton flipCameras;
-  // private JoystickButton flipArmDriverControlState;
 
-  // private JoystickButton incFeedForward, decFeedForward, measureFeedForward, runForward, runBackward;
-  // private JoystickButton runIntakeIn, runIntakeOut;
-
+  private JoystickButton enableBrakeMode, enableCoastMode;
+  private JoystickButton armToNeutral;
+  
 
   public OI() {
     driverController = new MustangController(RobotMap.DRIVER_CONTROLLER_PORT);
     // operatorController = new MustangController(RobotMap.OPERATOR_CONTROLLER_PORT);
     xkeys = new XKeys();
-    
     toggleReverseDrive = new JoystickButton(driverController, XboxButtons.LEFT_BUMPER);
-    toggleReverseDrive.whenPressed(new FlipDriveDirection());
-    flipCameras = new JoystickButton(driverController, XboxButtons.B);
-    flipCameras.whenPressed(new FlipCamera());
-
-    // incFeedForward = new JoystickButton(driverController, XboxButtons.START);
-    // incFeedForward.whenPressed(new IncreaseMeasurementOutput());
-    // decFeedForward = new JoystickButton(driverController, XboxButtons.BACK);
-    // decFeedForward.whenPressed(new DecreaseMeasurementOutput());
-    // measureFeedForward = new JoystickButton(driverController, XboxButtons.X);
-    // measureFeedForward.whenPressed(new MeasureArbitraryFeedforward(Robot.arm.getElbow()));
-
-    // runForward = new JoystickButton(driverController, XboxButtons.B);
-    // runForward.whenPressed(new MoveElbow(Robot.arm.getElbow(), -90));
-    // runBackward = new JoystickButton(driverController, XboxButtons.A);
-    // runBackward.whenPressed(new MoveElbow(Robot.arm.getElbow(), 90));
-
-    // runIntakeIn = new JoystickButton(operatorController, XboxButtons.RIGHT_BUMPER);
-    // runIntakeIn.whenPressed(new ButtonRunIntake(Robot.intake, RunIntakeInWithIR.RUNNING_POWER, true));
-    // runIntakeIn.whenReleased(new StopIntakeRollers(Robot.intake));
-    // runIntakeOut = new JoystickButton(operatorController, XboxButtons.LEFT_BUMPER);
-    // runIntakeOut.whenPressed(new ButtonRunIntake(Robot.intake, RunIntakeInWithIR.RUNNING_POWER, false));
-    // runIntakeOut.whenReleased(new StopIntakeRollers(Robot.intake));
+    toggleReverseDrive.whenPressed(new FlipDriveAndCamera());
+    armToNeutral = new JoystickButton(driverController, XboxButtons.A);
+    armToNeutral.whenPressed(
+      new InstantCommand() {
+        protected void initialize() {
+          Scheduler.getInstance().add(new MoveArm(Arm.getArmState(LegalState.NEUTRAL), Robot.arm));
+        }
+      }
+    );
   }
 
   /**
@@ -86,7 +77,7 @@ public class OI {
    * @param time The time to rumble for in seconds
    */
   public void rumbleOperatorController(double power, double time) {
-    rumbleController(operatorController, power, time);
+    // rumbleController(operatorController, power, time);
   }
 
   private void rumbleController(MustangController controller, double power, double time) {
@@ -97,9 +88,9 @@ public class OI {
     return driverController;
   }
 
-  public MustangController getOperatorController() {
-    return operatorController;
-  }
+  // public MustangController getOperatorController() {
+  //   return operatorController;
+  // }
 
   public boolean isQuickTurnPressed() {
     return driverController.getRightBumper();

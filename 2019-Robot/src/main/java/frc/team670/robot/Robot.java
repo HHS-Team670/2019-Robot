@@ -7,8 +7,6 @@
 
 package frc.team670.robot;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -17,8 +15,8 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.ControlOperatorController;
-import frc.team670.robot.commands.drive.DriveMotionProfile;
 import frc.team670.robot.commands.drive.teleop.XboxRocketLeagueDrive;
+import frc.team670.robot.commands.drive.vision.VisionPurePursuitWithPivot;
 import frc.team670.robot.commands.tuning.ResetPulseWidthEncoder;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangCoprocessor;
@@ -67,16 +65,6 @@ public class Robot extends TimedRobot {
   private Timer timer;
 
   public Robot() {
-
-    oi = new OI();
-
-    try
-    {
-        Logger.CustomLogger.setup();
-    }
-    catch (Throwable e) { Logger.logException(e);}
-    
-    Logger.consoleLog();
   }
 
   /**
@@ -87,6 +75,18 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // auton_chooser.addDefault("Default Auto", new TimeDrive());
     // chooser.addObject("My Auto", new MyAutoCommand());
+
+
+    oi = new OI();
+
+    try
+    {
+        Logger.CustomLogger.setup();
+    }
+    catch (Throwable e) { Logger.logException(e);}
+    
+    Logger.consoleLog();
+
     SmartDashboard.putData("Auto mode", auton_chooser);
     Logger.consoleLog();
     System.out.println("Robot init");
@@ -98,16 +98,16 @@ public class Robot extends TimedRobot {
     // Setup to receive PID values from smart dashboard
     pid_chooser.setDefaultOption("false", false);
     pid_chooser.addOption("true", true);
-    SmartDashboard.putData("PID Inputs from Dashboard?", pid_chooser);
-    SmartDashboard.putNumber("P", 0);
-    SmartDashboard.putNumber("I", 0);
-    SmartDashboard.putNumber("D", 0);
-    SmartDashboard.putNumber("KA", 0);
+    // SmartDashboard.putData("PID Inputs from Dashboard?", pid_chooser);
+    // SmartDashboard.putNumber("P", 0);
+    // SmartDashboard.putNumber("I", 0);
+    // SmartDashboard.putNumber("D", 0);
+    // SmartDashboard.putNumber("KA", 0);
 
     // autonomousCommand = oi.getSelectedAutonCommand();
     timer = new Timer();
 
-    operatorControl = new ControlOperatorController(oi.getOperatorController());
+    // operatorControl = new ControlOperatorController(oi.getOperatorController());
     updateArbitraryFeedForwards = new Notifier(new Runnable() {
       public void run() {
         wrist.updateArbitraryFeedForward();
@@ -157,10 +157,24 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("intake-ir-sensor", sensors.getIntakeIROutput());
     SmartDashboard.putNumber("extension-actual-length" , extension.getLengthInches());
     SmartDashboard.putNumber("arm-extension" , extension.getLengthInches() / Extension.EXTENSION_OUT_IN_INCHES);
+    SmartDashboard.putNumber("Actual Extension" , extension.getLengthInches());
+    SmartDashboard.putBoolean("drive-reversed-status", XboxRocketLeagueDrive.isDriveReversed());
 
-    elbow.sendDataToDashboard();
-    extension.sendDataToDashboard();
-    wrist.sendDataToDashboard();
+    SmartDashboard.putNumber("Angle", sensors.getAngle());
+    SmartDashboard.putNumber("Phi", sensors.getAngleToTarget());
+    SmartDashboard.putNumber("Horizontal Angle", coprocessor.getAngleToWallTarget());
+    SmartDashboard.putNumber("Depth", coprocessor.getDistanceToWallTarget());
+
+    // SmartDashboard.putNumber("Arbitrary Feedforward Measurement", MeasureArbitraryFeedforward.output);
+
+    // SmartDashboard.putString("Held Item", arm.getHeldItem().toString());
+
+    // elbow.sendDataToDashboard();
+    // extension.sendDataToDashboard();
+    // wrist.sendDataToDashboard();
+    // intake.sendDataToDashboard();
+    sensors.sendUltrasonicDataToDashboard();
+    driveBase.sendDIOEncoderDataToDashboard();
 
   }
   /**
@@ -173,6 +187,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("robot-state", "disabledInit()");
     Logger.consoleLog("Robot Disabled");
     // autonomousCommand = oi.getSelectedAutonCommand();
+    driveBase.initCoastMode();
     intake.stop();
     timer.stop();
     intake.stop();
@@ -198,33 +213,42 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
-    sensors.resetNavX();
+    // sensors.resetNavX(); // Reset NavX completely, zero the field centric based on how robot faces from start of game.
 
-    SmartDashboard.putString("robot-state", "autonomousInit()");
+    // driveBase.initBrakeMode();
 
-    if(DriverStation.getInstance().getAlliance().equals(Alliance.Red)) {
-      leds.changeAlliance(false);
-    } else if (DriverStation.getInstance().getAlliance().equals(Alliance.Blue)) {
-      leds.changeAlliance(true);
-    } else {
-      leds.changeAlliance(true);
-    }
+    // SmartDashboard.putString("robot-state", "autonomousInit()");
 
-    sensors.resetNavX(); // Reset NavX completely, zero the field centric based on how robot faces from start of game.
-    Logger.consoleLog("Auton Started");
-    timer.start();
+    // if(DriverStation.getInstance().getAlliance().equals(Alliance.Red)) {
+    //   leds.changeAlliance(false);
+    // } else if (DriverStation.getInstance().getAlliance().equals(Alliance.Blue)) {
+    //   leds.changeAlliance(true);
+    // } else {
+    //   leds.changeAlliance(true);
+    // }
+
+    // Logger.consoleLog("Auton Started");
+    // timer.start();
+
+    // Scheduler.getInstance().add(new MoveExtensionBackUntilHitsLimitSwitch(extension));
+    // arm.setCoastMode();
 
     // TODO: robot crashing when trying to load path
     // autonomousCommand = oi.getSelectedAutonCommand();
     // autonomousCommand = new RunIntake(intake, sensors, true);
     // schedule the autonomous command (example)
+
+    autonomousCommand = new VisionPurePursuitWithPivot(driveBase, coprocessor, sensors, 6, true, true);
+      // autonomousCommand = new TestVelocityDrive(20, 20);'
+    // autonomousCommand = new NavXChangeableAnglePivot(new MutableDouble(15), driveBase, sensors);
+
     if (autonomousCommand != null) {
       autonomousCommand.start();
     }
 
-    if (operatorControl != null) {
-      operatorControl.start();
-    }
+    // if (operatorControl != null) {
+    //   operatorControl.start();
+    // }
   }
 
   /**
@@ -234,12 +258,14 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     // SmartDashboard.putString("robot-state", "autonomousPeriodic()");
     // SmartDashboard.putNumber("game-time", (int) timer.get());
-    // Scheduler.getInstance().run();
+    Scheduler.getInstance().run();
   }
 
   @Override
   public void teleopInit() {
     SmartDashboard.putString("robot-state", "teleopInit()");
+
+    driveBase.initBrakeMode();
 
     leds.setForwardData(true);
 

@@ -36,6 +36,7 @@ public class MoveElbow extends Command {
     this.elbowSetpointInDegrees = elbowSetpointInDegrees;
     requires(elbow);
     super.setInterruptible(true);
+    setTimeout(2);
   }
 
   // Called just before this Command runs the first time
@@ -55,6 +56,9 @@ public class MoveElbow extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
+    if(isTimedOut()) {
+      return true;
+    }
     return MathUtils.isWithinTolerance(elbow.getAngleInDegrees(), elbowSetpointInDegrees, DEGREE_TOLERANCE);
   }
 

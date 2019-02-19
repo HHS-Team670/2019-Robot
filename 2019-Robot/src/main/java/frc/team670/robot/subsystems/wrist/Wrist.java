@@ -30,10 +30,12 @@ public class Wrist extends BaseWrist {
 
   // Motion Magic
   private static final int kPIDLoopIdx = 0, MOTION_MAGIC_SLOT = 0, kTimeoutMs = 0;
-  private static final double MM_F = 0, MM_P = 1.05, MM_I = 0, MM_D = 50;
-  private static final double ARBITRARY_FEEDFORWARD = 0.05;
-  private static final double ARBITRARY_FEEDFORWARD_BALL = ARBITRARY_FEEDFORWARD; // TODO set this
-  private static final double ARBITRARY_FEEDFORWARD_HATCH = ARBITRARY_FEEDFORWARD; // TODO set this
+  private static final double MM_F = 0, MM_P = 1.5, MM_I = 0.0, MM_D = 50;
+  private static final int MM_IZONE = 0;
+  private static final double OPEN_ARBITRARY_FEEDFORWARD = 0.065;
+  private static final double CLOSED_ARBITRARY_FEEDFORWARD = 0.07;
+  private static final double ARBITRARY_FEEDFORWARD_BALL = 0.135;
+  private static final double ARBITRARY_FEEDFORWARD_HATCH = 0.245;
 
   private static final int OFFSET_FROM_ENCODER_ZERO = 3615;
   private static final int WRIST_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 100;
@@ -48,12 +50,13 @@ public class Wrist extends BaseWrist {
   public static final int TICKS_PER_ROTATION = 4096;
 
   public Wrist() {
-    super(new TalonSRX(RobotMap.ARM_WRIST_ROTATION), ARBITRARY_FEEDFORWARD, FORWARD_SOFT_LIMIT, REVERSE_SOFT_LIMIT, false, QUAD_ENCODER_MIN, QUAD_ENCODER_MAX, CONTINUOUS_CURRENT_LIMIT, PEAK_CURRENT_LIMIT, OFFSET_FROM_ENCODER_ZERO);
+    super(new TalonSRX(RobotMap.ARM_WRIST_ROTATION), OPEN_ARBITRARY_FEEDFORWARD, FORWARD_SOFT_LIMIT, REVERSE_SOFT_LIMIT, false, QUAD_ENCODER_MIN, QUAD_ENCODER_MAX, CONTINUOUS_CURRENT_LIMIT, PEAK_CURRENT_LIMIT, OFFSET_FROM_ENCODER_ZERO);
     rotator.selectProfileSlot(MOTION_MAGIC_SLOT, kPIDLoopIdx);
 		rotator.config_kF(MOTION_MAGIC_SLOT, MM_F, kTimeoutMs);
 		rotator.config_kP(MOTION_MAGIC_SLOT, MM_P, kTimeoutMs);
 		rotator.config_kI(MOTION_MAGIC_SLOT, MM_I, kTimeoutMs);
     rotator.config_kD(MOTION_MAGIC_SLOT, MM_D, kTimeoutMs);
+    rotator.config_IntegralZone(MOTION_MAGIC_SLOT, MM_IZONE, kTimeoutMs);
     rotator.configMotionCruiseVelocity(WRIST_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS, kTimeoutMs);
     rotator.configMotionAcceleration(WRIST_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS, kTimeoutMs);
     
@@ -167,7 +170,12 @@ public class Wrist extends BaseWrist {
         double arbitraryFeedForwardConstant;
         HeldItem heldItem = Robot.arm.getHeldItem();
         if(heldItem.equals(HeldItem.NONE)) {
-          arbitraryFeedForwardConstant = ARBITRARY_FEEDFORWARD;
+          if(Robot.claw.isOpen()) {
+            arbitraryFeedForwardConstant = OPEN_ARBITRARY_FEEDFORWARD;
+          }
+          else {
+            arbitraryFeedForwardConstant = CLOSED_ARBITRARY_FEEDFORWARD;
+          }
         } else if (heldItem.equals(HeldItem.BALL)) {
           arbitraryFeedForwardConstant = ARBITRARY_FEEDFORWARD_BALL;
         } else {
@@ -181,8 +189,9 @@ public class Wrist extends BaseWrist {
 
   @Override
   public void setMotionMagicSetpointAngle(double angle) {
-    SmartDashboard.putString("current-command", "wrist motion magic setpoint set");
+    SmartDashboard.putNumber("Wrist MM Setpoint", angle);
     setpoint = convertWristDegreesToTicks(angle);
+    enableBrakeMode();
     rotator.set(ControlMode.MotionMagic, setpoint);
   }
 }

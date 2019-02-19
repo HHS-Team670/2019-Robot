@@ -8,16 +8,16 @@
 package frc.team670.robot.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team670.robot.Robot;
 import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.commands.arm.movement.MoveArmAfterDriveDistance;
 import frc.team670.robot.commands.arm.movement.PlaceOrGrab;
 import frc.team670.robot.commands.drive.DriveMotionProfile;
 import frc.team670.robot.commands.drive.pivot.NavXPivot;
-import frc.team670.robot.commands.drive.vision.VisionPurePursuit;
+import frc.team670.robot.commands.drive.vision.VisionPurePursuitWithPivot;
 import frc.team670.robot.subsystems.Arm;
-import frc.team670.robot.Robot;
+import frc.team670.robot.subsystems.Arm.HeldItem;
 import frc.team670.robot.subsystems.Arm.LegalState;
 import frc.team670.robot.subsystems.Arm.PlaceGrabState;
 
@@ -34,7 +34,7 @@ public class BuildAuton extends CommandGroup {
      */
     public BuildAuton(String[] autonSequence, Arm arm) {
         SmartDashboard.putString("current-command", "BuildAuton");
-        String startDirection = autonSequence[0];
+        String startHolding = autonSequence[0];
         String start = autonSequence[1];
         String target1 = autonSequence[2];
         String height1 = autonSequence[3];
@@ -49,6 +49,16 @@ public class BuildAuton extends CommandGroup {
         // determines whether the robot starts facing backwards based on the first radio
         // button
         boolean isRobotFacingBack = true;
+
+        if (startHolding.equals("Ball")) {
+            arm.setHeldItem(HeldItem.BALL);
+        }
+        else if (startHolding.equals("Hatch")) {
+            arm.setHeldItem(HeldItem.HATCH);
+        } 
+        else {
+            arm.setHeldItem(HeldItem.NONE);
+        }
 
         /*
          * if the robot starts facing back, the first path and arm command will be going
@@ -170,6 +180,6 @@ public class BuildAuton extends CommandGroup {
         boolean isReversed = !placeGrabState.getIsFront();
         boolean isLow = placeGrabState.getIsLowTarget();
 
-        addSequential(new VisionPurePursuit(Robot.driveBase, Robot.coprocessor, Robot.sensors, distanceFromTarget, isReversed, isLow));
+        addSequential(new VisionPurePursuitWithPivot(Robot.driveBase, Robot.coprocessor, Robot.sensors, distanceFromTarget, isReversed, isLow));
     }
 }

@@ -13,6 +13,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
@@ -50,7 +51,7 @@ public class Extension extends BaseExtension {
   private static final int EXTMOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_100MS = 6000; 
   public static final int QUAD_ENCODER_MAX = FORWARD_SOFT_LIMIT + 200, QUAD_ENCODER_MIN = REVERSE_SOFT_LIMIT - 200; 
 
-  private static final double ARBITRARY_FEEDFORWARD_CONSTANT = 0.055;
+  public static final double ARBITRARY_FEEDFORWARD_CONSTANT = 0.055;
   public static final double MAX_EXTENSION_OUTPUT = 0.4;
 
 
@@ -59,6 +60,8 @@ public class Extension extends BaseExtension {
   private static final double NO_SETPOINT = 99999;
 
   private static final int OFFSET_FROM_ENCODER_ZERO = 0;
+
+  private Notifier resetPositionBasedOnLimitSwitchTrippingNotifier;
 
 
   public Extension() {
@@ -97,10 +100,10 @@ public class Extension extends BaseExtension {
     extensionMotor.configPeakOutputForward(MAX_EXTENSION_OUTPUT, RobotConstants.kTimeoutMs);
     extensionMotor.configPeakOutputReverse(-MAX_EXTENSION_OUTPUT, RobotConstants.kTimeoutMs);
 
-    if(extensionMotor.getSensorCollection().isRevLimitSwitchClosed()) {
+    if(getReverseLimitSwitchTripped()) {
       extensionMotor.setSelectedSensorPosition(EXTENSION_IN_POS);
     }
-    else if(extensionMotor.getSensorCollection().isFwdLimitSwitchClosed()) {
+    else if(getForwardLimitSwitchTripped()) {
       extensionMotor.setSelectedSensorPosition(EXTENSION_OUT_POS);
     }
 
@@ -122,6 +125,14 @@ public class Extension extends BaseExtension {
     // extensionMotor.getSensorCollection().setQuadraturePosition(pulseWidthPos, 0);
     extensionMotor.getSensorCollection().setQuadraturePosition(START_POSITION_TICKS, 0); // The Extension 
     stop();
+
+    resetPositionBasedOnLimitSwitchTrippingNotifier = new Notifier(new Runnable() {
+      public void run() {
+        resetPositionBasedOnLimitSwitchTripping();
+      }
+    });
+    resetPositionBasedOnLimitSwitchTrippingNotifier.startPeriodic(0.25);
+
   }
 
   @Override
@@ -134,6 +145,16 @@ public class Extension extends BaseExtension {
   @Override
   public void enableCurrentLimit() {
     extensionMotor.enableCurrentLimit(true);
+  }
+
+  @Override
+  public void enableCoastMode() {
+    extensionMotor.setNeutralMode(NeutralMode.Coast);
+  }
+
+  @Override
+  public void enableBrakeMode() {
+    extensionMotor.setNeutralMode(NeutralMode.Brake);
   }
 
   @Override
@@ -201,6 +222,7 @@ public class Extension extends BaseExtension {
   public synchronized void setMotionMagicSetpointInInches(double extensionSetpointInInches) {
     extensionMotor.selectProfileSlot(MOTION_MAGIC_SLOT, kPIDLoopIdx);
     setpoint = convertExtensionInchesToTicks(extensionSetpointInInches);
+    enableBrakeMode();
     extensionMotor.set(ControlMode.MotionMagic, setpoint);
   }
 
@@ -235,7 +257,15 @@ public class Extension extends BaseExtension {
     }
   }
 
-  private double getArbitraryFeedForwardAngleMultiplier() {
+  public void resetPositionBasedOnLimitSwitchTripping() {
+    if (getReverseLimitSwitchTripped()) {
+      setSelectedSensorPosition(Extension.EXTENSION_IN_POS);
+    } else if (getForwardLimitSwitchTripped()) {
+      setSelectedSensorPosition(Extension.EXTENSION_OUT_POS);
+    }
+  }
+
+  public double getArbitraryFeedForwardAngleMultiplier() {
     double angle = Robot.arm.getElbow().getAngleInDegrees();
     double output = Math.cos(Math.toRadians(angle));
     return output;
@@ -284,6 +314,20 @@ public class Extension extends BaseExtension {
 
   private int getUnadjustedPulseWidth() {
     return extensionMotor.getSensorCollection().getPulseWidthPosition();
+  }
+
+  @Override
+  public boolean getReverseLimitSwitchTripped(){
+    return extensionMotor.getSensorCollection().isRevLimitSwitchClosed();
+  }
+
+  @Override
+  public boolean getForwardLimitSwitchTripped(){
+    return extensionMotor.getSensorCollection().isFwdLimitSwitchClosed();
+  }
+
+  private void setSelectedSensorPosition(int sensorPos) {
+    extensionMotor.setSelectedSensorPosition(sensorPos);
   }
 
 

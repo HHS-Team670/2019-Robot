@@ -9,6 +9,7 @@ package frc.team670.robot.commands.intake;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team670.robot.dataCollection.XKeys;
 import frc.team670.robot.subsystems.BaseIntake;
 
 /**
@@ -29,6 +30,7 @@ public class StopIntakeRollers extends InstantCommand {
   protected void initialize() {
     SmartDashboard.putString("current-command", "StopIntakeRollers");
     intake.runIntake(0, false);
+    XKeys.setBothToggles(false);
   }
 
 }

@@ -9,6 +9,7 @@ package frc.team670.robot.commands.arm.movement;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team670.robot.dataCollection.XKeys;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.BaseIntake;
 import frc.team670.robot.subsystems.Claw;
@@ -37,6 +38,7 @@ public class CancelArmMovement extends InstantCommand {
   protected void initialize() {
     SmartDashboard.putString("current-command", "CancelArmMovement");
     intake.runIntake(0, false);
+    XKeys.setBothToggles(false);
   }
 
 }

@@ -23,7 +23,7 @@ import frc.team670.robot.constants.RobotMap;
 public class Claw extends Subsystem {
 
   /** The amount of time to delay to allow the pneumatics to move in seconds */
-  public static final double TIME_TO_MOVE = 0.35;
+  public static final double TIME_TO_MOVE = 0.6;
 
   private static final double PULSE_DURATION = 0.4; // In seconds
   public static final double MAX_CLAW_OPEN_DIAMETER = 20; //Set distance
@@ -35,11 +35,16 @@ public class Claw extends Subsystem {
   public static final double LENGTH_IN_INCHES = 12;
 
   private Compressor compressor;
-  private Solenoid openClose, hardSoft, push;
+  private Solenoid sol0, sol1, push;
 
+  /*
+   * Hold hatch plate when disabled, so false = open, true = closed
+   * 
+   */
   public Claw() {
+
     try {
-      compressor = new Compressor(RobotMap.PC_MODULE);
+      compressor = new Compressor(RobotMap.PCM_MODULE);
       compressor.setClosedLoopControl(true);
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error instantiating compressor: " + ex.getMessage(), true);
@@ -47,71 +52,62 @@ public class Claw extends Subsystem {
     }
 
     try {
-      openClose = new Solenoid(RobotMap.HARD_GRIP_SOLENOID);
+      sol0 = new Solenoid(RobotMap.PCM_MODULE, RobotMap.SOLENOID_0);
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error instantiating openClose solenoid: " + ex.getMessage(), true);
-      openClose = null;
+      sol0 = null;
     }
 
     try {
-      hardSoft = new Solenoid(RobotMap.SOFT_GRIP_SOLENOID);
+      sol1 = new Solenoid(RobotMap.PCM_MODULE, RobotMap.SOLENOID_1);
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error instantiating hardSoft solenoid: " + ex.getMessage(), true);
-      hardSoft = null;
+      sol1 = null;
     }
 
     try {
-      push = new Solenoid(RobotMap.CLAW_PUSH_SOLENOID);
+      push = new Solenoid(RobotMap.PCM_MODULE, RobotMap.CLAW_PUSH_SOLENOID);
       push.setPulseDuration(PULSE_DURATION);
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error instantiating push solenoid: " + ex.getMessage(), true);
       push = null;
     }
-
   }
 
   /**
    * Toggles the claw grip based on closed and soft.
    */
   public void toggleGrip() {
-    if (openClose != null)
-      updateClaw(!openClose.get(), true);
+    if (sol1 != null) {
+      changeSolenoid(!sol1.get());
+    }
   }
 
   /**
    * Closes the claw.
    */
-  public void closeClaw(boolean isSoft) {
-    updateClaw(true, isSoft);
+  public void closeClaw() {
+    changeSolenoid(true);
+    System.out.println("Close Claw Called");
   }
 
   /**
    * Opens the claw.
    */
-  public void openClaw(boolean isSoft) {
-    updateClaw(false, isSoft);
+  public void openClaw() {
+    changeSolenoid(false);
+    System.out.println("Open Claw Called");
   }
 
-  /**
-   * Returns whether the  claw is open or not. If the solenoid isn't connected it will just return false (closed).
-   */
-  public boolean isOpen() {
-    if (openClose != null)
-      return openClose.get();
-    else
-      return false;
-  }
 
   /**
-   * Returns whether the claw is set to hard or soft. If solenoid is not connect, will output false (hard).
-   * 
-   * @return true if soft, false if hard.
+   * @param closed true to open, false to close
    */
-  public boolean isSoft() {
-    if (openClose != null)
-      return hardSoft.get();
-    else
-      return false;
+  private void changeSolenoid(boolean closed) {
+    if(sol1 != null && sol0 != null) {
+      sol0.set(closed);
+      sol1.set(closed);
+    }
   }
 
   /**
@@ -123,11 +119,14 @@ public class Claw extends Subsystem {
     }
   }
 
-  private void updateClaw(boolean isClosed, boolean isSoft) {
-    if (openClose != null)
-      openClose.set(isClosed);
-    if (hardSoft != null)
-      hardSoft.set(isSoft);
+  public boolean isOpen() {
+    if(sol1 != null) {
+      return !sol1.get();
+    }
+    else if (sol0 != null) {
+      return !sol0.get();
+    }
+    return true;
   }
 
   @Override

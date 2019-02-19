@@ -21,7 +21,7 @@ public class MoveWrist extends Command {
 
   private BaseWrist wrist;
 
-  private static final double DEGREE_TOLERANCE = 5;
+  private static final double DEGREE_TOLERANCE = 8;
 
   private double wristSetpointAngle;
 
@@ -38,6 +38,7 @@ public class MoveWrist extends Command {
     wristSetpointAngle = angle;
     requires(wrist);
     super.setInterruptible(true);
+    setTimeout(2);
   }
 
   // Called just before this Command runs the first time
@@ -57,6 +58,9 @@ public class MoveWrist extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
+    if(isTimedOut()) {
+      return true;
+    }
     return MathUtils.isWithinTolerance(wrist.getAngleInDegrees(), wristSetpointAngle, DEGREE_TOLERANCE);
   }
 
