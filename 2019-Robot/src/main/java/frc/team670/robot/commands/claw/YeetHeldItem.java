@@ -25,7 +25,5 @@ public class YeetHeldItem extends CommandGroup {
     } else {
       addSequential(new DropHatch(claw, arm));
     }
-    moveArm = ArmPathGenerator.getPath(Arm.getArmState(LegalState.NEUTRAL), arm);
-    addSequential(moveArm);
   }
 }
