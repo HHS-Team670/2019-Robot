@@ -243,6 +243,7 @@ function getFromMap(key) { // mapping is more aligned with arm position on robot
   if (key === "l") return "READY_PLACE_BALL_ROCKET_LOW_FORWARD";
   if (key === "q") return "READY_LOW_HATCH_FORWARD";
 
+  if (key === "d") return "GRAB_HATCH_GROUND_BACK";
   if (key === "h") return "GRAB_BALL_GROUND_BACK";
   if (key === "x") return "GRAB_BALL_INTAKE";
   if (key === "b") return "STOW";
