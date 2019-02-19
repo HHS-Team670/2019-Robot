@@ -174,7 +174,9 @@ public class MustangCoprocessor {
         double beta = Math.toDegrees(Math.asin((cameraHorizontalOffset * Math.sin(Math.PI/2 - hangle_offset_radians) / realDiagonalToTarget)));
         double real_angle = 90 - beta - phi;
 
-        return -1* real_angle;
+        if(phi < 0)
+            real_angle = hangle_offset + (hangle_offset- real_angle);
+        return (real_angle);
     }
 
     /*
