@@ -23,6 +23,11 @@ document.getElementById('claw').style = "transform: translate(" + (Math.sin(angl
 document.getElementById('intake').style = "transform: rotate(" + 0 + "deg)";
 document.getElementById('arm-extension').style = "transform: translate(" + (Math.sin((angle) * Math.PI / 180) * armLength) + "px, " + (armLength - (Math.sin((angle+90) * Math.PI / 180) * armLength)) + "px) rotate(" + (angle + 180) + "deg)";
 
+// list of camera labels
+var cameras = ['Back', 'Front'];
+var cameraIndex = 0;
+// document.getElementById('camera-text').innerHTML = cameras[cameraIndex];
+
 // sets the timer element to green color text
 document.getElementById('timer').style.color = 'rgb(0,200,0)';
 
