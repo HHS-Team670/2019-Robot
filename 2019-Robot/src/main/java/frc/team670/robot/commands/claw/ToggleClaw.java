@@ -23,6 +23,7 @@ public class ToggleClaw extends InstantCommand {
   public ToggleClaw(Claw claw) {
     super();
     requires(claw);
+    this.claw = claw;
   }
 
   // Called once when the command executes
