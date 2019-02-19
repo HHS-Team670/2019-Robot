@@ -45,7 +45,7 @@ public class MustangDriveBaseEncoder implements PIDSource {
             if (isDIOEncoder) {
                 return dioEncoder.get();
             }
-            return (int) (sparkEncoder.getPosition() / RobotConstants.SPARK_TICKS_PER_ROTATION);
+            return -1 * (int) (sparkEncoder.getPosition() / RobotConstants.SPARK_TICKS_PER_ROTATION);
         }  
         catch(RuntimeException e) {
             return 0;
@@ -76,7 +76,7 @@ public class MustangDriveBaseEncoder implements PIDSource {
             if (isDIOEncoder) {
                 return dioEncoder.getRate();
             }
-            return (DriveBase.convertDriveBaseTicksToInches(sparkEncoder.getVelocity() / RobotConstants.SPARK_TICKS_PER_ROTATION) / 60);
+            return -1 * (DriveBase.convertDriveBaseTicksToInches(sparkEncoder.getVelocity() / RobotConstants.SPARK_TICKS_PER_ROTATION) / 60);
         }
         catch(RuntimeException e) {
             return 0;
@@ -91,7 +91,7 @@ public class MustangDriveBaseEncoder implements PIDSource {
             if (isDIOEncoder) {
                 return DriveBase.convertInchesToDriveBaseTicks(dioEncoder.getRate());
             }
-            return (sparkEncoder.getVelocity() / RobotConstants.SPARK_TICKS_PER_ROTATION / 60);
+            return -1 * (sparkEncoder.getVelocity() / RobotConstants.SPARK_TICKS_PER_ROTATION / 60);
         }
         catch(RuntimeException e) {
             return 0;
