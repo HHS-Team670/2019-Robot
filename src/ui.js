@@ -28,7 +28,7 @@ document.getElementById('arm-extension').style = "transform: translate(" + (Math
 // list of camera labels
 var cameras = ['Back', 'Front'];
 var cameraIndex = 0;
-document.getElementById('camera-text').innerHTML = cameras[cameraIndex];
+// document.getElementById('camera-text').innerHTML = cameras[cameraIndex];
 
 // sets the timer element to green color text
 document.getElementById('timer').style.color = 'rgb(0,200,0)';
