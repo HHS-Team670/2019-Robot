@@ -1,11 +1,7 @@
 // Define UI elements
 var ui = {
     multiCamSRC: document.getElementById('multicam-src'),
-    timer: document.getElementById('timer'),
-    camera: {
-      viewer: document.getElementById('camera'),
-      src: 'http://10.6.70.191:80/?action=stream'
-    }
+    timer: document.getElementById('timer')
 };
 
 var date = new Date();
@@ -17,6 +13,8 @@ document.getElementById('climb-level-text').style.stroke = `rgb(90, 90, 90)`;
 
 document.getElementById('auton-chooser').style.display = "none";
 ui.timer.style.color = `rgb(0, 200, 0)`;
+
+document.getElementById('camera').viewer.style = "background-image: url(http://10.6.70.26:8000/?action=stream)";
 
 // ui.camera.viewer.style.backgroundImage = 'url(' + ui.camera.src + ')';
 // document.getElementById('camera').style = "background-color: rgb(39, 163, 39)";

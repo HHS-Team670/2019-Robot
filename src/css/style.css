@@ -77,7 +77,7 @@ header {
     overflow: hidden;
     background-color: #333;
     background-size: cover;
-    background-image: url(ui.camera.src);
+    background-image: url('http://10.6.70.26:8000/?action=stream');
 }
 svg * {
     stroke: white;
