@@ -69,10 +69,10 @@ header {
 #camera1 {
     padding: 0;
     position: absolute;
-    bottom: 0vh;
+    bottom: 25vh;
     left: 32vw;
     width: 30%;
-    height: 100%;
+    height: 50%;
     object-fit: fill;
     overflow: hidden;
     background-color: #333;
@@ -82,10 +82,10 @@ header {
 #camera2 {
     padding: 0;
     position: absolute;
-    bottom: 0vh;
+    bottom: 25vh;
     left: 10;
     width: 30%;
-    height: 100%;
+    height: 50%;
     object-fit: fill;
     overflow: hidden;
     background-color: #333;
@@ -132,11 +132,11 @@ body.login #login {
     margin-left: 5px;
 }
 #camera-back {
-  bottom: 0vh;
+  bottom: 25vh;
   z-index: 1;
 }
 #camera-front {
-  bottom: 0vh;
+  bottom: 25vh;
   left: 32vw;
   z-index: 1;
 }
