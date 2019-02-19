@@ -66,20 +66,20 @@ header {
     left: 30vw;
     color: white;
 }
-#camera1 {
+#camera {
     padding: 0;
     position: absolute;
-    bottom: 25vh;
-    left: 34vw;
-    width: 30vw;
-    height: 50vh;
+    bottom: 0vh;
+    left: 1vw;
+    width: 60vw;
+    height: 100vh;
     object-fit: fill;
     overflow: hidden;
     background-color: #333;
     background-size: cover;
-    background-image: url('http://10.6.70.26:8000/?action=stream');
+    /* image: url('http://10.6.70.26:8000/?action=stream'); */
 }
-#camera2 {
+/* #camera2 {
     padding: 0;
     position: absolute;
     bottom: 25vh;
@@ -91,7 +91,7 @@ header {
     background-color: #333;
     background-size: cover;
     background-image: url('http://10.6.70.26:8001/?action=stream');
-}
+} */
 #camera-texts {
     position: absolute;
     width: 40vw;

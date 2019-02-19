@@ -27,8 +27,10 @@
       <line x1="0" y1="0" x2="0" y2="100%" style="stroke-width:0.5"/>
     </svg>
 
-    <div id="camera1"></div>
-    <div id="camera2"></div>
+    <div id="camera">
+      <img id="camera-stream" src="http://10.6.70.26:8000/?action=stream" onerror="this.src='http://10.6.70.26:800' +camNumber+'/?action=stream&random='+ new Date().getMilliseconds()"/>
+    </div>
+    <!-- <div id="camera2"></div> -->
     
     <div id="camera-texts">
       <p x="0%">Front</p>

@@ -190,6 +190,17 @@ NetworkTables.addKeyListener('/SmartDashboard/drive-reversed-status', (key, valu
   }
 });
 
+var camNumber = 0;
+NetworkTables.addKeyListener('/SmartDashboard/camera-source', (key, value) => {
+  // camNumber = (camNumber + 1) % 2;
+  // console.log('value: ' + value);
+  // document.getElementById('camera').style.backgroundImage = 'url(\'http://10.6.70.26:800' +value+'/?action=stream\')';
+  camNumber = value;
+  console.log(camNumber);
+  document.getElementById('camera-stream').src = 'http://10.6.70.26:800' +camNumber+'/?action=stream';
+
+});
+
 // listens for keystrokes from the external keypad and passes the corresponding values over networktables
 var keys = [];
 var allKeys = '';
