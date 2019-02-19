@@ -72,6 +72,7 @@ public class RunIntakeInWithIR extends Command {
   @Override
   protected void interrupted() {
     intake.runIntake(0, true);
+    XKeys.setToggleIn(false);
     Logger.consoleLog();
   }
 }

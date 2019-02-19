@@ -33,7 +33,6 @@ public class AutoPickupCargo extends CommandGroup {
     // the Intake sensor has been tripped
     if(!claw.isOpen())
       addParallel(new OpenClaw(claw));
-      
     CommandGroup moveArm = ArmPathGenerator.getPath(Arm.getStates().get(LegalState.GRAB_BALL_INTAKE), arm);
     addSequential(moveArm);
     addSequential(new RunIntakeInWithIR(intake, sensors));
