@@ -26,7 +26,7 @@ import frc.team670.robot.utils.math.Vector;
  */
 public class VisionPurePursuit extends CommandGroup {
 
-  private static final double MAX_VEL = 16, MAX_ACC = 100, MAX_VELK = 1; // VELK = Curve Velocity (1-5)
+  private static final double MAX_VEL = 7.5, MAX_ACC = 57, MAX_VELK = 4.5; // VELK = Curve Velocity (1-5)
   // NOTE: Everything passed into the PurePursuit algorithm is in inches/s
   // including constants above and output goes straight to the Spark Neos in
   // inches/s as a velocity control - Check PurePursuitTracker Notifier for this
@@ -94,7 +94,7 @@ public class VisionPurePursuit extends CommandGroup {
     //   return;
     // }
 
-    double straightDistance = 66;
+    double straightDistance = 46;
 
     straightDistance = straightDistance - spaceFromTarget;
     if (straightDistance < 0) {
@@ -112,7 +112,7 @@ public class VisionPurePursuit extends CommandGroup {
     // double angle = coprocessor.getAngleToWallTarget();
     double horizontalAngle = 0;
     // double horizontalDistance = straightDistance * Math.tan(Math.toRadians(horizontalAngle)); // x = y * tan(theta)
-    double horizontalDistance = 18;
+    double horizontalDistance = -18;
     double partialDistanceY = (straightDistance) * 2.0 / 5.0;
 
     System.out.println("straightDist: " + straightDistance + ", horizontalDistance: " + horizontalDistance);
