@@ -196,7 +196,7 @@ public class XKeys {
     private void visionDrive(){
         PlaceGrabState placeGrabState = null;
         try {
-             placeGrabState = (PlaceGrabState) Arm.getCurrentState();
+             placeGrabState = (PlaceGrabState) Arm.getTargetState();
         } catch (ClassCastException ex) {
             return;
         }
