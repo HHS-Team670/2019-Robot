@@ -14,7 +14,7 @@ document.getElementById('climb-level-text').style.stroke = `rgb(90, 90, 90)`;
 document.getElementById('auton-chooser').style.display = "none";
 ui.timer.style.color = `rgb(0, 200, 0)`;
 
-document.getElementById('camera').viewer.style = "background-image: url(http://10.6.70.26:8000/?action=stream)";
+// document.getElementById('camera').viewer.style = "background-image: url(http://10.6.70.26:8001/?action=stream)";
 var multicamSources = ['http://10.6.70.26:8000/?action=stream', 'http://10.6.70.26:8001/?action=stream'];
 var multicamIndex = 0;
 
@@ -62,11 +62,11 @@ NetworkTables.addKeyListener('/SmartDashboard/game-time', (key, value) => {
 });
 
 // listens for camera-source 
-NetworkTables.addKeyListener('/SmartDashboard/camera-source', (key, value) => {
-  multicamIndex = (multicamIndex + 1) % multicamSources.length;
-  document.getElementById('camera').viewer.style = "background-image: url(" + multicamSources[multicamIndex] + ")";
-  NetworkTables.putValue('/SmartDashboard/camera-source', '');
-});
+// NetworkTables.addKeyListener('/SmartDashboard/camera-source', (key, value) => {
+//   multicamIndex = (multicamIndex + 1) % multicamSources.length;
+//   document.getElementById('camera').viewer.style = "background-image: url(" + multicamSources[multicamIndex] + ")";
+//   NetworkTables.putValue('/SmartDashboard/camera-source', '');
+// });
 
 // listens for vision data for testing
 NetworkTables.addKeyListener('/SmartDashboard/reflect_tape_vision_data', (key, value) => {
