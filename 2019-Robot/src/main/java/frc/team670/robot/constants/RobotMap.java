@@ -61,7 +61,7 @@ public class RobotMap {
   public static final int BACK_LEFT_ULTRASONIC_ECHO_PIN = 1;
   public static final int BACK_RIGHT_ULTRASONIC_TRIGGER_PIN = 9;
   public static final int BACK_RIGHT_ULTRASONIC_ECHO_PIN = 8;
-  public final static int INTAKE_IR_DIO_PORT = 2;
+  public final static int INTAKE_IR_DIO_PORT = 10;
 
 
   // Joysticks
