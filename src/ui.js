@@ -14,15 +14,15 @@ document.getElementById('climb-level-text').style.stroke = `rgb(90, 90, 90)`;
 document.getElementById('auton-chooser').style.display = "none";
 ui.timer.style.color = `rgb(0, 200, 0)`;
 
-document.getElementById('camera').viewer.style = "background-image: url(http://10.6.70.26:8000/?action=stream)";
-var multicamSources = ['http://10.6.70.26:8000/?action=stream', 'http://10.6.70.26:8001/?action=stream'];
+// document.getElementById('camera').viewer.style = "background-image: url(http://10.6.70.57:8001/?action=stream)";
+var multicamSources = ['http://10.6.70.57:8000/?action=stream', 'http://10.6.70.57:8001/?action=stream'];
 var multicamIndex = 0;
 
 // ui.camera.viewer.style.backgroundImage = 'url(' + ui.camera.src + ')';
 // document.getElementById('camera').style = "background-color: rgb(39, 163, 39)";
 
 // sets default positions for robot diagram
-var angle = 0;
+var angle = 90;
 var armLength = 110;
 document.getElementById('arm').style = "transform: rotate(" + angle + "deg)";
 document.getElementById('claw').style = "transform: translate(" + (Math.sin(angle * Math.PI / 180) * (parseInt(document.getElementById('arm-extension').getAttribute('height')) + armLength)) + "px, " + (armLength - Math.sin((angle+90) * Math.PI / 180) * (parseInt(document.getElementById('arm-extension').getAttribute('height')) + armLength)) + "px)";
@@ -47,31 +47,31 @@ NetworkTables.addKeyListener('/SmartDashboard/game-time', (key, value) => {
   ui.timer.style.color = `rgb(0, 200, 0)`;
 
   // change color of timer based on remaining match time
-  if (remaining < 135){
+  if (remaining < 135) {
      ui.timer.style.color = `rgb(255, 255, 255)`;
   }
-  if (remaining < 45){
+  if (remaining < 45) {
     ui.timer.style.color = `rgb(244,215,66)`;
     document.getElementById('climb-state-text').style.stroke = `rgb(255, 255, 255)`;
     document.getElementById('climb-level-text').style.stroke = `rgb(255, 255, 255)`;
   }
-  if (remaining < 30){
+  if (remaining < 30) {
      ui.timer.style.color = `rgb(200, 0, 0)`;
   }
   ui.timer.innerHTML = minutes + ':' + seconds;
 });
 
 // listens for camera-source 
-NetworkTables.addKeyListener('/SmartDashboard/camera-source', (key, value) => {
-  multicamIndex = (multicamIndex + 1) % multicamSources.length;
-  document.getElementById('camera').viewer.style = "background-image: url(" + multicamSources[multicamIndex] + ")";
-  NetworkTables.putValue('/SmartDashboard/camera-source', '');
-});
-
-// listens for vision data for testing
-NetworkTables.addKeyListener('/SmartDashboard/reflect_tape_vision_data', (key, value) => {
-  document.getElementById('current-command-text').innerHTML = value[2];
-});
+// NetworkTables.addKeyListener('/SmartDashboard/camera-source', (key, value) => {
+//   if (value === 1) {
+//     NetworkTables.putValue('/SmartDashboard/camera-source', 0);
+//     multicamIndex = (multicamIndex + 1) % multicamSources.length;
+//     document.getElementById('camera-text').innerHTML = cameras[multicamIndex];
+//     // document.getElementById('camera').style = "background-image: url(" + multicamSources[multicamIndex] + ")";
+//   } else {
+//     document.getElementById('warnings').innerHTML = '>>>' + value;
+//   }
+// });
 
 // listens for robot-state and updates status lights and auton chooser accordingly
 NetworkTables.addKeyListener('/SmartDashboard/robot-state', (key, value) => {
@@ -104,8 +104,8 @@ NetworkTables.addKeyListener('/SmartDashboard/warnings', (key, value) => {
 
 // displays the currently running command on the dashboard
 NetworkTables.addKeyListener('/SmartDashboard/current-command', (key, value) => {
-  if (value != 'undefined') document.getElementById('current-command').innerHTML = value;
-  else document.getElementById('current-command').innerHTML = "NULL";
+  if (value != 'undefined') document.getElementById('current-command-text').innerHTML = value;
+  else document.getElementById('current-command-text').innerHTML = "NULL";
 });
 
 // displays the current climb state
@@ -141,8 +141,8 @@ NetworkTables.addKeyListener('/SmartDashboard/elbow-angle', (key, value) => {
   } else if (angle >= 187.65 && angle < 227.35) {
     backHeight = (angle - 187.65) / (227.35 - 187.65) * 100;
   }
-  if (multiCamSRC.innerHTML === 'Front') document.getElementById('hline').setAttribute('y', frontHeight+'%');
-  if (multiCamSRC.innerHTML === 'Back') document.getElementById('hline').setAttribute('y', backHeight+'%');
+  // if (multiCamSRC.innerHTML === 'Front') document.getElementById('hline').setAttribute('y', frontHeight+'%');
+  // if (multiCamSRC.innerHTML === 'Back') document.getElementById('hline').setAttribute('y', backHeight+'%');
 });
 
 // updates the robot diagram with the extension of the arm
