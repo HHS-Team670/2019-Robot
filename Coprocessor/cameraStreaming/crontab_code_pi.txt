@@ -1,4 +1,0 @@
-# run 'crontab -e' on the pi
-# copy this line to the bottom of the file, save the file, and reboot the pi
-
-@reboot cd /home/pi/git/Mustang-Pi/cameraStreaming && /usr/bin/python /home/pi/git/Mustang-Pi/cameraStreaming/nt_server.py &
