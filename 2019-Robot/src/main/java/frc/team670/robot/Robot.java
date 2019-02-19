@@ -162,9 +162,9 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("arm-extension" , extension.getLengthInches() / Extension.EXTENSION_OUT_IN_INCHES);
     intake.sendDataToDashboard(); 
     SmartDashboard.putNumber("NavX Yaw", sensors.getYawDouble());
-    
+
     intake.sendDataToDashboard();
-    leds.setStillDrive(true);
+    
   }
   /**
    * This function is called once each time the robot enters Disabled mode.
