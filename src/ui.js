@@ -217,6 +217,17 @@ NetworkTables.addKeyListener('/SmartDashboard/vision-status', (key, value) => {
   }
 });
 
+// updates status lights for reversed drive
+NetworkTables.addKeyListener('/SmartDashboard/vision-status', (key, value) => {
+  if (value === true) {
+    document.getElementById('drive-reversed-status').style.fill = "rgb(255,255,255)";
+    document.getElementById('drive-reversed-status').style.stroke = "rgb(255,255,255)";
+  } else {
+    document.getElementById('drive-reversed-status').style.fill = "none";
+    document.getElementById('drive-reversed-status').style.stroke = "rgb(255,255,255)";
+  }
+});
+
 // listens for keystrokes from the external keypad and passes the corresponding values over networktables
 var keys = [];
 var allKeys = '';
