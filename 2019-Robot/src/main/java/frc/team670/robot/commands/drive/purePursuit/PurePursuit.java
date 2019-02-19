@@ -80,7 +80,7 @@ public class PurePursuit extends Command {
     Logger.consoleLog("Pose: %s ", poseEstimator.getPose());
     // VisionPurePursuit.disableArmRestriction();
     driveBase.setSparkVelocityControl(0,0);
-    finalAngle.setValue(sensors.getYawDouble() + finalAngle.getValue());
+    finalAngle.setValue(finalAngle.getValue() - sensors.getYawDouble());
     // purePursuitTracker.stopNotifier();
     purePursuitTracker.reset();
   }
