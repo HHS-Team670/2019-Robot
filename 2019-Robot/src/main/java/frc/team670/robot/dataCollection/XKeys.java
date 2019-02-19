@@ -100,7 +100,7 @@ public class XKeys {
         table.addEntryListener("xkeys-claw", (table2, key2, entry, value, flags) -> {
             toggleClaw();
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
-        table.addEntryListener("xkeys-resetExtenion", (table2, key2, entry, value, flags) -> {
+        table.addEntryListener("xkeys-extension", (table2, key2, entry, value, flags) -> {
             moveExtensionBackUntilHitsLimitSwitch();
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-cancel", (table2, key2, entry, value, flags) -> {

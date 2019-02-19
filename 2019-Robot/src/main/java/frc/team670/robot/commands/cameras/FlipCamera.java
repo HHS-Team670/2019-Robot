@@ -27,7 +27,10 @@ public class FlipCamera extends InstantCommand{
     }
 
     public static void flipCameraDirection() {
-        SmartDashboard.putString("camera-source", "next");
+        int camNumber = 0;
+        if (cameraDirection) camNumber = 0;
+        else camNumber = 1;
+        SmartDashboard.putString("camera-source", camNumber+"");
         cameraDirection = !cameraDirection;
     }
 
