@@ -208,7 +208,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
-    sensors.resetNavX();
+    sensors.resetNavX(); // Reset NavX completely, zero the field centric based on how robot faces from start of game.
 
     driveBase.initBrakeMode();
 
@@ -222,7 +222,6 @@ public class Robot extends TimedRobot {
       leds.changeAlliance(true);
     }
 
-    sensors.resetNavX(); // Reset NavX completely, zero the field centric based on how robot faces from start of game.
     Logger.consoleLog("Auton Started");
     timer.start();
 
