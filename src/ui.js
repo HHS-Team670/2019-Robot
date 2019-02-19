@@ -15,6 +15,8 @@ document.getElementById('auton-chooser').style.display = "none";
 ui.timer.style.color = `rgb(0, 200, 0)`;
 
 document.getElementById('camera').viewer.style = "background-image: url(http://10.6.70.26:8000/?action=stream)";
+var multicamSources = ['http://10.6.70.26:8000/?action=stream', 'http://10.6.70.26:8001/?action=stream'];
+var multicamIndex = 0;
 
 // ui.camera.viewer.style.backgroundImage = 'url(' + ui.camera.src + ')';
 // document.getElementById('camera').style = "background-color: rgb(39, 163, 39)";
@@ -60,8 +62,6 @@ NetworkTables.addKeyListener('/SmartDashboard/game-time', (key, value) => {
 });
 
 // listens for camera-source 
-multicamSources = ['http://10.6.70.26:8000/?action=stream', 'http://10.6.70.26:8001/?action=stream'];
-var multicamIndex = 0;
 NetworkTables.addKeyListener('/SmartDashboard/camera-source', (key, value) => {
   multicamIndex = (multicamIndex + 1) % multicamSources.length;
   document.getElementById('camera').viewer.style = "background-image: url(" + multicamSources[multicamIndex] + ")";
