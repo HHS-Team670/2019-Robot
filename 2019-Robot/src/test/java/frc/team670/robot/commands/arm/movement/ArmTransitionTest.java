@@ -71,6 +71,7 @@ public class ArmTransitionTest {
 
                 
                 // assertEquals(true, MathUtils.isWithinTolerance(isIntakeDeployed, intake.getAngleInDegrees(), 0.3));
+                // System.out.println("Start: " + startState.getClass().getName() + ", Dest: " + dest.getClass().getName());
                 assertEquals(finalElbowAngle, elbow.getAngleInDegrees(), 0.1);
                 assertEquals(finalWristAngle, wrist.getAngleInDegrees(), 0.1);
                 assertEquals(finalExtensionLength, extension.getLengthInches(), 0.1);
