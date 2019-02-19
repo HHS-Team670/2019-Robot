@@ -25,7 +25,7 @@ public class NavXChangeableAnglePivot extends Command {
   private PIDController pivotController;
 
   private static final double P = 0.05, I = 0.0, D = 0.5;
-  private static final double ABSOLUTE_TOLERANCE = 3;
+  private static final double ABSOLUTE_TOLERANCE = 1.5;
 
   private int onTargetCount;
 
