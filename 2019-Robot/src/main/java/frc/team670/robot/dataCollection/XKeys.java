@@ -255,7 +255,7 @@ public class XKeys {
         PlaceGrabState placeGrab = null;
 
         try {
-            placeGrab = (PlaceGrabState) Arm.getTargetState();
+            placeGrab = (PlaceGrabState) possiblePlaceGrabState;
         } catch (ClassCastException ex) {
             return;
         }
