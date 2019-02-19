@@ -22,7 +22,7 @@ import frc.team670.robot.commands.arm.movement.CancelArmMovement;
 import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.commands.arm.movement.PlaceOrGrab;
 import frc.team670.robot.commands.claw.CloseClaw;
-import frc.team670.robot.commands.claw.OpenClaw;
+import frc.team670.robot.commands.claw.ToggleClaw;
 import frc.team670.robot.commands.claw.YeetHeldItem;
 import frc.team670.robot.commands.climb.armClimb.CancelArmClimb;
 import frc.team670.robot.commands.drive.vision.CancelDriveBase;
@@ -88,11 +88,9 @@ public class XKeys {
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-claw", (table2, key2, entry, value, flags) -> {
             String s = value.getString();
-            if (s.equals("open_claw")) { 
+            if (s.equals("toggle_claw")) { 
                 toggleClaw();
-                SmartDashboard.putString("xkeys-claw", "toggled");
             }
-            // else if (s.equals("close_claw")) closeClaw();
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-cancel", (table2, key2, entry, value, flags) -> {
             if (value.getType() != NetworkTableType.kString) return;
@@ -183,10 +181,6 @@ public class XKeys {
         Scheduler.getInstance().add(new AutoPickupCargo(Robot.arm, Robot.intake, Robot.claw, Robot.sensors));
     }
 
-    private void cancelArmClimb() {
-        Scheduler.getInstance().add(new CancelArmClimb(Robot.arm));
-    }
-
     private void cancelAllCommands() {
         Scheduler.getInstance().add(new CancelAllCommands(Robot.driveBase, Robot.arm, Robot.intake, Robot.claw));
     }
@@ -228,11 +222,7 @@ public class XKeys {
     }
 
     private void toggleClaw() {
-        Scheduler.getInstance().add(new OpenClaw(Robot.claw));
-    }
-
-    private void closeClaw() {
-        Scheduler.getInstance().add(new CloseClaw(Robot.claw));
+        Scheduler.getInstance().add(new ToggleClaw(Robot.claw));
     }
     
     public static void setToggleIn(boolean toggleInBoolean){

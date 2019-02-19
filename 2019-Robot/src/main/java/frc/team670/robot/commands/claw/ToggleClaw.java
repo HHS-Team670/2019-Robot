@@ -19,9 +19,9 @@ public class ToggleClaw extends InstantCommand {
   
   private Claw claw;
 
-  public ToggleClaw() {
+  public ToggleClaw(Claw claw) {
     super();
-    requires(Robot.claw);
+    requires(claw);
   }
 
   // Called once when the command executes
