@@ -10,6 +10,7 @@ package frc.team670.robot.commands.intake;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.dataCollection.MustangSensors;
+import frc.team670.robot.dataCollection.XKeys;
 import frc.team670.robot.subsystems.BaseIntake;
 import frc.team670.robot.subsystems.Intake;
 
@@ -33,6 +34,7 @@ public class ButtonRunIntake extends InstantCommand {
   protected void initialize() {
     SmartDashboard.putString("current-command", "ButtonRunIntake");
     intake.runIntake(power, runningIn);
+    XKeys.setToggleIn(runningIn);
   }
 
 }

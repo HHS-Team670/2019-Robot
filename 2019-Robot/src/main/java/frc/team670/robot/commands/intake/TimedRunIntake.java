@@ -8,6 +8,7 @@
 package frc.team670.robot.commands.intake;
 
 import edu.wpi.first.wpilibj.command.TimedCommand;
+import frc.team670.robot.dataCollection.XKeys;
 import frc.team670.robot.subsystems.BaseIntake;
 import frc.team670.robot.utils.Logger;
 
@@ -45,6 +46,7 @@ public class TimedRunIntake extends TimedCommand {
   @Override
   protected void end() {
     intake.runIntake(0, true);
+    XKeys.setToggleIn(false);
     Logger.consoleLog();
   }
 
