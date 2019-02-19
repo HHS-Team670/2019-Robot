@@ -44,7 +44,7 @@ public class RunIntakeInWithIR extends Command {
     // If the IR sensor has been tripped and it is for the first time
     if (!sensors.isIntakeIRSensorNull() && sensors.getIntakeIROutput() && !hasBeenTriggered) {
       hasBeenTriggered = true;
-      setTimeout(0.5 + timeSinceInitialized());
+      setTimeout(1 + timeSinceInitialized());
     }
   }
 
