@@ -48,7 +48,7 @@ public class DriveBase extends Subsystem {
 
   private final double P_P = 0.1, P_I = 1E-4, P_D = 1, P_FF = 0; // Position PID Values. Set based off the default in
                                                                  // REV Robotics example code.
-  private final double V_P = 5E-5, V_I = 1E-5, V_D = 0, V_FF = 0; // Velocity PID Values. Set based off the default in
+  private final double V_P = 5E-6, V_I = 1E-6, V_D = 0, V_FF = 0; // Velocity PID Values. Set based off the default in
                                                                   // REV Robotics example code.
 
   public DriveBase() {
@@ -90,10 +90,21 @@ public class DriveBase extends Subsystem {
     left1.getPIDController().setFF(P_FF, ENCODERS_PID_SLOT);
     left1.getPIDController().setOutputRange(-1, 1);
 
+    left1.getPIDController().setP(V_P, VELOCITY_PID_SLOT);
+    left1.getPIDController().setI(V_I, VELOCITY_PID_SLOT);
+    left1.getPIDController().setD(V_D, VELOCITY_PID_SLOT);
+    left1.getPIDController().setFF(V_FF, VELOCITY_PID_SLOT);
+
     right1.getPIDController().setP(V_P, VELOCITY_PID_SLOT);
     right1.getPIDController().setI(V_I, VELOCITY_PID_SLOT);
     right1.getPIDController().setD(V_D, VELOCITY_PID_SLOT);
     right1.getPIDController().setFF(V_FF, VELOCITY_PID_SLOT);
+
+    right1.getPIDController().setP(P_P, ENCODERS_PID_SLOT);
+    right1.getPIDController().setI(P_I, ENCODERS_PID_SLOT);
+    right1.getPIDController().setD(P_D, ENCODERS_PID_SLOT);
+    right1.getPIDController().setFF(P_FF, ENCODERS_PID_SLOT);
+    right1.getPIDController().setOutputRange(-1, 1);
 
     setRampRate(allMotors, 0.254); // Will automatically cook some Cheezy Poofs
 
@@ -279,6 +290,8 @@ public class DriveBase extends Subsystem {
   public void setSparkVelocityControl(double leftVel, double rightVel) {
     leftVel = convertInchesPerSecondToDriveBaseRoundsPerMinute(convertInchesToDriveBaseTicks(leftVel));
     rightVel = convertInchesPerSecondToDriveBaseRoundsPerMinute(convertInchesToDriveBaseTicks(rightVel));
+    System.out.println("LeftVel: " + leftVel);
+    System.out.println("RightVel: " + rightVel);
     left1.getPIDController().setReference(leftVel, ControlType.kVelocity, VELOCITY_PID_SLOT);
     right1.getPIDController().setReference(rightVel, ControlType.kVelocity, VELOCITY_PID_SLOT);
   }

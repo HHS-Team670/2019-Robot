@@ -18,8 +18,6 @@ import edu.wpi.first.wpilibj.SerialPort.Port;
  */
 public class RobotMap {
 
-  // TODO set all of these.
-
   // Do not put Talon or other CTRE things to CAN ID 0 because that's the PDP. CAN conflicts are only within device families.
 
   public static final int PDP_ID = 0;
@@ -32,10 +30,10 @@ public class RobotMap {
 
   //Encoders
       //Drivebase
-  public static final int LEFT_ENCODER_CHANNEL_A = 0; // These are properly set
-  public static final int LEFT_ENCODER_CHANNEL_B = 1;
-  public static final int RIGHT_ENCODER_CHANNEL_A = 2;
-  public static final int RIGHT_ENCODER_CHANNEL_B = 3;
+  public static final int LEFT_ENCODER_CHANNEL_A = 3; // These are properly set
+  public static final int LEFT_ENCODER_CHANNEL_B = 2;
+  public static final int RIGHT_ENCODER_CHANNEL_A = 5;
+  public static final int RIGHT_ENCODER_CHANNEL_B = 4;
 
   // Arm
   public static final int ARM_EXTENSION_MOTOR = 8;
@@ -57,13 +55,13 @@ public class RobotMap {
   // Sensors
   public final static Port NAVX_PORT = SerialPort.Port.kUSB;  
 
-  public static final int FRONT_ULTRASONIC_TRIGGER_PIN = 17; // TODO set these
-  public static final int FRONT_ULTRASONIC_ECHO_PIN = 18;
-  public static final int BACK_LEFT_ULTRASONIC_TRIGGER_PIN = 19;
-  public static final int BACK_LEFT_ULTRASONIC_ECHO_PIN = 20;
-  public static final int BACK_RIGHT_ULTRASONIC_TRIGGER_PIN = 21;
-  public static final int BACK_RIGHT_ULTRASONIC_ECHO_PIN = 22;
-  public final static int INTAKE_IR_DIO_PORT = 9;
+  public static final int FRONT_ULTRASONIC_TRIGGER_PIN = 20; // TODO set these
+  public static final int FRONT_ULTRASONIC_ECHO_PIN = 21;
+  public static final int BACK_LEFT_ULTRASONIC_TRIGGER_PIN = 6;
+  public static final int BACK_LEFT_ULTRASONIC_ECHO_PIN = 7;
+  public static final int BACK_RIGHT_ULTRASONIC_TRIGGER_PIN = 8;
+  public static final int BACK_RIGHT_ULTRASONIC_ECHO_PIN = 9;
+  public final static int INTAKE_IR_DIO_PORT = 0;
 
 
   // Joysticks

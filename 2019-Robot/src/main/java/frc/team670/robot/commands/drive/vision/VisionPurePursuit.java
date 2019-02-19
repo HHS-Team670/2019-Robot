@@ -67,56 +67,58 @@ public class VisionPurePursuit extends InstantCommand {
   // Called once when the command executes
   @Override
   protected void initialize() {
-    driveBase.initBrakeMode();
-    coprocessor.setTargetHeight(lowTarget);
+    // driveBase.initBrakeMode();
+    // coprocessor.setTargetHeight(lowTarget);
 
-    coprocessor.setCamera(isReversed);
-    try {
-      Thread.sleep(100);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
+    // coprocessor.setCamera(isReversed);
+    // try {
+    //   Thread.sleep(100);
+    // } catch (InterruptedException e) {
+    //   e.printStackTrace();
+    // }
 
-    try {
-      if(MathUtils.doublesEqual(coprocessor.getVisionValues()[2], RobotConstants.VISION_ERROR_CODE)) {
-        SmartDashboard.putString("warnings", "Coprocess Camera Unplugged: Vision Down");
-        return;
-      } 
-    } catch(IndexOutOfBoundsException e) {
-      return;
-    }
+    // try {
+    //   if(MathUtils.doublesEqual(coprocessor.getVisionValues()[2], RobotConstants.VISION_ERROR_CODE)) {
+    //     SmartDashboard.putString("warnings", "Coprocess Camera Unplugged: Vision Down");
+    //     return;
+    //   } 
+    // } catch(IndexOutOfBoundsException e) {
+    //   return;
+    // }
 
-    double horizontalAngle = coprocessor.getAngleToWallTarget();
-    if (MathUtils.doublesEqual(horizontalAngle, RobotConstants.VISION_ERROR_CODE)) {
-      Logger.consoleLog("No Valid Vision Data found, command quit.");
-      SmartDashboard.putString("vision-status", "error");
-      SmartDashboard.putString("warnings", "Vision Target Not Found");
-      return;
-    }
+    // double horizontalAngle = coprocessor.getAngleToWallTarget();
+    // if (MathUtils.doublesEqual(horizontalAngle, RobotConstants.VISION_ERROR_CODE)) {
+    //   Logger.consoleLog("No Valid Vision Data found, command quit.");
+    //   SmartDashboard.putString("vision-status", "error");
+    //   SmartDashboard.putString("warnings", "Vision Target Not Found");
+    //   return;
+    // }
 
-    double ultrasonicDistance;
-    if (!isReversed) {
-      ultrasonicDistance = sensors.getFrontUltrasonicDistance();
-    } else {
-      ultrasonicDistance = sensors.getAdjustedBackUltrasonicDistance();
-    }
-    ultrasonicDistance *= Math.cos(Math.toRadians(horizontalAngle)); // use cosine to get the straight ultrasonic
-                                                                     // distance not the diagonal one
+    // double ultrasonicDistance;
+    // if (!isReversed) {
+    //   ultrasonicDistance = sensors.getFrontUltrasonicDistance();
+    // } else {
+    //   ultrasonicDistance = sensors.getAdjustedBackUltrasonicDistance();
+    // }
+    // ultrasonicDistance *= Math.cos(Math.toRadians(horizontalAngle)); // use cosine to get the straight ultrasonic
+    //                                                                  // distance not the diagonal one
 
-    double visionDistance = coprocessor.getDistanceToWallTarget();
+    // double visionDistance = coprocessor.getDistanceToWallTarget();
 
-    double straightDistance;
-    if (MathUtils.doublesEqual(visionDistance, RobotConstants.VISION_ERROR_CODE)) {
-      straightDistance = ultrasonicDistance;
-    } else {
-      straightDistance = (visionDistance < ultrasonicDistance) ? visionDistance : ultrasonicDistance;
-    }
+    // double straightDistance;
+    // if (MathUtils.doublesEqual(visionDistance, RobotConstants.VISION_ERROR_CODE)) {
+    //   straightDistance = ultrasonicDistance;
+    // } else {
+    //   straightDistance = (visionDistance < ultrasonicDistance) ? visionDistance : ultrasonicDistance;
+    // }
 
-    if (straightDistance > 132) { // Distance is too far, must be invalid data.
-      Logger.consoleLog("No Valid Vision Data or Ultrasonic Data found, command quit.");
-      SmartDashboard.putString("vision-status", "");
-      return;
-    }
+    // if (straightDistance > 132) { // Distance is too far, must be invalid data.
+    //   Logger.consoleLog("No Valid Vision Data or Ultrasonic Data found, command quit.");
+    //   SmartDashboard.putString("vision-status", "");
+    //   return;
+    // }
+
+    double straightDistance = 40;
 
     straightDistance = straightDistance - spaceFromTarget;
     if (straightDistance < 0) {
@@ -131,7 +133,9 @@ public class VisionPurePursuit extends InstantCommand {
     System.out.println("Angle: " + coprocessor.getAngleToWallTarget());
     // horizontal distance - when going forward a positive horizontal distance is
     // right and negative is left
-    double horizontalDistance = straightDistance * Math.tan(Math.toRadians(coprocessor.getAngleToWallTarget())); // x = y * tan(theta)
+    // double angle = coprocessor.getAngleToWallTarget();
+    double horizontalAngle = 0;
+    double horizontalDistance = straightDistance * Math.tan(Math.toRadians(horizontalAngle)); // x = y * tan(theta)
     double partialDistanceY = (straightDistance) * 2.0 / 5.0;
 
     System.out.println("straightDist: " + straightDistance + ", horizontalDistance: " + horizontalDistance);
@@ -164,32 +168,6 @@ public class VisionPurePursuit extends InstantCommand {
 
     command = new PurePursuit(path, driveBase, sensors, poseEstimator, isReversed);
 
-    if (straightDistance > 60) { // Protect arm until it is time to actually place
-      Scheduler.getInstance().add(new MoveArm(Arm.getArmState(LegalState.NEUTRAL), Robot.arm));
-      restrictArmMovement = new Notifier(new Runnable() {
-
-        private boolean reversed = isReversed;
-
-        public void run() {
-          double ultrasonicDistance;
-          if(!reversed) {
-            ultrasonicDistance = sensors.getFrontUltrasonicDistance();
-          }
-          else {
-            ultrasonicDistance = sensors.getAdjustedBackUltrasonicDistance();
-          }
-          ultrasonicDistance *= Math.cos(Math.toRadians(horizontalAngle)); //use cosine to get the straight ultrasonic distance not the diagonal one
-      
-          if (ultrasonicDistance < 48) {
-            Scheduler.getInstance().add(new MoveArm(Arm.getCurrentState(), Robot.arm));
-            cancel();
-          }
-        }
-      });
-      restrictArmMovement.startPeriodic(0.03);
-    } else {
-      restrictArmMovement = null;
-    }
 
     Scheduler.getInstance().add(command);
   }

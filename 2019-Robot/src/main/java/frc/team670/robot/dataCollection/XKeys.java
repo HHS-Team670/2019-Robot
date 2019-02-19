@@ -119,7 +119,6 @@ public class XKeys {
         if (in.equals("READY_PLACE_BALL_ROCKET_LOW_FORWARD")) legalState = LegalState.READY_PLACE_BALL_ROCKET_LOW_FORWARD;
         if (in.equals("GRAB_BALL_GROUND_BACK")) legalState = LegalState.GRAB_BALL_GROUND_BACK;
         if (in.equals("GRAB_BALL_INTAKE")) legalState = LegalState.GRAB_BALL_INTAKE;
-        if (in.equals("READY_GRAB_HATCH_GROUND_BACK")) legalState = LegalState.READY_GRAB_HATCH_GROUND_BACK;
         if (in.equals("STOW")) legalState = LegalState.STOW;
         if (in.equals("NEUTRAL")) legalState = LegalState.NEUTRAL;
 

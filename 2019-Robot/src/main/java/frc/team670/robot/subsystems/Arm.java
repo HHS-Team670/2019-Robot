@@ -60,9 +60,7 @@ public class Arm {
     states = new HashMap<LegalState, ArmState>();
     states.put(LegalState.NEUTRAL, new Neutral(this, intake));
 
-    states.put(LegalState.START_BALL, new StartBall(this, intake));
-    states.put(LegalState.START_HATCH, new StartHatch(this, intake));
-    states.put(LegalState.START_EMPTY, new StartEmpty(this, intake));
+    states.put(LegalState.START, new Start(this, intake));
   
     states.put(LegalState.GRAB_HATCH_GROUND_BACK, new GrabHatchGroundBack(this, intake));
     states.put(LegalState.READY_GRAB_HATCH_GROUND_BACK, new ReadyGrabHatchGroundBack(this, intake));
@@ -204,9 +202,7 @@ public class Arm {
   public enum LegalState {
     NEUTRAL(0), // High Neutral Position within the robot that all Transitions can run through.
 
-    START_BALL(1), // Starting Position
-    START_HATCH(2),
-    START_EMPTY(3),
+    START(1), // Starting Position
     
     READY_GRAB_HATCH_GROUND_BACK(30), // Hatch from the ground at the back
     GRAB_HATCH_GROUND_BACK(31),
@@ -403,9 +399,7 @@ public class Arm {
   private class Neutral extends ArmState {
     private Neutral(Arm arm, BaseIntake intake) {
       super(50.067, -50.067, 0, false, new ArmTransition[] {
-      new CommonTransition(LegalState.NEUTRAL, LegalState.START_BALL, arm, intake),
-      new CommonTransition(LegalState.NEUTRAL, LegalState.START_HATCH, arm, intake),
-      new CommonTransition(LegalState.NEUTRAL, LegalState.START_EMPTY, arm, intake),
+      // new CommonTransition(LegalState.NEUTRAL, LegalState.START, arm, intake),
       new CommonTransition(LegalState.NEUTRAL, LegalState.READY_GRAB_HATCH_GROUND_BACK, arm, intake),
       new CommonTransition(LegalState.NEUTRAL, LegalState.GRAB_BALL_GROUND_BACK, arm, intake),
       new NeutralToGrabBallIntake(arm, intake),
@@ -427,23 +421,12 @@ public class Arm {
     }
   }
 
-  private class StartBall extends ArmState {
-    private StartBall(Arm arm, BaseIntake intake) {
-      super(1, 15, 17, false, new ArmTransition[] { new CommonTransition(LegalState.START_BALL, LegalState.NEUTRAL, arm, intake)});
+  private class Start extends ArmState {
+    private Start(Arm arm, BaseIntake intake) {
+      super(80.6, 99, 0, false, new ArmTransition[] { new CommonTransition(LegalState.START, LegalState.NEUTRAL, arm, intake)});
     }
   }
 
-  private class StartHatch extends ArmState {
-    private StartHatch(Arm arm, BaseIntake intake) {
-     super(0, 3, 0, false, new ArmTransition[] { new CommonTransition(LegalState.START_HATCH, LegalState.NEUTRAL, arm, intake)});
-    }
-  }
-
-  private class StartEmpty extends ArmState {
-    private StartEmpty(Arm arm, BaseIntake intake) {
-      super(0, 5, 0, false, new ArmTransition[] { new CommonTransition(LegalState.START_EMPTY, LegalState.NEUTRAL, arm, intake)});
-    }
-  }
   //Transitions commented out because uneccesary sequence of movement
   private class ReadyGrabHatchGroundBack extends ArmState {
     private ReadyGrabHatchGroundBack(Arm arm, BaseIntake intake) {
@@ -507,7 +490,7 @@ public class Arm {
 
   private class ReadyLowHatchForward extends ArmState {
     private ReadyLowHatchForward(Arm arm, BaseIntake intake) {
-      super(3, 7, 3.2, false, new ArmTransition[] { new CommonTransition(LegalState.READY_LOW_HATCH_FORWARD, LegalState.LOW_HATCH_FORWARD, arm, intake), 
+      super(103, -17, 3.2, false, new ArmTransition[] { new CommonTransition(LegalState.READY_LOW_HATCH_FORWARD, LegalState.LOW_HATCH_FORWARD, arm, intake), 
         new CommonTransition(LegalState.READY_LOW_HATCH_FORWARD, LegalState.NEUTRAL, arm, intake)
       });
     }
@@ -533,7 +516,7 @@ public class Arm {
   }
   private class LowHatchBack extends PlaceGrabState {
     private LowHatchBack(Arm arm, BaseIntake intake) {
-      super(-106, 12, 0.03, false, new ArmTransition[] { new CommonTransition(LegalState.LOW_HATCH_BACK, LegalState.READY_LOW_HATCH_BACK, arm ,intake)}, false, 10.731, true);
+      super(-106, 15, 0.03, false, new ArmTransition[] { new CommonTransition(LegalState.LOW_HATCH_BACK, LegalState.READY_LOW_HATCH_BACK, arm ,intake)}, false, 10.731, true);
     }
   }
 
@@ -588,7 +571,7 @@ public class Arm {
 
   private class PlaceHatchRocketMiddleBack extends PlaceGrabState{
     private PlaceHatchRocketMiddleBack(Arm arm, BaseIntake intake) {
-      super(-41.5, -51, 10.14, false, new ArmTransition[] { new CommonTransition(LegalState.PLACE_HATCH_ROCKET_MIDDLE_BACK, LegalState.READY_PLACE_HATCH_ROCKET_MIDDLE_BACK, arm ,intake)}, false, 25.0, true);
+      super(-41.5, -51, 9.5, false, new ArmTransition[] { new CommonTransition(LegalState.PLACE_HATCH_ROCKET_MIDDLE_BACK, LegalState.READY_PLACE_HATCH_ROCKET_MIDDLE_BACK, arm ,intake)}, false, 25.0, true);
     }
   }
 
@@ -672,5 +655,27 @@ public class Arm {
       private Stow(Arm arm, BaseIntake intake) {
         super(103, -105, 0, false, new ArmTransition[] { new CommonTransition(LegalState.STOW, LegalState.NEUTRAL, arm, intake)});
       } 
+  }
+
+  public void setCoastMode(){
+    getElbow().enableCoastMode();
+    getElbow().stop();
+    getWrist().enableCoastMode();
+    getWrist().stop();
+    getExtension().enableCoastMode();
+    getExtension().stop();
+  }
+
+  public void setBrakeMode(){
+    getElbow().enableBrakeMode();
+    getElbow().stop();
+    getWrist().enableBrakeMode();
+    getWrist().stop();
+    getExtension().enableBrakeMode();
+    getExtension().stop();
+  }
+
+  public Claw getClaw(){
+    return claw;
   }
 }

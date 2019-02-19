@@ -47,7 +47,7 @@ public class Intake extends BaseIntake {
   
   private Point2D.Double intakeCoord;
 
-  public static final double RUNNING_POWER = 0.30;
+  public static final double RUNNING_POWER = 0.35;
   public static final double PICKUP_RUNNING_POWER = 0.1;
 
   public Intake() {
@@ -137,8 +137,10 @@ public class Intake extends BaseIntake {
    *                      1]
    */
   public void runIntake(double power, boolean runningIn) {
-    power *= runningIn ? 1 : -1;
-    roller.set(ControlMode.PercentOutput, power);
+    if(getAngleInDegrees() > 0) {
+        power *= runningIn ? 1 : -1;
+        roller.set(ControlMode.PercentOutput, power);
+    }
   }
   /**
    * Converts an intake angle into ticks
