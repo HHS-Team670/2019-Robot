@@ -48,8 +48,8 @@ public class NeutralToGrabBallIntake extends ArmTransition {
   @Override
   public void initTransition() {
     addParallel(new MoveWrist(wrist, Arm.getStates().get(LegalState.GRAB_BALL_INTAKE).getWristAngle()));
-    addParallel(new MoveExtension(extension, Arm.getStates().get(LegalState.GRAB_BALL_INTAKE).getWristAngle()));
-    addSequential(new MoveElbow(elbow, Arm.getStates().get(LegalState.GRAB_BALL_INTAKE).getWristAngle()));
+    addParallel(new MoveElbow(elbow, Arm.getStates().get(LegalState.GRAB_BALL_INTAKE).getElbowAngle()));
+    addParallel(new MoveExtension(extension, Arm.getStates().get(LegalState.GRAB_BALL_INTAKE).getExtensionLength()));
     addSequential(new WaitForChildren());
     addSequential(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_DEPLOYED, intake));
    
