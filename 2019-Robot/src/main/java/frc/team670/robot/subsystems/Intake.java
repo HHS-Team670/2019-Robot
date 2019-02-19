@@ -63,14 +63,12 @@ public class Intake extends BaseIntake {
     rotator.setInverted(true);
     // rotator.setSensorPhase(true); // Positive is inwards movement, negative is outward
 
-    if(rotatorSensorCollection.isRevLimitSwitchClosed()) {
-      System.out.println("Rev limit hit");
-      rotator.setSelectedSensorPosition(REVERSE_SOFT_LIMIT + 50);
-    }
-    else if(rotatorSensorCollection.isFwdLimitSwitchClosed()) {
-      System.out.println("Fwd limit hit");
-      rotator.setSelectedSensorPosition(FORWARD_SOFT_LIMIT - 50);
-    }
+    // if(rotatorSensorCollection.isRevLimitSwitchClosed() && !rotatorSensorCollection.isFwdLimitSwitchClosed()) {
+    //   rotator.setSelectedSensorPosition(REVERSE_SOFT_LIMIT + 50);
+    // }
+    // else if(rotatorSensorCollection.isFwdLimitSwitchClosed() && !rotatorSensorCollection.isRevLimitSwitchClosed()) {
+    //   rotator.setSelectedSensorPosition(FORWARD_SOFT_LIMIT - 50);
+    // }
 
     stop();
     setMotionMagicPIDValues();
@@ -139,13 +137,7 @@ public class Intake extends BaseIntake {
    *                      1]
    */
   public void runIntake(double power, boolean runningIn) {
-    if(setpoint == NO_SETPOINT) {
-      System.out.println("Running motor in/out");
-      power *= runningIn ? 1 : -1;
-    } else {
-      System.out.println("Setpoint has not been cleared, so no power");
-      power = 0;
-    }
+    power *= runningIn ? 1 : -1;
     roller.set(ControlMode.PercentOutput, power);
   }
   /**
