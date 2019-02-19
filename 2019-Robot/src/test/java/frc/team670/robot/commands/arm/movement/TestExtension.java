@@ -131,7 +131,7 @@ public class TestExtension extends BaseExtension {
   }
 
   @Override
-  public void resetPositionBasedOnLimitSwitchTripping() {
+  public void warnifLimitHit() {
 
   }
 
