@@ -26,6 +26,7 @@ import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.functions.MathUtils;
 import frc.team670.robot.utils.math.Vector;
+import frc.team670.robot.utils.math.AngleStorage;
 
 /**
  * Starts a Pure Pursuit path based off vision data
@@ -48,13 +49,14 @@ public class VisionPurePursuit extends InstantCommand {
   private boolean isReversed;
   private boolean lowTarget;
   private static Notifier restrictArmMovement;
+  private AngleStorage angle;
 
   /**
    * @param isReversed True if using the back-facing camera on the robot to drive
    *                   backwards
    */
   public VisionPurePursuit(DriveBase driveBase, MustangCoprocessor coprocessor, MustangSensors sensors,
-      double spaceFromTarget, boolean isReversed, boolean lowTarget) {
+      double spaceFromTarget, boolean isReversed, boolean lowTarget, AngleStorage angle) {
     super();
     this.coprocessor = coprocessor;
     this.sensors = sensors;
@@ -62,6 +64,7 @@ public class VisionPurePursuit extends InstantCommand {
     this.spaceFromTarget = spaceFromTarget;
     this.isReversed = isReversed;
     this.lowTarget = lowTarget;
+    this.angle = angle;
   }
 
   // Called once when the command executes
@@ -88,7 +91,7 @@ public class VisionPurePursuit extends InstantCommand {
     }
 
     double horizontalAngle = coprocessor.getAngleToWallTarget();
-    double finalAngle = (sensors.getFieldCentricYaw() % 360) + horizontalAngle; // Finds field centric angle the robot should be at after finishing PurePursuit
+    angle.setAngle(horizontalAngle); //Angle robot should be at by the end of PurePursuit
     if (MathUtils.doublesEqual(horizontalAngle, RobotConstants.VISION_ERROR_CODE)) {
       Logger.consoleLog("No Valid Vision Data found, command quit.");
       SmartDashboard.putString("vision-status", "error"); //MAKE THIS A WARNING
@@ -164,7 +167,7 @@ public class VisionPurePursuit extends InstantCommand {
     
     Path path = generator.generatePath(isReversed);
 
-    command = new PurePursuit(path, driveBase, sensors, poseEstimator, isReversed, finalAngle);
+    command = new PurePursuit(path, driveBase, sensors, poseEstimator, isReversed, angle);
 
     if (straightDistance > 60) { // Protect arm until it is time to actually place
       Scheduler.getInstance().add(new MoveArm(Arm.getArmState(LegalState.NEUTRAL), Robot.arm));

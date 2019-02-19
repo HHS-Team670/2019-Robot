@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.Robot;
 import frc.team670.robot.dataCollection.NullPIDOutput;
 import frc.team670.robot.utils.Logger;
+import frc.team670.robot.utils.math.AngleStorage;
 import jaci.pathfinder.Pathfinder;
 
 /**
@@ -130,22 +131,6 @@ public class NavXPivot extends Command {
   protected void interrupted() {
 		end();
 		Logger.consoleLog();
-}
-
-	public class AngleStorage {
-		private double angle;
-
-		public AngleStorage(double angle) {
-			setAngle(angle);
-		}
-
-		public void setAngle(double angle) {
-			this.angle = angle;
-		}
-
-		public double getAngle() {
-			return angle;
-		}
 	}
 	
 }

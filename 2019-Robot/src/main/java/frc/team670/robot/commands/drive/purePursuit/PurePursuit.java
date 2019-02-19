@@ -8,12 +8,11 @@
 package frc.team670.robot.commands.drive.purePursuit;
 
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.Scheduler;
-import frc.team670.robot.commands.drive.pivot.NavXPivot;
-import frc.team670.robot.commands.drive.vision.VisionPurePursuitWithPivot;
+import frc.team670.robot.commands.drive.vision.VisionPurePursuit;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.utils.Logger;
+import frc.team670.robot.utils.math.AngleStorage;
 
 public class PurePursuit extends Command {
 
@@ -23,10 +22,10 @@ public class PurePursuit extends Command {
   private PoseEstimator poseEstimator;
   private DriveBase driveBase;
   private MustangSensors sensors;
-  private double finalAngle;
+  private AngleStorage finalAngle;
   private int executeCount;
 
-  public PurePursuit(Path path, DriveBase driveBase, MustangSensors sensors, PoseEstimator estimator, boolean isReversed, double finalAngle) {
+  public PurePursuit(Path path, DriveBase driveBase, MustangSensors sensors, PoseEstimator estimator, boolean isReversed, AngleStorage finalAngle) {
    this.driveBase = driveBase;
    this.sensors = sensors;
    this.poseEstimator = estimator;
@@ -75,9 +74,8 @@ public class PurePursuit extends Command {
   @Override
   protected void end() {
     Logger.consoleLog("Pose: %s ", poseEstimator.getPose());
-    VisionPurePursuitWithPivot.disableArmRestriction();
-    double currentAngle = sensors.getFieldCentricYaw() % 360;
-    Scheduler.getInstance().add(new NavXPivot(finalAngle - currentAngle));
+    finalAngle.setAngle(finalAngle.getAngle() - sensors.getYawDouble());
+    VisionPurePursuit.disableArmRestriction();
     driveBase.setSparkVelocityControl(0,0);
     purePursuitTracker.stopNotifier();
     purePursuitTracker.reset();

@@ -8,10 +8,11 @@
 package frc.team670.robot.commands.drive.vision;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import frc.team670.robot.commands.drive.pivot.NavXPivot.AngleStorage;
+import frc.team670.robot.commands.drive.pivot.NavXPivot;
 import frc.team670.robot.dataCollection.MustangCoprocessor;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.DriveBase;
+import frc.team670.robot.utils.math.AngleStorage;
 
 /**
  * Starts a Pure Pursuit path based off vision data
@@ -23,8 +24,8 @@ public class VisionPurePursuitWithPivot extends CommandGroup {
 
     AngleStorage changeableAngle = new AngleStorage(0);
 
-    addSequential(new VisionPurePursuit(driveBase, coprocessor, sensors, spaceFromTarget, isReversed, lowTarget));
-    // addSequential(new NavXPivot());
+    addSequential(new VisionPurePursuit(driveBase, coprocessor, sensors, spaceFromTarget, isReversed, lowTarget, changeableAngle));
+    addSequential(new NavXPivot(changeableAngle));
   }
 
 }
