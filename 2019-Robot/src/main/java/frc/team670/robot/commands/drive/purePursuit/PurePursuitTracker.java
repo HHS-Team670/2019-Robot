@@ -32,13 +32,12 @@ public class PurePursuitTracker {
 	public PurePursuitTracker(PoseEstimator poseEstimator, DriveBase driveBase, MustangSensors sensors, boolean isReversed) {
 		this.poseEstimator = poseEstimator;
 		this.isReversed = isReversed;
-		updater = new Notifier( new Runnable() {
-			public void run() {
-				poseEstimator.update();
-				drivePower = update(poseEstimator.getPose(), driveBase.getLeftMustangEncoderVelocityInInchesPerSecond(), driveBase.getRightMustangEncoderVelocityInInchesPerSecond(), sensors.getRotationAngle().radians());
-0				Robot.driveBase.setSparkVelocityControl(drivePower.getLeft(), drivePower.getRight()); //Returns in inches/s
-			}
-		});
+		// updater = new Notifier( new Runnable() {
+		// 	public void run() {
+		// 		poseEstimator.update();
+		// 		drivePower = update(poseEstimator.getPose(), driveBase.getLeftMustangEncoderVelocityInInchesPerSecond(), driveBase.getRightMustangEncoderVelocityInInchesPerSecond(), sensors.getRotationAngle().radians());
+		// 	}
+		// });
         reset();
 	}
 
@@ -50,13 +49,13 @@ public class PurePursuitTracker {
 		this(poseEstimator, driveBase, sensors, false);
 	}
 
-	public void startNotifier(double period){
-		updater.startPeriodic(period);
-	}
+	// public void startNotifier(double period){
+	// 	updater.startPeriodic(period);
+	// }
 
-	public void stopNotifier(){
-		updater.stop();
-	}
+	// public void stopNotifier(){
+	// 	updater.stop();
+	// }
 
 
 	/**

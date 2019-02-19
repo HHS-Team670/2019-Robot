@@ -227,15 +227,15 @@ public class Robot extends TimedRobot {
     // Logger.consoleLog("Auton Started");
     // timer.start();
 
-    Scheduler.getInstance().add(new MoveExtensionBackUntilHitsLimitSwitch(extension));
-    arm.setCoastMode();
+    // Scheduler.getInstance().add(new MoveExtensionBackUntilHitsLimitSwitch(extension));
+    // arm.setCoastMode();
 
     // TODO: robot crashing when trying to load path
     // autonomousCommand = oi.getSelectedAutonCommand();
     // autonomousCommand = new RunIntake(intake, sensors, true);
     // schedule the autonomous command (example)
 
-    // autonomousCommand = new VisionPurePursuit(driveBase, coprocessor, sensors, 0, false, true);
+    autonomousCommand = new VisionPurePursuit(driveBase, coprocessor, sensors, 0, false, true);
 
     if (autonomousCommand != null) {
       autonomousCommand.start();

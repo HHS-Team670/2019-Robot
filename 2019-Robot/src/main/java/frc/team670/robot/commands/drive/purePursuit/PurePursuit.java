@@ -12,6 +12,8 @@ import frc.team670.robot.commands.drive.vision.VisionPurePursuit;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.utils.Logger;
+import frc.team670.robot.utils.functions.MathUtils;
+import frc.team670.robot.utils.math.DrivePower;
 
 public class PurePursuit extends Command {
 
@@ -41,7 +43,7 @@ public class PurePursuit extends Command {
     purePursuitTracker.reset();
     Logger.consoleLog();
     executeCount = 0;
-    purePursuitTracker.startNotifier(0.01); //Pass in period in seconds
+    // purePursuitTracker.startNotifier(0.01); //Pass in period in seconds
     System.out.println("Start, Pose: " + poseEstimator.getPose());
   }
 
@@ -50,15 +52,15 @@ public class PurePursuit extends Command {
   protected void execute() {
     //FOLLOWING MOVED TO PurePursuitTracker as a Notifier
 
-    // poseEstimator.update();
-    // DrivePower drivePower;
+    poseEstimator.update();
+    DrivePower drivePower;
 
-    // drivePower = purePursuitTracker.update(poseEstimator.getPose(), MathUtils.convertDriveBaseTicksToInches(driveBase.getLeftVelocity()), MathUtils.convertDriveBaseTicksToInches(driveBase.getRightVelocity()), sensors.getRotationAngle().radians());
-    // driveBase.velocityControl(MathUtils.convertInchesToDriveBaseTicks(drivePower.getLeft()), MathUtils.convertInchesToDriveBaseTicks(drivePower.getRight()));
+    drivePower = purePursuitTracker.update(poseEstimator.getPose(), driveBase.getLeftMustangEncoderVelocityInInchesPerSecond(), driveBase.getRightMustangEncoderVelocityInInchesPerSecond(), sensors.getRotationAngle().radians());
   
-    // if(executeCount % 5 == 0)
-    //   Logger.consoleLog("Powers (inches): leftPower: %s, rightPower: %s", drivePower.getLeft(), drivePower.getRight());
-    // executeCount++;
+    driveBase.setSparkVelocityControl(drivePower.getLeft(), drivePower.getRight()); //Returns in inches/s
+    if(executeCount % 5 == 0)
+      Logger.consoleLog("Powers (inches): leftPower: %s, rightPower: %s", drivePower.getLeft(), drivePower.getRight());
+    executeCount++;
   }
 
   // Make this return true when this Command no longer needs to run execute()
@@ -73,7 +75,7 @@ public class PurePursuit extends Command {
     Logger.consoleLog("Pose: %s ", poseEstimator.getPose());
     VisionPurePursuit.disableArmRestriction();
     driveBase.setSparkVelocityControl(0,0);
-    purePursuitTracker.stopNotifier();
+    // purePursuitTracker.stopNotifier();
     purePursuitTracker.reset();
   }
 
