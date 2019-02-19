@@ -178,7 +178,7 @@ NetworkTables.addKeyListener('/SmartDashboard/vision-status', (key, value) => {
 });
 
 // updates status lights for reversed drive
-NetworkTables.addKeyListener('/SmartDashboard/vision-status', (key, value) => {
+NetworkTables.addKeyListener('/SmartDashboard/drive-reversed-status', (key, value) => {
   if (value === true) {
     document.getElementById('drive-reversed-status').style.fill = "rgb(255,255,255)";
     document.getElementById('drive-reversed-status').style.stroke = "rgb(255,255,255)";
