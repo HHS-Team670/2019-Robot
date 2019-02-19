@@ -225,6 +225,7 @@ document.addEventListener("keyup", function(event) {
     else if (nextTask.includes("climb")) NetworkTables.putValue('/SmartDashboard/xkeys-climber', nextTask);
     else if (nextTask.includes("vision")) NetworkTables.putValue('/SmartDashboard/xkeys-visiondrive', nextTask);
     else if (nextTask.includes("claw")) NetworkTables.putValue('/SmartDashboard/xkeys-claw', nextTask);
+    else if (nextTask.includes("extension")) NetworkTables.putValue('/SmartDashboard/xkeys-extension', nextTask);
   } else {
 
   }
@@ -269,6 +270,7 @@ function getFromMap(key) { // mapping is more aligned with arm position on robot
   if (key === "z") return "cancel_all";
 
   if (key === "5") return "toggle_claw";
+  if (key === "6") return "reset_extension";
 
   if (key === "0") return "vision_drive";
 
