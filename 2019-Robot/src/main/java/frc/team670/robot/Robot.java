@@ -26,6 +26,7 @@ import frc.team670.robot.subsystems.Claw;
 import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.subsystems.Intake;
 import frc.team670.robot.subsystems.MustangLEDs_2019;
+import frc.team670.robot.subsystems.Arm.HeldItem;
 import frc.team670.robot.subsystems.elbow.Elbow;
 import frc.team670.robot.subsystems.extension.Extension;
 import frc.team670.robot.subsystems.wrist.Wrist;
@@ -159,7 +160,15 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("arm-extension" , extension.getLengthInches() / Extension.EXTENSION_OUT_IN_INCHES);
     SmartDashboard.putNumber("Actual Extension" , extension.getLengthInches());
     SmartDashboard.putBoolean("drive-reversed-status", XboxRocketLeagueDrive.isDriveReversed());
-    SmartDashboard.putString("claw-held-item", arm.getHeldItem().name());
+    if (arm.getHeldItem().equals(HeldItem.HATCH)) {
+      SmartDashboard.putString("claw-status", "Hatch");
+    } else if (arm.getHeldItem().equals(HeldItem.BALL)) {
+      SmartDashboard.putString("claw-status", "Ball");
+    } else if (claw.isOpen()) {
+      SmartDashboard.putString("claw-status", "open");
+    } else if (!claw.isOpen()) {
+      SmartDashboard.putString("claw-status", "close");
+    }
 
     SmartDashboard.putNumber("Angle", sensors.getAngle());
     SmartDashboard.putNumber("Phi", sensors.getAngleToTarget());
