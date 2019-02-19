@@ -280,8 +280,7 @@ function getFromMap(key) { // mapping is more aligned with arm position on robot
   if (key === "o") return "cancel_arm";
   if (key === "z") return "cancel_all";
 
-  if (key === "5") return "open_claw";
-  if (key === "6") return "close_claw";
+  if (key === "5") return "toggle_claw";
 
   if (key === "0") return "vision_drive";
 
