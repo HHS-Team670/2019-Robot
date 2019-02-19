@@ -88,8 +88,11 @@ public class XKeys {
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-claw", (table2, key2, entry, value, flags) -> {
             String s = value.getString();
-            if (s.equals("open_claw")) openClaw();
-            else if (s.equals("close_claw")) closeClaw();
+            if (s.equals("open_claw")) { 
+                toggleClaw();
+                SmartDashboard.putString("xkeys-claw", "toggled");
+            }
+            // else if (s.equals("close_claw")) closeClaw();
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-cancel", (table2, key2, entry, value, flags) -> {
             if (value.getType() != NetworkTableType.kString) return;
@@ -224,7 +227,7 @@ public class XKeys {
         Scheduler.getInstance().add(new YeetHeldItem(Robot.claw, Robot.arm));
     }
 
-    private void openClaw() {
+    private void toggleClaw() {
         Scheduler.getInstance().add(new OpenClaw(Robot.claw));
     }
 

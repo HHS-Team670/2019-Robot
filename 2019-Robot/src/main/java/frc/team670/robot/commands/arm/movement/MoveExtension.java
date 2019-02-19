@@ -36,6 +36,7 @@ public class MoveExtension extends Command {
     this.extensionSetpointInInches = extensionSetpointInInches;
     requires(extension);
     super.setInterruptible(true);
+    setTimeout(2);
   }
 
   // Called just before this Command runs the first time
@@ -55,6 +56,9 @@ public class MoveExtension extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
+    if(isTimedOut()) {
+      return true;
+    }
     return MathUtils.isWithinTolerance(extension.getLengthInches(), extensionSetpointInInches, DISTANCE_TOLERANCE);
   }
 
