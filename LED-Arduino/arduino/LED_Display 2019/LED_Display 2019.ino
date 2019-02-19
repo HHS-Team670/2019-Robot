@@ -3,7 +3,7 @@
    Purpose: Updated 2019 light show for differnt field tasks.
    Requires an Arduino with an Ethernet Shield or an Arduino with a built
    in Ethernet port, such as the Leonardo or Yun.
-   @author arnav kulkarni, arnuv tandon
+   @author ctchen, arnav kulkarni, arnuv tandon
 */
 
 //iterate through first quadrant
@@ -69,6 +69,27 @@ void setStripColor(int r, int g, int b, int quadrant)
   strip.show();
 }
 
+void parseData()
+{
+  connectionTimer++;                                //Adds a count to the ConnectionTimer
+  if (robotClient.available())                      //Runs when bytes are available to read
+  {
+    connectionTimer = 0;                            //Sets the connectionTimer countdown to zero
+    dataString = "";                                //Resets our final data string
+    while (robotClient.available())                 //Processes data until program is out of readable bytes
+    {
+      char robotRead = (char)robotClient.read();    //Reads the sent data string
+      dataString = dataString + robotRead;          //Combines the character with the full data string
+    }
+  }
+  //Parses dataString and receives corresponding values from Java program
+  allianceData = dataString.substring(0, 2);
+  Serial.print(allianceData);
+  //Grabs the expected location of various data, puts it in variables
+  stateData = dataString.substring(2, 4);
+  Serial.println(stateData);
+}
+
 void setRunningAllianceColors() {
   byte red = 255;
   byte blue = 0;
@@ -125,17 +146,67 @@ void setSolidWhite(int quadrant) {
 
 //climbing green LEDs effect
 
-//climbing green LEDs effect for 2 quadrants
-void setClimbingGreenLights() //to be used when we are climbing, will display climbing green LEDS
+
+void setWipeGreenLights()
 {
 
-  for (int i = 0; i <= strip.numPixels(); i++)
+  for (int i = 0; i <= 58; i++)
   {
     strip.setPixelColor(i, 0, 255, 0);
     strip.show();
     delay(20);                              //Slows down the leds so we can see the effects
   }
-  for (int i = 0; i < strip.numPixels(); i++)
+  for (int i = 0; i < 58; i++)
+  {
+    strip.setPixelColor(i, 0, 0, 0);
+    strip.show();
+    delay(20);                            //Slows down the leds so we can see the effects
+  }
+
+}
+
+void setWipePurpleLights() {
+
+  for (int i = 0; i <= 58; i++)
+  {
+    strip.setPixelColor(i, 255, 0, 255);
+    strip.show();
+    delay(20);                              //Slows down the leds so we can see the effects
+  }
+  for (int i = 0; i < 58; i++)
+  {
+    strip.setPixelColor(i, 0, 0, 0);
+    strip.show();
+    delay(20);                            //Slows down the leds so we can see the effects
+  }
+
+}
+
+void theaterChase(uint32_t c, uint8_t wait) {
+  for (int j = 0; j < 10; j++) { //do 10 cycles of chasing
+    for (int q = 0; q < 3; q++) {
+      for (uint16_t i = 0; i < strip.numPixels(); i = i + 3) {
+        strip.setPixelColor(i + q, c);  //turn every third pixel on
+      }
+      strip.show();
+
+      delay(wait);
+
+      for (uint16_t i = 0; i < strip.numPixels(); i = i + 3) {
+        strip.setPixelColor(i + q, 0);      //turn every third pixel off
+      }
+    }
+  }
+}
+void setWipeAquaLights() {
+
+  for (int i = 0; i <= 58; i++)
+  {
+    strip.setPixelColor(i, 0, 255, 255);
+    strip.show();
+    delay(20);                              //Slows down the leds so we can see the effects
+  }
+  for (int i = 0; i < 58; i++)
   {
     strip.setPixelColor(i, 0, 0, 0);
     strip.show();
@@ -195,102 +266,6 @@ void setRandomStrobe()
 
 }
 
-void setCylonBounce()
-{
-  byte red = 0;
-  byte green = 0;
-  byte blue  = 255;
-  int EyeSize = 3;
-  int SpeedDelay = 30;
-  int ReturnDelay = 30;
-
-  for (int i = 15; i < 45 - EyeSize - 2; i++)
-  {
-    if (stateData = visionLock) {
-      parseData();
-      reset(2);
-      reset(3);
-      strip.setPixelColor(i, red / 10, green / 10, blue / 10);
-
-      for (int j = 1; j <= EyeSize; j++)
-      {
-        strip.setPixelColor(i + j, red, green, blue);
-      }
-      strip.setPixelColor(i + EyeSize + 1, red / 10, green / 10, blue / 10);
-      strip.show();
-      delay(SpeedDelay);
-    }
-  }
-
-  delay(ReturnDelay);
-
-  for (int i = 45 - EyeSize - 2; i > 15; i--)
-  {
-    if (stateData = visionLock) {
-      parseData();
-      reset(2);
-      reset(3);
-      strip.setPixelColor(i, red / 10, green / 10, blue / 10);
-      for (int j = 1; j <= EyeSize; j++)
-      {
-        strip.setPixelColor(i + j, red, green, blue);
-      }
-      strip.setPixelColor(i + EyeSize + 1, red / 10, green / 10, blue / 10);
-      strip.show();
-      delay(SpeedDelay);
-    }
-  }
-
-  delay(ReturnDelay);
-}
-void setCylonBounce(int CVG)
-{
-  byte red = 255;
-  byte green = 0;
-  byte blue  = 0;
-  int EyeSize = 3;
-  int SpeedDelay = 30;
-  int ReturnDelay = 30;
-
-  for (int i = 15; i < 45 - EyeSize - 2; i++)
-  {
-    if (stateData = visionLock) {
-      parseData();
-      reset(2);
-      reset(3);
-      strip.setPixelColor(i, red / 10, green / 10, blue / 10);
-
-      for (int j = 1; j <= EyeSize; j++)
-      {
-        strip.setPixelColor(i + j, red, green, blue);
-      }
-      strip.setPixelColor(i + EyeSize + 1, red / 10, green / 10, blue / 10);
-      strip.show();
-      delay(SpeedDelay);
-    }
-  }
-
-  delay(ReturnDelay);
-
-  for (int i = 45 - EyeSize - 2; i > 15; i--)
-  {
-    if (stateData = visionLock) {
-      parseData();
-      reset(2);
-      reset(3);
-      strip.setPixelColor(i, red / 10, green / 10, blue / 10);
-      for (int j = 1; j <= EyeSize; j++)
-      {
-        strip.setPixelColor(i + j, red, green, blue);
-      }
-      strip.setPixelColor(i + EyeSize + 1, red / 10, green / 10, blue / 10);
-      strip.show();
-      delay(SpeedDelay);
-    }
-  }
-
-  delay(ReturnDelay);
-}
 
 void meteorRain()
 {
@@ -359,62 +334,33 @@ void fadeToBlack(int ledNo, byte fadeValue)
 }
 
 
-void setRainbow()
-{
-  byte *c;
-  int speedDelay = 10;
-  for (int j = 0; j < 256; j++)                                // cycle all 256 colors in the wheel
-  {
-    parseData();
-    if (stateData == reverseDrive) {
-      for (int q = 0; q < 3; q++)
-      {
-        for (int i = 15; i <= 43 ; i = i + 3)
-        {
-          c = Wheel( (i + j) % 255);
-          strip.setPixelColor(i + q, *c, *(c + 1), *(c + 2)); //turn every third pixel on
-        }
-        strip.show();
 
-        delay(speedDelay);
 
-        for (int i = 15; i < 45; i = i + 3)
-        {
-          strip.setPixelColor(i + q, 0, 0, 0);    //turn every third pixel off
-        }
-      }
+void rainbowCycle(uint8_t wait) {
+  uint16_t i, j;
+
+  for (j = 0; j < 256 * 5; j++) { // 5 cycles of all colors on wheel
+    for (i = 0; i < strip.numPixels(); i++) {
+      strip.setPixelColor(i, Wheel(((i * 256 / strip.numPixels()) + j) & 255));
     }
+    strip.show();
+    delay(wait);
   }
 }
-byte * Wheel(byte WheelPos)
-{
-  static byte c[3];
 
-  if (WheelPos < 85)
-  {
-    c[0] = WheelPos * 3;
-    c[1] = 255 - WheelPos * 3;
-    c[2] = 0;
-  }
-  else if (WheelPos < 170)
-  {
+// Input a value 0 to 255 to get a color value.
+// The colours are a transition r - g - b - back to r.
+uint32_t Wheel(byte WheelPos) {
+  if (WheelPos < 85) {
+    return strip.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
+  } else if (WheelPos < 170) {
     WheelPos -= 85;
-    c[0] = 255 - WheelPos * 3;
-    c[1] = 0;
-    c[2] = WheelPos * 3;
-  }
-  else
-  {
+    return strip.Color(255 - WheelPos * 3, 0, WheelPos * 3);
+  } else {
     WheelPos -= 170;
-    c[0] = 0;
-    c[1] = WheelPos * 3;
-    c[2] = 255 - WheelPos * 3;
+    return strip.Color(0, WheelPos * 3, 255 - WheelPos * 3);
   }
-
-
-  return c;
 }
-
 
 
 //Sets the strip to black(no color)
@@ -424,26 +370,7 @@ void reset(int quadrant)
   strip.show();
 }
 
-void parseData()
-{
-  connectionTimer++;                                //Adds a count to the ConnectionTimer
-  if (robotClient.available())                      //Runs when bytes are available to read
-  {
-    connectionTimer = 0;                            //Sets the connectionTimer countdown to zero
-    dataString = "";                                //Resets our final data string
-    while (robotClient.available())                 //Processes data until program is out of readable bytes
-    {
-      char robotRead = (char)robotClient.read();    //Reads the sent data string
-      dataString = dataString + robotRead;          //Combines the character with the full data string
-    }
-  }
-  //Parses dataString and receives corresponding values from Java program
-  allianceData = dataString.substring(0, 2);
-  Serial.print(allianceData);
-  //Grabs the expected location of various data, puts it in variables
-  stateData = dataString.substring(2, 4);
-  Serial.println(stateData);
-}
+
 
 void resetConnectionTimer()
 {
@@ -475,29 +402,26 @@ void loop()
 
   if (stateData.equals(forwardDrive))
   {
-    setSolidGreen(1);
-    setSolidGreen(4);
-    setCylonBounce(1);
+    theaterChase(strip.Color(0, 255, 255), 50); // Aqua
   }
   else if (stateData.equals(reverseDrive))
   {
-    setSolidRed(1);
-    setSolidRed(4);
-    setRainbow();
+    theaterChase(strip.Color(255, 0, 255), 50); // Purple
   }
   else if (stateData.equals(visionLock))
   {
-    setSolidPurple(1);
-    setSolidPurple(4);
-    setCylonBounce();
+    setWipeGreenLights();
   }
   else if (stateData.equals(climbing))
   {
-    setClimbingGreenLights();
+    setWipeGreenLights();
   }
-  else
+  else if (stateData.equals(stillDrive))
   {
     setRunningAllianceColors();
+  } else if (stateData.equals("")){
+    rainbowCycle(20);
+
   }
 
   resetConnectionTimer();
