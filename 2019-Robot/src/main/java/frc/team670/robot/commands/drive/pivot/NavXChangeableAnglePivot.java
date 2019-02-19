@@ -9,11 +9,13 @@ package frc.team670.robot.commands.drive.pivot;
 
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.command.Command;
+import frc.team670.robot.commands.drive.teleop.XboxRocketLeagueDrive;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.dataCollection.NullPIDOutput;
 import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.MutableDouble;
+import frc.team670.robot.Robot;
 import jaci.pathfinder.Pathfinder;
 
 public class NavXChangeableAnglePivot extends Command {
@@ -95,7 +97,14 @@ public class NavXChangeableAnglePivot extends Command {
   protected void end() {
     driveBase.stop();
     System.out.println(sensors.getYawDouble());
-		Logger.consoleLog("CurrentAngle: %s, TargetAngle: %s", sensors.getYawDouble(), finalAngle);  }
+    Logger.consoleLog("CurrentAngle: %s, TargetAngle: %s", sensors.getYawDouble(), finalAngle);  
+    boolean isReversed = XboxRocketLeagueDrive.isDriveReversed();
+    if (isReversed) {
+      Robot.leds.setReverseData(true);
+    } else {
+      Robot.leds.setForwardData(true);
+    }
+  }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run

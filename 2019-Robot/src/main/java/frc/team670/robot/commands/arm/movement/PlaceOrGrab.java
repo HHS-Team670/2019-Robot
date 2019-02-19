@@ -32,7 +32,7 @@ public class PlaceOrGrab extends CommandGroup {
    */
   public PlaceOrGrab(boolean isPlacing) {
     SmartDashboard.putString("current-command", "PlaceOrGrab");
-    ArmState state = Arm.getCurrentState();
+    ArmState state = Arm.getTargetState();
     if (state.equals(Arm.getArmState(LegalState.PLACE_BALL_CARGOSHIP_BACK))) {
       addSequential(new DropBall(Robot.claw, Robot.arm));
     } else if (state.equals(Arm.getArmState(LegalState.PLACE_BALL_CARGOSHIP_FORWARD))) {
@@ -54,6 +54,13 @@ public class PlaceOrGrab extends CommandGroup {
       addSequential(moveArm);
       addSequential(new DropBall(Robot.claw, Robot.arm));
       moveArm = ArmPathGenerator.getPath(Arm.getArmState(LegalState.PLACE_BALL_ROCKET_MIDDLE_BACK), state, Robot.arm);
+      addSequential(moveArm);
+    } 
+    else if (state.equals(Arm.getArmState(LegalState.READY_GRAB_HATCH_GROUND_BACK))) {
+      moveArm = ArmPathGenerator.getPath(Arm.getArmState(LegalState.GRAB_HATCH_GROUND_BACK), Robot.arm);
+      addSequential(moveArm);
+      addSequential(new GrabHatch(Robot.claw, Robot.arm));
+      moveArm = ArmPathGenerator.getPath(Arm.getArmState(LegalState.READY_GRAB_HATCH_GROUND_BACK), state, Robot.arm);
       addSequential(moveArm);
     } else if (state.equals(Arm.getArmState(LegalState.READY_PLACE_HATCH_ROCKET_MIDDLE_BACK))) {
       moveArm = ArmPathGenerator.getPath(Arm.getArmState(LegalState.PLACE_HATCH_ROCKET_MIDDLE_BACK), Robot.arm);

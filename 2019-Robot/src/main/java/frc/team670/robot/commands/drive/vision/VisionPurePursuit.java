@@ -21,6 +21,8 @@ import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.MutableDouble;
 import frc.team670.robot.utils.functions.MathUtils;
 import frc.team670.robot.utils.math.Vector;
+import frc.team670.robot.Robot;
+
 
 /**
  * Starts a Pure Pursuit path based off vision data
@@ -145,7 +147,7 @@ public class VisionPurePursuit extends CommandGroup {
 
     finalAngle.setValue(horizontalAngle);
     PurePursuit command = new PurePursuit(path, driveBase, sensors, poseEstimator, isReversed, finalAngle);
-
+    Robot.leds.setVisionData(true);
     addSequential(command);
   }
 

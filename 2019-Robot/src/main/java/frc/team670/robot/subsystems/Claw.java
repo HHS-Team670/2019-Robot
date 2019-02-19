@@ -25,7 +25,7 @@ public class Claw extends Subsystem {
   /** The amount of time to delay to allow the pneumatics to move in seconds */
   public static final double TIME_TO_MOVE = 0.6;
 
-  private static final double PULSE_DURATION = 0.4; // In seconds
+  private static final double PULSE_DURATION = TIME_TO_MOVE + 0.4; // In seconds
   public static final double MAX_CLAW_OPEN_DIAMETER = 20; //Set distance
   // Used to find lowest point on arm (so that intake doesn't crash into it). If claw is angled up, the extension tip is lowest point.
 
@@ -78,8 +78,9 @@ public class Claw extends Subsystem {
    * Toggles the claw grip based on closed and soft.
    */
   public void toggleGrip() {
-    if (sol1 != null) {
-      changeSolenoid(!sol1.get());
+    if (sol1 != null && sol0 != null) {
+      sol1.set(!sol1.get());
+      sol0.set(!sol0.get());
     }
   }
 
@@ -87,15 +88,19 @@ public class Claw extends Subsystem {
    * Closes the claw.
    */
   public void closeClaw() {
-    changeSolenoid(true);
+    changeSolenoid(false);
     System.out.println("Close Claw Called");
+  }
+
+  public void togglePush() {
+    push.set(!push.get());
   }
 
   /**
    * Opens the claw.
    */
   public void openClaw() {
-    changeSolenoid(false);
+    changeSolenoid(true);
     System.out.println("Open Claw Called");
   }
 
@@ -121,10 +126,10 @@ public class Claw extends Subsystem {
 
   public boolean isOpen() {
     if(sol1 != null) {
-      return !sol1.get();
+      return sol1.get();
     }
     else if (sol0 != null) {
-      return !sol0.get();
+      return sol0.get();
     }
     return true;
   }

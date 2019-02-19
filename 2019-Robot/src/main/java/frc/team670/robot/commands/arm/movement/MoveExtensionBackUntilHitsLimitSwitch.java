@@ -43,7 +43,7 @@ public class MoveExtensionBackUntilHitsLimitSwitch extends Command {
 
   protected void end(){
     extension.stop();
-    extension.resetPositionBasedOnLimitSwitchTripping();
+    extension.warnifLimitHit();
   }
 
   @Override

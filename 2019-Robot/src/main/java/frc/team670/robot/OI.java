@@ -7,16 +7,14 @@
 
 package frc.team670.robot;
 
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team670.robot.commands.arm.EnableArmBrakeMode;
-import frc.team670.robot.commands.arm.EnableArmCoastMode;
 import frc.team670.robot.commands.arm.movement.MoveArm;
-import frc.team670.robot.commands.cameras.FlipCamera;
+import frc.team670.robot.commands.claw.DropBall;
+import frc.team670.robot.commands.claw.PickupBall;
 import frc.team670.robot.commands.drive.teleop.FlipDriveAndCamera;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.dataCollection.XKeys;
@@ -42,6 +40,7 @@ public class OI {
 
   private JoystickButton enableBrakeMode, enableCoastMode;
   private JoystickButton armToNeutral;
+  private JoystickButton dropBall, grabBall, togglePush;
   
 
   public OI() {
@@ -58,8 +57,20 @@ public class OI {
         }
       }
     );
-  }
 
+    // dropBall = new JoystickButton(driverController, XboxButtons.Y);
+    // dropBall.whenPressed(new DropBall(Robot.claw, Robot.arm));
+    // grabBall = new JoystickButton(driverController, XboxButtons.X);
+    // grabBall.whenPressed(new PickupBall(Robot.claw, Robot.arm));
+
+    // dropBall = new JoystickButton(driverController, XboxButtons.B);
+    // dropBall.whenPressed(new InstantCommand() {
+    //   protected void initialize() {
+    //     Robot.claw.togglePush();
+    //   }
+    // });
+
+  }
   /**
    * Sets the rumble on the driver controller
    * 
