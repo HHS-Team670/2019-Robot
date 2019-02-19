@@ -30,13 +30,20 @@ public class ArmPathGenerator {
 
   }
 
+  /**
+   * Generates using the current ArmState as its current location
+   */
+  public static CommandGroup getPath(ArmState destination, Arm arm) {
+    return getPath(Arm.getCurrentState(), destination, arm);
+  }
+
   /** 
    * Looks for an existing path. If none exists, search for the path to move to.
    * Called just before this Command runs the first time
-   * */
-  public static CommandGroup getPath(ArmState destination, Arm arm) {
+   */
+  public static CommandGroup getPath(ArmState start, ArmState destination, Arm arm) {
     // System.out.println("................getting path");
-    ArmState currentState = Arm.getCurrentState();
+    ArmState currentState = start;
     // Logger.consoleLog("currentState: %s, destinationState: %s", currentState.getClass().getName(), destination.getClass().getName());
     CommandGroup movements = new CommandGroup() {
       @Override
