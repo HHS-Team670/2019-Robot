@@ -132,9 +132,13 @@ NetworkTables.addKeyListener('/SmartDashboard/claw-status', (key, value) => {
   } else if (value === "Hatch") {
     document.getElementById('claw').style.stroke = "rgb(65, 169, 244)";
     document.getElementById('claw').style.fill = "rgb(65, 169, 244)";
+    document.getElementById('held-item').innerHTML = "Hatch";
   } else if (value === "Ball") {
     document.getElementById('claw').style.stroke = "rgb(244, 151, 65)";
     document.getElementById('claw').style.fill = "rgb(244, 151, 65)";
+    document.getElementById('held-item').innerHTML = "Ball";
+  } else {
+    document.getElementById('held-item').innerHTML = "None";
   }
 })
 

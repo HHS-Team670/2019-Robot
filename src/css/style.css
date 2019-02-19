@@ -224,9 +224,9 @@ body.login #login {
 }
 #current-command {
     position: absolute;
-    transform: translate(81vw, 68vh);
+    transform: translate(81vw, 65vh);
     width: 13vw;
-    height: 6vh;
+    height: 10vh;
     z-index: 1;
 }
 
