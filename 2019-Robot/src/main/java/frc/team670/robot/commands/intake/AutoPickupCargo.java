@@ -31,7 +31,9 @@ public class AutoPickupCargo extends CommandGroup {
     SmartDashboard.putString("current-command", "AutoPickupCargo");
     // runIntake will go until the IR in the claw gets tripped or 0.5 seconds after
     // the Intake sensor has been tripped
-    addParallel(new OpenClaw(claw));
+    if(!claw.isOpen())
+      addParallel(new OpenClaw(claw));
+      
     CommandGroup moveArm = ArmPathGenerator.getPath(Arm.getStates().get(LegalState.GRAB_BALL_INTAKE), arm);
     addSequential(moveArm);
     addSequential(new RunIntakeInWithIR(intake, sensors));
