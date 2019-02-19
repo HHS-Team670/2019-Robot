@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.arm.movement.ArmPathGenerator;
 import frc.team670.robot.commands.arm.movement.MoveArm;
+import frc.team670.robot.commands.claw.OpenClaw;
 import frc.team670.robot.commands.claw.PickupBall;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.Arm;
@@ -28,9 +29,9 @@ public class AutoPickupCargo extends CommandGroup {
    */
   public AutoPickupCargo(Arm arm, Intake intake, Claw claw, MustangSensors sensors) {
     SmartDashboard.putString("current-command", "AutoPickupCargo");
-
     // runIntake will go until the IR in the claw gets tripped or 0.5 seconds after
     // the Intake sensor has been tripped
+    addParallel(new OpenClaw(claw));
     CommandGroup moveArm = ArmPathGenerator.getPath(Arm.getStates().get(LegalState.GRAB_BALL_INTAKE), arm);
     addSequential(moveArm);
     addSequential(new RunIntakeInWithIR(intake, sensors));
