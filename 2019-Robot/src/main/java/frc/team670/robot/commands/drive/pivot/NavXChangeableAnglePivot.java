@@ -24,8 +24,10 @@ public class NavXChangeableAnglePivot extends Command {
   private double startAngle, finalAngle;
   private PIDController pivotController;
 
-  private static final double P = 0.0055, I = 0.00001, D = 0;
-  private static final double ABSOLUTE_TOLERANCE = 3;
+  private static final double P = 0.05, I = 0.0, D = 0.5;
+  private static final double ABSOLUTE_TOLERANCE = 1.5;
+
+  private int onTargetCount;
 
 
   public NavXChangeableAnglePivot(MutableDouble angle, DriveBase driveBase, MustangSensors sensors) {
@@ -45,15 +47,17 @@ public class NavXChangeableAnglePivot extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    if(sensors.isNavXNull()){
-      cancel();
-      return;
-    }
+    System.out.println(sensors.getYawDouble());
+    onTargetCount = 0;
+    // if(sensors.isNavXNull()){
+    //   cancel();
+    //   return;
+    // }
 
-    if(angle.getValue() < 3) {
-      cancel();
-      return;
-    }
+    // if(angle.getValue() < 3) {
+    //   cancel();
+    //   return;
+    // }
 
     startAngle = sensors.getYawDouble();
     finalAngle = Pathfinder.boundHalfDegrees(startAngle + angle.getValue());
@@ -77,14 +81,21 @@ public class NavXChangeableAnglePivot extends Command {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
+    // if(pivotController.onTarget()) {
+		//   onTargetCount ++;
+	  // } else {
+		//   onTargetCount = 0;
+	  // }
+	  // return (onTargetCount > 3);
     return pivotController.onTarget();
   }
 
   // Called once after isFinished returns true
   @Override
   protected void end() {
-		driveBase.stop();
-		Logger.consoleLog("CurrentAngle: %s, TargetAngle", sensors.getYawDouble(), finalAngle);  }
+    driveBase.stop();
+    System.out.println(sensors.getYawDouble());
+		Logger.consoleLog("CurrentAngle: %s, TargetAngle: %s", sensors.getYawDouble(), finalAngle);  }
 
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run

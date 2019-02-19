@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -293,8 +294,8 @@ public class DriveBase extends Subsystem {
   public void setSparkVelocityControl(double leftVel, double rightVel) {
     leftVel = convertInchesPerSecondToDriveBaseRoundsPerMinute(convertInchesToDriveBaseTicks(leftVel));
     rightVel = convertInchesPerSecondToDriveBaseRoundsPerMinute(convertInchesToDriveBaseTicks(rightVel));
-    System.out.println("LeftVel: " + leftVel);
-    System.out.println("RightVel: " + rightVel);
+    // System.out.println("LeftVel: " + leftVel);
+    // System.out.println("RightVel: " + rightVel);
     left1.getPIDController().setReference(leftVel, ControlType.kVelocity, VELOCITY_PID_SLOT);
     right1.getPIDController().setReference(rightVel, ControlType.kVelocity, VELOCITY_PID_SLOT);
   }
@@ -628,6 +629,10 @@ public class DriveBase extends Subsystem {
    */
   public double getLeftMustangEncoderVelocityInTicksPerSecond() {
     return leftMustangEncoder.getVelocityTicks();
+  }
+
+  public void initCoastMode() {
+    setMotorsNeutralMode(IdleMode.kCoast);
   }
 
   /**

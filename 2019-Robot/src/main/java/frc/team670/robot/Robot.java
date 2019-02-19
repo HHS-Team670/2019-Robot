@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.ControlOperatorController;
 import frc.team670.robot.commands.drive.teleop.XboxRocketLeagueDrive;
-import frc.team670.robot.commands.drive.vision.VisionPurePursuit;
 import frc.team670.robot.commands.drive.vision.VisionPurePursuitWithPivot;
 import frc.team670.robot.commands.tuning.ResetPulseWidthEncoder;
 import frc.team670.robot.constants.RobotConstants;
@@ -161,6 +160,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Actual Extension" , extension.getLengthInches());
     SmartDashboard.putBoolean("drive-reversed-status", XboxRocketLeagueDrive.isDriveReversed());
 
+    SmartDashboard.putNumber("Angle", sensors.getYawDouble());
+
     // SmartDashboard.putNumber("Arbitrary Feedforward Measurement", MeasureArbitraryFeedforward.output);
 
     // SmartDashboard.putString("Held Item", arm.getHeldItem().toString());
@@ -183,6 +184,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("robot-state", "disabledInit()");
     Logger.consoleLog("Robot Disabled");
     // autonomousCommand = oi.getSelectedAutonCommand();
+    driveBase.initCoastMode();
     intake.stop();
     timer.stop();
     intake.stop();
@@ -233,8 +235,9 @@ public class Robot extends TimedRobot {
     // autonomousCommand = new RunIntake(intake, sensors, true);
     // schedule the autonomous command (example)
 
-    autonomousCommand = new VisionPurePursuitWithPivot(driveBase, coprocessor, sensors, 0, false, true);
-      // autonomousCommand = new TestVelocityDrive(20, 20);
+    autonomousCommand = new VisionPurePursuitWithPivot(driveBase, coprocessor, sensors, 6, false, true);
+      // autonomousCommand = new TestVelocityDrive(20, 20);'
+    // autonomousCommand = new NavXChangeableAnglePivot(new MutableDouble(15), driveBase, sensors);
 
     if (autonomousCommand != null) {
       autonomousCommand.start();

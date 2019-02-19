@@ -17,7 +17,7 @@ import frc.team670.robot.utils.math.DrivePower;
 
 public class PurePursuit extends Command {
 
-  private static final double LOOKAHEAD_DISTANCE = 12;
+  private static final double LOOKAHEAD_DISTANCE_AT_66_INCHES = 15;
 
   private PurePursuitTracker purePursuitTracker;
   private PoseEstimator poseEstimator;
@@ -36,7 +36,7 @@ public class PurePursuit extends Command {
    this.finalAngle = finalAngle;
   
    purePursuitTracker = new PurePursuitTracker(poseEstimator, driveBase, sensors, isReversed);
-   purePursuitTracker.setPath(path, LOOKAHEAD_DISTANCE);
+   purePursuitTracker.setPath(path, LOOKAHEAD_DISTANCE_AT_66_INCHES * 40/66);
    requires(driveBase);
   }
 
