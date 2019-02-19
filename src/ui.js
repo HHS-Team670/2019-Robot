@@ -122,13 +122,19 @@ NetworkTables.addKeyListener('/SmartDashboard/intake-angle', (key, value) => {
   if (value != null) document.getElementById('intake').style = "transform: rotate(" + (value - 90) + "deg)";
 });
 
-NetworkTables.addKeyListener('/SmartDashboard/claw-held-item', (key, value) => {
-  if (value === "None") {
-    document.getElementById('claw').style.stroke = "rgb(255, 255, 255)";
+NetworkTables.addKeyListener('/SmartDashboard/claw-status', (key, value) => {
+  if (value === "open") {
+    document.getElementById('claw').style.stroke = "rgb(0, 200, 0)";
+    document.getElementById('claw').style.fill = "rgb(0, 200, 0)";
+  } else if (value === "close") {
+    document.getElementById('claw').style.stroke = "rgb(0, 0, 200)";
+    document.getElementById('claw').style.fill = "rgb(0, 0, 200)";
   } else if (value === "Hatch") {
     document.getElementById('claw').style.stroke = "rgb(65, 169, 244)";
+    document.getElementById('claw').style.fill = "rgb(65, 169, 244)";
   } else if (value === "Ball") {
     document.getElementById('claw').style.stroke = "rgb(244, 151, 65)";
+    document.getElementById('claw').style.fill = "rgb(244, 151, 65)";
   }
 })
 
