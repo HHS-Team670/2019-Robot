@@ -70,7 +70,7 @@ header {
     padding: 0;
     position: absolute;
     bottom: 0vh;
-    left: 30vw;
+    left: 32vw;
     width: 30%;
     height: 100%;
     object-fit: fill;
@@ -131,8 +131,13 @@ body.login #login {
 #login > button {
     margin-left: 5px;
 }
-#camera-src {
+#camera-back {
   bottom: 0vh;
+  z-index: 1;
+}
+#camera-front {
+  bottom: 0vh;
+  left: 32vw;
   z-index: 1;
 }
 #robot-info {
@@ -142,12 +147,12 @@ body.login #login {
 }
 #status-lights {
   position: absolute;
-  transform: translate(58vw, 75vh);
+  transform: translate(70vw, 75vh);
   z-index: 1;
 }
 #warning-info {
     position: absolute;
-    transform: translate(60vw, 90vh);
+    transform: translate(65vw, 90vh);
     width: 40vw;
     height: 10vh;
     z-index: 1;
@@ -263,13 +268,6 @@ body.login #login {
     width: 13vw;
     height: 6vh;
     z-index: 1;
-}
-#climb-status {
-    position: absolute;
-    transform: translate(60vw, 12vh);
-    width: 15vw;
-    height: 10vh;
-    z-index: 0;
 }
 
 #big-warning {

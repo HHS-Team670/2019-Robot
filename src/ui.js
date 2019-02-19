@@ -7,10 +7,6 @@ var ui = {
 var date = new Date();
 document.getElementById('big-warning').style.display = "none";
 
-
-document.getElementById('climb-state-text').style.stroke = `rgb(90, 90, 90)`;
-document.getElementById('climb-level-text').style.stroke = `rgb(90, 90, 90)`;
-
 document.getElementById('auton-chooser').style.display = "none";
 ui.timer.style.color = `rgb(0, 200, 0)`;
 
@@ -75,7 +71,7 @@ NetworkTables.addKeyListener('/SmartDashboard/game-time', (key, value) => {
 
 // listens for robot-state and updates status lights and auton chooser accordingly
 NetworkTables.addKeyListener('/SmartDashboard/robot-state', (key, value) => {
-  if (value === "autonomousInit()") {
+  if (value === "autonomousInit()" || value === "disabledPeriodic()") {
     document.getElementById('auton-chooser').style.display = "none";
   } else if (value === "autonomousPeriodic()") {
     document.getElementById('auton-status').style.fill = "rgb(0,255,0)";
@@ -108,19 +104,9 @@ NetworkTables.addKeyListener('/SmartDashboard/current-command', (key, value) => 
   else document.getElementById('current-command-text').innerHTML = "NULL";
 });
 
-// displays the current climb state
-NetworkTables.addKeyListener('/SmartDashboard/climb-state', (key, value) => {
-  if (value != null) document.getElementById('climb-state-text').innerHTML = value;
-});
-
-// displays the current climb level
-NetworkTables.addKeyListener('/SmartDashboard/climb-level', (key, value) => {
-  if (value != null) document.getElementById('climb-level-text').innerHTML = value;
-});
-
 // displays the current arm state
 NetworkTables.addKeyListener('/SmartDashboard/current-arm-state', (key, value) => {
-  if (value != null) document.getElementById('current-arm-state').innerHTML = value;
+  if (value != null) document.getElementById('current-arm-state').innerHTML = value.split("$")[1].split("@")[0];
 });
 
 // updates the robot diagram based on the angle of the robot's elbow

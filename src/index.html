@@ -8,15 +8,16 @@
 </head>
 
 <body>
-    <header>
-        <div id="robot-state">Unknown state</div>
-    </header>
 
     <div id="timer">2:30</div>
 
-    <div id="camera-src">
-      <p id="camera-text">Back</p>
-    </div>    
+    <div id="camera-back">
+      <p>Back</p>
+    </div>  
+
+    <div id="camera-front">
+      <p>Front</p>
+    </div>  
     
     <div id="camera1"></div>
     <div id="camera2"></div>
@@ -64,12 +65,6 @@
     <svg id="current-command">
       <text id="current-command-text" x="50%" y="20%" style="text-anchor: middle">Current Command</text>
     </svg>
-
-     <svg id="climb-status">
-      <text id="climb-state-text" x="50%" y="20%" style="text-anchor: middle">Current Climb State </text>
-      <text id="climb-level-text" x="50%" y="100%" style="text-anchor: middle">Current Climb Level </text>
-    </svg>
-
 
     <div id="auton-chooser">
       <form id="auto-chooser">
