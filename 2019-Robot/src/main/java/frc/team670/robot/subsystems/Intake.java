@@ -137,8 +137,10 @@ public class Intake extends BaseIntake {
    *                      1]
    */
   public void runIntake(double power, boolean runningIn) {
-    power *= runningIn ? 1 : -1;
-    roller.set(ControlMode.PercentOutput, power);
+    if(getAngleInDegrees() > 0) {
+        power *= runningIn ? 1 : -1;
+        roller.set(ControlMode.PercentOutput, power);
+    }
   }
   /**
    * Converts an intake angle into ticks

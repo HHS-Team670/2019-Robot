@@ -507,7 +507,7 @@ public class Arm {
 
   private class ReadyLowHatchForward extends ArmState {
     private ReadyLowHatchForward(Arm arm, BaseIntake intake) {
-      super(3, 7, 3.2, false, new ArmTransition[] { new CommonTransition(LegalState.READY_LOW_HATCH_FORWARD, LegalState.LOW_HATCH_FORWARD, arm, intake), 
+      super(103, -17, 3.2, false, new ArmTransition[] { new CommonTransition(LegalState.READY_LOW_HATCH_FORWARD, LegalState.LOW_HATCH_FORWARD, arm, intake), 
         new CommonTransition(LegalState.READY_LOW_HATCH_FORWARD, LegalState.NEUTRAL, arm, intake)
       });
     }

@@ -279,6 +279,8 @@ public class DriveBase extends Subsystem {
   public void setSparkVelocityControl(double leftVel, double rightVel) {
     leftVel = convertInchesPerSecondToDriveBaseRoundsPerMinute(convertInchesToDriveBaseTicks(leftVel));
     rightVel = convertInchesPerSecondToDriveBaseRoundsPerMinute(convertInchesToDriveBaseTicks(rightVel));
+    System.out.println("LeftVel: " + leftVel);
+    System.out.println("RightVel: " + rightVel);
     left1.getPIDController().setReference(leftVel, ControlType.kVelocity, VELOCITY_PID_SLOT);
     right1.getPIDController().setReference(rightVel, ControlType.kVelocity, VELOCITY_PID_SLOT);
   }

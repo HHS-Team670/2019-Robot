@@ -12,12 +12,13 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.arm.EnableArmBrakeMode;
 import frc.team670.robot.commands.arm.EnableArmCoastMode;
+import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.commands.cameras.FlipCamera;
-import frc.team670.robot.commands.claw.CloseClaw;
-import frc.team670.robot.commands.claw.OpenClaw;
 import frc.team670.robot.commands.drive.teleop.FlipDriveAndCamera;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.dataCollection.XKeys;
+import frc.team670.robot.subsystems.Arm;
+import frc.team670.robot.subsystems.Arm.LegalState;
 import frc.team670.robot.utils.MustangController;
 import frc.team670.robot.utils.MustangController.XboxButtons;
 
@@ -63,10 +64,10 @@ public class OI {
     flipCameras = new JoystickButton(driverController, XboxButtons.B);
     flipCameras.whenPressed(new FlipCamera());
 
-    openClaw = new JoystickButton(driverController, XboxButtons.X);
-    openClaw.whenPressed(new OpenClaw(Robot.claw));
-    closeClaw = new JoystickButton(driverController, XboxButtons.Y);
-    closeClaw.whenPressed(new CloseClaw(Robot.claw));
+    // openClaw = new JoystickButton(driverController, XboxButtons.X);
+    // openClaw.whenPressed(new OpenClaw(Robot.claw));
+    // closeClaw = new JoystickButton(driverController, XboxButtons.Y);
+    // closeClaw.whenPressed(new CloseClaw(Robot.claw));
 
     // flipIntakeIn = new JoystickButton(driverController, XboxButtons.X);
     // flipIntakeIn.whenPressed(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_IN, Robot.intake));

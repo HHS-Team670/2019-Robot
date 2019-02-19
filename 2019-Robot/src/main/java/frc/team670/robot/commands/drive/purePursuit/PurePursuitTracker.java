@@ -36,7 +36,7 @@ public class PurePursuitTracker {
 			public void run() {
 				poseEstimator.update();
 				drivePower = update(poseEstimator.getPose(), driveBase.getLeftMustangEncoderVelocityInInchesPerSecond(), driveBase.getRightMustangEncoderVelocityInInchesPerSecond(), sensors.getRotationAngle().radians());
-				Robot.driveBase.setSparkVelocityControl(drivePower.getLeft(), drivePower.getRight()); //Returns in inches/s
+0				Robot.driveBase.setSparkVelocityControl(drivePower.getLeft(), drivePower.getRight()); //Returns in inches/s
 			}
 		});
         reset();
