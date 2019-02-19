@@ -23,6 +23,7 @@ public class ButtonRunIntake extends InstantCommand {
   private double power;
 
   public ButtonRunIntake(BaseIntake intake, double power, boolean runningIn) {
+    requires(intake);
     this.intake = intake;
     this.runningIn = runningIn;
     this.power = power;
