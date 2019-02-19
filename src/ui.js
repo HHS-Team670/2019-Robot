@@ -3,6 +3,7 @@ var ui = {
     multiCamSRC: document.getElementById('multicam-src'),
     timer: document.getElementById('timer')
 };
+const https = require('https');
 
 var date = new Date();
 document.getElementById('big-warning').style.display = "none";
@@ -10,12 +11,9 @@ document.getElementById('big-warning').style.display = "none";
 document.getElementById('auton-chooser').style.display = "none";
 ui.timer.style.color = `rgb(0, 200, 0)`;
 
-// document.getElementById('camera').viewer.style = "background-image: url(http://10.6.70.57:8001/?action=stream)";
-var multicamSources = ['http://10.6.70.57:8000/?action=stream', 'http://10.6.70.57:8001/?action=stream'];
+document.getElementById('camera1').style = "background-image: url(http://10.6.70.26:8000/?action=stream)";
+var multicamSources = ['http://10.6.70.26:8000/?action=stream', 'http://10.6.70.26:8001/?action=stream'];
 var multicamIndex = 0;
-
-// ui.camera.viewer.style.backgroundImage = 'url(' + ui.camera.src + ')';
-// document.getElementById('camera').style = "background-color: rgb(39, 163, 39)";
 
 // sets default positions for robot diagram
 var angle = 0;
@@ -25,13 +23,25 @@ document.getElementById('claw').style = "transform: translate(" + (Math.sin(angl
 document.getElementById('intake').style = "transform: rotate(" + 0 + "deg)";
 document.getElementById('arm-extension').style = "transform: translate(" + (Math.sin((angle) * Math.PI / 180) * armLength) + "px, " + (armLength - (Math.sin((angle+90) * Math.PI / 180) * armLength)) + "px) rotate(" + (angle + 180) + "deg)";
 
-// list of camera labels
-var cameras = ['Back', 'Front'];
-var cameraIndex = 0;
-document.getElementById('camera-text').innerHTML = cameras[cameraIndex];
-
 // sets the timer element to green color text
 document.getElementById('timer').style.color = 'rgb(0,200,0)';
+
+// https.get('http://10.6.70.26:8001/?action=stream', (resp) => {
+//   let data = '';
+
+//   // A chunk of data has been recieved.
+//   resp.on('data', (chunk) => {
+//     document.getElementById('camera1').style.backgroundImage = url('http://10.6.70.26:8000/?action=stream');
+//   });
+
+//   // The whole response has been received. Print out the result.
+//   resp.on('end', () => {
+//     console.log(JSON.parse(data).explanation);
+//   });
+
+// }).on("error", (err) => {
+//   console.log("Error: " + err.message);
+// });
 
 // listens for game-time which starts counting down on autonInit()
 NetworkTables.addKeyListener('/SmartDashboard/game-time', (key, value) => {
@@ -133,7 +143,13 @@ NetworkTables.addKeyListener('/SmartDashboard/elbow-angle', (key, value) => {
 
 // updates the robot diagram with the extension of the arm
 NetworkTables.addKeyListener('/SmartDashboard/arm-extension', (key, value) => {
-  if (value != null) document.getElementById('arm-extension').setAttribute('height', value * 60);
+  if (value != null) {
+    if (value <= 0) {
+      document.getElementById('arm-extension').setAttribute('height', 0);
+    } else {
+      document.getElementById('arm-extension').setAttribute('height', value * 60);
+    }
+  }
 });
 
 // updates the angle of the intake in the robot diagram
