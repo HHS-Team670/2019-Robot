@@ -43,6 +43,7 @@ public class NeutralToGrabBallIntake extends ArmTransition {
     super(LegalState.NEUTRAL, LegalState.GRAB_BALL_INTAKE, arm, intake);
     this.arm = arm;
     this.intake = intake;
+    setInterruptible(false);
   }
 
   @Override
