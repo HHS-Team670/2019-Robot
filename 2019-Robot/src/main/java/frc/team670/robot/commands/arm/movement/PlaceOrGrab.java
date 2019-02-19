@@ -32,7 +32,7 @@ public class PlaceOrGrab extends CommandGroup {
    */
   public PlaceOrGrab(boolean isPlacing) {
     SmartDashboard.putString("current-command", "PlaceOrGrab");
-    ArmState state = Arm.getCurrentState();
+    ArmState state = Arm.getTargetState();
     if (state.equals(Arm.getArmState(LegalState.PLACE_BALL_CARGOSHIP_BACK))) {
       addSequential(new DropBall(Robot.claw, Robot.arm));
     } else if (state.equals(Arm.getArmState(LegalState.PLACE_BALL_CARGOSHIP_FORWARD))) {

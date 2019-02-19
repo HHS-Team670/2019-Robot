@@ -183,6 +183,7 @@ public class XKeys {
     }
 
     private void toggleHeldItem() {
+        System.out.println("Toggle Held Item");
         Scheduler.getInstance().add(new ToggleHeldItem(Robot.arm));
     }
 
