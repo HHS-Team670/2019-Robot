@@ -61,7 +61,7 @@ public class Extension extends BaseExtension {
 
   private static final int OFFSET_FROM_ENCODER_ZERO = 0;
 
-  private Notifier resetPositionBasedOnLimitSwitchTrippingNotifier;
+  private Notifier warningWhenLimitTripped;
 
 
   public Extension() {
@@ -126,12 +126,12 @@ public class Extension extends BaseExtension {
     extensionMotor.getSensorCollection().setQuadraturePosition(START_POSITION_TICKS, 0); // The Extension 
     stop();
 
-    resetPositionBasedOnLimitSwitchTrippingNotifier = new Notifier(new Runnable() {
+    warningWhenLimitTripped = new Notifier(new Runnable() {
       public void run() {
-        resetPositionBasedOnLimitSwitchTripping();
+        warnifLimitHit();
       }
     });
-    resetPositionBasedOnLimitSwitchTrippingNotifier.startPeriodic(0.25);
+    warningWhenLimitTripped.startPeriodic(0.25);
 
   }
 
@@ -257,11 +257,11 @@ public class Extension extends BaseExtension {
     }
   }
 
-  public void resetPositionBasedOnLimitSwitchTripping() {
+  public void warnifLimitHit() {
     if (getReverseLimitSwitchTripped()) {
-      setSelectedSensorPosition(Extension.EXTENSION_IN_POS);
+      
     } else if (getForwardLimitSwitchTripped()) {
-      setSelectedSensorPosition(Extension.EXTENSION_OUT_POS);
+
     }
   }
 
