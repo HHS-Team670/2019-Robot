@@ -118,7 +118,7 @@ public class VisionPurePursuit extends InstantCommand {
     //   return;
     // }
 
-    double straightDistance = 40;
+    double straightDistance = 66;
 
     straightDistance = straightDistance - spaceFromTarget;
     if (straightDistance < 0) {
@@ -135,7 +135,8 @@ public class VisionPurePursuit extends InstantCommand {
     // right and negative is left
     // double angle = coprocessor.getAngleToWallTarget();
     double horizontalAngle = 0;
-    double horizontalDistance = straightDistance * Math.tan(Math.toRadians(horizontalAngle)); // x = y * tan(theta)
+    // double horizontalDistance = straightDistance * Math.tan(Math.toRadians(horizontalAngle)); // x = y * tan(theta)
+    double horizontalDistance = 18;
     double partialDistanceY = (straightDistance) * 2.0 / 5.0;
 
     System.out.println("straightDist: " + straightDistance + ", horizontalDistance: " + horizontalDistance);

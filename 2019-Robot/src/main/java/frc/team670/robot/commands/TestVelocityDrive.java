@@ -20,24 +20,25 @@ public class TestVelocityDrive extends Command {
     requires(Robot.driveBase);
     this.leftVelocity = leftVelocity;
     this.rightVelocity = rightVelocity;
+    setTimeout(2);
   }
 
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    Robot.driveBase.setSparkVelocityControl(leftVelocity, rightVelocity);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    
+    Robot.driveBase.tankDrive(leftVelocity/40, leftVelocity/40);
+
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return false;
+    return isTimedOut();
   }
 
   // Called once after isFinished returns true

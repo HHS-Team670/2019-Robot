@@ -57,9 +57,9 @@ public class PurePursuit extends Command {
 
     drivePower = purePursuitTracker.update(poseEstimator.getPose(), driveBase.getLeftMustangEncoderVelocityInInchesPerSecond(), driveBase.getRightMustangEncoderVelocityInInchesPerSecond(), sensors.getRotationAngle().radians());
   
-    driveBase.setSparkVelocityControl(drivePower.getLeft(), drivePower.getRight()); //Returns in inches/s
+    driveBase.tankDrive(drivePower.getLeft()/60, drivePower.getRight()/60); //Returns in inches/s
     if(executeCount % 5 == 0)
-      Logger.consoleLog("Powers (inches): leftPower: %s, rightPower: %s", drivePower.getLeft(), drivePower.getRight());
+      Logger.consoleLog("Powers (inches): leftPower: %s, rightPower: %s, Pose: %s", drivePower.getLeft(), drivePower.getRight(), poseEstimator.getPose());
     executeCount++;
   }
 

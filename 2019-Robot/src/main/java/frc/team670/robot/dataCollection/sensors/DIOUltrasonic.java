@@ -30,8 +30,9 @@ public class DIOUltrasonic {
         this.horizontalOffset = horizontalOffset;
 
         try {
-             ultrasonic =  new Ultrasonic(triggerPin, echoPin);
+         ultrasonic =  new Ultrasonic(triggerPin, echoPin);
         } catch (RuntimeException ex){
+            // System.out.println();
             ultrasonic = null;
             DriverStation.reportError("Ultrasonic error", true);
         }

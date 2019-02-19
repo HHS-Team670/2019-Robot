@@ -46,10 +46,12 @@ public class DriveBase extends Subsystem {
   private MustangDriveBaseEncoder leftMustangEncoder, rightMustangEncoder;
   private Encoder leftDIOEncoder, rightDIOEncoder;
 
+  private static final double drivebaseGearRatio = 8.45;
+
   private final double P_P = 0.1, P_I = 1E-4, P_D = 1, P_FF = 0; // Position PID Values. Set based off the default in
                                                                  // REV Robotics example code.
-  private final double V_P = 5E-6, V_I = 1E-6, V_D = 0, V_FF = 0; // Velocity PID Values. Set based off the default in
-                                                                  // REV Robotics example code.
+  private final double V_P = 10, V_I = 1E-6, V_D = 0, V_FF = 0; // Velocity PID Values. Set based off the default in
+                                                                // REV Robotics example code.
 
   public DriveBase() {
     left1 = new CANSparkMax(RobotMap.SPARK_LEFT_MOTOR_1, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -110,14 +112,16 @@ public class DriveBase extends Subsystem {
 
     // DIO Encoders
     try {
-      leftDIOEncoder = new Encoder(RobotMap.LEFT_ENCODER_CHANNEL_A, RobotMap.LEFT_ENCODER_CHANNEL_B, false, EncodingType.k4X);
+      leftDIOEncoder = new Encoder(RobotMap.LEFT_ENCODER_CHANNEL_A, RobotMap.LEFT_ENCODER_CHANNEL_B, false,
+          EncodingType.k4X);
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error Instantiating leftDIOEncoder: " + ex.getMessage(), true);
       leftDIOEncoder = null;
     }
-    
+
     try {
-      rightDIOEncoder = new Encoder(RobotMap.RIGHT_ENCODER_CHANNEL_A, RobotMap.RIGHT_ENCODER_CHANNEL_B, false, EncodingType.k4X);
+      rightDIOEncoder = new Encoder(RobotMap.RIGHT_ENCODER_CHANNEL_A, RobotMap.RIGHT_ENCODER_CHANNEL_B, false,
+          EncodingType.k4X);
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error Instantiating rightDIOEncoder: " + ex.getMessage(), true);
       rightDIOEncoder = null;
@@ -126,13 +130,13 @@ public class DriveBase extends Subsystem {
     double distancePerPulse = (1 / RobotConstants.DIO_TICKS_PER_ROTATION)
         * (Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
 
-    if (leftDIOEncoder != null){
+    if (leftDIOEncoder != null) {
       leftDIOEncoder.setDistancePerPulse(distancePerPulse);
       leftDIOEncoder.setReverseDirection(true);
     }
-    if(rightDIOEncoder != null) {
+    if (rightDIOEncoder != null) {
       rightDIOEncoder.setDistancePerPulse(distancePerPulse);
-      rightDIOEncoder.setReverseDirection(false);
+      rightDIOEncoder.setReverseDirection(true);
     }
 
     leftMustangEncoder = new MustangDriveBaseEncoder(leftDIOEncoder, left1.getEncoder());
@@ -255,15 +259,14 @@ public class DriveBase extends Subsystem {
   /**
    * Returns the left DIO Encoder
    */
-  public Encoder getLeftDIOEncoder(){
+  public Encoder getLeftDIOEncoder() {
     return leftDIOEncoder;
   }
-
 
   /**
    * Returns the right DIO Encoder
    */
-  public Encoder getRightDIOEncoder(){
+  public Encoder getRightDIOEncoder() {
     return rightDIOEncoder;
   }
 
@@ -472,7 +475,9 @@ public class DriveBase extends Subsystem {
    * the Spark Encoder
    */
   // public double getLeftSparkEncoderVelocityInches() {
-  //   return (DriveBase.convertDriveBaseTicksToInches(left1.getEncoder().getVelocity() / RobotConstants.SPARK_TICKS_PER_ROTATION) / 60);
+  // return
+  // (DriveBase.convertDriveBaseTicksToInches(left1.getEncoder().getVelocity() /
+  // RobotConstants.SPARK_TICKS_PER_ROTATION) / 60);
   // }
 
   /**
@@ -488,7 +493,9 @@ public class DriveBase extends Subsystem {
    * the Spark Encoder
    */
   // public double getRightSparkEncoderVelocityInches() {
-  //   return (DriveBase.convertDriveBaseTicksToInches(right1.getEncoder().getVelocity() / RobotConstants.SPARK_TICKS_PER_ROTATION) / 60);
+  // return
+  // (DriveBase.convertDriveBaseTicksToInches(right1.getEncoder().getVelocity() /
+  // RobotConstants.SPARK_TICKS_PER_ROTATION) / 60);
   // }
 
   /**
@@ -498,7 +505,6 @@ public class DriveBase extends Subsystem {
   public double getRightSparkEncoderVelocityTicks() {
     return (right1.getEncoder().getVelocity() / RobotConstants.SPARK_TICKS_PER_ROTATION / 60);
   }
-
 
   public double getLeftDIODistanceInches() {
     return leftDIOEncoder.getDistance();
@@ -526,126 +532,142 @@ public class DriveBase extends Subsystem {
   }
 
   /**
-  * Converts a tick value taken from a drive base DIO encoder to inches.
-  */
+   * Converts a tick value taken from a drive base DIO encoder to inches.
+   */
   public static double convertDriveBaseTicksToInches(double ticks) {
-      double rotations = ticks / RobotConstants.DIO_TICKS_PER_ROTATION;
-      return rotations * Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER;
-   }
+    double rotations = ticks / RobotConstants.DIO_TICKS_PER_ROTATION;
+    return rotations * Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER;
+  }
 
-   public static double convertSparkRevolutionsToInches(double revolutions) {
-    return revolutions * Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER;
- }
-
-  /**
-  * Converts an inch value into drive base DIO Encoder ticks.
-  */
-  public static int convertInchesToDriveBaseTicks(double inches) {
-      double rotations = inches / (Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
-      return (int)(rotations * RobotConstants.DIO_TICKS_PER_ROTATION);
+  public static double convertSparkRevolutionsToInches(double revolutions) {
+    // rev * 2piR in / rev
+    return revolutions * Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER / drivebaseGearRatio;
   }
 
   /**
-   * Gets inches per rotations of a NEO motor on the drive base since SparkMAX encoders work in rotations.
+   * Converts an inch value into drive base DIO Encoder ticks.
+   */
+  public static int convertInchesToDriveBaseTicks(double inches) {
+    double rotations = inches / (Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
+    return (int) (rotations * RobotConstants.DIO_TICKS_PER_ROTATION);
+  }
+
+  /**
+   * Gets inches per rotations of a NEO motor on the drive base since SparkMAX
+   * encoders work in rotations.
    */
   public static double convertDriveBaseRotationsToInches(double rotations) {
-      return RobotConstants.DRIVEBASE_INCHES_PER_ROTATION * rotations;
+    return RobotConstants.DRIVEBASE_INCHES_PER_ROTATION * rotations;
   }
 
   /**
-   * Gets rotations of a NEO motor on the drive base per a value in inches ince SparkMAX encoders work in rotations.
+   * Gets rotations of a NEO motor on the drive base per a value in inches ince
+   * SparkMAX encoders work in rotations.
    */
   public static double convertInchesToDriveBaseRotations(double inches) {
-      return inches / RobotConstants.DRIVEBASE_INCHES_PER_ROTATION;
+    return inches / RobotConstants.DRIVEBASE_INCHES_PER_ROTATION;
   }
 
   /**
    * Converts a value of per second of the DriveBase Rounds Per Minute
    */
   public static double convertInchesPerSecondToDriveBaseRoundsPerMinute(double inchesPerSecond) {
-      // (Inches/seconds) * (60 seconds/1 minute) * ((2 * Diameter inches)/Rotation)
-      return inchesPerSecond * 60 / (Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
+    // (Inches/seconds) * (60 seconds/1 minute) * ((2 * Diameter inches)/Rotation)
+    return inchesPerSecond * 60 / (Math.PI * RobotConstants.DRIVE_BASE_WHEEL_DIAMETER);
   }
 
   /**
    * Returns the MustangDriveBaseEncoder used for the left motors
    */
-  public MustangDriveBaseEncoder getLeftMustangDriveBaseEncoder(){
+  public MustangDriveBaseEncoder getLeftMustangDriveBaseEncoder() {
     return leftMustangEncoder;
   }
 
   /**
    * Returns the MustangDriveBaseEncoder used for the right motors
    */
-  public MustangDriveBaseEncoder getRightMustangDriveBaseEncoder(){
+  public MustangDriveBaseEncoder getRightMustangDriveBaseEncoder() {
     return rightMustangEncoder;
   }
 
   /**
-   * Returns the position of the MustangDriveBaseEncoder used for the left motors in ticks
+   * Returns the position of the MustangDriveBaseEncoder used for the left motors
+   * in ticks
    */
-  public int getLeftMustangEncoderPositionInTicks(){
+  public int getLeftMustangEncoderPositionInTicks() {
     return leftMustangEncoder.getPositionTicks();
   }
 
   /**
-   * Returns the position of the MustangDriveBaseEncoder used for the right motors in ticks
+   * Returns the position of the MustangDriveBaseEncoder used for the right motors
+   * in ticks
    */
-  public int getRightMustangEncoderPositionInTicks(){
+  public int getRightMustangEncoderPositionInTicks() {
     return rightMustangEncoder.getPositionTicks();
   }
 
   /**
-   * Returns the position of the MustangDriveBaseEncoder used for the left motors in inches
+   * Returns the position of the MustangDriveBaseEncoder used for the left motors
+   * in inches
    */
-  public double getLeftMustangEncoderPositionInInches(){
+  public double getLeftMustangEncoderPositionInInches() {
     return leftMustangEncoder.getPositionInches();
   }
 
   /**
-   * Returns the position of the MustangDriveBaseEncoder used for the right motors in inches
+   * Returns the position of the MustangDriveBaseEncoder used for the right motors
+   * in inches
    */
-  public double getRightMustangEncoderPositionInInches(){
+  public double getRightMustangEncoderPositionInInches() {
     return rightMustangEncoder.getPositionInches();
   }
-    /**
-   * Returns the velocity of the MustangDriveBaseEncoder used for the left motors in ticks/second
+
+  /**
+   * Returns the velocity of the MustangDriveBaseEncoder used for the left motors
+   * in ticks/second
    */
-  public double getLeftMustangEncoderVelocityInTicksPerSecond(){
+  public double getLeftMustangEncoderVelocityInTicksPerSecond() {
     return leftMustangEncoder.getVelocityTicks();
   }
 
   /**
-   * Returns the velocity of the MustangDriveBaseEncoder used for the right motors in ticks/second
+   * Returns the velocity of the MustangDriveBaseEncoder used for the right motors
+   * in ticks/second
    */
-  public double getRightMustangEncoderVelocityInTicksPerSecond(){
+  public double getRightMustangEncoderVelocityInTicksPerSecond() {
     return rightMustangEncoder.getVelocityTicks();
   }
 
   /**
-   * Returns the velocity of the MustangDriveBaseEncoder used for the left motors in inches/second
+   * Returns the velocity of the MustangDriveBaseEncoder used for the left motors
+   * in inches/second
    */
-  public double getLeftMustangEncoderVelocityInInchesPerSecond(){
+  public double getLeftMustangEncoderVelocityInInchesPerSecond() {
     return leftMustangEncoder.getVelocityInches();
   }
 
   /**
-   * Returns the velocity of the MustangDriveBaseEncoder used for the right motors in inches/second
+   * Returns the velocity of the MustangDriveBaseEncoder used for the right motors
+   * in inches/second
    */
-  public double getRightMustangEncoderVelocityInInchesPerSecond(){
+  public double getRightMustangEncoderVelocityInInchesPerSecond() {
     return rightMustangEncoder.getVelocityInches();
   }
 
   public void sendDIOEncoderDataToDashboard() {
-    if (leftDIOEncoder != null && rightDIOEncoder != null) {
-      SmartDashboard.putNumber("Left DIO Encoder: ", leftDIOEncoder.get());
-      SmartDashboard.putNumber("Right DIO Encoder: ", rightDIOEncoder.get());
-    } 
-    
+    if (leftDIOEncoder != null) {
+      SmartDashboard.putNumber("Left DIO Encoder: ", convertDriveBaseTicksToInches(leftDIOEncoder.get()));
+    }
+
+    if (rightDIOEncoder != null) {
+      SmartDashboard.putNumber("Right Encoder: ", rightDIOEncoder.get());
+    }
+
     if (leftDIOEncoder == null) {
-      SmartDashboard.putString("Left DIO Encoder: ", "LEFT DIO ENCODER IS NULL!");
-    } else{
-      SmartDashboard.putString("Right DIO Encoder: ", "RIGHT DIO ENCODER IS NULL!");
+      SmartDashboard.putString("Left DIO Encoder:", "LEFT DIO ENCODER IS NULL!");
+    }
+    if (rightDIOEncoder == null) {
+      SmartDashboard.putNumber("Right Encoder:", convertSparkRevolutionsToInches(right1.getEncoder().getPosition()));
     }
   }
 }

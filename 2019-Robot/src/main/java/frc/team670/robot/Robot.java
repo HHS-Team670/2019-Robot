@@ -7,8 +7,6 @@
 
 package frc.team670.robot;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -17,10 +15,8 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.ControlOperatorController;
-import frc.team670.robot.commands.arm.movement.MoveExtensionBackUntilHitsLimitSwitch;
 import frc.team670.robot.commands.drive.teleop.XboxRocketLeagueDrive;
 import frc.team670.robot.commands.drive.vision.VisionPurePursuit;
-import frc.team670.robot.commands.tuning.MeasureArbitraryFeedforward;
 import frc.team670.robot.commands.tuning.ResetPulseWidthEncoder;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangCoprocessor;
@@ -173,7 +169,7 @@ public class Robot extends TimedRobot {
     // wrist.sendDataToDashboard();
     // intake.sendDataToDashboard();
     sensors.sendUltrasonicDataToDashboard();
-    // driveBase.sendDIOEncoderDataToDashboard();
+    driveBase.sendDIOEncoderDataToDashboard();
 
   }
   /**
@@ -237,6 +233,7 @@ public class Robot extends TimedRobot {
     // schedule the autonomous command (example)
 
     autonomousCommand = new VisionPurePursuit(driveBase, coprocessor, sensors, 0, false, true);
+      // autonomousCommand = new TestVelocityDrive(20, 20);
 
     if (autonomousCommand != null) {
       autonomousCommand.start();
