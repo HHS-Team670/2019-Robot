@@ -65,7 +65,7 @@ NetworkTables.addKeyListener('/SmartDashboard/game-time', (key, value) => {
 NetworkTables.addKeyListener('/SmartDashboard/camera-source', (key, value) => {
   if (value == 'next') {
     window.webContents.reload();
-    location.reload(true);
+    // location.reload(true);
     cameraIndex = (cameraIndex + 1) % cameras.length;
     document.getElementById('camera-text').innerHTML = cameras[cameraIndex];
     multiCamSRC.innerHTML = cameras[cameraIndex];
