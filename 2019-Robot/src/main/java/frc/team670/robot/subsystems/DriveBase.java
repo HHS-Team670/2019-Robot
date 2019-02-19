@@ -121,8 +121,9 @@ public class DriveBase extends Subsystem {
     }
 
     try {
-      rightDIOEncoder = new Encoder(RobotMap.RIGHT_ENCODER_CHANNEL_A, RobotMap.RIGHT_ENCODER_CHANNEL_B, false,
-          EncodingType.k4X);
+      // rightDIOEncoder = new Encoder(RobotMap.RIGHT_ENCODER_CHANNEL_A, RobotMap.RIGHT_ENCODER_CHANNEL_B, false,
+          // EncodingType.k4X);
+      rightDIOEncoder = null;
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error Instantiating rightDIOEncoder: " + ex.getMessage(), true);
       rightDIOEncoder = null;
@@ -136,8 +137,8 @@ public class DriveBase extends Subsystem {
       leftDIOEncoder.setReverseDirection(true);
     }
     if (rightDIOEncoder != null) {
-      rightDIOEncoder.setDistancePerPulse(distancePerPulse);
-      rightDIOEncoder.setReverseDirection(true);
+      // rightDIOEncoder.setDistancePerPulse(distancePerPulse);
+      // rightDIOEncoder.setReverseDirection(true);
     }
 
     leftMustangEncoder = new MustangDriveBaseEncoder(leftDIOEncoder, left1.getEncoder());
@@ -661,7 +662,7 @@ public class DriveBase extends Subsystem {
 
   public void sendDIOEncoderDataToDashboard() {
     if (leftDIOEncoder != null) {
-      SmartDashboard.putNumber("Left DIO Encoder: ", convertDriveBaseTicksToInches(leftDIOEncoder.get()));
+      SmartDashboard.putNumber("Left DIO Encoder: ", leftMustangEncoder.getPositionInches());
     }
 
     if (rightDIOEncoder != null) {
@@ -672,7 +673,7 @@ public class DriveBase extends Subsystem {
       SmartDashboard.putString("Left DIO Encoder:", "LEFT DIO ENCODER IS NULL!");
     }
     if (rightDIOEncoder == null) {
-      SmartDashboard.putNumber("Right Encoder:", convertSparkRevolutionsToInches(right1.getEncoder().getPosition()));
+      SmartDashboard.putNumber("Right Encoder:", rightMustangEncoder.getPositionInches());
     }
   }
 }

@@ -29,14 +29,14 @@ public class PurePursuit extends Command {
   /**
    * @param finalAngle a MutableDouble object reference to the angle (using zeroed yaw) this PurePursuit command should end up at compared to the zeroed yaw.
    */
-  public PurePursuit(Path path, DriveBase driveBase, MustangSensors sensors, PoseEstimator estimator, boolean isReversed, MutableDouble finalAngle) {
+  public PurePursuit(Path path, DriveBase driveBase, MustangSensors sensors, PoseEstimator estimator, boolean isReversed, MutableDouble finalAngle, double yDistance) {
    this.driveBase = driveBase;
    this.sensors = sensors;
    this.poseEstimator = estimator;
    this.finalAngle = finalAngle;
   
    purePursuitTracker = new PurePursuitTracker(poseEstimator, driveBase, sensors, isReversed);
-   purePursuitTracker.setPath(path, LOOKAHEAD_DISTANCE_AT_66_INCHES * 40/66);
+   purePursuitTracker.setPath(path, LOOKAHEAD_DISTANCE_AT_66_INCHES * yDistance/66);
    requires(driveBase);
   }
 
