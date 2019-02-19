@@ -117,24 +117,13 @@ public class MustangCoprocessor {
      * Returns distance to the target from the center of the robot
      */
     public double getDistanceToWallTarget() {
-        double hangle_offset = wallTarget.getHAngle();
-        double hangle_offset_radians = Math.toRadians(hangle_offset);
-        if(MathUtils.doublesEqual(hangle_offset, RobotConstants.VISION_ERROR_CODE)){
+        double depth_offset = getOffsetDepth();
+        if(MathUtils.doublesEqual(depth_offset, RobotConstants.VISION_ERROR_CODE)){
             return RobotConstants.VISION_ERROR_CODE;
         }
-        double depth_offset = getOffsetDepth();
         double real_depth = depth_offset;
         double phi = Robot.sensors.getAngleToTarget();
-        double alpha = 90 - hangle_offset - phi;
-        double y = (depth_offset * Math.tan(hangle_offset_radians) * Math.sin(Math.toRadians(phi)))/ (Math.sin(Math.toRadians(alpha)));
-        double diagonalOffsetToTarget = (depth_offset / Math.cos(hangle_offset_radians)) + y;
-        double temp = cameraHorizontalOffset*cameraHorizontalOffset + diagonalOffsetToTarget * diagonalOffsetToTarget - (2 * cameraHorizontalOffset * diagonalOffsetToTarget * Math.cos(Math.PI/2 - hangle_offset_radians));
-        double realDiagonalToTarget = Math.sqrt(temp);
-        double beta = Math.toDegrees(Math.asin((cameraHorizontalOffset * Math.sin(Math.PI/2 - hangle_offset_radians) / realDiagonalToTarget)));
-        double real_angle = 90 - beta - phi;
-        double omega = alpha + beta;
-        double tempAngle = 180 - omega - real_angle;
-        real_depth = (Math.sin(Math.toRadians(omega)) * realDiagonalToTarget) / Math.sin(Math.toRadians(tempAngle));
+        real_depth = real_depth + (cameraHorizontalOffset * Math.tan(Math.toRadians(phi)));
         
         return real_depth;
     }
@@ -167,15 +156,14 @@ public class MustangCoprocessor {
         double depth_offset = getOffsetDepth();
         double phi = Robot.sensors.getAngleToTarget();
         double alpha = 90 - hangle_offset - phi;
-        double y = (depth_offset * Math.tan(hangle_offset_radians) * Math.sin(Math.toRadians(phi)))/ (Math.sin(Math.toRadians(alpha)));
-        double diagonalOffsetToTarget = (depth_offset / Math.cos(hangle_offset_radians)) + y;
-        double temp = cameraHorizontalOffset*cameraHorizontalOffset + diagonalOffsetToTarget * diagonalOffsetToTarget - (2 * cameraHorizontalOffset * diagonalOffsetToTarget * Math.cos(Math.PI/2 - hangle_offset_radians));
+        double y = (depth_offset * Math.sin(Math.toRadians(phi+90)))/ (Math.sin(Math.toRadians(alpha)));
+        double temp = cameraHorizontalOffset*cameraHorizontalOffset + y * y - (2 * cameraHorizontalOffset * y * Math.cos(Math.PI/2 - hangle_offset_radians));
         double realDiagonalToTarget = Math.sqrt(temp);
-        double beta = Math.toDegrees(Math.asin((cameraHorizontalOffset * Math.sin(Math.PI/2 - hangle_offset_radians) / realDiagonalToTarget)));
-        double real_angle = 90 - beta - phi;
-
-        if(phi < 0)
-            real_angle = hangle_offset + (hangle_offset- real_angle);
+        double beta = Math.toDegrees(Math.asin((y * Math.sin(Math.PI/2 - hangle_offset_radians) / realDiagonalToTarget)));
+        double real_angle = beta-90;
+    
+        if(hangle_offset > 0)
+            real_angle *= -1; //Angle returned is always negative because of arcsins range so multiply by -1 if hangle was positive
         return (real_angle);
     }
 

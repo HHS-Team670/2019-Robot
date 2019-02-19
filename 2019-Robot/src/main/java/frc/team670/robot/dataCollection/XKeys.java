@@ -20,6 +20,7 @@ import frc.team670.robot.commands.CancelAllCommands;
 import frc.team670.robot.commands.arm.ToggleHeldItem;
 import frc.team670.robot.commands.arm.movement.CancelArmMovement;
 import frc.team670.robot.commands.arm.movement.MoveArm;
+import frc.team670.robot.commands.arm.movement.MoveExtensionBackUntilHitsLimitSwitch;
 import frc.team670.robot.commands.arm.movement.PlaceOrGrab;
 import frc.team670.robot.commands.claw.ToggleClaw;
 import frc.team670.robot.commands.claw.YeetHeldItem;
@@ -98,6 +99,9 @@ public class XKeys {
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-claw", (table2, key2, entry, value, flags) -> {
             toggleClaw();
+        }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+        table.addEntryListener("xkeys-resetExtenion", (table2, key2, entry, value, flags) -> {
+            moveExtensionBackUntilHitsLimitSwitch();
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-cancel", (table2, key2, entry, value, flags) -> {
             if (value.getType() != NetworkTableType.kString) return;
@@ -270,6 +274,10 @@ public class XKeys {
 
     private void toggleClaw() {
         Scheduler.getInstance().add(new ToggleClaw(Robot.claw));
+    }
+
+    private void moveExtensionBackUntilHitsLimitSwitch(){
+        Scheduler.getInstance().add(new MoveExtensionBackUntilHitsLimitSwitch(Robot.arm.getExtension()));
     }
     
     public static void setToggleIn(boolean toggleInBoolean){
