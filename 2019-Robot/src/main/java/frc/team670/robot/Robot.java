@@ -55,9 +55,6 @@ public class Robot extends TimedRobot {
   public static Arm arm = new Arm(elbow, wrist, extension, intake, claw);
 
   private Notifier updateArbitraryFeedForwards;
-  private Notifier checkVisionLock;
-
-
 
   private Command autonomousCommand, operatorControl;
   private SendableChooser<Command> auton_chooser = new SendableChooser<>();
@@ -117,22 +114,6 @@ public class Robot extends TimedRobot {
         intake.updateArbitraryFeedForward();
       }
     });
-
-    checkVisionLock = new Notifier(new Runnable() {
-      public void run() {
-        if(!MathUtils.doublesEqual(coprocessor.getAngleToWallTarget(), RobotConstants.VISION_ERROR_CODE)) {
-          leds.setVisionData(true);
-        } else {
-          boolean isReversed = XboxRocketLeagueDrive.isDriveReversed();
-          if (isReversed) {
-            Robot.leds.setReverseData(true);
-          } else {
-            Robot.leds.setForwardData(true);
-          }
-        }
-      }
-    });
-    checkVisionLock.startPeriodic(0.2);
 
     updateArbitraryFeedForwards.startPeriodic(0.01);
 
@@ -248,7 +229,7 @@ public class Robot extends TimedRobot {
     // autonomousCommand = new RunIntake(intake, sensors, true);
     // schedule the autonomous command (example)
 
-    autonomousCommand = new VisionPurePursuitWithPivot(driveBase, coprocessor, sensors, 6, true, true);
+    // autonomousCommand = new VisionPurePursuitWithPivot(driveBase, coprocessor, sensors, 6, true, true);
       // autonomousCommand = new TestVelocityDrive(20, 20);'
     // autonomousCommand = new NavXChangeableAnglePivot(new MutableDouble(15), driveBase, sensors);
 
