@@ -31,9 +31,21 @@ import frc.team670.robot.commands.intake.RunIntakeInWithIR;
 import frc.team670.robot.commands.intake.StopIntakeRollers;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
+import frc.team670.robot.subsystems.Arm.GrabBallLoadingStationBack;
+import frc.team670.robot.subsystems.Arm.GrabBallLoadingStationForward;
 import frc.team670.robot.subsystems.Arm.LegalState;
+import frc.team670.robot.subsystems.Arm.LowHatchBack;
+import frc.team670.robot.subsystems.Arm.LowHatchForward;
+import frc.team670.robot.subsystems.Arm.PlaceBallCargoBack;
+import frc.team670.robot.subsystems.Arm.PlaceBallCargoForward;
 import frc.team670.robot.subsystems.Arm.PlaceGrabState;
+import frc.team670.robot.subsystems.Arm.ReadyPlaceBallRocketLowBack;
+import frc.team670.robot.subsystems.Arm.ReadyPlaceBallRocketLowForward;
+import frc.team670.robot.subsystems.Arm.ReadyPlaceBallRocketMiddleBack;
+import frc.team670.robot.subsystems.Arm.ReadyPlaceHatchRocketMiddleBack;
+import frc.team670.robot.subsystems.Arm.ReadyPlaceHatchRocketMiddleForward;
 import frc.team670.robot.subsystems.Intake;
+import frc.team670.robot.utils.Logger;
 
 
 /**
@@ -196,16 +208,57 @@ public class XKeys {
     }
 
     private void visionDrive(){
-        PlaceGrabState placeGrabState = null;
+        ArmState possiblePlaceGrabState = null;
+        ArmState targetState = Arm.getTargetState();
+        if(targetState instanceof GrabBallLoadingStationForward) {
+            possiblePlaceGrabState = Arm.getArmState(LegalState.GRAB_BALL_LOADINGSTATION_FORWARD);
+        }
+        else if (targetState instanceof GrabBallLoadingStationBack) {
+            possiblePlaceGrabState = Arm.getArmState(LegalState.GRAB_BALL_LOADINGSTATION_BACK);
+        }
+        else if (targetState instanceof LowHatchForward) {
+            possiblePlaceGrabState = Arm.getArmState(LegalState.LOW_HATCH_FORWARD);
+        }
+        else if (targetState instanceof LowHatchBack) {
+            possiblePlaceGrabState = Arm.getArmState(LegalState.LOW_HATCH_BACK);
+        }
+        else if (targetState instanceof PlaceBallCargoForward) {
+            possiblePlaceGrabState = Arm.getArmState(LegalState.PLACE_BALL_CARGOSHIP_FORWARD);
+        }
+        else if (targetState instanceof PlaceBallCargoBack) {
+            possiblePlaceGrabState = Arm.getArmState(LegalState.PLACE_BALL_CARGOSHIP_BACK);
+        }
+        else if (targetState instanceof ReadyPlaceHatchRocketMiddleForward) {
+            possiblePlaceGrabState = Arm.getArmState(LegalState.PLACE_HATCH_ROCKET_MIDDLE_FORWARD);
+        }
+        else if (targetState instanceof ReadyPlaceHatchRocketMiddleBack) {
+            possiblePlaceGrabState = Arm.getArmState(LegalState.PLACE_HATCH_ROCKET_MIDDLE_BACK);
+        }
+        else if (targetState instanceof ReadyPlaceBallRocketLowForward) {
+            possiblePlaceGrabState = Arm.getArmState(LegalState.PLACE_BALL_ROCKET_LOW_FORWARD);
+        }
+        else if (targetState instanceof ReadyPlaceBallRocketLowBack) {
+            possiblePlaceGrabState = Arm.getArmState(LegalState.PLACE_BALL_ROCKET_LOW_BACK);
+        }
+        else if (targetState instanceof ReadyPlaceBallRocketMiddleBack) {
+            possiblePlaceGrabState = Arm.getArmState(LegalState.PLACE_BALL_ROCKET_MIDDLE_BACK);
+        }
+        else {
+            Logger.consoleLog("Target state is not a possible to place state");
+            return;
+        }
+        
+        PlaceGrabState placeGrab = null;
+
         try {
-             placeGrabState = (PlaceGrabState) Arm.getTargetState();
+            placeGrab = (PlaceGrabState) Arm.getTargetState();
         } catch (ClassCastException ex) {
             return;
         }
 
-        double distanceFromTarget = placeGrabState.getDistanceFromTarget();
-        boolean isReversed = !placeGrabState.getIsFront();
-        boolean isLow = placeGrabState.getIsLowTarget();
+        double distanceFromTarget = placeGrab.getDistanceFromTarget();
+        boolean isReversed = !placeGrab.getIsFront();
+        boolean isLow = placeGrab.getIsLowTarget();
 
         SmartDashboard.putString("vision-status", "");
         Scheduler.getInstance().add(new VisionPurePursuitWithPivot(Robot.driveBase, Robot.coprocessor, Robot.sensors, distanceFromTarget, isReversed, isLow));
