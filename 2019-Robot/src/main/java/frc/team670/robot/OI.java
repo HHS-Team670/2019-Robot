@@ -40,7 +40,7 @@ public class OI {
 
   private JoystickButton enableBrakeMode, enableCoastMode;
   private JoystickButton armToNeutral;
-  private JoystickButton dropBall, grabBall;
+  private JoystickButton dropBall, grabBall, togglePush;
   
 
   public OI() {
@@ -62,6 +62,13 @@ public class OI {
     dropBall.whenPressed(new DropBall(Robot.claw, Robot.arm));
     grabBall = new JoystickButton(driverController, XboxButtons.X);
     grabBall.whenPressed(new PickupBall(Robot.claw, Robot.arm));
+
+    dropBall = new JoystickButton(driverController, XboxButtons.B);
+    dropBall.whenPressed(new InstantCommand() {
+      protected void initialize() {
+        Robot.claw.togglePush();
+      }
+    });
 
   }
   /**

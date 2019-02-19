@@ -91,6 +91,10 @@ public class Claw extends Subsystem {
     System.out.println("Close Claw Called");
   }
 
+  public void togglePush() {
+    push.set(!push.get());
+  }
+
   /**
    * Opens the claw.
    */

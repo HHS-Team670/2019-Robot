@@ -55,6 +55,13 @@ public class PlaceOrGrab extends CommandGroup {
       addSequential(new DropBall(Robot.claw, Robot.arm));
       moveArm = ArmPathGenerator.getPath(Arm.getArmState(LegalState.PLACE_BALL_ROCKET_MIDDLE_BACK), state, Robot.arm);
       addSequential(moveArm);
+    } 
+    else if (state.equals(Arm.getArmState(LegalState.READY_GRAB_HATCH_GROUND_BACK))) {
+      moveArm = ArmPathGenerator.getPath(Arm.getArmState(LegalState.GRAB_HATCH_GROUND_BACK), Robot.arm);
+      addSequential(moveArm);
+      addSequential(new GrabHatch(Robot.claw, Robot.arm));
+      moveArm = ArmPathGenerator.getPath(Arm.getArmState(LegalState.READY_GRAB_HATCH_GROUND_BACK), state, Robot.arm);
+      addSequential(moveArm);
     } else if (state.equals(Arm.getArmState(LegalState.READY_PLACE_HATCH_ROCKET_MIDDLE_BACK))) {
       moveArm = ArmPathGenerator.getPath(Arm.getArmState(LegalState.PLACE_HATCH_ROCKET_MIDDLE_BACK), Robot.arm);
       addSequential(moveArm);
