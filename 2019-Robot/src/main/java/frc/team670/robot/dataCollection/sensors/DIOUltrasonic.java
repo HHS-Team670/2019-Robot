@@ -30,8 +30,9 @@ public class DIOUltrasonic {
         this.horizontalOffset = horizontalOffset;
 
         try {
-             ultrasonic =  new Ultrasonic(triggerPin, echoPin);
+         ultrasonic =  new Ultrasonic(triggerPin, echoPin);
         } catch (RuntimeException ex){
+            // System.out.println();
             ultrasonic = null;
             DriverStation.reportError("Ultrasonic error", true);
         }
@@ -48,7 +49,7 @@ public class DIOUltrasonic {
         double distance = getUnadjustedDistance();
         // Untested Math below
         double phi = Robot.sensors.getAngleToTarget();
-        distance = horizontalOffset * Math.tan(Math.toRadians(phi)) + distance;
+        distance = distance - (horizontalOffset * Math.tan(Math.toRadians(phi)));
         return distance;
     }
 

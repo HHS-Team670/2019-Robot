@@ -22,8 +22,8 @@ public class PoseEstimator {
 		this.driveBase = driveBase;
 		this.sensors = sensors;
 
-		prevLeftDist = DriveBase.convertDriveBaseTicksToInches(driveBase.getLeftDIOEncoderPosition());
-		prevRightDist = DriveBase.convertDriveBaseTicksToInches(driveBase.getRightDIOEncoderPosition());
+		prevLeftDist = driveBase.getLeftMustangEncoderPositionInInches();
+		prevRightDist = driveBase.getRightMustangEncoderPositionInInches();
 		update();
 		// System.out.println("Start Pose: " + pose);
 	}
@@ -61,8 +61,8 @@ public class PoseEstimator {
 	public void update() {
 		double leftDist, rightDist;
 		leftDist = driveBase.getLeftMustangEncoderPositionInInches(); //Not negative because encoders increase when robot moves forward
-		rightDist = driveBase.getRightMustangEncoderPositionInInches();
-		// System.out.println("LeftDist: " + leftDist + ", RightDist: " + rightDist);
+		rightDist = driveBase.getRightMustangEncoderPositionInInches(); // Right encoder doesnt work
+		System.out.println("LeftDist: " + leftDist + ", RightDist: " + rightDist);
 		double deltaLeftDist = leftDist - prevLeftDist;
 		double deltaRightDist = rightDist - prevRightDist;
 		Rotation deltaHeading = prevPose.getRotation().inverse().rotate(sensors.getRotationAngle());

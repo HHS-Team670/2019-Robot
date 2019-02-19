@@ -7,8 +7,6 @@
 
 package frc.team670.robot;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -17,10 +15,8 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.ControlOperatorController;
-import frc.team670.robot.commands.arm.movement.MoveExtensionBackUntilHitsLimitSwitch;
 import frc.team670.robot.commands.drive.teleop.XboxRocketLeagueDrive;
-import frc.team670.robot.commands.drive.vision.VisionPurePursuit;
-import frc.team670.robot.commands.tuning.MeasureArbitraryFeedforward;
+import frc.team670.robot.commands.drive.vision.VisionPurePursuitWithPivot;
 import frc.team670.robot.commands.tuning.ResetPulseWidthEncoder;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangCoprocessor;
@@ -111,7 +107,7 @@ public class Robot extends TimedRobot {
     // autonomousCommand = oi.getSelectedAutonCommand();
     timer = new Timer();
 
-    operatorControl = new ControlOperatorController(oi.getOperatorController());
+    // operatorControl = new ControlOperatorController(oi.getOperatorController());
     updateArbitraryFeedForwards = new Notifier(new Runnable() {
       public void run() {
         wrist.updateArbitraryFeedForward();
@@ -165,6 +161,11 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("drive-reversed-status", XboxRocketLeagueDrive.isDriveReversed());
     SmartDashboard.putString("claw-held-item", arm.getHeldItem().name());
 
+    SmartDashboard.putNumber("Angle", sensors.getAngle());
+    SmartDashboard.putNumber("Phi", sensors.getAngleToTarget());
+    SmartDashboard.putNumber("Horizontal Angle", coprocessor.getAngleToWallTarget());
+    SmartDashboard.putNumber("Depth", coprocessor.getDistanceToWallTarget());
+
     // SmartDashboard.putNumber("Arbitrary Feedforward Measurement", MeasureArbitraryFeedforward.output);
 
     // SmartDashboard.putString("Held Item", arm.getHeldItem().toString());
@@ -174,7 +175,7 @@ public class Robot extends TimedRobot {
     // wrist.sendDataToDashboard();
     // intake.sendDataToDashboard();
     sensors.sendUltrasonicDataToDashboard();
-    // driveBase.sendDIOEncoderDataToDashboard();
+    driveBase.sendDIOEncoderDataToDashboard();
 
   }
   /**
@@ -187,6 +188,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("robot-state", "disabledInit()");
     Logger.consoleLog("Robot Disabled");
     // autonomousCommand = oi.getSelectedAutonCommand();
+    driveBase.initCoastMode();
     intake.stop();
     timer.stop();
     intake.stop();
@@ -237,7 +239,9 @@ public class Robot extends TimedRobot {
     // autonomousCommand = new RunIntake(intake, sensors, true);
     // schedule the autonomous command (example)
 
-    autonomousCommand = new VisionPurePursuit(driveBase, coprocessor, sensors, 0, false, true);
+    autonomousCommand = new VisionPurePursuitWithPivot(driveBase, coprocessor, sensors, 6, true, true);
+      // autonomousCommand = new TestVelocityDrive(20, 20);'
+    // autonomousCommand = new NavXChangeableAnglePivot(new MutableDouble(15), driveBase, sensors);
 
     if (autonomousCommand != null) {
       autonomousCommand.start();

@@ -27,10 +27,6 @@ public class NavXPivot extends Command {
 	private int onTargetCount;
 
   public NavXPivot(double angle) {
-	if(Robot.sensors.isNavXNull()){
-		super.cancel();
-		return;
-	}
 
 	this.angle = angle;
 	
@@ -47,15 +43,21 @@ public class NavXPivot extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-		startAngle = Robot.sensors.getYawDouble();
-		finalAngle = Pathfinder.boundHalfDegrees(startAngle + angle);
 
-		// Logger.consoleLog("StartAngle:%s FinalAngle:%s DegreesToTravel:%s", 
-		// 		startAngle, finalAngle, angle);
+	if(Robot.sensors.isNavXNull()){
+		super.cancel();
+		return;
+	}
 
-		pivotController.setSetpoint(finalAngle);
+	startAngle = Robot.sensors.getYawDouble();
+	finalAngle = Pathfinder.boundHalfDegrees(startAngle + angle);
 
-		pivotController.enable();
+	// Logger.consoleLog("StartAngle:%s FinalAngle:%s DegreesToTravel:%s", 
+	// 		startAngle, finalAngle, angle);
+
+	pivotController.setSetpoint(finalAngle);
+
+	pivotController.enable();
   }
 
   // Called repeatedly when this Command is scheduled to run

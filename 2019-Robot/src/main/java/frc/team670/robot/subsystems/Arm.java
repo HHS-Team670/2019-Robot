@@ -37,7 +37,7 @@ public class Arm {
 
   // All of the states
   private static HashMap<LegalState, ArmState> states;
-  private static ArmState currentState;
+  private static ArmState currentState, targetState;
 
   /** Value meant only for unit testing. Do not use this anywhere else! */
   public static double unitTestExtensionDist, unitTestElbowAngle, unitTestWristAngle;
@@ -101,7 +101,7 @@ public class Arm {
     
     states.put(LegalState.STOW, new Stow(this, intake));
 
-    currentState = getArmState(LegalState.STOW); //Default state
+    currentState = getArmState(LegalState.START); //Default state
 
     for(ArmState state : getStatesArrayList()) { // Initialize all the transitions
       state.initTransitions();
@@ -260,6 +260,14 @@ public class Arm {
     }
   };
 
+  public static ArmState getTargetState() {
+    return targetState;
+  }
+
+  public static void setTargetState(ArmState state) {
+    targetState = state;
+  }
+
   /**
    * Represents a potential state for the arm including a wrist angle, elbow
    * angle, and extension.
@@ -273,14 +281,14 @@ public class Arm {
     private ArmTransition[] transitions;
 
     /**
-     * @param extensionLength The absolute Extension length with Extension length in
-     *                        absolute inches with 0 being completely unextended.
      * @param elbowAngle      The absolute Elbow angle with 0 being vertical in the
      *                        space (180,-180) with 180 being towards the front of
      *                        the robot.
      * @param wristAngle      The absolute Wrist angle with 0 being in line with the
      *                        arm in the space (180,-180) with 180 being towards the
      *                        front of the robot.
+     * @param extensionLength The absolute Extension length with Extension length in
+     *                        absolute inches with 0 being completely unextended.
      * @param isIntakeDeployed  True if the intake is deployed (out to intake balls), false
      *                          if it is retracted into the robot.
      * @param transitions     The ArmTransitions that begin at this ArmState

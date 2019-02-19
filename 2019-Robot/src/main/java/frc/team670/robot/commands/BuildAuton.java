@@ -8,16 +8,15 @@
 package frc.team670.robot.commands;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team670.robot.Robot;
 import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.commands.arm.movement.MoveArmAfterDriveDistance;
 import frc.team670.robot.commands.arm.movement.PlaceOrGrab;
 import frc.team670.robot.commands.drive.DriveMotionProfile;
 import frc.team670.robot.commands.drive.pivot.NavXPivot;
-import frc.team670.robot.commands.drive.vision.VisionPurePursuit;
+import frc.team670.robot.commands.drive.vision.VisionPurePursuitWithPivot;
 import frc.team670.robot.subsystems.Arm;
-import frc.team670.robot.Robot;
 import frc.team670.robot.subsystems.Arm.HeldItem;
 import frc.team670.robot.subsystems.Arm.LegalState;
 import frc.team670.robot.subsystems.Arm.PlaceGrabState;
@@ -181,6 +180,6 @@ public class BuildAuton extends CommandGroup {
         boolean isReversed = !placeGrabState.getIsFront();
         boolean isLow = placeGrabState.getIsLowTarget();
 
-        addSequential(new VisionPurePursuit(Robot.driveBase, Robot.coprocessor, Robot.sensors, distanceFromTarget, isReversed, isLow));
+        addSequential(new VisionPurePursuitWithPivot(Robot.driveBase, Robot.coprocessor, Robot.sensors, distanceFromTarget, isReversed, isLow));
     }
 }

@@ -13,6 +13,7 @@ import java.util.Map;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team670.robot.commands.arm.SetTargetState;
 import frc.team670.robot.commands.arm.armTransitions.ArmTransition;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
@@ -82,6 +83,7 @@ public class ArmPathGenerator {
       // searched.put(currentState, transitions); //Stores current path in instance variable
       }
     }
+    movements.addParallel(new SetTargetState(destination));
     for (ArmTransition t : transitions) {
       movements.addSequential(t.getCommand());
     }

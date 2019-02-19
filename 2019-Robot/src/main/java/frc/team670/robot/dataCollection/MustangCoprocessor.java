@@ -33,9 +33,9 @@ public class MustangCoprocessor {
     public static final double HIGH_TARGET_HEIGHT = 39.125; //inches
     public static final double LOW_TARGET_HEIGHT = 31.5; //inches
 
-    private static final double BACK_CAMERA_HORIZONTAL_OFFSET = 5.25; //inches
-    private static final double BACK_CAMERA_HEIGHT = 7.25;
-    private static final double BACK_CAMERA_VERTICAL_OFFSET_ANGLE = 27; //degrees
+    private static final double BACK_CAMERA_HORIZONTAL_OFFSET = -7.875; //inches
+    private static final double BACK_CAMERA_HEIGHT = 12.375;
+    private static final double BACK_CAMERA_VERTICAL_OFFSET_ANGLE = 29; //degrees
 
     private static final double FRONT_CAMERA_HORIZONTAL_OFFSET = 5.25; //inches
     private static final double FRONT_CAMERA_HEIGHT = 7.25;
@@ -151,6 +151,10 @@ public class MustangCoprocessor {
         return offset_depth;
     }
 
+    public double getTimestamp() {
+        return wallTarget.getTimeStamp();
+    }
+
     /*
      * Returns horizontal angle to the target from the center of the robot
      */
@@ -170,14 +174,16 @@ public class MustangCoprocessor {
         double beta = Math.toDegrees(Math.asin((cameraHorizontalOffset * Math.sin(Math.PI/2 - hangle_offset_radians) / realDiagonalToTarget)));
         double real_angle = 90 - beta - phi;
 
-        return real_angle;
+        if(phi < 0)
+            real_angle = hangle_offset + (hangle_offset- real_angle);
+        return (real_angle);
     }
 
     /*
      * Returns an array containing the calculated vision values - [horizontal angle, distance to target]
      */
     public double[] getVisionValues() {
-        double[] values = {getAngleToWallTarget(), getDistanceToWallTarget()};
+        double[] values = {getAngleToWallTarget(), getDistanceToWallTarget(), getTimestamp()};
         return values;
     }
 

@@ -34,7 +34,7 @@ public class MustangDriveBaseEncoder implements PIDSource {
         this.dioEncoder = dioEncoder;
         this.sparkEncoder = sparkEncoder;
         type = PIDSourceType.kDisplacement;
-        isDIOEncoder = (dioEncoder == null);
+        isDIOEncoder = (dioEncoder != null);
     }
 
     /**
@@ -60,7 +60,7 @@ public class MustangDriveBaseEncoder implements PIDSource {
             if (isDIOEncoder) {
                 return DriveBase.convertDriveBaseTicksToInches(dioEncoder.get());
             }
-            return DriveBase.convertDriveBaseTicksToInches((sparkEncoder.getPosition() / RobotConstants.SPARK_TICKS_PER_ROTATION));
+            return -1 * DriveBase.convertSparkRevolutionsToInches(sparkEncoder.getPosition());
         }
         catch(RuntimeException e) {
             return 0;

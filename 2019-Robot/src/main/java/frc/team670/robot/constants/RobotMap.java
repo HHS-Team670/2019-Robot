@@ -30,10 +30,10 @@ public class RobotMap {
 
   //Encoders
       //Drivebase
-  public static final int LEFT_ENCODER_CHANNEL_A = 3; // These are properly set
-  public static final int LEFT_ENCODER_CHANNEL_B = 2;
-  public static final int RIGHT_ENCODER_CHANNEL_A = 5;
-  public static final int RIGHT_ENCODER_CHANNEL_B = 4;
+  public static final int LEFT_ENCODER_CHANNEL_A = 4; // These are properly set
+  public static final int LEFT_ENCODER_CHANNEL_B = 5;
+  public static final int RIGHT_ENCODER_CHANNEL_A = 2;
+  public static final int RIGHT_ENCODER_CHANNEL_B = 3;
 
   // Arm
   public static final int ARM_EXTENSION_MOTOR = 8;
@@ -57,11 +57,11 @@ public class RobotMap {
 
   public static final int FRONT_ULTRASONIC_TRIGGER_PIN = 20; // TODO set these
   public static final int FRONT_ULTRASONIC_ECHO_PIN = 21;
-  public static final int BACK_LEFT_ULTRASONIC_TRIGGER_PIN = 6;
-  public static final int BACK_LEFT_ULTRASONIC_ECHO_PIN = 7;
-  public static final int BACK_RIGHT_ULTRASONIC_TRIGGER_PIN = 8;
-  public static final int BACK_RIGHT_ULTRASONIC_ECHO_PIN = 9;
-  public final static int INTAKE_IR_DIO_PORT = 0;
+  public static final int BACK_LEFT_ULTRASONIC_TRIGGER_PIN = 0;
+  public static final int BACK_LEFT_ULTRASONIC_ECHO_PIN = 1;
+  public static final int BACK_RIGHT_ULTRASONIC_TRIGGER_PIN = 9;
+  public static final int BACK_RIGHT_ULTRASONIC_ECHO_PIN = 8;
+  public final static int INTAKE_IR_DIO_PORT = 2;
 
 
   // Joysticks
