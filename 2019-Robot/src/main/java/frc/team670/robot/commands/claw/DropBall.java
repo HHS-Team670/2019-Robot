@@ -7,7 +7,7 @@
 
 package frc.team670.robot.commands.claw;
 
-import edu.wpi.first.wpilibj.command.TimedCommand;
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.HeldItem;
@@ -17,13 +17,13 @@ import frc.team670.robot.utils.Logger;
 /**
  * Drops the ball using a hard open and by pushing it
  */
-public class DropBall extends TimedCommand {
+public class DropBall extends Command {
   
   private Claw claw;
   private Arm arm;
 
   public DropBall(Claw claw, Arm arm) {
-    super(Claw.TIME_TO_MOVE);
+    setTimeout(Claw.TIME_TO_MOVE);
     this.claw = claw;
     this.arm = arm;
     requires(claw);

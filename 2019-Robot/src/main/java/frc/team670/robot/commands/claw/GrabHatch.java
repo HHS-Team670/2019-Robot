@@ -7,7 +7,9 @@
 
 package frc.team670.robot.commands.claw;
 
-import edu.wpi.first.wpilibj.command.TimedCommand;
+import java.net.SocketTimeoutException;
+
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.HeldItem;
@@ -17,13 +19,13 @@ import frc.team670.robot.utils.Logger;
 /**
  * Grabs the hatch by opening the intake hard.
  */
-public class GrabHatch extends TimedCommand {
+public class GrabHatch extends Command {
   
   private Claw claw;
   private Arm arm;
 
   public GrabHatch(Claw claw, Arm arm) {
-    super(Claw.TIME_TO_MOVE);
+    setTimeout(Claw.TIME_TO_MOVE);
     this.claw = claw;
     this.arm = arm;
     requires(claw);
@@ -45,7 +47,7 @@ public class GrabHatch extends TimedCommand {
 
   @Override
   protected boolean isFinished() {
-    return super.isFinished();
+    return isTimedOut();
   }
 
   @Override
