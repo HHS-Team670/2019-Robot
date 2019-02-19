@@ -66,18 +66,31 @@ header {
     left: 30vw;
     color: white;
 }
-#camera {
+#camera1 {
     padding: 0;
     position: absolute;
     bottom: 0vh;
-    left: 10;
-    width: 55%;
+    left: 30vw;
+    width: 30%;
     height: 100%;
     object-fit: fill;
     overflow: hidden;
     background-color: #333;
     background-size: cover;
     background-image: url('http://10.6.70.26:8000/?action=stream');
+}
+#camera2 {
+    padding: 0;
+    position: absolute;
+    bottom: 0vh;
+    left: 10;
+    width: 30%;
+    height: 100%;
+    object-fit: fill;
+    overflow: hidden;
+    background-color: #333;
+    background-size: cover;
+    background-image: url('http://10.6.70.26:8001/?action=stream');
 }
 svg * {
     stroke: white;
@@ -235,14 +248,14 @@ body.login #login {
     transform: translate(0vw, 0vh);
     stroke-width: 0.25px;
 } */
-#v-crosshairs {
+/* #v-crosshairs {
     position: absolute;
     transform: translate(50vw, 0vh);
 }
 #h-crosshairs {
     position: absolute;
     transform: translate(0vw, 50vh);
-}
+} */
 
 #current-command {
     position: absolute;
