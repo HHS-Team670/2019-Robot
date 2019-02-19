@@ -97,10 +97,10 @@ public class OI {
 
 
 
-    enableBrakeMode = new JoystickButton(driverController, XboxButtons.START);
-    enableBrakeMode.whenPressed(new EnableArmBrakeMode(Robot.arm));
-    enableCoastMode = new JoystickButton(driverController, XboxButtons.BACK);
-    enableCoastMode.whenPressed(new EnableArmCoastMode(Robot.arm));
+    // enableBrakeMode = new JoystickButton(driverController, XboxButtons.START);
+    // enableBrakeMode.whenPressed(new EnableArmBrakeMode(Robot.arm));
+    // enableCoastMode = new JoystickButton(driverController, XboxButtons.BACK);
+    // enableCoastMode.whenPressed(new EnableArmCoastMode(Robot.arm));
   }
 
   /**
