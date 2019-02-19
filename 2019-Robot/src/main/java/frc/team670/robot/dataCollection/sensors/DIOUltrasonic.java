@@ -49,7 +49,7 @@ public class DIOUltrasonic {
         double distance = getUnadjustedDistance();
         // Untested Math below
         double phi = Robot.sensors.getAngleToTarget();
-        distance = horizontalOffset * Math.tan(Math.toRadians(phi)) + distance;
+        distance = distance - (horizontalOffset * Math.tan(Math.toRadians(phi)));
         return distance;
     }
 
