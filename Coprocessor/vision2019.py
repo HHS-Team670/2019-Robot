@@ -66,8 +66,9 @@ def main():
     #Resets the symlinks to vid source 50 and 51, connecting them to usb ports
     os.system("sudo rm -f /dev/video" + `front_capture_source`)
     os.system("sudo rm -f /dev/video" + `back_capture_source`)
-    os.system("sudo ln -s /dev/v4l/by-path/platform-xhci-hcd.3.auto-usb-0:1.1:1.0-video-index0 /dev/video"+ `front_capture_source`)
-    os.system("sudo ln -s /dev/v4l/by-path/platform-12110000.usb-usb-0:1:1.0-video-index0 /dev/video"+ `back_capture_source`)
+    os.system("sudo ln -s /dev/v4l/by-path/platform-12110000.usb-usb-0:1:1.0-video-index0 /dev/video"+ `front_capture_source`)
+    os.system("sudo ln -s /dev/v4l/by-path/platform-xhci-hcd.3.auto-usb-0:1.1:1.0-video-index0 /dev/video"+ `back_capture_source`)
+    
     #Sets exposure and other camera properties for both cameras
     os.system("v4l2-ctl -d /dev/video" + `front_capture_source` + " -c exposure_auto=1 -c exposure_absolute=.01 -c brightness=0 -c white_balance_temperature_auto=0 -c backlight_compensation=0 -c contrast=10 -c saturation=200")
     os.system("v4l2-ctl -d /dev/video" + `back_capture_source` + " -c exposure_auto=1 -c exposure_absolute=.01 -c brightness=0 -c white_balance_temperature_auto=0 -c backlight_compensation=0 -c contrast=10 -c saturation=200")
@@ -138,7 +139,8 @@ def main():
 
             '''
             Uncomment below if you want to save images to output for debugging
-
+            '''
+            '''
             if frameCount % 10 == 0:
                 cv2.imwrite("output/mask_%d.jpg"%frameCount, masked_image)
                 cv2.imwrite("output/frame_%d.jpg"%frameCount,input_image) # Take out later to speed up
