@@ -62,14 +62,11 @@ NetworkTables.addKeyListener('/SmartDashboard/game-time', (key, value) => {
 });
 
 // listens for camera-source 
+multicamSources = ['http://10.6.70.26:8000/?action=stream', 'http://10.6.70.26:8001/?action=stream'];
+var multicamIndex = 0;
 NetworkTables.addKeyListener('/SmartDashboard/camera-source', (key, value) => {
-  if (value == 'next') {
-    window.webContents.reload();
-    // location.reload(true);
-    cameraIndex = (cameraIndex + 1) % cameras.length;
-    document.getElementById('camera-text').innerHTML = cameras[cameraIndex];
-    multiCamSRC.innerHTML = cameras[cameraIndex];
-  }
+  multicamIndex = (multicamIndex + 1) % multicamSources.length;
+  document.getElementById('camera').viewer.style = "background-image: url(" + multicamSources[multicamIndex] + ")";
   NetworkTables.putValue('/SmartDashboard/camera-source', '');
 });
 

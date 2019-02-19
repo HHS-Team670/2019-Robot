@@ -7,6 +7,6 @@ ui.camera = {
 
 // document.getElementById('camera').style = "background-image: url(" + ui.camera.src + ")";
 // ui.camera.viewer.style.backgroundImage = 'url(' + ui.camera.src + ')';
-ui.camera.viewer.style = "background-image: url(" + ui.camera.src + ")";
+// ui.camera.viewer.style = "background-image: url(" + ui.camera.src + ")";
 // document.getElementById('camera').setAttribute('background-image', "url(" + ui.camera.src + ")");
 
