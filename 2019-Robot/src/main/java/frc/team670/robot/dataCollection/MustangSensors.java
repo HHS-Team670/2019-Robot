@@ -293,7 +293,7 @@ public class MustangSensors {
     }
 
     // Front cargo ship
-    else if(fieldCentricAngle > 347 && fieldCentricAngle <= 14){
+    else if(fieldCentricAngle > 347 || fieldCentricAngle <= 14){
       target_angle = 0;
     }
 
