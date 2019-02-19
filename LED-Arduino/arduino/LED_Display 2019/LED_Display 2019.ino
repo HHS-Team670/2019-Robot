@@ -16,7 +16,7 @@
 #include <Adafruit_NeoPixel.h>                      //Adafruit library for led methods
 
 Adafruit_NeoPixel strip =                           //Defines an Adafruit Neopixel strip, containing 120 LEDs, using
-  Adafruit_NeoPixel(60, 5, NEO_GRB + NEO_KHZ800);
+  Adafruit_NeoPixel(60, 7, NEO_GRB + NEO_KHZ800);
 
 
 EthernetClient robotClient;                          //Defines a client to be used to connect to the Robo Rio
