@@ -7,18 +7,19 @@
 
 package frc.team670.robot.commands.drive.vision;
 
-import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.drive.purePursuit.Path;
 import frc.team670.robot.commands.drive.purePursuit.PathGenerator;
 import frc.team670.robot.commands.drive.purePursuit.PoseEstimator;
 import frc.team670.robot.commands.drive.purePursuit.PurePursuit;
+import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangCoprocessor;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.DriveBase;
+import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.MutableDouble;
+import frc.team670.robot.utils.functions.MathUtils;
 import frc.team670.robot.utils.math.Vector;
 
 /**
@@ -43,32 +44,34 @@ public class VisionPurePursuit extends CommandGroup {
       double spaceFromTarget, boolean isReversed, boolean lowTarget, MutableDouble finalAngle) {
     super();
 
-    // driveBase.initBrakeMode();
-    // coprocessor.setTargetHeight(lowTarget);
+    driveBase.initBrakeMode();
+    coprocessor.setTargetHeight(lowTarget);
 
-    // coprocessor.setCamera(isReversed);
+    coprocessor.setCamera(isReversed);
     // try {
-    //   Thread.sleep(100);
+    //   Thread.sleep(35);
     // } catch (InterruptedException e) {
     //   e.printStackTrace();
     // }
 
-    // try {
-    //   if(MathUtils.doublesEqual(coprocessor.getVisionValues()[2], RobotConstants.VISION_ERROR_CODE)) {
-    //     SmartDashboard.putString("warnings", "Coprocess Camera Unplugged: Vision Down");
-    //     return;
-    //   } 
-    // } catch(IndexOutOfBoundsException e) {
-    //   return;
-    // }
+    try {
+      if(MathUtils.doublesEqual(coprocessor.getVisionValues()[2], RobotConstants.VISION_ERROR_CODE)) {
+        SmartDashboard.putString("warnings", "Coprocess Camera Unplugged: Vision Down");
+           Logger.consoleLog("Coprocess Camera Unplugged: Vision Down");
+        return;
+      } 
+    } catch(IndexOutOfBoundsException e) {
+      return;
+    }
 
-    // double horizontalAngle = coprocessor.getAngleToWallTarget();
-    // if (MathUtils.doublesEqual(horizontalAngle, RobotConstants.VISION_ERROR_CODE)) {
-    //   Logger.consoleLog("No Valid Vision Data found, command quit.");
-    //   SmartDashboard.putString("vision-status", "error");
-    //   SmartDashboard.putString("warnings", "Vision Target Not Found");
-    //   return;
-    // }
+    double horizontalAngle = coprocessor.getAngleToWallTarget();
+    System.out.println("HorizontalAngle: " + horizontalAngle);
+    if (MathUtils.doublesEqual(horizontalAngle, RobotConstants.VISION_ERROR_CODE)) {
+      Logger.consoleLog("No Valid Vision Data found, command quit.");
+      SmartDashboard.putString("vision-status", "error");
+      SmartDashboard.putString("warnings", "Vision Target Not Found");
+      return;
+    }
 
     // double ultrasonicDistance;
     // if (!isReversed) {
@@ -79,9 +82,9 @@ public class VisionPurePursuit extends CommandGroup {
     // ultrasonicDistance *= Math.cos(Math.toRadians(horizontalAngle)); // use cosine to get the straight ultrasonic
     //                                                                  // distance not the diagonal one
 
-    // double visionDistance = coprocessor.getDistanceToWallTarget();
+    double visionDistance = coprocessor.getDistanceToWallTarget();
 
-    // double straightDistance;
+    double straightDistance = visionDistance;
     // if (MathUtils.doublesEqual(visionDistance, RobotConstants.VISION_ERROR_CODE)) {
     //   straightDistance = ultrasonicDistance;
     // } else {
@@ -94,7 +97,6 @@ public class VisionPurePursuit extends CommandGroup {
     //   return;
     // }
 
-    double straightDistance = 46;
 
     straightDistance = straightDistance - spaceFromTarget;
     if (straightDistance < 0) {
@@ -109,10 +111,8 @@ public class VisionPurePursuit extends CommandGroup {
     System.out.println("Angle: " + coprocessor.getAngleToWallTarget());
     // horizontal distance - when going forward a positive horizontal distance is
     // right and negative is left
-    // double angle = coprocessor.getAngleToWallTarget();
-    double horizontalAngle = 0;
-    // double horizontalDistance = straightDistance * Math.tan(Math.toRadians(horizontalAngle)); // x = y * tan(theta)
-    double horizontalDistance = -18;
+    double horizontalDistance = straightDistance * Math.tan(Math.toRadians(horizontalAngle)); // x = y * tan(theta)
+    // double horizontalDistance = -18;
     double partialDistanceY = (straightDistance) * 2.0 / 5.0;
 
     System.out.println("straightDist: " + straightDistance + ", horizontalDistance: " + horizontalDistance);
