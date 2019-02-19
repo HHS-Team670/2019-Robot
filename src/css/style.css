@@ -70,9 +70,9 @@ header {
     padding: 0;
     position: absolute;
     bottom: 25vh;
-    left: 32vw;
-    width: 30%;
-    height: 50%;
+    left: 34vw;
+    width: 30vw;
+    height: 50vh;
     object-fit: fill;
     overflow: hidden;
     background-color: #333;
@@ -83,14 +83,20 @@ header {
     padding: 0;
     position: absolute;
     bottom: 25vh;
-    left: 10;
-    width: 30%;
-    height: 50%;
+    left: 2vw;
+    width: 30vw;
+    height: 50vh;
     object-fit: fill;
     overflow: hidden;
     background-color: #333;
     background-size: cover;
     background-image: url('http://10.6.70.26:8001/?action=stream');
+}
+#camera-texts {
+    position: absolute;
+    width: 40vw;
+    height: 5vh;
+    transform: translate(2vw, 75vh);
 }
 svg * {
     stroke: white;
@@ -131,15 +137,6 @@ body.login #login {
 #login > button {
     margin-left: 5px;
 }
-#camera-back {
-  bottom: 25vh;
-  z-index: 1;
-}
-#camera-front {
-  bottom: 25vh;
-  left: 32vw;
-  z-index: 1;
-}
 #robot-info {
   position: absolute;
   transform: translate(90vw, 70vh);
@@ -165,6 +162,8 @@ body.login #login {
 }
 #claw {
     position: absolute;
+    transform-origin: bottom center;
+    transform: rotate(90deg);
 }
 #arm-base {
     transform-origin: top center;
@@ -223,45 +222,6 @@ body.login #login {
     position: absolute;
     transform: translate(calc(90px + 125px + 130px + 100px), 275px);
 }
-/* #vline-left {
-    position: absolute;
-    transform: translate(0vw, 0vh);
-    stroke-width: 0.25px;
-}
-#hline-left {
-    position: absolute;
-    transform: translate(0vw, 0vh);
-    stroke-width: 0.25px;
-}
-#vline-right {
-    position: absolute;
-    transform: translate(0vw, 0vh);
-    stroke-width: 0.25px;
-}
-#hline-right {
-    position: absolute;
-    transform: translate(0vw, 0vh);
-    stroke-width: 0.25px;
-} */
-/* #vline {
-    position: absolute;
-    transform: translate(0vw, 0vh);
-    stroke-width: 0.25px;
-}
-#hline {
-    position: absolute;
-    transform: translate(0vw, 0vh);
-    stroke-width: 0.25px;
-} */
-/* #v-crosshairs {
-    position: absolute;
-    transform: translate(50vw, 0vh);
-}
-#h-crosshairs {
-    position: absolute;
-    transform: translate(0vw, 50vh);
-} */
-
 #current-command {
     position: absolute;
     transform: translate(81vw, 68vh);
@@ -277,4 +237,26 @@ body.login #login {
     width: 30vw;
     height: 20vh;
     z-index: 1;
+}
+#back-crosshairs-vertical {
+    position: absolute;
+    width: 0px;
+    height: 70vh;
+    transform: translate(15vw, 15vh);
+    z-index: 0;
+}
+#front-crosshairs-vertical {
+    position: absolute;
+    width: 1vw;
+    height: 70vh;
+    transform: translate(45vw, 15vh);
+    z-index: 0;
+}
+#back-indicator {
+    position: absolute;
+    transform: translate(0.5vw, 21vh);
+}
+#front-indicator {
+    position: absolute;
+    transform: translate(32.5vw, 21vh);
 }

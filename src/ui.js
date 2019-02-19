@@ -1,19 +1,15 @@
 // Define UI elements
 var ui = {
-    multiCamSRC: document.getElementById('multicam-src'),
     timer: document.getElementById('timer')
 };
-const https = require('https');
 
 var date = new Date();
 document.getElementById('big-warning').style.display = "none";
+document.getElementById('back-indicator').style.display = "none";
+document.getElementById('front-indicator').style.display = "none";
 
 document.getElementById('auton-chooser').style.display = "none";
 ui.timer.style.color = `rgb(0, 200, 0)`;
-
-document.getElementById('camera1').style = "background-image: url(http://10.6.70.26:8000/?action=stream)";
-var multicamSources = ['http://10.6.70.26:8000/?action=stream', 'http://10.6.70.26:8001/?action=stream'];
-var multicamIndex = 0;
 
 // sets default positions for robot diagram
 var angle = 0;
@@ -23,30 +19,8 @@ document.getElementById('claw').style = "transform: translate(" + (Math.sin(angl
 document.getElementById('intake').style = "transform: rotate(" + 0 + "deg)";
 document.getElementById('arm-extension').style = "transform: translate(" + (Math.sin((angle) * Math.PI / 180) * armLength) + "px, " + (armLength - (Math.sin((angle+90) * Math.PI / 180) * armLength)) + "px) rotate(" + (angle + 180) + "deg)";
 
-// list of camera labels
-var cameras = ['Back', 'Front'];
-var cameraIndex = 0;
-// document.getElementById('camera-text').innerHTML = cameras[cameraIndex];
-
 // sets the timer element to green color text
 document.getElementById('timer').style.color = 'rgb(0,200,0)';
-
-// https.get('http://10.6.70.26:8001/?action=stream', (resp) => {
-//   let data = '';
-
-//   // A chunk of data has been recieved.
-//   resp.on('data', (chunk) => {
-//     document.getElementById('camera1').style.backgroundImage = url('http://10.6.70.26:8000/?action=stream');
-//   });
-
-//   // The whole response has been received. Print out the result.
-//   resp.on('end', () => {
-//     console.log(JSON.parse(data).explanation);
-//   });
-
-// }).on("error", (err) => {
-//   console.log("Error: " + err.message);
-// });
 
 // listens for game-time which starts counting down on autonInit()
 NetworkTables.addKeyListener('/SmartDashboard/game-time', (key, value) => {
@@ -71,18 +45,6 @@ NetworkTables.addKeyListener('/SmartDashboard/game-time', (key, value) => {
   }
   ui.timer.innerHTML = minutes + ':' + seconds;
 });
-
-// listens for camera-source 
-// NetworkTables.addKeyListener('/SmartDashboard/camera-source', (key, value) => {
-//   if (value === 1) {
-//     NetworkTables.putValue('/SmartDashboard/camera-source', 0);
-//     multicamIndex = (multicamIndex + 1) % multicamSources.length;
-//     document.getElementById('camera-text').innerHTML = cameras[multicamIndex];
-//     // document.getElementById('camera').style = "background-image: url(" + multicamSources[multicamIndex] + ")";
-//   } else {
-//     document.getElementById('warnings').innerHTML = '>>>' + value;
-//   }
-// });
 
 // listens for robot-state and updates status lights and auton chooser accordingly
 NetworkTables.addKeyListener('/SmartDashboard/robot-state', (key, value) => {
@@ -142,8 +104,6 @@ NetworkTables.addKeyListener('/SmartDashboard/elbow-angle', (key, value) => {
   } else if (angle >= 187.65 && angle < 227.35) {
     backHeight = (angle - 187.65) / (227.35 - 187.65) * 100;
   }
-  // if (multiCamSRC.innerHTML === 'Front') document.getElementById('hline').setAttribute('y', frontHeight+'%');
-  // if (multiCamSRC.innerHTML === 'Back') document.getElementById('hline').setAttribute('y', backHeight+'%');
 });
 
 // updates the robot diagram with the extension of the arm
@@ -162,26 +122,15 @@ NetworkTables.addKeyListener('/SmartDashboard/intake-angle', (key, value) => {
   if (value != null) document.getElementById('intake').style = "transform: rotate(" + (value - 90) + "deg)";
 });
 
-// updates status lights for claw ir
-NetworkTables.addKeyListener('/SmartDashboard/claw-ir-sensor', (key, value) => {
-  if (value === 'holding-hatch') {
+NetworkTables.addKeyListener('/SmartDashboard/claw-held-item', (key, value) => {
+  if (value === "None") {
+    document.getElementById('claw').style.stroke = "rgb(255, 255, 255)";
+  } else if (value === "Hatch") {
     document.getElementById('claw').style.stroke = "rgb(65, 169, 244)";
-    document.getElementById('claw-status').style.fill = "rgb(65, 169, 244)";
-    document.getElementById('claw-status').style.stroke = "rgb(65, 169, 244)";
-  } else if (value === 'open') {
-    document.getElementById('claw').style.stroke = "rgb(255,255,255)";
-    document.getElementById('claw-status').style.fill = "none";
-    document.getElementById('claw-status').style.stroke = "rgb(255,255,255)";
-  } else if (value === 'holding-ball') {
+  } else if (value === "Ball") {
     document.getElementById('claw').style.stroke = "rgb(244, 151, 65)";
-    document.getElementById('claw-status').style.fill = "rgb(244, 151, 65)";
-    document.getElementById('claw-status').style.stroke = "rgb(244, 151, 65)";
-  } else if (value === 'closed') {
-    document.getElementById('claw').style.stroke = "rgb(65, 169, 244)";
-    document.getElementById('claw-status').style.fill = "rgb(65, 169, 244)";
-    document.getElementById('claw-status').style.stroke = "rgb(65, 169, 244)";
   }
-});
+})
 
 // updates status lights for intake ir
 NetworkTables.addKeyListener('/SmartDashboard/intake-ir-sensor', (key, value) => {
@@ -210,6 +159,9 @@ NetworkTables.addKeyListener('/SmartDashboard/vision-status', (key, value) => {
   if (value === 'engaged') {
     document.getElementById('vision-status').style.fill = "rgb(0,255,0)";
     document.getElementById('vision-status').style.stroke = "rgb(0,255,0)";
+  } else if (value === 'invalid-target') {
+    document.getElementById('vision-status').style.fill = "rgb(241,244,66)";
+    document.getElementById('vision-status').style.stroke = "rgb(241,244,66)";
   } else if (value === 'error' || value === -99999) {
     document.getElementById('vision-status').style.fill = "rgb(255,0,0)";
     document.getElementById('vision-status').style.stroke = "rgb(255,0,0)";
@@ -224,9 +176,11 @@ NetworkTables.addKeyListener('/SmartDashboard/vision-status', (key, value) => {
   if (value === true) {
     document.getElementById('drive-reversed-status').style.fill = "rgb(255,255,255)";
     document.getElementById('drive-reversed-status').style.stroke = "rgb(255,255,255)";
+    document.getElementById('back-indicator').style.display = "none";
   } else {
     document.getElementById('drive-reversed-status').style.fill = "none";
     document.getElementById('drive-reversed-status').style.stroke = "rgb(255,255,255)";
+    document.getElementById('front-indicator').style.display = "none";
   }
 });
 
