@@ -10,10 +10,10 @@ package frc.team670.robot.commands.intake;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.dataCollection.MustangSensors;
-import frc.team670.robot.dataCollection.XKeys;
 import frc.team670.robot.subsystems.BaseIntake;
 import frc.team670.robot.subsystems.Intake;
 import frc.team670.robot.utils.Logger;
+import frc.team670.robot.dataCollection.XKeys;
 
 public class RunIntakeInWithIR extends Command {
 
@@ -64,7 +64,7 @@ public class RunIntakeInWithIR extends Command {
   protected void end() {
     intake.runIntake(0, true);
     Logger.consoleLog();
-    XKeys.setToggleIn(false);
+    XKeys.setBothToggles(false);
   }
 
   // Called when another command which requires one or more of the same
@@ -72,7 +72,7 @@ public class RunIntakeInWithIR extends Command {
   @Override
   protected void interrupted() {
     intake.runIntake(0, true);
-    XKeys.setToggleIn(false);
     Logger.consoleLog();
+    end();
   }
 }

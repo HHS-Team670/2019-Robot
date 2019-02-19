@@ -46,7 +46,7 @@ public class TimedRunIntake extends TimedCommand {
   @Override
   protected void end() {
     intake.runIntake(0, true);
-    XKeys.setToggleIn(false);
+    XKeys.setBothToggles(false);
     Logger.consoleLog();
   }
 

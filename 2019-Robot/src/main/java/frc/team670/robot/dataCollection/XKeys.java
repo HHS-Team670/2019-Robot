@@ -230,5 +230,10 @@ public class XKeys {
         toggleIn = !toggleOutBoolean;
     }
 
+    public static void setBothToggles(boolean bothTogglesBoolean){
+        toggleIn = bothTogglesBoolean;
+        toggleOut = bothTogglesBoolean;
+    }
+
 
 }

@@ -38,7 +38,7 @@ public class CancelArmMovement extends InstantCommand {
   protected void initialize() {
     SmartDashboard.putString("current-command", "CancelArmMovement");
     intake.runIntake(0, false);
-    XKeys.setToggleIn(false);
+    XKeys.setBothToggles(false);
   }
 
 }

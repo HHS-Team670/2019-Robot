@@ -26,6 +26,7 @@ public class ButtonRunIntake extends InstantCommand {
     this.intake = intake;
     this.runningIn = runningIn;
     this.power = power;
+    XKeys.setToggleIn(runningIn);
   }
 
 
@@ -34,7 +35,6 @@ public class ButtonRunIntake extends InstantCommand {
   protected void initialize() {
     SmartDashboard.putString("current-command", "ButtonRunIntake");
     intake.runIntake(power, runningIn);
-    XKeys.setToggleIn(runningIn);
   }
 
 }
