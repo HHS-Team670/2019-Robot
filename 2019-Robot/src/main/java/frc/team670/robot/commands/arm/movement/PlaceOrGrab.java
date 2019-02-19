@@ -36,7 +36,7 @@ public class PlaceOrGrab extends CommandGroup {
     } else if (state.equals(Arm.getArmState(LegalState.PLACE_BALL_CARGOSHIP_FORWARD))) {
       addSequential(new DropBall(Robot.claw, Robot.arm));
     } else if (state.equals(Arm.getArmState(LegalState.READY_PLACE_BALL_ROCKET_LOW_BACK))) {
-      moveArm = ArmPathGenerator.getPath(Arm.getStates().get(LegalState.PLACE_BALL_ROCKET_LOW_BACK), Robot.arm);
+      moveArm = ArmPathGenerator.getPath(Arm.getArmState(LegalState.PLACE_BALL_ROCKET_LOW_BACK), Robot.arm);
       addSequential(moveArm);
       addSequential(new DropBall(Robot.claw, Robot.arm));
       moveArm = ArmPathGenerator.getPath(state, Robot.arm);
@@ -54,13 +54,13 @@ public class PlaceOrGrab extends CommandGroup {
       moveArm = ArmPathGenerator.getPath(state, Robot.arm);
       addSequential(moveArm);
     } else if (state.equals(Arm.getArmState(LegalState.READY_PLACE_HATCH_ROCKET_MIDDLE_BACK))) {
-      moveArm = ArmPathGenerator.getPath(Arm.getStates().get(LegalState.PLACE_HATCH_ROCKET_MIDDLE_BACK), Robot.arm);
+      moveArm = ArmPathGenerator.getPath(Arm.getArmState(LegalState.PLACE_HATCH_ROCKET_MIDDLE_BACK), Robot.arm);
       addSequential(moveArm);
       addSequential(new DropHatch(Robot.claw, Robot.arm));
       moveArm = ArmPathGenerator.getPath(state, Robot.arm);
       addSequential(moveArm);
     } else if (state.equals(Arm.getArmState(LegalState.READY_PLACE_HATCH_ROCKET_MIDDLE_FORWARD))) {
-      moveArm = ArmPathGenerator.getPath(Arm.getStates().get(LegalState.PLACE_HATCH_ROCKET_MIDDLE_FORWARD), Robot.arm);
+      moveArm = ArmPathGenerator.getPath(Arm.getArmState(LegalState.PLACE_HATCH_ROCKET_MIDDLE_FORWARD), Robot.arm);
       addSequential(moveArm);
       addSequential(new DropHatch(Robot.claw, Robot.arm));
       moveArm = ArmPathGenerator.getPath(state, Robot.arm);
@@ -70,26 +70,26 @@ public class PlaceOrGrab extends CommandGroup {
     } else if (state.equals(Arm.getArmState(LegalState.GRAB_BALL_INTAKE))) { // check this
       addSequential(new AutoPickupCargo(Robot.arm, Robot.intake, Robot.claw, Robot.sensors));
     } else if (state.equals(Arm.getArmState(LegalState.GRAB_BALL_LOADINGSTATION_BACK))) { // figure this out
-      moveArm = ArmPathGenerator.getPath(Arm.getStates().get(LegalState.GRAB_BALL_LOADINGSTATION_BACK), Robot.arm);
+      moveArm = ArmPathGenerator.getPath(Arm.getArmState(LegalState.GRAB_BALL_LOADINGSTATION_BACK), Robot.arm);
       addSequential(moveArm);
       addSequential(new PickupBall(Robot.claw, Robot.arm));
       moveArm = ArmPathGenerator.getPath(state, Robot.arm);
       addSequential(moveArm);
     } else if (state.equals(Arm.getArmState(LegalState.GRAB_BALL_LOADINGSTATION_FORWARD))) { // figure this out
-      moveArm = ArmPathGenerator.getPath(Arm.getStates().get(LegalState.GRAB_BALL_LOADINGSTATION_FORWARD), Robot.arm);
+      moveArm = ArmPathGenerator.getPath(Arm.getArmState(LegalState.GRAB_BALL_LOADINGSTATION_FORWARD), Robot.arm);
       addSequential(moveArm);
       addSequential(new PickupBall(Robot.claw, Robot.arm));
       moveArm = ArmPathGenerator.getPath(state, Robot.arm);
       addSequential(moveArm);
     } else if (state.equals(Arm.getArmState(LegalState.READY_LOW_HATCH_BACK))) {
       if (isPlacing) {
-        moveArm = ArmPathGenerator.getPath(Arm.getStates().get(LegalState.LOW_HATCH_BACK), Robot.arm);
+        moveArm = ArmPathGenerator.getPath(Arm.getArmState(LegalState.LOW_HATCH_BACK), Robot.arm);
         addSequential(moveArm);
         addSequential(new DropHatch(Robot.claw, Robot.arm));
         moveArm = ArmPathGenerator.getPath(state, Robot.arm);
         addSequential(moveArm);
       } else {
-        moveArm = ArmPathGenerator.getPath(Arm.getStates().get(LegalState.LOW_HATCH_BACK), Robot.arm);
+        moveArm = ArmPathGenerator.getPath(Arm.getArmState(LegalState.LOW_HATCH_BACK), Robot.arm);
         addSequential(moveArm);
         addSequential(new GrabHatch(Robot.claw, Robot.arm));
         moveArm = ArmPathGenerator.getPath(state, Robot.arm);
@@ -97,13 +97,13 @@ public class PlaceOrGrab extends CommandGroup {
       }
     } else if (state.equals(Arm.getArmState(LegalState.READY_LOW_HATCH_FORWARD))) {
       if (isPlacing) {
-        moveArm = ArmPathGenerator.getPath(Arm.getStates().get(LegalState.LOW_HATCH_FORWARD), Robot.arm);
+        moveArm = ArmPathGenerator.getPath(Arm.getArmState(LegalState.LOW_HATCH_FORWARD), Robot.arm);
         addSequential(moveArm);
         addSequential(new DropHatch(Robot.claw, Robot.arm));
         moveArm = ArmPathGenerator.getPath(state, Robot.arm);
         addSequential(moveArm);
       } else {
-        moveArm = ArmPathGenerator.getPath(Arm.getStates().get(LegalState.LOW_HATCH_FORWARD), Robot.arm);
+        moveArm = ArmPathGenerator.getPath(Arm.getArmState(LegalState.LOW_HATCH_FORWARD), Robot.arm);
         addSequential(moveArm);
         addSequential(new GrabHatch(Robot.claw, Robot.arm));
         moveArm = ArmPathGenerator.getPath(state, Robot.arm);

@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.arm.armTransitions.ArmTransition;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
@@ -41,6 +42,8 @@ public class ArmPathGenerator {
       @Override
       protected void end() { // The created path will set the Arm's state to wherever it moved after finishing
         Arm.setState(destination);
+        SmartDashboard.putString("current-command", "MoveArm finished");
+        SmartDashboard.putString("movearm-finished", "finished");
       }
 
       @Override
