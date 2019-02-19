@@ -132,9 +132,13 @@ NetworkTables.addKeyListener('/SmartDashboard/claw-status', (key, value) => {
   } else if (value === "Hatch") {
     document.getElementById('claw').style.stroke = "rgb(65, 169, 244)";
     document.getElementById('claw').style.fill = "rgb(65, 169, 244)";
+    document.getElementById('held-item').innerHTML = "Hatch";
   } else if (value === "Ball") {
     document.getElementById('claw').style.stroke = "rgb(244, 151, 65)";
     document.getElementById('claw').style.fill = "rgb(244, 151, 65)";
+    document.getElementById('held-item').innerHTML = "Ball";
+  } else {
+    document.getElementById('held-item').innerHTML = "None";
   }
 })
 
@@ -254,6 +258,7 @@ function getFromMap(key) { // mapping is more aligned with arm position on robot
   if (key === "l") return "READY_PLACE_BALL_ROCKET_LOW_FORWARD";
   if (key === "q") return "READY_LOW_HATCH_FORWARD";
 
+  if (key === "d") return "READY_GRAB_HATCH_GROUND_BACK";
   if (key === "h") return "GRAB_BALL_GROUND_BACK";
   if (key === "x") return "GRAB_BALL_INTAKE";
   if (key === "b") return "STOW";
