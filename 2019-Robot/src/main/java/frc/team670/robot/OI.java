@@ -48,16 +48,6 @@ public class OI {
     driverController = new MustangController(RobotMap.DRIVER_CONTROLLER_PORT);
     // operatorController = new MustangController(RobotMap.OPERATOR_CONTROLLER_PORT);
     xkeys = new XKeys();
-
-    // openClaw = new JoystickButton(driverController, XboxButtons.LEFT_BUMPER);
-    // openClaw.whenPressed(new OpenClaw(Robot.claw));
-    // closeClaw = new JoystickButton(driverController, XboxButtons.RIGHT_BUMPER);
-    // closeClaw.whenPressed(new CloseClaw(Robot.claw));
-
-    // intakeIn = new JoystickButton(driverController, XboxButtons.START);
-    // intakeIn.whenPressed(new MoveIntakeToSetpointAngle(70, Robot.intake));
-    // intakeOut = new JoystickButton(driverController, XboxButtons.BACK);
-    // intakeOut.whenPressed(new MoveIntakeToSetpointAngle(-70, Robot.intake));
     toggleReverseDrive = new JoystickButton(driverController, XboxButtons.LEFT_BUMPER);
     toggleReverseDrive.whenPressed(new FlipDriveAndCamera());
     armToNeutral = new JoystickButton(driverController, XboxButtons.A);
@@ -68,45 +58,6 @@ public class OI {
         }
       }
     );
-
-
-    // openClaw = new JoystickButton(driverController, XboxButtons.X);
-    // openClaw.whenPressed(new OpenClaw(Robot.claw));
-    // closeClaw = new JoystickButton(driverController, XboxButtons.Y);
-    // closeClaw.whenPressed(new CloseClaw(Robot.claw));
-
-    // flipIntakeIn = new JoystickButton(driverController, XboxButtons.X);
-    // flipIntakeIn.whenPressed(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_IN, Robot.intake));
-    // flipIntakeOut = new JoystickButton(driverController, XboxButtons.Y);
-    // flipIntakeOut.whenPressed(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_DEPLOYED, Robot.intake));
-    // runIntakeIn = new JoystickButton(driverController, XboxButtons.X);
-    // runIntakeIn.whenPressed(new ButtonRunIntake(Robot.intake, RunIntakeInWithIR.RUNNING_POWER, true));
-    // runIntakeOut = new JoystickButton(driverController, XboxButtons.Y);
-    // runIntakeOut.whenPressed(new ButtonRunIntake(Robot.intake, RunIntakeInWithIR.RUNNING_POWER, false));
-
-
-
-    // incFeedForward = new JoystickButton(driverController, XboxButtons.START);
-    // incFeedForward.whenPressed(new IncreaseMeasurementOutput());
-    // decFeedForward = new JoystickButton(driverController, XboxButtons.BACK);
-    // decFeedForward.whenPressed(new DecreaseMeasurementOutput());
-    // measureFeedForward = new JoystickButton(driverController, XboxButtons.X);
-    // measureFeedForward.whenPressed(new MeasureArbitraryFeedforward(Robot.arm.getExtension()));
-
-    // runForward = new JoystickButton(driverController, XboxButtons.B);
-    // runForward.whenPressed(new MoveWrist(Robot.arm.getWrist(), 45));
-    // runBackward = new JoystickButton(driverController, XboxButtons.A);
-    // runBackward.whenPressed(new MoveWrist(Robot.arm.getWrist(), -45));
-
-    // setHeldItem = new JoystickButton(driverController, XboxButtons.Y);
-    // setHeldItem.whenPressed(new ToggleHeldItem(Robot.arm));
-
-
-
-    // enableBrakeMode = new JoystickButton(driverController, XboxButtons.START);
-    // enableBrakeMode.whenPressed(new EnableArmBrakeMode(Robot.arm));
-    // enableCoastMode = new JoystickButton(driverController, XboxButtons.BACK);
-    // enableCoastMode.whenPressed(new EnableArmCoastMode(Robot.arm));
   }
 
   /**
