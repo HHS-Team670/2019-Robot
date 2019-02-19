@@ -160,6 +160,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("intake-ir-sensor", sensors.getIntakeIROutput());
     SmartDashboard.putNumber("extension-actual-length" , extension.getLengthInches());
     SmartDashboard.putNumber("arm-extension" , extension.getLengthInches() / Extension.EXTENSION_OUT_IN_INCHES);
+    SmartDashboard.putNumber("Actual Extension" , extension.getLengthInches());
     // SmartDashboard.putNumber("Arbitrary Feedforward Measurement", MeasureArbitraryFeedforward.output);
 
     // SmartDashboard.putString("Held Item", arm.getHeldItem().toString());
