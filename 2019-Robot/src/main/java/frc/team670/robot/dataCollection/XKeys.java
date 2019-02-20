@@ -28,6 +28,7 @@ import frc.team670.robot.commands.drive.vision.CancelDriveBase;
 import frc.team670.robot.commands.drive.vision.VisionPurePursuitWithPivot;
 import frc.team670.robot.commands.intake.AutoPickupCargo;
 import frc.team670.robot.commands.intake.ButtonRunIntake;
+import frc.team670.robot.commands.intake.MoveIntakeToSetpointAngle;
 import frc.team670.robot.commands.intake.RunIntakeInWithIR;
 import frc.team670.robot.commands.intake.StopIntakeRollers;
 import frc.team670.robot.subsystems.Arm;
@@ -90,6 +91,7 @@ public class XKeys {
             if (s.equals("run_intake_in_with_IR")) runIntakeInWithIR();
             else if (s.equals("toggle_intake_in")) runIntakeIn();
             else if (s.equals("toggle_intake_out")) runIntakeOut();
+            else if (s.equals("bring_intake_in")) bringInIntake();
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-autopickup", (table2, key2, entry, value, flags) -> {
             autoPickupBall();
@@ -293,6 +295,10 @@ public class XKeys {
     public static void setBothToggles(boolean bothTogglesBoolean){
         toggleIn = bothTogglesBoolean;
         toggleOut = bothTogglesBoolean;
+    }
+
+    private void bringInIntake() {
+        Scheduler.getInstance().add(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_IN, Robot.intake));
     }
 
 
