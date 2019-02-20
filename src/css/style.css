@@ -226,8 +226,8 @@ body.login #login {
 }
 #crosshairs {
     position: absolute;
-    width: 1vw;
-    height: 100vh;
+    width: 20vw;
+    height: 150vh;
     transform: translate(27vw, 0vh);
     z-index: 0;
 }

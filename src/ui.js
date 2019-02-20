@@ -11,6 +11,10 @@ document.getElementById('front-indicator').style.display = "none";
 document.getElementById('auton-chooser').style.display = "none";
 ui.timer.style.color = `rgb(0, 200, 0)`;
 
+document.getElementById('crosshairs').style = "transform: translate(41vw, 0vh)";
+document.getElementById('crosshair-line').style = "transform: rotate(10deg)";
+
+
 // sets default positions for robot diagram
 var angle = 0;
 var armLength = 110;
@@ -137,8 +141,6 @@ NetworkTables.addKeyListener('/SmartDashboard/claw-status', (key, value) => {
     document.getElementById('claw').style.stroke = "rgb(244, 151, 65)";
     document.getElementById('claw').style.fill = "rgb(244, 151, 65)";
     document.getElementById('held-item').innerHTML = "Ball";
-  } else {
-    document.getElementById('held-item').innerHTML = "None";
   }
 })
 
@@ -187,12 +189,12 @@ NetworkTables.addKeyListener('/SmartDashboard/drive-reversed-status', (key, valu
     document.getElementById('drive-reversed-status').style.fill = "rgb(255,255,255)";
     document.getElementById('drive-reversed-status').style.stroke = "rgb(255,255,255)";
     document.getElementById('back-indicator').style.display = "none";
-    document.getElementById('crosshairs').style = "transform: translate(20vw, 0vh)";
+    document.getElementById('crosshairs').style = "transform: translate(21vw, 0vh)";
   } else {
     document.getElementById('drive-reversed-status').style.fill = "none";
     document.getElementById('drive-reversed-status').style.stroke = "rgb(255,255,255)";
     document.getElementById('front-indicator').style.display = "none";
-    document.getElementById('crosshairs').style = "transform: translate(25vw, 0vh)";
+    document.getElementById('crosshairs').style = "transform: translate(41vw, 0vh); rotate(10deg)";
   }
 });
 
@@ -204,7 +206,6 @@ NetworkTables.addKeyListener('/SmartDashboard/camera-source', (key, value) => {
   camNumber = value;
   console.log(camNumber);
   document.getElementById('camera-stream').src = 'http://10.6.70.26:800' +camNumber+'/?action=stream';
-
 });
 
 // listens for keystrokes from the external keypad and passes the corresponding values over networktables
