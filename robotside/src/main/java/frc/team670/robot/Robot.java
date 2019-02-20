@@ -7,25 +7,37 @@
 
 package frc.team670.robot;
 
-import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Notifier;
+import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team670.robot.subsystems.MustangLEDs_2019;
+import frc.team670.robot.utils.Logger;
+import frc.team670.robot.utils.functions.MathUtils;
 
 /**
  * The VM is configured to automatically run this class, and to call the
- * functions corresponding to each mode, as described in the IterativeRobot
+ * functions corresponding to each mode, as described in the TimedRobot
  * documentation. If you change the name of this class or the package after
  * creating this project, you must also update the build.gradle file in the
  * project.
  */
-public class Robot extends IterativeRobot {
-  private static final String kDefaultAuto = "Default";
-  private static final String kCustomAuto = "My Auto";
-  private String m_autoSelected;
-  private final SendableChooser<String> m_chooser = new SendableChooser<>();
-  private MustangLEDs leds = new MustangLEDs();
-  private long changeTime;
-  boolean gearData = false;
+public class Robot extends TimedRobot {
+  public static OI oi;
+  public static DriveBase driveBase = new DriveBase();
+  public static MustangLEDs_2019 leds = new MustangLEDs_2019();
+
+  private Command autonomousCommand, operatorControl;
+  private SendableChooser<Command> auton_chooser = new SendableChooser<>();
+  public static SendableChooser<Boolean> pid_chooser = new SendableChooser<>();
+  
+  private Timer timer;
+
+  public Robot() {
+  }
 
   /**
    * This function is run when the robot is first started up and should be
@@ -33,18 +45,13 @@ public class Robot extends IterativeRobot {
    */
   @Override
   public void robotInit() {
-
     System.out.println("Robot init");
 
     leds.socketSetup(5801);
     System.out.println("LED Setup Run");
+    timer = new Timer();
 
-    m_chooser.addDefault("Default Auto", kDefaultAuto);
-    m_chooser.addObject("My Auto", kCustomAuto);
-    SmartDashboard.putData("Auto choices", m_chooser);
-    changeTime = System.currentTimeMillis();
-    leds.update_xFinal(0);
-    leds.updateClimbingBoolean(gearData);
+    leds.setStillDrive(true);
   }
 
   /**
@@ -54,19 +61,26 @@ public class Robot extends IterativeRobot {
    *
    * <p>This runs after the mode specific periodic functions, but before
    * LiveWindow and SmartDashboard integrated updating.
+   */  
+ @Override
+  public void robotPeriodic() {
+
+  }
+  /**
+   * This function is called once each time the robot enters Disabled mode.
+   * You can use it to reset any subsystem information you want to clear when
+   * the robot is disabled.
    */
   @Override
-  public void robotPeriodic() {
-    //System.out.println("Test");
-    if(System.currentTimeMillis() > changeTime + 4 * 1000) {
-      changeTime = System.currentTimeMillis();
-      leds.updateGearData(!gearData);
-      System.out.println("Gear Data: " + gearData);
-      leds.changeAlliance(gearData);
-      gearData = !gearData;
-      leds.update_xFinal((int)(Math.random() * 3));
-    }
+  public void disabledInit() {
+    SmartDashboard.putString("robot-state", "disabledInit()");
+    Logger.consoleLog("Robot Disabled");
+    driveBase.initCoastMode();
+  }
 
+  @Override
+  public void disabledPeriodic() {
+    Scheduler.getInstance().run();
   }
 
   /**
@@ -74,18 +88,18 @@ public class Robot extends IterativeRobot {
    * between different autonomous modes using the dashboard. The sendable
    * chooser code works with the Java SmartDashboard. If you prefer the
    * LabVIEW Dashboard, remove all of the chooser code and uncomment the
-   * getString line to get the auto name from the text box below the Gyro
+   * getString code to get the auto name from the text box below the Gyro
    *
-   * <p>You can add additional auto modes by adding additional comparisons to
-   * the switch structure below with additional strings. If using the
-   * SendableChooser make sure to add them to the chooser code above as well.
+   * <p>You can add additional auto modes by adding additional commands to the
+   * chooser code above (like the commented example) or additional comparisons
+   * to the switch structure below with additional strings & commands.
    */
   @Override
   public void autonomousInit() {
-    m_autoSelected = m_chooser.getSelected();
-    // autoSelected = SmartDashboard.getString("Auto Selector",
-    // defaultAuto);
-    System.out.println("Auto selected: " + m_autoSelected);
+    leds.setForwardData(true);
+    if (autonomousCommand != null) {
+      autonomousCommand.start();
+    }
   }
 
   /**
@@ -93,14 +107,24 @@ public class Robot extends IterativeRobot {
    */
   @Override
   public void autonomousPeriodic() {
-    switch (m_autoSelected) {
-      case kCustomAuto:
-        // Put custom auto code here
-        break;
-      case kDefaultAuto:
-      default:
-        // Put default auto code here
-        break;
+    Scheduler.getInstance().run();
+  }
+
+  @Override
+  public void teleopInit() {
+    leds.setForwardData(true);
+
+    driveBase.initBrakeMode();
+
+    leds.setForwardData(true);
+
+    Logger.consoleLog("Teleop Started");
+    // This makes sure that the autonomous stops running when
+    // teleop starts running. If you want the autonomous to
+    // continue until interrupted by another command, remove
+    // this line or comment it out.
+    if (autonomousCommand != null) {
+      autonomousCommand.cancel();
     }
   }
 
@@ -118,4 +142,5 @@ public class Robot extends IterativeRobot {
   public void testPeriodic() {
 
   }
+
 }
