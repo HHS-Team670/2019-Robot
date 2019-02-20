@@ -96,7 +96,7 @@ function createWindow() {
     });
     // Create the browser window.
     mainWindow = new BrowserWindow({
-        width: 1366,
+        width: 1540,
         height: 570,
         // 1366x570 is a good standard height, but you may want to change this to fit your DriverStation's screen better.
         // It's best if the dashboard takes up as much space as possible without covering the DriverStation application.
