@@ -88,7 +88,7 @@ public class Claw extends Subsystem {
    * Closes the claw.
    */
   public void closeClaw() {
-    changeSolenoid(false);
+    changeSolenoid(true);
     System.out.println("Close Claw Called");
   }
 
@@ -100,7 +100,7 @@ public class Claw extends Subsystem {
    * Opens the claw.
    */
   public void openClaw() {
-    changeSolenoid(true);
+    changeSolenoid(false);
     System.out.println("Open Claw Called");
   }
 
@@ -126,10 +126,10 @@ public class Claw extends Subsystem {
 
   public boolean isOpen() {
     if(sol1 != null) {
-      return sol1.get();
+      return !sol1.get();
     }
     else if (sol0 != null) {
-      return sol0.get();
+      return !sol0.get();
     }
     return true;
   }

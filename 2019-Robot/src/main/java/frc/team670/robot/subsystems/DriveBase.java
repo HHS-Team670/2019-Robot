@@ -109,7 +109,7 @@ public class DriveBase extends Subsystem {
     right1.getPIDController().setFF(P_FF, ENCODERS_PID_SLOT);
     right1.getPIDController().setOutputRange(-1, 1);
 
-    setRampRate(allMotors, 0.254); // Will automatically cook some Cheezy Poofs
+    setRampRate(allMotors, 0.36); // Will automatically cook some Cheezy Poofs
 
     // DIO Encoders
     try {

@@ -107,6 +107,10 @@ public class Robot extends TimedRobot {
 
     leds.setStillDrive(true);
 
+    elbow.stop();
+    wrist.stop();
+    extension.stop();
+
     // operatorControl = new ControlOperatorController(oi.getOperatorController());
     updateArbitraryFeedForwards = new Notifier(new Runnable() {
       public void run() {
