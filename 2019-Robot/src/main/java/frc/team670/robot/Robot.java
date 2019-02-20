@@ -105,6 +105,8 @@ public class Robot extends TimedRobot {
     // autonomousCommand = oi.getSelectedAutonCommand();
     timer = new Timer();
 
+    leds.setStillDrive(true);
+
     // operatorControl = new ControlOperatorController(oi.getOperatorController());
     updateArbitraryFeedForwards = new Notifier(new Runnable() {
       public void run() {
@@ -204,7 +206,9 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
-    // sensors.resetNavX(); // Reset NavX completely, zero the field centric based on how robot faces from start of game.
+    leds.setForwardData(true);
+
+    sensors.resetNavX(); // Reset NavX completely, zero the field centric based on how robot faces from start of game.
 
     // driveBase.initBrakeMode();
 
@@ -255,6 +259,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     SmartDashboard.putString("robot-state", "teleopInit()");
+    leds.setForwardData(true);
 
     driveBase.initBrakeMode();
 

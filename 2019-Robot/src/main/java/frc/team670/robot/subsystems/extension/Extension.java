@@ -34,7 +34,7 @@ public class Extension extends BaseExtension {
   private static final int POSITION_SLOT = 1;
   private final double P_P = 0.1, P_I = 0.0, P_D = 0.0, P_F = 0.0, RAMP_RATE = 0.1;
   private static final double EXTENSION_POWER = 0.75; // TODO set this for Extension movement when climbing
-  private static final int CONTINUOUS_CURRENT_LIMIT = 20, PEAK_CURRENT_LIMIT = 0;
+  private static final int CONTINUOUS_CURRENT_LIMIT = 10, PEAK_CURRENT_LIMIT = 20;
 
   private static final int START_POSITION_TICKS = 0; // TODO set this. Start position needed since extension has no absolute encoder
 
@@ -99,6 +99,8 @@ public class Extension extends BaseExtension {
     extensionMotor.configNominalOutputReverse(0, RobotConstants.kTimeoutMs);
     extensionMotor.configPeakOutputForward(MAX_EXTENSION_OUTPUT, RobotConstants.kTimeoutMs);
     extensionMotor.configPeakOutputReverse(-MAX_EXTENSION_OUTPUT, RobotConstants.kTimeoutMs);
+
+    extensionMotor.configPeakCurrentDuration(300);
 
     if(getReverseLimitSwitchTripped()) {
       extensionMotor.setSelectedSensorPosition(EXTENSION_IN_POS);
@@ -327,6 +329,16 @@ public class Extension extends BaseExtension {
 
   private void setSelectedSensorPosition(int sensorPos) {
     extensionMotor.setSelectedSensorPosition(sensorPos);
+  }
+
+  public void resetLimitSwitch(){
+    if(getForwardLimitSwitchTripped()){
+      extensionMotor.setSelectedSensorPosition(Extension.EXTENSION_OUT_POS);
+    }
+
+    if(getReverseLimitSwitchTripped()){
+      extensionMotor.setSelectedSensorPosition(Extension.EXTENSION_IN_POS);
+    }
   }
 
 
