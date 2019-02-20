@@ -62,6 +62,11 @@ public class TestExtension extends BaseExtension {
   }
 
   @Override
+  public void resetLimitSwitch() {
+    
+  }
+
+  @Override
   public boolean isReverseLimitPressed() {
     return false;
   }

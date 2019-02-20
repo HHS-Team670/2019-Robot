@@ -24,12 +24,12 @@ public class Intake extends BaseIntake {
 
   public static final double DISTANCE_FROM_ARM_ZERO = 28;
 
-  private static final int ROLLER_CONTINUOUS_CURRENT = 30, ROLLER_PEAK_CURRENT = 0;
+  private static final int ROLLER_CONTINUOUS_CURRENT = 30, ROLLER_PEAK_CURRENT = 40;
 
   public static final int INTAKE_ANGLE_IN = -90, INTAKE_ANGLE_DEPLOYED = 90;
   public static final double INTAKE_FIXED_LENGTH_IN_INCHES = 11.25, INTAKE_ROTATING_LENGTH_IN_INCHES = 14;
   private static final double MAX_BASE_OUTPUT = 0.75;
-  private static final double kF = 0, kP = 0.4, kI = 0, kD = 0;
+  private static final double kF = 0, kP = 0.45, kI = 0, kD = 0;
 
   // Motion Magic
   private static final int kPIDLoopIdx = 0, MOTION_MAGIC_SLOT = 0, kTimeoutMs = 0;

@@ -26,7 +26,7 @@ public class Wrist extends BaseWrist {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
   
-  private static final int CONTINUOUS_CURRENT_LIMIT = 10, PEAK_CURRENT_LIMIT = 20;
+  private static final int CONTINUOUS_CURRENT_LIMIT = 15, PEAK_CURRENT_LIMIT = 20;
 
   // Motion Magic
   private static final int kPIDLoopIdx = 0, MOTION_MAGIC_SLOT = 0, kTimeoutMs = 0;
