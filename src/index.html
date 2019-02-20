@@ -19,14 +19,19 @@
 
     <div id="timer">2:30</div>
   
-    <svg id="crosshairs">
-      <line id="crosshair-line" x1="0" y1="0" x2="0" y2="100%" style="stroke-width:5"/>
+    <svg id="v-crosshairs-left">
+      <line x1="0" y1="0" x2="0" y2="100%" style="stroke-width:0.5"/>
+    </svg>
+    <svg id="v-crosshairs-right">
+      <line x1="0" y1="0" x2="0" y2="100%" style="stroke-width:0.5"/>
     </svg>
 
-    <div id="camera">
-      <img id="camera-stream" style='height:100%; width:100%; object-fit:fill' src="http://10.6.70.26:8000/?action=stream" onerror="this.src='http://10.6.70.26:800' +camNumber+'/?action=stream&random='+ new Date().getMilliseconds()"/>
+    <div id="camera1">
+      <img id="camera-stream" style='height:100%; width:100%; object-fit:fill' src="http://10.6.70.26:8000/?action=stream" onerror="this.src='http://10.6.70.26:8000/?action=stream"/>
     </div>
-    <!-- <div id="camera2"></div> -->
+    <div id="camera2">
+      <img id="camera-stream" style='height:100%; width:100%; object-fit:fill' src="http://10.6.70.26:8001/?action=stream" onerror="this.src='http://10.6.70.26:8001/?action=stream"/>
+    </div>
     
     <div id="camera-texts">
       <p x="0%" y="0%">Front</p>
@@ -68,11 +73,6 @@
       <rect id="intake" x="65%" y="75%" width="20%" height="5%"/>
       <circle cx="30%" cy="95%" r="5%"/>
       <circle cx="60%" cy="95%" r="5%"/>
-    </svg>
-
-    <svg id="current-command">
-      <text id="current-command-text" x="50%" y="20%" style="text-anchor: middle">Current Command</text>
-      <text id="held-item" x="50%" y="90%" style="text-anchor: middle">Held Item</text> 
     </svg>
 
     <div id="auton-chooser">

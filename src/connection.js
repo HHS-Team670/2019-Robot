@@ -34,9 +34,6 @@ function onRobotConnection(connected) {
     document.body.classList.toggle('login', false);
     document.getElementById('login').style.display = "none";
     loginShown = false;
-
-    document.getElementById('camera-stream').src = "http://10.6.70.26:800" + NetworkTables.getValue('/SmartDashboard/camera-source') + "/?action=stream";
-    console.log('initial value set');
   } else if (loginShown) {
     setLogin();
   }

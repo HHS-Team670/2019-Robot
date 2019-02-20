@@ -12,7 +12,6 @@ document.getElementById('auton-chooser').style.display = "none";
 ui.timer.style.color = `rgb(0, 200, 0)`;
 
 document.getElementById('crosshairs').style = "transform: translate(41vw, 0vh)";
-document.getElementById('crosshair-line').style = "transform: rotate(10deg)";
 
 
 // sets default positions for robot diagram
@@ -79,12 +78,6 @@ NetworkTables.addKeyListener('/SmartDashboard/warnings', (key, value) => {
   }
 });
 
-// displays the currently running command on the dashboard
-NetworkTables.addKeyListener('/SmartDashboard/current-command', (key, value) => {
-  if (value != 'undefined') document.getElementById('current-command-text').innerHTML = value;
-  else document.getElementById('current-command-text').innerHTML = "NULL";
-});
-
 // displays the current arm state
 NetworkTables.addKeyListener('/SmartDashboard/current-arm-state', (key, value) => {
   if (value != null) document.getElementById('current-arm-state').innerHTML = value.split("$")[1].split("@")[0];
@@ -141,6 +134,8 @@ NetworkTables.addKeyListener('/SmartDashboard/claw-status', (key, value) => {
     document.getElementById('claw').style.stroke = "rgb(244, 151, 65)";
     document.getElementById('claw').style.fill = "rgb(244, 151, 65)";
     document.getElementById('held-item').innerHTML = "Ball";
+  } else if (value === "None") {
+    document.getElementById('held-item').innerHTML = "None";
   }
 })
 
@@ -196,16 +191,6 @@ NetworkTables.addKeyListener('/SmartDashboard/drive-reversed-status', (key, valu
     document.getElementById('front-indicator').style.display = "none";
     document.getElementById('crosshairs').style = "transform: translate(41vw, 0vh); rotate(10deg)";
   }
-});
-
-var camNumber = 0;
-NetworkTables.addKeyListener('/SmartDashboard/camera-source', (key, value) => {
-  // camNumber = (camNumber + 1) % 2;
-  // console.log('value: ' + value);
-  // document.getElementById('camera').style.backgroundImage = 'url(\'http://10.6.70.26:800' +value+'/?action=stream\')';
-  camNumber = value;
-  console.log(camNumber);
-  document.getElementById('camera-stream').src = 'http://10.6.70.26:800' +camNumber+'/?action=stream';
 });
 
 // listens for keystrokes from the external keypad and passes the corresponding values over networktables
@@ -354,6 +339,5 @@ function readRadioButtons() {
 // sends auton chooser data over networktables
 function sendAuton() {
   readRadioButtons();
-  document.getElementById('warnings').innerHTML = auton;
   NetworkTables.putValue("/SmartDashboard/auton-sequence", auton);
 }
