@@ -18,23 +18,18 @@
     </svg>
 
     <div id="timer">2:30</div>
-    
-    <svg id="back-crosshairs-vertical" fill="rgb(255,0,0)">
-      <line x1="0" y1="0" x2="0" y2="100%" style="stroke-width:0.5"/>
-    </svg>
-
-    <svg id="front-crosshairs-vertical">
-      <line x1="0" y1="0" x2="0" y2="100%" style="stroke-width:0.5"/>
+  
+    <svg id="crosshairs">
+      <line x1="0" y1="0" x2="0" y2="100%" style="stroke-width:5"/>
     </svg>
 
     <div id="camera">
-      <img id="camera-stream" src="http://10.6.70.26:8000/?action=stream" onerror="this.src='http://10.6.70.26:800' +camNumber+'/?action=stream&random='+ new Date().getMilliseconds()"/>
+      <img id="camera-stream" style='height:100%; width:100%; object-fit:fill' src="http://10.6.70.26:8000/?action=stream" onerror="this.src='http://10.6.70.26:800' +camNumber+'/?action=stream&random='+ new Date().getMilliseconds()"/>
     </div>
     <!-- <div id="camera2"></div> -->
     
     <div id="camera-texts">
-      <p x="0%">Front</p>
-      <p x="90%">Back</p>
+      <p x="0%" y="0%">Front</p>
     </div>
 
     <svg id="status-lights" width="350" height="60">

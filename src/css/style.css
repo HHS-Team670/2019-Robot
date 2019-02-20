@@ -69,34 +69,20 @@ header {
 #camera {
     padding: 0;
     position: absolute;
-    bottom: 0vh;
+    bottom: 5vh;
     left: 1vw;
-    width: 60vw;
-    height: 100vh;
+    width: 56vw;
+    height: 90vh;
     object-fit: fill;
     overflow: hidden;
     background-color: #333;
     background-size: cover;
-    /* image: url('http://10.6.70.26:8000/?action=stream'); */
 }
-/* #camera2 {
-    padding: 0;
-    position: absolute;
-    bottom: 25vh;
-    left: 2vw;
-    width: 30vw;
-    height: 50vh;
-    object-fit: fill;
-    overflow: hidden;
-    background-color: #333;
-    background-size: cover;
-    background-image: url('http://10.6.70.26:8001/?action=stream');
-} */
 #camera-texts {
     position: absolute;
-    width: 40vw;
-    height: 5vh;
-    transform: translate(2vw, 75vh);
+    width: 5vw;
+    height: 6vh;
+    transform: translate(1vw, 89vh);
 }
 svg * {
     stroke: white;
@@ -238,18 +224,11 @@ body.login #login {
     height: 20vh;
     z-index: 1;
 }
-#back-crosshairs-vertical {
-    position: absolute;
-    width: 0px;
-    height: 70vh;
-    transform: translate(15vw, 15vh);
-    z-index: 0;
-}
-#front-crosshairs-vertical {
+#crosshairs {
     position: absolute;
     width: 1vw;
-    height: 70vh;
-    transform: translate(45vw, 15vh);
+    height: 100vh;
+    transform: translate(27vw, 0vh);
     z-index: 0;
 }
 #back-indicator {

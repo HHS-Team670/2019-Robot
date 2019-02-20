@@ -187,10 +187,12 @@ NetworkTables.addKeyListener('/SmartDashboard/drive-reversed-status', (key, valu
     document.getElementById('drive-reversed-status').style.fill = "rgb(255,255,255)";
     document.getElementById('drive-reversed-status').style.stroke = "rgb(255,255,255)";
     document.getElementById('back-indicator').style.display = "none";
+    document.getElementById('crosshairs').style = "transform: translate(20vw, 0vh)";
   } else {
     document.getElementById('drive-reversed-status').style.fill = "none";
     document.getElementById('drive-reversed-status').style.stroke = "rgb(255,255,255)";
     document.getElementById('front-indicator').style.display = "none";
+    document.getElementById('crosshairs').style = "transform: translate(25vw, 0vh)";
   }
 });
 
