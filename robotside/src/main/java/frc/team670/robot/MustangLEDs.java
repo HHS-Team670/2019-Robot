@@ -1,13 +1,11 @@
-package frc.team670.robot;
+package frc.team670.robot.subsystems;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-
 import org.opencv.core.MatOfPoint;
-
 import edu.wpi.first.wpilibj.DriverStation;
 
 /**
@@ -17,174 +15,151 @@ import edu.wpi.first.wpilibj.DriverStation;
  * 
  * @author ctchen, shaylandias
  */
-public class MustangLEDs {
-	// Data Init
-	String alliance = "Invalid";
-	String climbing = "false  ";
-	String forwardDrive="false  ";
-	String reverseDrive="false  ";
-	String still="false  ";
-	String visionLock="false  ";
-	int xFinal = 2;
-	String data = "Invalid,false,false,";
+
+public class MustangLEDs_2019 {
+
+	// string representations for alliances
+	final byte[] blueAlliance = { '1', 'A' };
+	final byte[] redAlliance = { '2', 'A' };
+	// final String invalidAlliance="3A";
+
+	// string representations for robot states
+	final byte[] climbing = { '4', 'R' };
+	final byte[] visionLock = { '2', 'R' };
+	final byte[] forwardDrive = { '0', 'R' };
+	final byte[] reverseDrive = { '1', 'R' };
+	final byte[] stillDrive = { '3', 'R' };
+
+	// final byte[] runningAllianceColors = {'0','L'};
+	// final byte[] solidGreen = {'1','L'};
+	// final byte[] solidRed = {'2','L'};
+	// final byte[] solidPurple = {'3','L'};
+	// final byte[] GreenLights = {'4','L'};
+	// final byte[] Strobe = {'5','L'};
+	// final byte[] randomStrobe = {'6','L'};
+	// final byte[] bounceBackground = {'7','L'};
+	// final byte[] cylonBounce = {'8','L'};
+	// final byte[] rainbow = {'9','L'};
 	
+
+	// variables for data which will be sent over server
+	byte[] stateData = stillDrive;
+	byte[] allianceData = blueAlliance;
+	// byte[] lightShowData = runningAllianceColors;
+
 	// Socket Init
 	ServerSocket serverSocket = null;
 	// Thread init
 	clientManagement client = new clientManagement();
 
-	
-	public void socketSetup(int server){ // Activates a single client once comms are established
-		
+	public void socketSetup(int server) { // Activates a single client once comms are established
+
 		try {
 			serverSocket = null;
 			serverSocket = new ServerSocket(server);
 			client.start();
 		} catch (IOException e) {
 			System.out.println("Unable to init Arduino server");
-		}  
-		
-	}
-	
-	public void changeAlliance(boolean b) {
-		if(b) {
-			alliance = "blue   ";
+			System.out.println(e.toString());
 		}
-		else {
-			alliance = "red    ";
+
+	}
+
+	public void changeAlliance(boolean b) { //sets alliance data, is the first byte array sent over server
+		if (b) {
+			allianceData = blueAlliance;
+		} else {
+			allianceData = redAlliance;
+		}
+
+	}
+	public void setClimbingData(boolean trigger) { // Updates if we are climbing
+		if (trigger == true) {
+			stateData = climbing;
+		} else {
+			setStillDrive(true);
 		}
 	}
 
-	public void updateAlliance(){ // Updates the Alliance Color in data transmission
-		
-		DriverStation.Alliance color = DriverStation.getInstance().getAlliance();
-		
-		if(color == DriverStation.Alliance.Blue){
-			alliance = "blue   ";
-		}
-		if(color == DriverStation.Alliance.Red){
-			alliance = "red    ";
-		}
-		if(color == DriverStation.Alliance.Invalid){
-			alliance = "invalid";	
+	public void setVisionData(boolean trigger) { // updates if we lock onto a vision target
+		if (trigger == true) {
+			stateData = visionLock;
+		} else {
+			setStillDrive(true);
 		}
 	}
-	
-	public void updateClimbingBoolean(boolean trigger){ // Updates if we are climbing
-		if(trigger == true){
-			climbing = "true   ";
-		}else{
-			climbing = "false  ";
-		}
-	}
-	
-	public void updateVisionData(boolean trigger){ //updates if we lock onto a vision target
-		if(trigger == true){
-			visionLock = "true   ";
-		}else{
-			visionLock = "false  ";
-		}
-	}
-	public void updateForwardDrive(boolean trigger){//update if we are driving forward
-		if(trigger=true){
-			forwardDrive="true   ";
-		}
-		else{
-			forwardDrive="false  ";
-		}
-	}
-	public void updateReverseDrive(boolean trigger){
-		if(trigger=true){
-			reverseDrive="true   ";
-		}
-		else{
-			reverseDrive="false  ";
-		}
-	}
-	public void updateStillDrive(boolean trigger){
-		if(trigger=true){
-			still="true   ";
-		}
-		else{
-			still="false  ";
-		}
-	}
-	
-	public void update_xFinal(double acceptedXFinal){ // Updates xFinal in data
-		if(acceptedXFinal > 10 && acceptedXFinal != -666){
-			xFinal = 3;
-		}else{
-			if(acceptedXFinal < -10 && acceptedXFinal != -666){
-				xFinal = 1;
-			}else{
-				xFinal = 2;
-			}
-		}
-	}
-	
-	public class clientManagement extends Thread{
-		
-		public void run(){
-			
-			Socket socketClient = null;
-			DataOutputStream output = null;
-			ArrayList<MatOfPoint> gpgArray = new ArrayList<MatOfPoint>();
-			while(socketClient == null){ // Attempts until client is found
 
-				System.out.println("Socket Client null");
-				try {
-					socketClient = serverSocket.accept();
-				} catch (IOException e) {
-					socketClient = null;
+	public void setForwardData(boolean trigger) {// updates if we are driving forward
+
+		if (trigger = true) {
+			stateData = forwardDrive;
+		} else {
+			setStillDrive(true);
+		}
+	}
+
+	public void setReverseData(boolean trigger) {// updates if we are driving in reverse
+		if (trigger = true) {
+			stateData = reverseDrive;
+		} else {
+			setStillDrive(true);
+		}
+	}
+
+	public void setStillDrive(boolean trigger) {// updates it robot is not moving
+		if (trigger = true) {
+			stateData = stillDrive;
+		}
+	}
+
+	public class clientManagement extends Thread {
+
+		public void run() {
+
+			while (true) {
+				Socket socketClient = null;
+				DataOutputStream output = null;
+				ArrayList<MatOfPoint> gpgArray = new ArrayList<MatOfPoint>();
+				while (socketClient == null) { // Attempts until client is found
+
+					System.out.println("Waiting for LED client connection");
+					try {
+						socketClient = serverSocket.accept();
+					} catch (IOException e) {
+						socketClient = null;
+					}
 				}
-			}
-			
-			while(output == null){	// Attempts until Data Output Stream declared
-				System.out.println("Output Null");
-				try {
-					output = new DataOutputStream(socketClient.getOutputStream());
-					output.flush();
-				} catch (IOException e) {
-					output = null;
+
+				while (output == null) { // Attempts until Data Output Stream declared
+					System.out.println("Output Null");
+					try {
+						output = new DataOutputStream(socketClient.getOutputStream());
+					} catch (IOException e) {
+						output = null;
+					}
 				}
-			}
-			
-			while(true){
-				
-				// Compiles data into one nice neat string
-				
-				data = alliance + "," + climbing + "," + forwardDrive+ "," +reverseDrive + "," + still+ "," +visionLock+","+xFinal;
-	
-				System.out.println(data);
-				
+
+				System.out.println(allianceData + "" + stateData);
+
 				// Sends data to the Arduino/Ethernet Shield
 				try {
-					output.writeUTF(data);
+					output.write(allianceData);
+					output.write(stateData);
 					output.flush();
+					output.close();
 				} catch (Exception e) {
 					System.out.println("Unable to send Arduino data");
-					
-					try{
-						output.close();
-						socketClient.close();
-						serverSocket = null;
-						socketClient = null;
-						socketSetup(5801);
-					}catch(Exception E){
-					}
-					
-					socketSetup(5801);
-					return;
-				}  
-				
+					System.out.println(e.toString());
+				}
+
 				// Sleeps to attempt to prevent a DOS overload
-                try {
+				try {
 					Thread.sleep(250);
 				} catch (Exception e) {
 				}
-  
+
 			}
-			
-		}			
-	}	
+
+		}
+	}
 }
