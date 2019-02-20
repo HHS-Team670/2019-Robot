@@ -11,6 +11,10 @@ document.getElementById('front-indicator').style.display = "none";
 document.getElementById('auton-chooser').style.display = "none";
 ui.timer.style.color = `rgb(0, 200, 0)`;
 
+document.getElementById('crosshairs').style = "transform: translate(41vw, 0vh)";
+document.getElementById('crosshair-line').style = "transform: rotate(10deg)";
+
+
 // sets default positions for robot diagram
 var angle = 0;
 var armLength = 110;
@@ -137,8 +141,6 @@ NetworkTables.addKeyListener('/SmartDashboard/claw-status', (key, value) => {
     document.getElementById('claw').style.stroke = "rgb(244, 151, 65)";
     document.getElementById('claw').style.fill = "rgb(244, 151, 65)";
     document.getElementById('held-item').innerHTML = "Ball";
-  } else {
-    document.getElementById('held-item').innerHTML = "None";
   }
 })
 
@@ -192,7 +194,7 @@ NetworkTables.addKeyListener('/SmartDashboard/drive-reversed-status', (key, valu
     document.getElementById('drive-reversed-status').style.fill = "none";
     document.getElementById('drive-reversed-status').style.stroke = "rgb(255,255,255)";
     document.getElementById('front-indicator').style.display = "none";
-    document.getElementById('crosshairs').style = "transform: translate(41vw, 0vh)";
+    document.getElementById('crosshairs').style = "transform: translate(41vw, 0vh); rotate(10deg)";
   }
 });
 
@@ -204,7 +206,6 @@ NetworkTables.addKeyListener('/SmartDashboard/camera-source', (key, value) => {
   camNumber = value;
   console.log(camNumber);
   document.getElementById('camera-stream').src = 'http://10.6.70.26:800' +camNumber+'/?action=stream';
-
 });
 
 // listens for keystrokes from the external keypad and passes the corresponding values over networktables
@@ -222,7 +223,7 @@ document.addEventListener("keyup", function(event) {
     }
     else if (nextTask.includes("cancel")) NetworkTables.putValue('/SmartDashboard/xkeys-cancel', nextTask);
     else if (nextTask === "place" || nextTask === "grab" || nextTask === "drop_held_item" || nextTask === "toggle_held_item") NetworkTables.putValue('/SmartDashboard/xkeys-placing', nextTask);
-    else if (nextTask.includes("toggle_intake") || nextTask.includes("run_intake")) NetworkTables.putValue('/SmartDashboard/xkeys-intake', nextTask);
+    else if (nextTask.includes("toggle_intake") || nextTask.includes("run_intake") || nextTask.includes("bring_intake_in")) NetworkTables.putValue('/SmartDashboard/xkeys-intake', nextTask);
     else if (nextTask === "auto_pickup_ball") NetworkTables.putValue('/SmartDashboard/xkeys-autopickup', nextTask);
     else if (nextTask.includes("climb")) NetworkTables.putValue('/SmartDashboard/xkeys-climber', nextTask);
     else if (nextTask.includes("vision")) NetworkTables.putValue('/SmartDashboard/xkeys-visiondrive', nextTask);
@@ -273,6 +274,7 @@ function getFromMap(key) { // mapping is more aligned with arm position on robot
 
   if (key === "5") return "toggle_claw";
   if (key === "6") return "reset_extension";
+  if (key === "7") return "bring_intake_in";
 
   if (key === "0") return "vision_drive";
 
