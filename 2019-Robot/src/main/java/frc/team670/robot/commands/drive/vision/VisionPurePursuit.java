@@ -70,7 +70,7 @@ public class VisionPurePursuit extends CommandGroup {
     System.out.println("HorizontalAngle: " + horizontalAngle);
     if (MathUtils.doublesEqual(horizontalAngle, RobotConstants.VISION_ERROR_CODE)) {
       Logger.consoleLog("No Valid Vision Data found, command quit.");
-      SmartDashboard.putString("vision-status", "error");
+      SmartDashboard.putString("vision-status", "invalid-data");
       SmartDashboard.putString("warnings", "Vision Target Not Found");
       return;
     }
