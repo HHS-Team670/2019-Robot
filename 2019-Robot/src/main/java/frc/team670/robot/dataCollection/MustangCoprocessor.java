@@ -33,9 +33,9 @@ public class MustangCoprocessor {
     public static final double HIGH_TARGET_HEIGHT = 39.125; //inches
     public static final double LOW_TARGET_HEIGHT = 31.5; //inches
 
-    private static final double BACK_CAMERA_HORIZONTAL_OFFSET = -7.875; //inches
-    private static final double BACK_CAMERA_HEIGHT = 12.375;
-    private static final double BACK_CAMERA_VERTICAL_OFFSET_ANGLE = 29; //degrees
+    private static final double BACK_CAMERA_HORIZONTAL_OFFSET = 7.875; //inches
+    private static final double BACK_CAMERA_HEIGHT = 11.375;
+    private static final double BACK_CAMERA_VERTICAL_OFFSET_ANGLE = 28; //degrees
 
     private static final double FRONT_CAMERA_HORIZONTAL_OFFSET = 5.25; //inches
     private static final double FRONT_CAMERA_HEIGHT = 7.25;
@@ -132,11 +132,12 @@ public class MustangCoprocessor {
      * Return the the depth from the horizontally offsetted camera
      */
     private double getOffsetDepth() {
-        double vangle = Math.abs(wallTarget.getVAngle()+verticalCameraOffsetAngle);
+        double vangle = Math.abs(wallTarget.getVAngle()-verticalCameraOffsetAngle);
         double hangle = wallTarget.getHAngle(); //Not need unless diagonal distance below is needed
         double targetHeight = lowTarget ? LOW_TARGET_HEIGHT : HIGH_TARGET_HEIGHT;
         double offset_depth = (targetHeight - cameraHeight) / Math.tan(Math.toRadians(vangle));
         //offset_depth = offset_depth / Math.cos(Math.toRadians(Math.abs(hangle))); - This finds the diagonal distance
+        SmartDashboard.putNumber("Depth To Camera", offset_depth);
         return offset_depth;
     }
 

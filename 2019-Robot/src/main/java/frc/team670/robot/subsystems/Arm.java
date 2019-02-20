@@ -391,10 +391,10 @@ public class Arm {
       this.isFront = elbowAngle > 0;
       this.isLowTarget = isLowTarget;
       if(elbowAngle > 0) {
-        this.distanceFromTarget = getCoordPosition().x - DISTANCE_FRONT_CAMERA__TO_ARM;
+        this.distanceFromTarget = Math.abs(getCoordPosition().x) - DISTANCE_FRONT_CAMERA__TO_ARM;
       }
       else {
-        this.distanceFromTarget = getCoordPosition().x - DISTANCE_BACK_TO_ARM;
+        this.distanceFromTarget = Math.abs(getCoordPosition().x) - DISTANCE_BACK_TO_ARM;
       }
     }
 

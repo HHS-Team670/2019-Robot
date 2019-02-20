@@ -121,8 +121,9 @@ public class DriveBase extends Subsystem {
     }
 
     try {
-      rightDIOEncoder = new Encoder(RobotMap.RIGHT_ENCODER_CHANNEL_A, RobotMap.RIGHT_ENCODER_CHANNEL_B, false,
-          EncodingType.k4X);
+      // rightDIOEncoder = new Encoder(RobotMap.RIGHT_ENCODER_CHANNEL_A, RobotMap.RIGHT_ENCODER_CHANNEL_B, false,
+          // EncodingType.k4X);
+      rightDIOEncoder = null;
     } catch (RuntimeException ex) {
       DriverStation.reportError("Error Instantiating rightDIOEncoder: " + ex.getMessage(), true);
       rightDIOEncoder = null;
@@ -136,12 +137,12 @@ public class DriveBase extends Subsystem {
       leftDIOEncoder.setReverseDirection(true);
     }
     if (rightDIOEncoder != null) {
-      rightDIOEncoder.setDistancePerPulse(distancePerPulse);
-      rightDIOEncoder.setReverseDirection(true);
+      // rightDIOEncoder.setDistancePerPulse(distancePerPulse);
+      // rightDIOEncoder.setReverseDirection(true);
     }
 
-    leftMustangEncoder = new MustangDriveBaseEncoder(leftDIOEncoder, left1.getEncoder());
-    rightMustangEncoder = new MustangDriveBaseEncoder(rightDIOEncoder, right1.getEncoder());
+    leftMustangEncoder = new MustangDriveBaseEncoder(leftDIOEncoder, left1.getEncoder(), false);
+    rightMustangEncoder = new MustangDriveBaseEncoder(rightDIOEncoder, right1.getEncoder(), true);
 
   }
 
@@ -240,22 +241,7 @@ public class DriveBase extends Subsystem {
     return output;
   }
 
-  /**
-   * Return the left CANEncoder Object. Do not access this for PID Controllers
-   * anymore, use the internal PIDControllers for the SparkMAX motors.
-   */
-  public CANEncoder getLeftSparkEncoder() {
-    return left1.getEncoder();
 
-  }
-
-  /**
-   * Return the right CanEncoder Object. Do not access this for PID Controllers
-   * anymore, use the internal PIDControllers for the SparkMAX motors.
-   */
-  public CANEncoder getRightSparkEncoder() {
-    return right1.getEncoder();
-  }
 
   /**
    * Returns the left DIO Encoder
@@ -326,20 +312,6 @@ public class DriveBase extends Subsystem {
    */
   public int getRightDIOEncoderPosition() {
     return rightDIOEncoder.get();
-  }
-
-  /**
-   * Returns the velocity of the left Spark controller in RPM
-   */
-  public int getLeftSparkVelocityInRotationsPerMinute() {
-    return (int) left1.getEncoder().getVelocity();
-  }
-
-  /**
-   * Returns the velocity of the right Spark controller in RPM
-   */
-  public int getRightSparkVelocityInRotationsPerMinute() {
-    return (int) right1.getEncoder().getVelocity();
   }
 
   /**
@@ -661,7 +633,7 @@ public class DriveBase extends Subsystem {
 
   public void sendDIOEncoderDataToDashboard() {
     if (leftDIOEncoder != null) {
-      SmartDashboard.putNumber("Left DIO Encoder: ", convertDriveBaseTicksToInches(leftDIOEncoder.get()));
+      SmartDashboard.putNumber("Left DIO Encoder: ", leftMustangEncoder.getPositionInches());
     }
 
     if (rightDIOEncoder != null) {
@@ -672,7 +644,7 @@ public class DriveBase extends Subsystem {
       SmartDashboard.putString("Left DIO Encoder:", "LEFT DIO ENCODER IS NULL!");
     }
     if (rightDIOEncoder == null) {
-      SmartDashboard.putNumber("Right Encoder:", convertSparkRevolutionsToInches(right1.getEncoder().getPosition()));
+      SmartDashboard.putNumber("Right Encoder:", rightMustangEncoder.getPositionInches());
     }
   }
 }

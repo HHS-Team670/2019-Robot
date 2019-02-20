@@ -70,7 +70,7 @@ public class VisionPurePursuit extends CommandGroup {
     System.out.println("HorizontalAngle: " + horizontalAngle);
     if (MathUtils.doublesEqual(horizontalAngle, RobotConstants.VISION_ERROR_CODE)) {
       Logger.consoleLog("No Valid Vision Data found, command quit.");
-      SmartDashboard.putString("vision-status", "error");
+      SmartDashboard.putString("vision-status", "invalid-data");
       SmartDashboard.putString("warnings", "Vision Target Not Found");
       return;
     }
@@ -99,7 +99,6 @@ public class VisionPurePursuit extends CommandGroup {
     //   return;
     // }
 
-
     straightDistance = straightDistance - spaceFromTarget;
     if (straightDistance < 0) {
       System.out.println("Too close to target!");
@@ -116,6 +115,7 @@ public class VisionPurePursuit extends CommandGroup {
     double horizontalDistance = straightDistance * Math.tan(Math.toRadians(horizontalAngle)); // x = y * tan(theta)
     // double horizontalDistance = -18;
     double partialDistanceY = (straightDistance) * 2.0 / 5.0;
+
 
     System.out.println("straightDist: " + straightDistance + ", horizontalDistance: " + horizontalDistance);
     if (isReversed) { // Flip all of these to match our coord system when looking out the back
@@ -146,7 +146,7 @@ public class VisionPurePursuit extends CommandGroup {
     Path path = generator.generatePath(isReversed);
 
     finalAngle.setValue(horizontalAngle);
-    PurePursuit command = new PurePursuit(path, driveBase, sensors, poseEstimator, isReversed, finalAngle);
+    PurePursuit command = new PurePursuit(path, driveBase, sensors, poseEstimator, isReversed, finalAngle, straightDistance);
     Robot.leds.setVisionData(true);
     addSequential(command);
   }
