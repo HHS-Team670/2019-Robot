@@ -26,16 +26,16 @@ public class Wrist extends BaseWrist {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
   
-  private static final int CONTINUOUS_CURRENT_LIMIT = 15, PEAK_CURRENT_LIMIT = 20;
+  private static final int CONTINUOUS_CURRENT_LIMIT = 10, PEAK_CURRENT_LIMIT = 20;
 
   // Motion Magic
   private static final int kPIDLoopIdx = 0, MOTION_MAGIC_SLOT = 0, kTimeoutMs = 0;
   private static final double MM_F = 0, MM_P = 1.5, MM_I = 0.0, MM_D = 50;
   private static final int MM_IZONE = 0;
-  private static final double OPEN_ARBITRARY_FEEDFORWARD = 0.065;
-  private static final double CLOSED_ARBITRARY_FEEDFORWARD = 0.07;
-  private static final double ARBITRARY_FEEDFORWARD_BALL = 0.135;
-  private static final double ARBITRARY_FEEDFORWARD_HATCH = 0.245;
+  private static final double OPEN_ARBITRARY_FEEDFORWARD = 0.07; // 0.065
+  private static final double CLOSED_ARBITRARY_FEEDFORWARD = 0.075; // 0.075
+  private static final double ARBITRARY_FEEDFORWARD_BALL = 0.145; // 0.145
+  private static final double ARBITRARY_FEEDFORWARD_HATCH = 0.27; // 0.245
 
   private static final int OFFSET_FROM_ENCODER_ZERO = 3615;
   private static final int WRIST_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 100;
