@@ -93,11 +93,11 @@ public class VisionPurePursuit extends CommandGroup {
     //   straightDistance = (visionDistance < ultrasonicDistance) ? visionDistance : ultrasonicDistance;
     // }
 
-    // if (straightDistance > 132) { // Distance is too far, must be invalid data.
-    //   Logger.consoleLog("No Valid Vision Data or Ultrasonic Data found, command quit.");
-    //   SmartDashboard.putString("vision-status", "");
-    //   return;
-    // }
+    if (straightDistance > 132) { // Distance is too far, must be invalid data.
+      Logger.consoleLog("No Valid Vision Data or Ultrasonic Data found, command quit.");
+      SmartDashboard.putString("vision-status", "invalid-data");
+      return;
+    }
 
     straightDistance = straightDistance - spaceFromTarget;
     if (straightDistance < 0) {
