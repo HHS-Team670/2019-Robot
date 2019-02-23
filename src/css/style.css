@@ -230,18 +230,16 @@ body.login #login {
     z-index: 1;
 }
 #v-crosshairs-left {
-    position: absolute;
-    width: 20vw;
-    height: 100vh;
-    transform: translate(20vw, 0vh);
-    z-index: 0;
+    border-left: 1px dotted white;
+    transform: translate(20vw, 17vh) rotate(10deg);
+    background-color: rgba(0, 0, 0, 0);
+    height: 66vh;
 }
 #v-crosshairs-right {
-    position: absolute;
-    width: 20vw;
-    height: 100vh;
-    transform: translate(50vw, 0vh);
-    z-index: 0;
+    border-left: 1px dotted white;
+    transform: translate(50vw, 17vh) rotate(-5deg);
+    background-color: rgba(0, 0, 0, 0);
+    height: 66vh;
 }
 #back-indicator {
     position: absolute;
