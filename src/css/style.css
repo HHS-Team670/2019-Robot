@@ -70,7 +70,7 @@ header {
     padding: 0;
     position: absolute;
     bottom: 25vh;
-    left: 1vw;
+    left: 1.5vw;
     width: 30vw;
     height: 50vh;
     object-fit: fill;
@@ -243,9 +243,9 @@ body.login #login {
 }
 #back-indicator {
     position: absolute;
-    transform: translate(0.5vw, 21vh);
+    transform: translate(0vw, 21vh);
 }
 #front-indicator {
     position: absolute;
-    transform: translate(32.5vw, 21vh);
+    transform: translate(33.5vw, 21vh);
 }

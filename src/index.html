@@ -20,26 +20,18 @@
     <div id="timer">2:30</div>
 
     <div id="camera1">
-      <img id="camera-stream" style='height:100%; width:100%; object-fit:fill' src="http://10.6.70.26:8000/?action=stream" onerror="this.src='http://10.6.70.26:8000/?action=stream"/>
+      <img id="camera-stream-1" style='height:100%; width:100%; object-fit:fill' src="http://10.6.70.26:8000/?action=stream" onerror="this.src='http://10.6.70.26:8000/?action=stream"/>
     </div>
     <div id="camera2">
-      <img id="camera-stream" style='height:100%; width:100%; object-fit:fill' src="http://10.6.70.26:8001/?action=stream" onerror="this.src='http://10.6.70.26:8001/?action=stream"/>
+      <img id="camera-stream-2" style='height:100%; width:100%; object-fit:fill' src="http://10.6.70.26:8001/?action=stream" onerror="this.src='http://10.6.70.26:8001/?action=stream"/>
     </div>
-  
-    <!-- <svg id="v-crosshairs-left" viewBox="0 0 1vw 100vh">
-      <line x1="0" y1="0" x2="0" y2="100%" style="stroke-width:0.5"/>
-    </svg>
-    <svg id="v-crosshairs-right">
-      <line x1="0" y1="0" x2="0" y2="100%" style="stroke-width:0.5"/>
-    </svg> -->
+    <div id="camera-large">
+      <img id="camera-stream-large" style='height:100%; width:100%; object-fit:fill' src="http://10.6.70.26:8001/?action=stream" onerror="this.src='http://10.6.70.26:8001/?action=stream"/>
+    </div>
 
     <div id="v-crosshairs-left"> </div>
     <div id="v-crosshairs-right"> </div>
-
-    
-    <div id="camera-texts">
-      <p x="0%" y="0%">Front</p>
-    </div>
+    <div id="v-crosshairs-large"> </div>
 
     <svg id="status-lights" width="350" height="60">
       <circle id="vision-status" cx="20%" cy="50%" r="5"/>
@@ -147,7 +139,6 @@
     <script src="networktables/networktables.js"></script>
     <script src="connection.js"></script>
     <script src="ui.js"></script>
-    <script src="components/multicamera.js"></script>
 
 
 </body>

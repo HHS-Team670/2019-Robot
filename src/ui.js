@@ -5,8 +5,6 @@ var ui = {
 
 var date = new Date();
 document.getElementById('big-warning').style.display = "none";
-document.getElementById('back-indicator').style.display = "none";
-document.getElementById('front-indicator').style.display = "none";
 
 document.getElementById('auton-chooser').style.display = "none";
 ui.timer.style.color = `rgb(0, 200, 0)`;
@@ -47,6 +45,36 @@ NetworkTables.addKeyListener('/SmartDashboard/game-time', (key, value) => {
      ui.timer.style.color = `rgb(200, 0, 0)`;
   }
   ui.timer.innerHTML = minutes + ':' + seconds;
+});
+
+// switches between single and double camera views
+NetworkTables.addKeyListener('/SmartDashboard/driver-camera-mode', (key, value) => {
+  if (value === "single") {
+    // hide everything to do with double camera view
+    document.getElementById('camera1').style.display = "none";
+    document.getElementById('camera2').style.display = "none";
+    document.getElementById('back-indicator').style.display = "none";
+    document.getElementById('front-indicator').style.display = "none";
+    document.getElementById('v-crosshairs-left').style.display = "none";
+    document.getElementById('v-crosshairs-right').style.display = "none";
+  } else if (value === "double") {
+    // hide everything to do with single camera view
+    document.getElementById('camera-large').style.display = "none";
+    document.getElementById('v-crosshairs-large').style.display = "none";
+
+    // show the streams
+    document.getElementById('camera1').src = "http://10.6.70.26:8000/?action=stream";
+    document.getElementById('camera1').onerror = "this.src='http://10.6.70.26:8000/?action=stream'";
+    document.getElementById('camera2').src = "http://10.6.70.26:8001/?action=stream";
+    document.getElementById('camera2').onerror = "this.src='http://10.6.70.26:8001/?action=stream'";
+  }
+});
+
+// flips the stream displayed on the large camera screen
+NetworkTables.addKeyListener('/SmartDashboard/camera-source', (key, value) => {
+  var sourceURL = 'http://10.6.70.26:800' + value +'/?action=stream';
+  document.getElementById('camera-large').src = sourceURL;
+  document.getElementById('camera-large').onerror = "this.src=" + sourceURL;
 });
 
 // listens for robot-state and updates status lights and auton chooser accordingly
@@ -90,17 +118,6 @@ NetworkTables.addKeyListener('/SmartDashboard/elbow-angle', (key, value) => {
   document.getElementById('claw').style = "transform: translate(" + (Math.sin(angle * Math.PI / 180) * (parseInt(document.getElementById('arm-extension').getAttribute('height')) + armLength)) + "px, " + (armLength - Math.sin((angle+90) * Math.PI / 180) * (parseInt(document.getElementById('arm-extension').getAttribute('height')) + armLength)) + "px)";
   document.getElementById('arm').style = "transform: rotate(" + angle + "deg)";
   document.getElementById('arm-extension').style = "transform: translate(" + (Math.sin((angle) * Math.PI / 180) * armLength) + "px, " + (armLength - (Math.sin((angle+90) * Math.PI / 180) * armLength)) + "px) rotate(" + (angle + 180) + "deg)";
-
-  var frontHeight = 0;
-  var backHeight = 0;
-  if (angle >= 42.65 && angle < 172.35) {
-    frontHeight = (angle - 42.65) / (172.35 - 42.65) * 100;
-  } else if (angle >= 172.35 && angle < 187.65) {
-    frontHeight = 100;
-    backHeight = 100;
-  } else if (angle >= 187.65 && angle < 227.35) {
-    backHeight = (angle - 187.65) / (227.35 - 187.65) * 100;
-  }
 });
 
 // updates the robot diagram with the extension of the arm
@@ -202,20 +219,16 @@ document.addEventListener("keyup", function(event) {
   var result = allKeys[allKeys.length - 1];
   var nextTask = getFromMap(result);
 
+  // make sure the key pressed is a valid action
   if (nextTask != null) {
-    if (nextTask.toUpperCase() === nextTask) {
-      NetworkTables.putValue('/SmartDashboard/xkeys-armstates', nextTask);
-    }
+    if (nextTask.toUpperCase() === nextTask) NetworkTables.putValue('/SmartDashboard/xkeys-armstates', nextTask);
     else if (nextTask.includes("cancel")) NetworkTables.putValue('/SmartDashboard/xkeys-cancel', nextTask);
     else if (nextTask === "place" || nextTask === "grab" || nextTask === "drop_held_item" || nextTask === "toggle_held_item") NetworkTables.putValue('/SmartDashboard/xkeys-placing', nextTask);
     else if (nextTask.includes("toggle_intake") || nextTask.includes("run_intake") || nextTask.includes("bring_intake_in")) NetworkTables.putValue('/SmartDashboard/xkeys-intake', nextTask);
     else if (nextTask === "auto_pickup_ball") NetworkTables.putValue('/SmartDashboard/xkeys-autopickup', nextTask);
-    else if (nextTask.includes("climb")) NetworkTables.putValue('/SmartDashboard/xkeys-climber', nextTask);
     else if (nextTask.includes("vision")) NetworkTables.putValue('/SmartDashboard/xkeys-visiondrive', nextTask);
     else if (nextTask.includes("claw")) NetworkTables.putValue('/SmartDashboard/xkeys-claw', nextTask);
     else if (nextTask.includes("extension")) NetworkTables.putValue('/SmartDashboard/xkeys-extension', nextTask);
-  } else {
-
   }
 });
 
