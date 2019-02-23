@@ -13,8 +13,7 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.arm.movement.MoveArm;
-import frc.team670.robot.commands.claw.DropBall;
-import frc.team670.robot.commands.claw.PickupBall;
+import frc.team670.robot.commands.cameras.FlipDriverCameraMode;
 import frc.team670.robot.commands.drive.teleop.FlipDriveAndCamera;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.dataCollection.XKeys;
@@ -36,7 +35,7 @@ public class OI {
   private XKeys xkeys;
 
   // Buttons
-  private JoystickButton toggleReverseDrive;
+  private JoystickButton toggleReverseDrive, toggleDriverCameraMode;
 
   private JoystickButton enableBrakeMode, enableCoastMode;
   private JoystickButton armToNeutral;
@@ -49,6 +48,8 @@ public class OI {
     xkeys = new XKeys();
     toggleReverseDrive = new JoystickButton(driverController, XboxButtons.LEFT_BUMPER);
     toggleReverseDrive.whenPressed(new FlipDriveAndCamera());
+    toggleDriverCameraMode = new JoystickButton(driverController, XboxButtons.RIGHT_BUMPER);
+    toggleDriverCameraMode.whenPressed(new FlipDriverCameraMode());
     armToNeutral = new JoystickButton(driverController, XboxButtons.A);
     armToNeutral.whenPressed(
       new InstantCommand() {
