@@ -49,16 +49,6 @@ body > * {
     overflow: scroll;
     background: #222;
 }
-#timer {
-    font-family: monospace;
-    display: block;
-    height: 12vh;
-    width: 14vw;
-    top: 0;
-    right: 0;
-    font-size: 12vh;
-    line-height: .8;
-}
 header {
     width: 20vw;
     height: 20vh;
@@ -85,6 +75,18 @@ header {
     left: 35vw;
     width: 30vw;
     height: 50vh;
+    object-fit: fill;
+    overflow: hidden;
+    background-color: #333;
+    background-size: cover;
+}
+#camera-large {
+    padding: 0;
+    position: absolute;
+    bottom: 2.5vh;
+    left: 0.5vw;
+    width: 66vw;
+    height: 95vh;
     object-fit: fill;
     overflow: hidden;
     background-color: #333;
@@ -154,7 +156,7 @@ body.login #login {
 }
 #robot-diagram {
     position: absolute;
-    transform: translate(75vw, 10vh);
+    transform: translate(75vw, 5vh);
     width: 25vw;
     height: 55vh;
 }
@@ -241,6 +243,12 @@ body.login #login {
     background-color: rgba(0, 0, 0, 0);
     height: 66vh;
 }
+#v-crosshairs-large {
+    border-left: 1px dotted white;
+    transform: translate(33vw, 0vh) rotate(-5deg);
+    background-color: rgba(0, 0, 0, 0);
+    height: 100vh;
+}
 #back-indicator {
     position: absolute;
     transform: translate(0vw, 21vh);
@@ -248,4 +256,10 @@ body.login #login {
 #front-indicator {
     position: absolute;
     transform: translate(33.5vw, 21vh);
+}
+#current-text {
+    position: absolute;
+    width: 25vw;
+    height: 8vh;
+    transform: translate(75vw, 60vh);
 }

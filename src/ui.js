@@ -1,16 +1,6 @@
-// Define UI elements
-var ui = {
-    timer: document.getElementById('timer')
-};
-
 var date = new Date();
 document.getElementById('big-warning').style.display = "none";
-
 document.getElementById('auton-chooser').style.display = "none";
-ui.timer.style.color = `rgb(0, 200, 0)`;
-
-document.getElementById('crosshairs').style = "transform: translate(41vw, 0vh)";
-
 
 // sets default positions for robot diagram
 var angle = 0;
@@ -19,33 +9,6 @@ document.getElementById('arm').style = "transform: rotate(" + angle + "deg)";
 document.getElementById('claw').style = "transform: translate(" + (Math.sin(angle * Math.PI / 180) * (parseInt(document.getElementById('arm-extension').getAttribute('height')) + armLength)) + "px, " + (armLength - Math.sin((angle+90) * Math.PI / 180) * (parseInt(document.getElementById('arm-extension').getAttribute('height')) + armLength)) + "px)";
 document.getElementById('intake').style = "transform: rotate(" + 0 + "deg)";
 document.getElementById('arm-extension').style = "transform: translate(" + (Math.sin((angle) * Math.PI / 180) * armLength) + "px, " + (armLength - (Math.sin((angle+90) * Math.PI / 180) * armLength)) + "px) rotate(" + (angle + 180) + "deg)";
-
-// sets the timer element to green color text
-document.getElementById('timer').style.color = 'rgb(0,200,0)';
-
-// listens for game-time which starts counting down on autonInit()
-NetworkTables.addKeyListener('/SmartDashboard/game-time', (key, value) => {
-  if (value == null) return;
-  var remaining = 150 - value;
-  var minutes = ~~(remaining / 60); // converts to integer
-  var seconds = (remaining - 60*minutes) % 60;
-  seconds = (seconds < 10) ? '0'+seconds : seconds;
-  ui.timer.style.color = `rgb(0, 200, 0)`;
-
-  // change color of timer based on remaining match time
-  if (remaining < 135) {
-     ui.timer.style.color = `rgb(255, 255, 255)`;
-  }
-  if (remaining < 45) {
-    ui.timer.style.color = `rgb(244,215,66)`;
-    document.getElementById('climb-state-text').style.stroke = `rgb(255, 255, 255)`;
-    document.getElementById('climb-level-text').style.stroke = `rgb(255, 255, 255)`;
-  }
-  if (remaining < 30) {
-     ui.timer.style.color = `rgb(200, 0, 0)`;
-  }
-  ui.timer.innerHTML = minutes + ':' + seconds;
-});
 
 // switches between single and double camera views
 NetworkTables.addKeyListener('/SmartDashboard/driver-camera-mode', (key, value) => {
@@ -73,6 +36,11 @@ NetworkTables.addKeyListener('/SmartDashboard/driver-camera-mode', (key, value) 
 // flips the stream displayed on the large camera screen
 NetworkTables.addKeyListener('/SmartDashboard/camera-source', (key, value) => {
   var sourceURL = 'http://10.6.70.26:800' + value +'/?action=stream';
+  if (sourceURL === "0") {
+    // TODO move large crosshairs for front camera
+  } else if (sourceURL === "1") {
+    // TODO move large crosshairs for back camera
+  }
   document.getElementById('camera-large').src = sourceURL;
   document.getElementById('camera-large').onerror = "this.src=" + sourceURL;
 });
@@ -146,13 +114,13 @@ NetworkTables.addKeyListener('/SmartDashboard/claw-status', (key, value) => {
   } else if (value === "Hatch") {
     document.getElementById('claw').style.stroke = "rgb(65, 169, 244)";
     document.getElementById('claw').style.fill = "rgb(65, 169, 244)";
-    document.getElementById('held-item').innerHTML = "Hatch";
+    document.getElementById('claw-held-item').innerHTML = "Hatch";
   } else if (value === "Ball") {
     document.getElementById('claw').style.stroke = "rgb(244, 151, 65)";
     document.getElementById('claw').style.fill = "rgb(244, 151, 65)";
-    document.getElementById('held-item').innerHTML = "Ball";
+    document.getElementById('claw-held-item').innerHTML = "Ball";
   } else if (value === "None") {
-    document.getElementById('held-item').innerHTML = "None";
+    document.getElementById('claw-held-item').innerHTML = "None";
   }
 })
 
