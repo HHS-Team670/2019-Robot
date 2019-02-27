@@ -50,8 +50,8 @@ public class ArmPathGenerator {
       @Override
       protected void end() { // The created path will set the Arm's state to wherever it moved after finishing
         Arm.setState(destination);
-        SmartDashboard.putString("current-command", "MoveArm finished");
-        SmartDashboard.putString("movearm-finished", "finished");
+        SmartDashboard.putString("destination-elbow-angle", null);
+        SmartDashboard.putNumber("destination-extension-length", 0);
       }
 
       @Override
