@@ -163,7 +163,7 @@ public class Arm {
    */
   public static Point2D.Double getCoordPosition(double elbowAngle, double wristAngle, double extensionLength) {
     double x = (extensionLength + Extension.FIXED_LENGTH) * Math.sin(Math.toRadians(elbowAngle)) + Claw.LENGTH_IN_INCHES * Math.sin(Math.toRadians(wristAngle + elbowAngle));
-    double y = (extensionLength + Extension.FIXED_LENGTH) * (elbowAngle < 0 ? -1 : 1) * Math.cos(Math.toRadians(elbowAngle)) + Claw.LENGTH_IN_INCHES * (wristAngle + elbowAngle < 0 ? -1 : 1) * Math.cos(Math.toRadians(wristAngle + elbowAngle)) + ARM_HEIGHT_IN_INCHES;
+    double y = (extensionLength + Extension.FIXED_LENGTH) * Math.cos(Math.toRadians(elbowAngle)) + Claw.LENGTH_IN_INCHES * Math.cos(Math.toRadians(wristAngle + elbowAngle)) + ARM_HEIGHT_IN_INCHES;
     return new Point2D.Double(x, y);
   }
 
