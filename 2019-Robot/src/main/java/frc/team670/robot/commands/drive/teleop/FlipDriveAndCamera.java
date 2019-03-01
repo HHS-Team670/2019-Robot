@@ -34,7 +34,7 @@ public class FlipDriveAndCamera extends InstantCommand {
         Robot.leds.setForwardData(true);
       }
       XboxRocketLeagueDrive.setDriveReversed(!isReversed);
-      Robot.oi.rumbleDriverController(0.4, 0.1);
+      Robot.oi.rumbleDriverController(0.7, 0.2);
       Logger.consoleLog("Flipped Drive: %s", (!isReversed));
     }
 

@@ -29,18 +29,15 @@ import frc.team670.robot.utils.MustangController.XboxButtons;
 public class OI {
 
   // Controllers/Joysticks
-  // private Joystick rightStick, arcadeButtons;
   private MustangController driverController;
 
   private XKeys xkeys;
 
   // Buttons
   private JoystickButton toggleReverseDrive, toggleDriverCameraMode;
+  private JoystickButton armToNeutral;  
 
-  private JoystickButton enableBrakeMode, enableCoastMode;
-  private JoystickButton armToNeutral;
-  private JoystickButton dropBall, grabBall, togglePush;
-  
+  // private JoystickButton dropBall, grabBall;
 
   public OI() {
     driverController = new MustangController(RobotMap.DRIVER_CONTROLLER_PORT);
@@ -48,7 +45,7 @@ public class OI {
     xkeys = new XKeys();
     toggleReverseDrive = new JoystickButton(driverController, XboxButtons.LEFT_BUMPER);
     toggleReverseDrive.whenPressed(new FlipDriveAndCamera());
-    toggleDriverCameraMode = new JoystickButton(driverController, XboxButtons.RIGHT_BUMPER);
+    toggleDriverCameraMode = new JoystickButton(driverController, XboxButtons.B);
     toggleDriverCameraMode.whenPressed(new FlipDriverCameraMode());
     armToNeutral = new JoystickButton(driverController, XboxButtons.A);
     armToNeutral.whenPressed(
