@@ -25,15 +25,20 @@ public class PurePursuit extends Command {
   private MustangSensors sensors;
   private int executeCount;
   private MutableDouble finalAngle;
+  private double yDistance;
+  private double xDistance;
 
   /**
    * @param finalAngle a MutableDouble object reference to the angle (using zeroed yaw) this PurePursuit command should end up at compared to the zeroed yaw.
    */
-  public PurePursuit(Path path, DriveBase driveBase, MustangSensors sensors, PoseEstimator estimator, boolean isReversed, MutableDouble finalAngle, double yDistance) {
+  public PurePursuit(Path path, DriveBase driveBase, MustangSensors sensors, PoseEstimator estimator, boolean isReversed, MutableDouble finalAngle, double yDistance, double xDistance) {
    this.driveBase = driveBase;
    this.sensors = sensors;
    this.poseEstimator = estimator;
    this.finalAngle = finalAngle;
+
+   this.yDistance = yDistance;
+   this.xDistance = xDistance;
   
    purePursuitTracker = new PurePursuitTracker(poseEstimator, driveBase, sensors, isReversed);
    purePursuitTracker.setPath(path, LOOKAHEAD_DISTANCE_AT_66_INCHES * yDistance/66);
@@ -80,7 +85,10 @@ public class PurePursuit extends Command {
     Logger.consoleLog("Pose: %s ", poseEstimator.getPose());
     // VisionPurePursuit.disableArmRestriction();
     driveBase.setSparkVelocityControl(0,0);
-    finalAngle.setValue(finalAngle.getValue() - sensors.getYawDouble());
+    double xOffset = xDistance - poseEstimator.getPose().x;
+    double yOffset = yDistance - poseEstimator.getPose().y;
+    double angle = Math.atan(yOffset/xOffset);
+    finalAngle.setValue(Math.toDegrees(angle));
     // purePursuitTracker.stopNotifier();
     purePursuitTracker.reset();
   }

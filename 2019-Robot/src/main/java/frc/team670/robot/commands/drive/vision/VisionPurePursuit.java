@@ -138,7 +138,7 @@ public class VisionPurePursuit extends CommandGroup {
     Path path = generator.generatePath(isReversed);
 
     finalAngle.setValue(horizontalAngle);
-    PurePursuit command = new PurePursuit(path, driveBase, sensors, poseEstimator, isReversed, finalAngle, straightDistance);
+    PurePursuit command = new PurePursuit(path, driveBase, sensors, poseEstimator, isReversed, finalAngle, straightDistance, horizontalDistance);
     Robot.leds.setVisionData(true);
     addSequential(command);
   }
