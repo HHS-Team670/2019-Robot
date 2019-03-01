@@ -10,6 +10,11 @@ document.getElementById('claw').style = "transform: translate(" + (Math.sin(angl
 document.getElementById('intake').style = "transform: rotate(" + 0 + "deg)";
 document.getElementById('arm-extension').style = "transform: translate(" + (Math.sin((angle) * Math.PI / 180) * armLength) + "px, " + (armLength - (Math.sin((angle+90) * Math.PI / 180) * armLength)) + "px) rotate(" + (angle + 180) + "deg)";
 
+// set default values for arm destination drawing
+document.getElementById('arm-destination').style = "transform: rotate(" + angle + "deg)";
+document.getElementById('claw-destination').style = "transform: translate(" + (Math.sin(angle * Math.PI / 180) * (parseInt(document.getElementById('arm-extension').getAttribute('height')) + armLength)) + "px, " + (armLength - Math.sin((angle+90) * Math.PI / 180) * (parseInt(document.getElementById('arm-extension').getAttribute('height')) + armLength)) + "px)";
+document.getElementById('arm-extension-destination').style = "transform: translate(" + (Math.sin((angle) * Math.PI / 180) * armLength) + "px, " + (armLength - (Math.sin((angle+90) * Math.PI / 180) * armLength)) + "px) rotate(" + (angle + 180) + "deg)";
+
 // switches between single and double camera views
 NetworkTables.addKeyListener('/SmartDashboard/driver-camera-mode', (key, value) => {
   if (value === "single") {
@@ -95,6 +100,24 @@ NetworkTables.addKeyListener('/SmartDashboard/arm-extension', (key, value) => {
       document.getElementById('arm-extension').setAttribute('height', 0);
     } else {
       document.getElementById('arm-extension').setAttribute('height', value * 60);
+    }
+  }
+});
+
+NetworkTables.addKeyListener('/SmartDashboard/destination-elbow-angle', (key, value) => {
+  if (value == null) return;
+  var angle = value;
+  document.getElementById('claw-destination').style = "transform: translate(" + (Math.sin(angle * Math.PI / 180) * (parseInt(document.getElementById('arm-extension').getAttribute('height')) + armLength)) + "px, " + (armLength - Math.sin((angle+90) * Math.PI / 180) * (parseInt(document.getElementById('arm-extension').getAttribute('height')) + armLength)) + "px)";
+  document.getElementById('arm-destination').style = "transform: rotate(" + angle + "deg)";
+  document.getElementById('arm-extension-destination').style = "transform: translate(" + (Math.sin((angle) * Math.PI / 180) * armLength) + "px, " + (armLength - (Math.sin((angle+90) * Math.PI / 180) * armLength)) + "px) rotate(" + (angle + 180) + "deg)";
+});
+
+NetworkTables.addKeyListener('/SmartDashboard/destination-extension-length', (key, value) => {
+  if (value != null) {
+    if (value <= 0) {
+      document.getElementById('arm-extension-destination').setAttribute('height', 0);
+    } else {
+      document.getElementById('arm-extension-destination').setAttribute('height', value * 60);
     }
   }
 });

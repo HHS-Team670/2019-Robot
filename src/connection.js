@@ -36,30 +36,21 @@ function onRobotConnection(connected) {
     loginShown = false;
   } else if (loginShown) {
     setLogin();
+    var d2 = new Date();
+    console.log('>>>time: ' + d2.getSeconds() + '.' + d2.getMilliseconds());
+    console.log('-----not connected-----');
   }
 }
-function setLogin() {
+function setLogin() { 
   // Add Enter key handler
   // Enable the input and the button
   address.disabled = connect.disabled = true;
   connect.textContent = 'Connect';
-  // Add the default address and select xxxx
 
   address.value = '10.6.70.2'; // while on network 670
   console.log("address", address.value);
-  // address.disabled = connect.disabled = true;
   ipc.send('connect', address.value);
-
-
-  // address.focus();
-  // address.setSelectionRange(8, 12);
 }
-// On click try to connect and disable the input and the button
-// connect.onclick = () => {
-//   ipc.send('connect', address.value);
-//   address.disabled = connect.disabled = true;
-//   connect.textContent = 'Connecting...';
-// };
 address.onkeydown = ev => {
   if (ev.key === 'Enter') {
     connect.click();

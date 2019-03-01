@@ -175,7 +175,24 @@ body.login #login {
 }
 #arm {
     transform-origin: bottom center;
-    /* transform: rotate(180deg); */
+}
+#claw-destination {
+    position: absolute;
+    transform-origin: bottom center;
+    transform: rotate(90deg);
+    stroke-opacity: 0.3;
+    stroke: rgb(0,200,0);
+}
+#arm-extension-destination {
+    transform-origin: top center;
+    transform: rotate(180deg);
+    stroke-opacity: 0.3;
+    stroke: rgb(0,200,0);
+}
+#arm-destination {
+    transform-origin: bottom center;
+    stroke-opacity: 0.3;
+    stroke: rgb(0,200,0);
 }
 #intake {
     transform-origin: bottom left;
