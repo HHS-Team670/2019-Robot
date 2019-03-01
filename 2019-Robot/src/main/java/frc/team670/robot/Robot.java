@@ -123,6 +123,8 @@ public class Robot extends TimedRobot {
 
     updateArbitraryFeedForwards.startPeriodic(0.01);
 
+    SmartDashboard.putNumberArray("reflect_tape_data", new double[]{RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE});
+
     // autonomousCommand = new MeasureTrackwidth();
   }
 
