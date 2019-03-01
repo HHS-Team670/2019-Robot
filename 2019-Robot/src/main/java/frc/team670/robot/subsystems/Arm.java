@@ -34,7 +34,7 @@ public class Arm {
   public enum HeldItem {NONE, BALL, HATCH};
   private HeldItem heldItem;
 
-  private static final double DISTANCE_BACK_TO_ARM = 3.125, DISTANCE_FRONT_CAMERA__TO_ARM = 31.75;
+  private static final double DISTANCE_BACK_TO_ARM = 3.125, DISTANCE_FRONT_CAMERA_TO_ARM = 31.75;
 
   public static final double ARM_HEIGHT_IN_INCHES = 5;
 
@@ -162,8 +162,8 @@ public class Arm {
    * of the arm.
    */
   public static Point2D.Double getCoordPosition(double elbowAngle, double wristAngle, double extensionLength) {
-    double x = (extensionLength + Extension.FIXED_LENGTH) * Math.sin(elbowAngle) + Claw.LENGTH_IN_INCHES * Math.sin(wristAngle + elbowAngle);
-    double y = (extensionLength + Extension.FIXED_LENGTH) * (elbowAngle < 0 ? -1 : 1) * Math.cos(elbowAngle) + Claw.LENGTH_IN_INCHES * (wristAngle + elbowAngle < 0 ? -1 : 1) * Math.cos(wristAngle + elbowAngle) + ARM_HEIGHT_IN_INCHES;
+    double x = (extensionLength + Extension.FIXED_LENGTH) * Math.sin(Math.toRadians(elbowAngle)) + Claw.LENGTH_IN_INCHES * Math.sin(Math.toRadians(wristAngle + elbowAngle));
+    double y = (extensionLength + Extension.FIXED_LENGTH) * (elbowAngle < 0 ? -1 : 1) * Math.cos(Math.toRadians(elbowAngle)) + Claw.LENGTH_IN_INCHES * (wristAngle + elbowAngle < 0 ? -1 : 1) * Math.cos(Math.toRadians(wristAngle + elbowAngle)) + ARM_HEIGHT_IN_INCHES;
     return new Point2D.Double(x, y);
   }
 
@@ -392,7 +392,7 @@ public class Arm {
       this.isFront = elbowAngle > 0;
       this.isLowTarget = isLowTarget;
       if(elbowAngle > 0) {
-        this.distanceFromTarget = Math.abs(getCoordPosition().x) - DISTANCE_FRONT_CAMERA__TO_ARM;
+        this.distanceFromTarget = Math.abs(getCoordPosition().x) - DISTANCE_FRONT_CAMERA_TO_ARM;
       }
       else {
         this.distanceFromTarget = Math.abs(getCoordPosition().x) - DISTANCE_BACK_TO_ARM;
