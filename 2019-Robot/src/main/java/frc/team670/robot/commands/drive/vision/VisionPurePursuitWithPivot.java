@@ -24,7 +24,7 @@ public class VisionPurePursuitWithPivot extends CommandGroup {
 
     MutableDouble changeableAngle = new MutableDouble(0);
 
-    addSequential(new VisionPurePursuit(driveBase, coprocessor, sensors, spaceFromTarget, isReversed, lowTarget, changeableAngle));
+    addSequential(new VisionDrive(driveBase, coprocessor, sensors, spaceFromTarget, isReversed, lowTarget, changeableAngle));
     addSequential(new NavXChangeableAnglePivot(changeableAngle, driveBase, sensors));
   }
 }
