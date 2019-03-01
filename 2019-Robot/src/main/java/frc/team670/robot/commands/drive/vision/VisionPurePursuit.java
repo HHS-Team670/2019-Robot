@@ -43,18 +43,10 @@ public class VisionPurePursuit extends CommandGroup {
    * @param finalAngle The mutable double for the desired final angle. Should be set by this command so a Pivot can finish it from the surrounding CommandGroup.
    */
   public VisionPurePursuit(DriveBase driveBase, MustangCoprocessor coprocessor, MustangSensors sensors,
-      double spaceFromTarget, boolean isReversed, boolean lowTarget, MutableDouble finalAngle) {
+      double spaceFromTarget, boolean isReversed, MutableDouble finalAngle) {
     super();
 
     driveBase.initBrakeMode();
-    coprocessor.setTargetHeight(lowTarget);
-
-    coprocessor.setCamera(isReversed);
-    // try {
-    //   Thread.sleep(35);
-    // } catch (InterruptedException e) {
-    //   e.printStackTrace();
-    // }
 
     try {
       if(MathUtils.doublesEqual(coprocessor.getVisionValues()[2], RobotConstants.VISION_ERROR_CODE)) {

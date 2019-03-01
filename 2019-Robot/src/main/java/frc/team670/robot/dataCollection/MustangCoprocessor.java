@@ -204,6 +204,19 @@ public class MustangCoprocessor {
     }
 
     /**
+     * Sets whether to use vision
+     * @param enabled true for vision, false for no vision
+     */
+    public void useVision(boolean enabled) {
+        if(enabled) {
+            SmartDashboard.putString("vision-camera", "enabled");
+        }
+        else {
+            SmartDashboard.putString("vision-camera", "disabled");
+        }
+    }
+
+    /**
      * Sets the target for vision (must be set properly to get correct distance)
      * @param lowTarget true for low (everything but rocket ball), false for high (rocket ball)
      */
