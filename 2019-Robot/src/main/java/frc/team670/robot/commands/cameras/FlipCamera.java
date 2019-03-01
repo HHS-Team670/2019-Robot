@@ -13,6 +13,7 @@ public class FlipCamera extends InstantCommand{
      * Driver camera direction (true = front, false = back). Starts false because robot starts backwards.
      */
     private static boolean cameraDirection = false;
+    private static int camNumber = 0;
 
     public FlipCamera(){
         super();
@@ -22,15 +23,12 @@ public class FlipCamera extends InstantCommand{
     @Override
     protected void initialize(){
         flipCameraDirection();
-        SmartDashboard.putString("current-command", "FlipCamera");
         Robot.oi.rumbleDriverController(0.4, 0.1);
     }
 
     public static void flipCameraDirection() {
         cameraDirection = !cameraDirection;
-        int camNumber;
-        if (cameraDirection) camNumber = 0;
-        else camNumber = 1;
+        camNumber = (camNumber + 1) % 2;
         SmartDashboard.putString("camera-source", camNumber+"");
     }
 

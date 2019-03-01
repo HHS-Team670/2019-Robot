@@ -56,6 +56,7 @@ notified = [False]
 #Connection Listener for Network Tables
 def connectionListener(connected, info):
     with cond:
+        print("connected%s"%connected)
         notified[0] = True
         cond.notify()
 
@@ -68,14 +69,10 @@ def main():
     os.system("sudo rm -f /dev/video" + `back_capture_source`)
     os.system("sudo ln -s /dev/v4l/by-path/platform-12110000.usb-usb-0:1:1.0-video-index0 /dev/video"+ `front_capture_source`)
     os.system("sudo ln -s /dev/v4l/by-path/platform-xhci-hcd.3.auto-usb-0:1.1:1.0-video-index0 /dev/video"+ `back_capture_source`)
-    
-    #Sets exposure and other camera properties for both cameras
-    os.system("v4l2-ctl -d /dev/video" + `front_capture_source` + " -c exposure_auto=1 -c exposure_absolute=.01 -c brightness=0 -c white_balance_temperature_auto=0 -c backlight_compensation=0 -c contrast=10 -c saturation=200")
-    os.system("v4l2-ctl -d /dev/video" + `back_capture_source` + " -c exposure_auto=1 -c exposure_absolute=.01 -c brightness=0 -c white_balance_temperature_auto=0 -c backlight_compensation=0 -c contrast=10 -c saturation=200")
 
     #Uncomment when saving images
-    #os.system("rm -rf output")
-    #os.system("mkdir output")
+    os.system("rm -rf output")
+    os.system("mkdir output")
     
     #Initializes connection to RIO
     NetworkTables.initialize(server=ROBORIO_IP)
@@ -84,6 +81,7 @@ def main():
     #Waits until RIO is connected before continuing
     with cond:
         if not notified[0]:
+            print("waiting")
             cond.wait()
 
     table = NetworkTables.getTable(NETWORK_TABLE_NAME)
@@ -99,9 +97,10 @@ def main():
     frameCount = 0
     while True:
         # gets which camera to use (front or back)
-        camera = "front"#table.getEntry(camera_key).getString("back")
+        camera ="front"#table.getEntry(camera_key).getString("back")
         
         vs = None
+        print(camera)
 
         if camera == "front":
             vs=vs_front
@@ -119,7 +118,7 @@ def main():
             # Read input image from video
             input_raw = vs.raw_read()
             if input_raw is None:
-                #print("Error: Capture source not found or broken.")
+                print("Error: Capture source not found or broken.")
                 returns = [ERROR, ERROR, ERROR]
                 push_network_table(table, returns)
                 table.putString("vision-status", "error")
@@ -140,7 +139,7 @@ def main():
             '''
             Uncomment below if you want to save images to output for debugging
             '''
-            '''
+                
             if frameCount % 10 == 0:
                 cv2.imwrite("output/mask_%d.jpg"%frameCount, masked_image)
                 cv2.imwrite("output/frame_%d.jpg"%frameCount,input_image) # Take out later to speed up
@@ -149,7 +148,7 @@ def main():
                     box_points = np.int0(box_points)
                     cv2.drawContours(input_image, [box_points], 0, (0, 255, 0), 2)
                 cv2.imwrite("output/boxed_%d.jpg"%frameCount,input_image) # Take out later to speed up
-            '''
+            
 
             # DEBUG mode code
             if object_rect is -1 and object_rect_2 is -1:
@@ -173,6 +172,7 @@ def main():
                 vangle = find_angle(input_image, high_point, vert_focal_length) # vangle - 'V'ertical angle
                 hangle = find_angle(input_image, rect_x_midpoint, hor_focal_length, vertical=False) # hangle - 'H'orizontal angle
                 returns = [hangle, vangle, timestamp]
+                print(returns)
             else:
               returns = [ERROR, ERROR, timestamp]
             
@@ -257,6 +257,8 @@ class ThreadedVideo:
             os.stat("/dev/video" + `self.src`)
             #Reopens stream so camera reconnects
             self.stream.open(self.src)
+            #Sets exposure and other camera properties for camera
+            os.system("v4l2-ctl -d /dev/video" + `self.src` + " -c exposure_auto=1 -c exposure_absolute=.01 -c brightness=0 -c white_balance_temperature_auto=0 -c backlight_compensation=0 -c contrast=10 -c saturation=200")
             cameraOpen = True
         except OSError:
             #Releases a stream if its camera is disconnected
@@ -352,7 +354,11 @@ def find_two_important_contours(image, debug=False):
                 distance = abs(center_x-con_x)
                 dists.append(distance)
 
-        centermost_dist = min(dists)
+        try:
+            centermost_dist = min(dists)
+        except Exception:
+            return [-1, -1]
+
         centermost_con = -1
         center_ind = -1
         if (centermost_dist != -1):
@@ -376,7 +382,12 @@ def find_two_important_contours(image, debug=False):
 
         sec_center_con = -1
         center_ind = -1
-        sec_center_dist = min(dists)
+
+        try:
+            sec_center_dist = min(dists)
+        except Exception:
+            sec_center_dist = -1
+
         if (sec_center_dist != -1):
             center_ind = dists.index(sec_center_dist)
             sec_center_con = ac_contours[center_ind]
@@ -536,3 +547,6 @@ def draw_output_image(image, rectanglelist, depth, vangle, hangle, highpoint=Non
 # causes program to run main method when program is run, but allows modular import allows
 if __name__ == "__main__":
     main()
+
+
+

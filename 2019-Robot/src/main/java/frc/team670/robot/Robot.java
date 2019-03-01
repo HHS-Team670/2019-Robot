@@ -151,6 +151,8 @@ public class Robot extends TimedRobot {
       SmartDashboard.putString("claw-status", "Hatch");
     } else if (arm.getHeldItem().equals(HeldItem.BALL)) {
       SmartDashboard.putString("claw-status", "Ball");
+    } else if (arm.getHeldItem().equals(HeldItem.NONE)) {
+      SmartDashboard.putString("claw-status", "None");
     } else if (claw.isOpen()) {
       SmartDashboard.putString("claw-status", "open");
     } else if (!claw.isOpen()) {

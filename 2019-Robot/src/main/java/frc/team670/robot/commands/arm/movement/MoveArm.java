@@ -24,12 +24,11 @@ public class MoveArm extends InstantCommand {
 
   public MoveArm(ArmState destination, Arm arm) {
     super();
-    SmartDashboard.putString("current-command", "MoveArm constructor");
     this.destination = destination;
     this.arm = arm;
     SmartDashboard.putString("current-command", "MoveArm");
-
-    SmartDashboard.putString("current-command", "MoveArm");
+    SmartDashboard.putString("destination-elbow-angle", destination.getElbowAngle()+"");
+    SmartDashboard.putNumber("destination-extension-length", destination.getExtensionLength());
 
     // System.out.println("...........start: " + arm.getCurrentState().getClass().getName());
     // System.out.println("...........destination: " + destination.getClass().getName());
