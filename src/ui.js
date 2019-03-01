@@ -15,6 +15,10 @@ document.getElementById('arm-destination').style = "transform: rotate(" + angle 
 document.getElementById('claw-destination').style = "transform: translate(" + (Math.sin(angle * Math.PI / 180) * (parseInt(document.getElementById('arm-extension').getAttribute('height')) + armLength)) + "px, " + (armLength - Math.sin((angle+90) * Math.PI / 180) * (parseInt(document.getElementById('arm-extension').getAttribute('height')) + armLength)) + "px)";
 document.getElementById('arm-extension-destination').style = "transform: translate(" + (Math.sin((angle) * Math.PI / 180) * armLength) + "px, " + (armLength - (Math.sin((angle+90) * Math.PI / 180) * armLength)) + "px) rotate(" + (angle + 180) + "deg)";
 
+// hide everything to do with single camera view
+document.getElementById('camera-large').style.display = "none";
+document.getElementById('v-crosshairs-large').style.display = "none";
+
 // switches between single and double camera views
 NetworkTables.addKeyListener('/SmartDashboard/driver-camera-mode', (key, value) => {
   if (value === "single") {
@@ -25,10 +29,27 @@ NetworkTables.addKeyListener('/SmartDashboard/driver-camera-mode', (key, value) 
     document.getElementById('front-indicator').style.display = "none";
     document.getElementById('v-crosshairs-left').style.display = "none";
     document.getElementById('v-crosshairs-right').style.display = "none";
+
+    // show everything to do with single camera view
+    document.getElementById('camera-large').style.display = "inline";
+    document.getElementById('v-crosshairs-large').style.display = "inline";
+
+    // show the streams
+    document.getElementById('camera-large').src = "http://10.6.70.26:8000/?action=stream";
+    document.getElementById('camera-large').onerror = "this.src='http://10.6.70.26:8000/?action=stream'";
+    
   } else if (value === "double") {
     // hide everything to do with single camera view
     document.getElementById('camera-large').style.display = "none";
     document.getElementById('v-crosshairs-large').style.display = "none";
+
+    // show everything to do with double camera view
+    document.getElementById('camera1').style.display = "inline";
+    document.getElementById('camera2').style.display = "inline";
+    document.getElementById('back-indicator').style.display = "inline";
+    document.getElementById('front-indicator').style.display = "inline";
+    document.getElementById('v-crosshairs-left').style.display = "inline";
+    document.getElementById('v-crosshairs-right').style.display = "inline";
 
     // show the streams
     document.getElementById('camera1').src = "http://10.6.70.26:8000/?action=stream";
