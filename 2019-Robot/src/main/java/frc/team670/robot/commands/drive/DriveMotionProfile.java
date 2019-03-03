@@ -156,7 +156,7 @@ public class DriveMotionProfile extends Command {
         leftTrajectory = Pathfinder.readFromCSV(new File(Filesystem.getDeployDirectory() + "/output/DriveOffPlatform.left.pf1"));
         rightTrajectory = Pathfinder.readFromCSV(new File(Filesystem.getDeployDirectory() + "/output/DriveOffPlatform.right.pf1"));
       }
-      catch(IOException e) {
+      catch(Exception e) {
 
       }
       // super.cancel();

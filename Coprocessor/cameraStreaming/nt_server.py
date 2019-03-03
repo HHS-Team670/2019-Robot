@@ -29,8 +29,8 @@ def connectionListener(connected, info):
         notified[0] = True
         cond.notify()
 
-#NetworkTables.initialize(server='10.6.70.2')
-NetworkTables.initialize()
+NetworkTables.initialize(server='10.6.70.2')
+#NetworkTables.initialize()
 NetworkTables.addConnectionListener(connectionListener, immediateNotify=True)
 
 with cond:
@@ -44,7 +44,7 @@ VISION_ERROR_CODE = -9999
 
 #os.system('sudo python /home/pi/git/Mustang-Pi/cameraStreaming/watchdog.py "/home/pi/git/Mustang-Pi/cameraStreaming/mjpg_streamer_server.sh > /tmp/error_cams 2>&1" &')   
 
-os.system('sudo /home/pi/git/Mustang-Pi/cameraStreaming/mjpg_streamer_server.sh')
+os.system('sudo /home/pi/git/Coprocessor/cameraStreaming/mjpg_streamer_server.sh')
 
 cam = '0'
 def valueChanged(table, key, value, isNew):
