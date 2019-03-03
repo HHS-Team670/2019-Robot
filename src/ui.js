@@ -2,6 +2,9 @@ var date = new Date();
 document.getElementById('big-warning').style.display = "none";
 document.getElementById('auton-chooser').style.display = "none";
 
+var cameraMode = "double";
+var driveReversed = true;
+
 // sets default positions for robot diagram
 var angle = 0;
 var armLength = 110;
@@ -33,11 +36,15 @@ NetworkTables.addKeyListener('/SmartDashboard/driver-camera-mode', (key, value) 
     // show everything to do with single camera view
     document.getElementById('camera-large').style.display = "inline";
     document.getElementById('v-crosshairs-large').style.display = "inline";
+    if (driveReversed) {
+      document.getElementById('camera-stream-large').src = "http://10.6.70.26:8001/?action=stream";
+      document.getElementById('camera-stream-large').onerror = "this.src='http://10.6.70.26:8001/?action=stream'";
+    } else {
+      document.getElementById('camera-stream-large').src = "http://10.6.70.26:8000/?action=stream";
+      document.getElementById('camera-stream-large').onerror = "this.src='http://10.6.70.26:8000/?action=stream'";
+    }
 
-    // show the streams
-    document.getElementById('camera-large').src = "http://10.6.70.26:8000/?action=stream";
-    document.getElementById('camera-large').onerror = "this.src='http://10.6.70.26:8000/?action=stream'";
-    
+    cameraMode = "single";
   } else if (value === "double") {
     // hide everything to do with single camera view
     document.getElementById('camera-large').style.display = "none";
@@ -46,29 +53,23 @@ NetworkTables.addKeyListener('/SmartDashboard/driver-camera-mode', (key, value) 
     // show everything to do with double camera view
     document.getElementById('camera1').style.display = "inline";
     document.getElementById('camera2').style.display = "inline";
-    document.getElementById('back-indicator').style.display = "inline";
-    document.getElementById('front-indicator').style.display = "inline";
     document.getElementById('v-crosshairs-left').style.display = "inline";
     document.getElementById('v-crosshairs-right').style.display = "inline";
+    if (driveReversed) {
+      document.getElementById('front-indicator').style.display = "inline";
+    } else {
+      document.getElementById('back-indicator').style.display = "inline";
+    }
 
     // show the streams
-    document.getElementById('camera1').src = "http://10.6.70.26:8000/?action=stream";
-    document.getElementById('camera1').onerror = "this.src='http://10.6.70.26:8000/?action=stream'";
-    document.getElementById('camera2').src = "http://10.6.70.26:8001/?action=stream";
-    document.getElementById('camera2').onerror = "this.src='http://10.6.70.26:8001/?action=stream'";
+    document.getElementById('camera-stream-1').src = "http://10.6.70.26:8000/?action=stream";
+    document.getElementById('camera-stream-1').onerror = "this.src='http://10.6.70.26:8000/?action=stream'";
+    document.getElementById('camera-stream-2').src = "http://10.6.70.26:8001/?action=stream";
+    document.getElementById('camera-stream-2').onerror = "this.src='http://10.6.70.26:8001/?action=stream'";
+  
+    cameraMode = "double";
   }
-});
-
-// flips the stream displayed on the large camera screen
-NetworkTables.addKeyListener('/SmartDashboard/camera-source', (key, value) => {
-  var sourceURL = 'http://10.6.70.26:800' + value +'/?action=stream';
-  if (sourceURL === "0") {
-    // TODO move large crosshairs for front camera
-  } else if (sourceURL === "1") {
-    // TODO move large crosshairs for back camera
-  }
-  document.getElementById('camera-large').src = sourceURL;
-  document.getElementById('camera-large').onerror = "this.src=" + sourceURL;
+  NetworkTables.putValue("cameraMode", cameraMode);
 });
 
 // listens for robot-state and updates status lights and auton chooser accordingly
@@ -208,18 +209,41 @@ NetworkTables.addKeyListener('/SmartDashboard/vision-status', (key, value) => {
 });
 
 // updates status lights for reversed drive
-NetworkTables.addKeyListener('/SmartDashboard/drive-reversed-status', (key, value) => {
+NetworkTables.addKeyListener('/SmartDashboard/drive-reversed', (key, value) => {
   if (value === true) {
     document.getElementById('drive-reversed-status').style.fill = "rgb(255,255,255)";
     document.getElementById('drive-reversed-status').style.stroke = "rgb(255,255,255)";
-    document.getElementById('back-indicator').style.display = "none";
-    document.getElementById('crosshairs').style = "transform: translate(21vw, 0vh)";
+    driveReversed = true;
   } else {
     document.getElementById('drive-reversed-status').style.fill = "none";
     document.getElementById('drive-reversed-status').style.stroke = "rgb(255,255,255)";
-    document.getElementById('front-indicator').style.display = "none";
-    document.getElementById('crosshairs').style = "transform: translate(41vw, 0vh); rotate(10deg)";
+    driveReversed = false;
   }
+  if (cameraMode === "single") {
+    if (value === true) {
+      document.getElementById('current-arm-state').innerHTML = "single back";
+      document.getElementById('camera-stream-large').src = "http://10.6.70.26:8001/?action=stream";
+      document.getElementById('camera-stream-large').onerror = "this.src='http://10.6.70.26:8001/?action=stream'";
+    } else {
+      document.getElementById('current-arm-state').innerHTML = "single front";
+      document.getElementById('camera-stream-large').src = "http://10.6.70.26:8000/?action=stream";
+      document.getElementById('camera-stream-large').onerror = "this.src='http://10.6.70.26:8000/?action=stream'";
+    }
+  } 
+  if (cameraMode === "double") {
+    if (value === true) {
+      document.getElementById('current-arm-state').innerHTML = "double back";
+      document.getElementById('back-indicator').style.display = "none";
+      document.getElementById('front-indicator').style.display = "inline";
+      document.getElementById('crosshairs').style = "transform: translate(21vw, 0vh)";
+    } else {
+      document.getElementById('current-arm-state').innerHTML = "double front";
+      document.getElementById('front-indicator').style.display = "none";
+      document.getElementById('back-indicator').style.display = "inline";
+      document.getElementById('crosshairs').style = "transform: translate(41vw, 0vh); rotate(10deg)";
+    }
+  }
+  
 });
 
 // listens for keystrokes from the external keypad and passes the corresponding values over networktables
