@@ -9,9 +9,11 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.NetworkTableType;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
+import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.utils.functions.MathUtils;
 
 /**
@@ -22,6 +24,7 @@ public class MustangCoprocessor {
 
     private HashMap<String, NetworkTableObject> entries;
 
+    private Solenoid backLedRing;
     private VisionValues wallTarget; 
 
     // The keys for the NetworkTable entries that the raspberry pi is putting up. Ensure that these are placed on the raspi also. Maybe make a shared config file
@@ -59,6 +62,8 @@ public class MustangCoprocessor {
         wallTarget = new VisionValues(NETWORK_TABLE_KEYS[0]);
         backCamera = true;
         lowTarget = true;
+        backLedRing = new Solenoid(RobotMap.PCM_MODULE, RobotMap.BACK_LED_RING);
+        backLedRing.set(false);
     }
 
     private class NetworkTableObject {
@@ -312,6 +317,14 @@ public class MustangCoprocessor {
             double result = entries.get(key).getValue()[index];
             return result;
         }
+    }
+
+    public void turnOnBackLedRing() {
+        backLedRing.set(true);
+    }
+
+    public void turnOffBackLedRing() {
+        backLedRing.set(false);
     }
 
 }
