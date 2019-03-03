@@ -72,5 +72,7 @@ public class RobotMap {
   public static final int INTAKE_BASE_TALON = 7;
   public static final int INTAKE_ROLLER_TALON = 4;
 
+  /** PCM Port of the back LED ring (super bright one) */
+  public static int BACK_LED_RING = 4;
 
 }
