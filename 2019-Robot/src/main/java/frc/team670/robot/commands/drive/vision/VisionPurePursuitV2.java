@@ -44,8 +44,6 @@ public class VisionPurePursuitV2 extends Command {
     private boolean isReversed;
     private int executeCount;
     private MutableDouble finalAngle;
-    private double straightDistance;
-    private double horizontalDistance;
     private double offset;
     private Vector endPoint;
 
@@ -101,7 +99,7 @@ public class VisionPurePursuitV2 extends Command {
     
         double visionDistance = coprocessor.getDistanceToWallTarget();
     
-        straightDistance = visionDistance; // Uses vision distance as a default
+        double straightDistance = visionDistance; // Uses vision distance as a default
         if(ultrasonicDistance < 150 && ultrasonicDistance > 5) {
             if (MathUtils.doublesEqual(visionDistance, RobotConstants.VISION_ERROR_CODE)) {
                 straightDistance = ultrasonicDistance;
@@ -129,7 +127,7 @@ public class VisionPurePursuitV2 extends Command {
         System.out.println("Angle: " + coprocessor.getAngleToWallTarget());
         // horizontal distance - when going forward a positive horizontal distance is
         // right and negative is left
-        horizontalDistance = straightDistance * Math.tan(Math.toRadians(horizontalAngle)); // x = y * tan(theta)
+        double horizontalDistance = straightDistance * Math.tan(Math.toRadians(horizontalAngle)); // x = y * tan(theta)
         // double horizontalDistance = -18;
         double partialDistanceY = (straightDistance) * 2.0 / 5.0;
     
