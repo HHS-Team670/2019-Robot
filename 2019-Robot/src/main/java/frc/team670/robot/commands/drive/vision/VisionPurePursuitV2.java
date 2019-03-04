@@ -47,6 +47,7 @@ public class VisionPurePursuitV2 extends Command {
     private double straightDistance;
     private double horizontalDistance;
     private double offset;
+    private Vector endPoint;
 
     /**
      * @param finalAngle a MutableDouble object reference to the angle (using zeroed yaw) this PurePursuit command should end up at compared to the zeroed yaw.
@@ -60,6 +61,7 @@ public class VisionPurePursuitV2 extends Command {
         this.coprocessor = coprocessor;
         this.isReversed = isReversed;
         this.offset = offset;
+        endPoint = new Vector();
 
         poseEstimator = new PoseEstimator(driveBase, sensors);
         purePursuitTracker = new PurePursuitTracker(poseEstimator, driveBase, sensors, isReversed);
@@ -147,7 +149,7 @@ public class VisionPurePursuitV2 extends Command {
         Vector startPose = poseEstimator.getPose();
         double startX = startPose.x, startY = startPose.y;
         Vector partialDistance = new Vector(startX + horizontalDistance, startY + partialDistanceY);
-        Vector endPoint = new Vector(startX + horizontalDistance, startY + (straightDistance));
+        endPoint = new Vector(startX + horizontalDistance, startY + (straightDistance));
 
         PathGenerator generator = new PathGenerator(SPACING);
         generator.setVelocities(MAX_VEL, MAX_ACC, MAX_VELK);
@@ -196,15 +198,16 @@ public class VisionPurePursuitV2 extends Command {
     // Called once after isFinished returns true
     @Override
     protected void end() {
-        Logger.consoleLog("Pose: %s ", poseEstimator.getPose());
+        Vector pose = poseEstimator.getPose();
         // VisionPurePursuit.disableArmRestriction();
-        driveBase.setSparkVelocityControl(0,0);
-        double xOffset = horizontalDistance - poseEstimator.getPose().x;
-        double yOffset = straightDistance + offset - poseEstimator.getPose().y;
-        double angle = Math.atan(yOffset/xOffset);
+        driveBase.stop();
+        double xOffset = endPoint.x - pose.x;
+        double yOffset = endPoint.y + offset - pose.y;
+        double angle = Math.toDegrees(Math.atan(yOffset/xOffset));
 
-        finalAngle.setValue(finalAngle.getValue()-sensors.getYawDouble()-Math.toDegrees(angle));
+        finalAngle.setValue(finalAngle.getValue() - sensors.getYawDouble() - angle);
 
+        Logger.consoleLog("Pose: %s, Pivot angle: %s", pose, angle);
         purePursuitTracker.reset();
     }
 
