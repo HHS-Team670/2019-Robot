@@ -3,8 +3,6 @@ package frc.team670.robot.commands.drive.purePursuit;
 import java.util.ArrayList;
 import java.util.Optional;
 
-import edu.wpi.first.wpilibj.Notifier;
-import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.DriveBase;
@@ -23,9 +21,9 @@ public class PurePursuitTracker {
 	private Path path;
 	private double lookaheadDistance;
 	private double robotTrack = 0;
-	private	DrivePower drivePower;
+	// private	DrivePower drivePower;
 
-	private Notifier updater;
+	// private Notifier updater;
 
 	private boolean isReversed;
 

@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.Robot;
 import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.utils.Logger;
-import frc.team670.robot.utils.functions.MathUtils;
 
 public class DIOEncoderDrive extends Command {
   private PIDController leftPIDController;

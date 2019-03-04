@@ -25,14 +25,7 @@ public class VisionDrive extends CommandGroup {
 
     double[] visionData = new double[]{RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE};
 
-    coprocessor.setTargetHeight(lowTarget);
-
-    coprocessor.setCamera(isReversed);
-    coprocessor.useVision(true);
-
-    addSequential(new CollectVisionData(visionData));
-    addSequential(new VisionPurePursuit(driveBase, coprocessor, sensors, spaceFromTarget, isReversed, changeableAngle));
-   
-    SmartDashboard.putNumberArray("reflect_tape_data", new double[]{RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE});
+    addSequential(new CollectVisionData(visionData, coprocessor, lowTarget, isReversed));
+    addSequential(new VisionPurePursuitV2(driveBase, sensors, isReversed, changeableAngle, spaceFromTarget, coprocessor));   
   }
 }

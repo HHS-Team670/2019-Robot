@@ -36,7 +36,7 @@ public class Arm {
 
   private static final double DISTANCE_BACK_TO_ARM = 3.125, DISTANCE_FRONT_CAMERA_TO_ARM = 31.75;
 
-  public static final double ARM_HEIGHT_IN_INCHES = 5;
+  public static final double ARM_HEIGHT_IN_INCHES = 24.425;
 
   // All of the states
   private static HashMap<LegalState, ArmState> states;

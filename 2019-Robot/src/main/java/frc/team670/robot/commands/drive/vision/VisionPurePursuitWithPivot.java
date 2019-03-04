@@ -15,10 +15,7 @@ import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.utils.MutableDouble;
 
 public class VisionPurePursuitWithPivot extends CommandGroup {
-  /**
-   * Add your docs here.
-   */
-    
+
   public VisionPurePursuitWithPivot(DriveBase driveBase, MustangCoprocessor coprocessor, MustangSensors sensors,
   double spaceFromTarget, boolean isReversed, boolean lowTarget) {
 

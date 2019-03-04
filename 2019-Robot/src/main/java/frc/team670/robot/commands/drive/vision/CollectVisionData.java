@@ -8,38 +8,62 @@
 package frc.team670.robot.commands.drive.vision;
 
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
+import frc.team670.robot.dataCollection.MustangCoprocessor;
 import frc.team670.robot.utils.functions.MathUtils;
 
 /**
  * Starts a Pure Pursuit path based off vision data
  */
 public class CollectVisionData extends Command {
+
+    private MustangCoprocessor coprocessor;
+
+    private boolean lowTarget, isReversed;
     private double[] visionData;
     private long startTime;
 
-  public CollectVisionData(double[] visionData) {
-    super();
-    this.visionData = visionData;
+    private static final double MAX_TIME_TO_RUN = 700; // Max time to run this in ms
 
-  }
+    public CollectVisionData(double[] visionData, MustangCoprocessor coprocessor, boolean lowTarget, boolean isReversed) {
+        super();
+        this.visionData = visionData;
+        this.lowTarget = lowTarget;
+        this.isReversed = isReversed;
+        this.coprocessor = coprocessor;
+    }
 
-  public void initialize(){
-      startTime = System.currentTimeMillis();
-  }
+    @Override
+    protected void initialize() {
+        coprocessor.turnOnBackLedRing();
+        coprocessor.setTargetHeight(lowTarget);
+        coprocessor.setCamera(isReversed);
+        SmartDashboard.putNumberArray("reflect_tape_data", new double[]{RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE});
+        coprocessor.useVision(true);
+        startTime = System.currentTimeMillis();
+    }
 
-  public boolean isFinished(){
-      return (!MathUtils.doublesEqual(visionData[2], RobotConstants.VISION_ERROR_CODE) || System.currentTimeMillis() - startTime > 1200);
-  }
+    @Override
+    protected void execute() {
 
-  public void execute(){
-      long time = System.currentTimeMillis();
+    }
 
-      if(time >= startTime + 500){
-          visionData = Robot.coprocessor.getVisionValues();
-      }
+    @Override
+    protected boolean isFinished() {
+        return (!MathUtils.doublesEqual(visionData[2], RobotConstants.VISION_ERROR_CODE) || System.currentTimeMillis() > startTime + MAX_TIME_TO_RUN);
+    }
 
-  }
+    @Override
+    protected void end() {
+        coprocessor.turnOffBackLedRing();
+        SmartDashboard.putString("vision-camera", "disabled");
+    }
+
+    @Override
+    protected void interrupted() {
+        end();
+    }
 
 }

@@ -46,8 +46,6 @@ public class VisionPurePursuit extends CommandGroup {
       double spaceFromTarget, boolean isReversed, MutableDouble finalAngle) {
     super();
 
-    driveBase.initBrakeMode();
-
     try {
       if(MathUtils.doublesEqual(coprocessor.getVisionValues()[2], RobotConstants.VISION_ERROR_CODE)) {
         SmartDashboard.putString("warnings", "Coprocess Camera Unplugged: Vision Down");

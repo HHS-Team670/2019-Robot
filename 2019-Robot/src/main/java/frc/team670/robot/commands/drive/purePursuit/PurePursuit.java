@@ -8,7 +8,6 @@
 package frc.team670.robot.commands.drive.purePursuit;
 
 import edu.wpi.first.wpilibj.command.Command;
-import frc.team670.robot.commands.drive.vision.VisionPurePursuit;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.utils.Logger;
@@ -62,8 +61,6 @@ public class PurePursuit extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    //FOLLOWING MOVED TO PurePursuitTracker as a Notifier
-
     poseEstimator.update();
     DrivePower drivePower;
 
