@@ -72,6 +72,8 @@ public class MustangSensors {
       // SmartDashboard.putString("warning", "Error instantiating back right ultrasonic");
       backRightUltrasonic = null;
     }
+
+    frontUltrasonic.setUltrasonicAutomaticMode(true);
   }
 
   /*
@@ -372,7 +374,7 @@ public class MustangSensors {
     if(backRightUltrasonic != null) { 
       SmartDashboard.putNumber("Back Right Ultrasonic: ", backRightUltrasonic.getUnadjustedDistance());
     } else if (backRightUltrasonic == null) {
-      SmartDashboard.putString("Back RIGHT Ultrasonic: ", "BACK RIGHT ULTRASONIC IS NULL!");
+      SmartDashboard.putString("Back Right Ultrasonic: ", "BACK RIGHT ULTRASONIC IS NULL!");
     }
   }
 }
