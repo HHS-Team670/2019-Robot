@@ -73,7 +73,7 @@ public class MustangSensors {
       backRightUltrasonic = null;
     }
 
-    frontUltrasonic.setUltrasonicAutomaticMode(true);
+    frontUltrasonic.setUltrasonicAutomaticMode(true); // This will set it for all the sensors. WPI should definitely have made this method static.
   }
 
   /*
@@ -145,15 +145,19 @@ public class MustangSensors {
     double backRight = getBackRightUltrasonicUnadjustedDistance();
     double adjustedDistance = (backLeft < backRight) ? backLeft : backRight; // Take the one that is least;
 
+    // Below check if both sensors are getting valid data, if not pick the one that seems right, or return the error code
+    if(backLeft >= 150 && backRight >= 150) {
+      return ULTRASONIC_ERROR_CODE;
+    }
+    else if(backRight < 150 && backLeft > 150){
+      return backRight;
+    }
+    else if(backLeft < 150 && backRight > 150){
+      return backLeft;
+    }
+
     if(Math.abs(backRight-backLeft) <= 10){
       adjustedDistance = (backLeft+backRight)/2.0; //average both if they're essentially the same
-    }
-    // Below see if one sensor is getting generally valid data - then use the adjusted distance from that ultrasonic
-    else if(backLeft > 132 && backRight <= 120){
-      adjustedDistance = getBackRightUltrasonicDistance();
-    }
-    else if(backRight > 132 && backLeft <= 120){
-      adjustedDistance = getBackLeftUltrasonicDistance();
     }
 
     return adjustedDistance;

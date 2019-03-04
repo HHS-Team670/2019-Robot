@@ -100,13 +100,15 @@ public class VisionPurePursuitV2 extends Command {
         double visionDistance = coprocessor.getDistanceToWallTarget();
     
         straightDistance = visionDistance; // Uses vision distance as a default
-        if (MathUtils.doublesEqual(visionDistance, RobotConstants.VISION_ERROR_CODE)) {
-          straightDistance = ultrasonicDistance;
-        } else if (Math.abs(visionDistance-ultrasonicDistance) < 10){ // Checks to make sure both are within a reasonable range of each other and then takes the smaller one
-          straightDistance = (visionDistance < ultrasonicDistance) ? visionDistance : ultrasonicDistance;
+        if(ultrasonicDistance < 150 && ultrasonicDistance > 5) {
+            if (MathUtils.doublesEqual(visionDistance, RobotConstants.VISION_ERROR_CODE)) {
+                straightDistance = ultrasonicDistance;
+            } else if (Math.abs(visionDistance-ultrasonicDistance) < 10){ // Checks to make sure both are within a reasonable range of each other and then takes the smaller one
+                straightDistance = (visionDistance < ultrasonicDistance) ? visionDistance : ultrasonicDistance;
+            }
         }
     
-        if (straightDistance > 132) { // Distance is too far, must be invalid data.
+        if (straightDistance > 150) { // Distance is too far, must be invalid data.
             Logger.consoleLog("No Valid Vision Data or Ultrasonic Data found, command quit.");
             SmartDashboard.putString("vision-status", "invalid-data");
             return;

@@ -26,6 +26,7 @@ import frc.team670.robot.Robot;
 
 /**
  * Starts a Pure Pursuit path based off vision data
+ * @deprecated Replaced by VisionPurePursuitV2 which combines this with PurePursuit into one Command
  */
 public class VisionPurePursuit extends CommandGroup {
 
