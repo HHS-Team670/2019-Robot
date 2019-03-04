@@ -97,123 +97,120 @@ def main():
     hor_focal_length = find_hor_focal_length(vs_front.raw_read()[0], camera_fov_horizontal)
 
     frameCount = 0
-    def checkEnabled(table, key, value, isNew):
-        print("Values: key: '%s'; value: %s; isNew: %s" % (key, value, isNew))
 
-        if key == enabled_key and value != "enabled":
-            return
+    while True:
+        time.sleep(1)
 
-        # gets which camera to use (front or back)
-        useVision = table.getEntry(enabled_key).getString("back") #CHECK THIS
-        camera = table.getEntry(camera_key).getString("back")
+def checkEnabled(table, key, value, isNew):
+    print("Values: key: '%s'; value: %s; isNew: %s" % (key, value, isNew))
 
-        vs = None
-        print(camera)
+    if key == enabled_key and value != "enabled":
+        return
 
-        if camera == "front":
-            vs=vs_front
-            #HSV Values to detect with front LED
-            min_hsv = [50, 220, 80] # Need to change according to practice field data
-            max_hsv = [70, 255, 210]
-        elif camera == "back":
-            vs=vs_back
-            #HSV Values to detect with back LED
-            min_hsv = [50, 220, 80] # Need to change according to practice field data
-            max_hsv = [70, 255, 210]
+    # gets which camera to use (front or back)
+    useVision = table.getEntry(enabled_key).getString("back") #CHECK THIS
+    camera = table.getEntry(camera_key).getString("back")
 
-        try:
-            frameCount += 1
-            # Read input image from video
-            input_raw = vs.raw_read()
-            if input_raw is None:
-                print("Error: Capture source not found or broken.")
-                returns = [ERROR, ERROR, ERROR]
-                push_network_table(table, returns)
-                print(returns)
-                table.putString("vision-status", "error")
+    vs = None
+    print(camera)
 
-                continue
-            else:
-                table.putString("vision-status", "")
+    if camera == "front":
+        vs=vs_front
+        #HSV Values to detect with front LED
+        min_hsv = [50, 220, 80] # Need to change according to practice field data
+        max_hsv = [70, 255, 210]
+    elif camera == "back":
+        vs=vs_back
+        #HSV Values to detect with back LED
+        min_hsv = [50, 220, 80] # Need to change according to practice field data
+        max_hsv = [70, 255, 210]
 
-            input_image = input_raw[0]
-            timestamp = input_raw[1]
-
-            # Find colored object / box it with a rectangle
-            masked_image = find_colored_object(input_image, debug=DEBUG_MODE)
-
-            object_rects = find_two_important_contours(masked_image, debug=DEBUG_MODE)
-            object_rect, object_rect_2 = object_rects
-
-            '''
-            Uncomment below if you want to save images to output for debugging
-            '''
-                
-            if frameCount % 10 == 0:
-                cv2.imwrite("output/mask_%d.jpg"%frameCount, masked_image)
-                cv2.imwrite("output/frame_%d.jpg"%frameCount,input_image) # Take out later to speed up
-                for rectangle in object_rects:
-                    box_points = cv2.boxPoints(rectangle)
-                    box_points = np.int0(box_points)
-                    cv2.drawContours(input_image, [box_points], 0, (0, 255, 0), 2)
-                cv2.imwrite("output/boxed_%d.jpg"%frameCount,input_image) # Take out later to speed up
-            
-
-            # DEBUG mode code
-            if object_rect is -1 and object_rect_2 is -1:
-                returns = [ERROR, ERROR, timestamp]
-               # push_network_table(table, returns)
-                print(returns)
-                if DEBUG_MODE:
-                    output_image = cv2.resize(input_image, (0, 0), fx=screen_resize,
-                                            fy=screen_resize)
-                    cv2.imshow("Output", output_image)
-                    key = cv2.waitKey(1) & 0xFF
-                    if key == ord('q'):
-                        # Quit if q key is pressed
-                        break
-                continue
-
-            # if rectangles exist
-            if not object_rect == -1 and not object_rect_2 == -1:
-                # find_vert_angle finds the depth / angle of the object
-                # find_hor_angle finds horizontal angle to object
-                rect_x_midpoint, high_point = find_rectangle_highpoint(object_rects)
-                vangle = find_angle(input_image, high_point, vert_focal_length) # vangle - 'V'ertical angle
-                hangle = find_angle(input_image, rect_x_midpoint, hor_focal_length, vertical=False) # hangle - 'H'orizontal angle
-                returns = [hangle, vangle, timestamp]
-                print(returns)
-            else:
-              returns = [ERROR, ERROR, timestamp]
-            
-            # set and push network table
+    try:
+        frameCount += 1
+        # Read input image from video
+        input_raw = vs.raw_read()
+        if input_raw is None:
+            print("Error: Capture source not found or broken.")
+            returns = [ERROR, ERROR, ERROR]
             push_network_table(table, returns)
+            print(returns)
+            table.putString("vision-status", "error")
 
-            # Create output image to display in debug mode
+            continue
+        else:
+            table.putString("vision-status", "")
+
+        input_image = input_raw[0]
+        timestamp = input_raw[1]
+
+        # Find colored object / box it with a rectangle
+        masked_image = find_colored_object(input_image, debug=DEBUG_MODE)
+
+        object_rects = find_two_important_contours(masked_image, debug=DEBUG_MODE)
+        object_rect, object_rect_2 = object_rects
+
+        '''
+        Uncomment below if you want to save images to output for debugging
+        '''
+                
+        if frameCount % 10 == 0:
+            cv2.imwrite("output/mask_%d.jpg"%frameCount, masked_image)
+            cv2.imwrite("output/frame_%d.jpg"%frameCount,input_image) # Take out later to speed up
+            for rectangle in object_rects:
+                box_points = cv2.boxPoints(rectangle)
+                box_points = np.int0(box_points)
+                cv2.drawContours(input_image, [box_points], 0, (0, 255, 0), 2)
+            cv2.imwrite("output/boxed_%d.jpg"%frameCount,input_image) # Take out later to speed up
+            
+
+        # DEBUG mode code
+        if object_rect is -1 and object_rect_2 is -1:
+            returns = [ERROR, ERROR, timestamp]
+            push_network_table(table, returns)
+            print(returns)
             if DEBUG_MODE:
-                output_image = draw_output_image(input_image, object_rects,
-                                                 0,
-                                                 vangle,
-                                                 hangle,
-                                                 highpoint = (int(rect_x_midpoint), int(high_point)))
-                if screen_resize != 1:
-                    output_image = cv2.resize(output_image, (0, 0),
-                                              fx=screen_resize, fy=screen_resize)
+                output_image = cv2.resize(input_image, (0, 0), fx=screen_resize, fy=screen_resize)
                 cv2.imshow("Output", output_image)
-
-                # Check for key presses
                 key = cv2.waitKey(1) & 0xFF
                 if key == ord('q'):
                     # Quit if q key is pressed
-                    break
-                # Handle mouse clicks
-                # Comment this out if unneeded for maximum efficiency
-                # currently somewhat broken
-                cv2.setMouseCallback("Output", mouse_click_handler,
-                                    {"input_image": input_image,
-                                    "screen_resize": screen_resize})
-        except Exception as e:
-            print(e)
+                    return
+            continue
+
+        # if rectangles exist
+        if not object_rect == -1 and not object_rect_2 == -1:
+            # find_vert_angle finds the depth / angle of the object
+            # find_hor_angle finds horizontal angle to object
+            rect_x_midpoint, high_point = find_rectangle_highpoint(object_rects)
+            vangle = find_angle(input_image, high_point, vert_focal_length) # vangle - 'V'ertical angle
+            hangle = find_angle(input_image, rect_x_midpoint, hor_focal_length, vertical=False) # hangle - 'H'orizontal angle
+            returns = [hangle, vangle, timestamp]
+            print(returns)
+        else:
+            returns = [ERROR, ERROR, timestamp]
+            
+        # set and push network table
+        push_network_table(table, returns)
+        table.putString(enabled_key, "disabled")
+
+        # Create output image to display in debug mode
+        if DEBUG_MODE:
+            output_image = draw_output_image(input_image, object_rects, 0, vangle, hangle, highpoint = (int(rect_x_midpoint), int(high_point)))
+            if screen_resize != 1:
+                output_image = cv2.resize(output_image, (0, 0), fx=screen_resize, fy=screen_resize)
+            cv2.imshow("Output", output_image)
+
+            # Check for key presses
+            key = cv2.waitKey(1) & 0xFF
+            if key == ord('q'):
+                # Quit if q key is pressed
+                return
+            # Handle mouse clicks
+            # Comment this out if unneeded for maximum efficiency
+            # currently somewhat broken
+            cv2.setMouseCallback("Output", mouse_click_handler, {"input_image": input_image, "screen_resize": screen_resize})
+    except Exception as e:
+        print(e)
            
     # Release & close when done
     vs.stop()
