@@ -71,58 +71,52 @@ def main():
     os.system("sudo ln -s /dev/v4l/by-path/platform-3f980000.usb-usb-0:1.5:1.0-video-index0 /dev/video"+ `front_capture_source`)
     os.system("sudo ln -s /dev/v4l/by-path/platform-3f980000.usb-usb-0:1.3:1.0-video-index0 /dev/video"+ `back_capture_source`)
 
-
-    #Sets exposure and other camera properties for camera
-    #Change at match
-	os.system("v4l2-ctl -d /dev/video" + `front_capture_source` + " -c exposure_auto=1 -c exposure_absolute=100 -c brightness=10 -c white_balance_temperature_auto=0 -c backlight_compensation=0 -c contrast=10 -c saturation=200")
-    os.system("v4l2-ctl -d /dev/video" + `back_capture_source` + " -c exposure_auto=1 -c exposure_absolute=100 -c brightness=10 -c white_balance_temperature_auto=0 -c backlight_compensation=0 -c contrast=10 -c saturation=200")
-
     #Uncomment when saving images
     os.system("rm -rf output")
     os.system("mkdir output")
     
     #Initializes connection to RIO
-    #NetworkTables.initialize(server=ROBORIO_IP)
+    NetworkTables.initialize(server=ROBORIO_IP)
 
-    #NetworkTables.addConnectionListener(connectionListener, immediateNotify=True)
+    NetworkTables.addConnectionListener(connectionListener, immediateNotify=True)
     #Waits until RIO is connected before continuing
-    #with cond:
-    #    if not notified[0]:
-    #        print("waiting")
-    #        cond.wait()
+    with cond:
+        if not notified[0]:
+            print("waiting")
+            cond.wait()
 
-    #table = NetworkTables.getTable(NETWORK_TABLE_NAME)
+    table = NetworkTables.getTable(NETWORK_TABLE_NAME)
+    table.addEntryListener(checkEnabled)
 
     #Video capture / resizing stuff
-    #vs_front = ThreadedVideo(screen_resize, front_capture_source).start()
-    #vs_back = ThreadedVideo(screen_resize, back_capture_source).start() 
+    vs_front = ThreadedVideo(screen_resize, front_capture_source).start()
+    vs_back = ThreadedVideo(screen_resize, back_capture_source).start() 
 
     # This may not need to be calculated, can use Andra's precalculated values
-    vert_focal_length = find_vert_focal_length(cv2.VideoCapture(front_capture_source).read()[1], camera_fov_vertical)
-    hor_focal_length = find_hor_focal_length(cv2.VideoCapture(front_capture_source).read()[1], camera_fov_horizontal)
+    vert_focal_length = find_vert_focal_length(vs_front.raw_read()[0], camera_fov_vertical)
+    hor_focal_length = find_hor_focal_length(vs_front.raw_read()[0], camera_fov_horizontal)
 
     frameCount = 0
-    while True:
-        # gets which camera to use (front or back)
-        useVision = "enabled" #table.getEntry(enabled_key).getString("back")
-        camera = "front" #table.getEntry(camera_key).getString("back")
-        
-        if useVision == "disabled":
-        	continue
-        elif useVision == "enabled":
-        	pass
-        	#table.putString("vision-enabled", "disabled")
+    def checkEnabled(table, key, value, isNew):
+        print("Values: key: '%s'; value: %s; isNew: %s" % (key, value, isNew))
 
-        capture_source = None
+        if key == enabled_key and value != "enabled":
+            return
+
+        # gets which camera to use (front or back)
+        useVision = table.getEntry(enabled_key).getString("back") #CHECK THIS
+        camera = table.getEntry(camera_key).getString("back")
+
+        vs = None
         print(camera)
 
         if camera == "front":
-            capture_source=front_capture_source
+            vs=vs_front
             #HSV Values to detect with front LED
             min_hsv = [50, 220, 80] # Need to change according to practice field data
             max_hsv = [70, 255, 210]
         elif camera == "back":
-            capture_source=back_capture_source
+            vs=vs_back
             #HSV Values to detect with back LED
             min_hsv = [50, 220, 80] # Need to change according to practice field data
             max_hsv = [70, 255, 210]
@@ -130,17 +124,17 @@ def main():
         try:
             frameCount += 1
             # Read input image from video
-            input_raw = cv2.VideoCapture(capture_source).read()[1]
+            input_raw = vs.raw_read()
             if input_raw is None:
                 print("Error: Capture source not found or broken.")
                 returns = [ERROR, ERROR, ERROR]
-    #            push_network_table(table, returns)
+                push_network_table(table, returns)
                 print(returns)
-                #table.putString("vision-status", "error")
+                table.putString("vision-status", "error")
 
                 continue
-            #else:
-                #table.putString("vision-status", "")
+            else:
+                table.putString("vision-status", "")
 
             input_image = input_raw[0]
             timestamp = input_raw[1]
@@ -193,7 +187,7 @@ def main():
               returns = [ERROR, ERROR, timestamp]
             
             # set and push network table
-#            push_network_table(table, returns)
+            push_network_table(table, returns)
 
             # Create output image to display in debug mode
             if DEBUG_MODE:
@@ -259,6 +253,11 @@ class ThreadedVideo:
 
     def raw_read(self):
         '''Returns the raw frame with the original video input's image size.'''
+        if self.opened():
+            self.grabbed = (read_video_image(self.stream), round(time.time()*1000))
+        else:
+            self.grabbed = None
+        
         return self.grabbed
 
     def stream(self):
@@ -273,12 +272,14 @@ class ThreadedVideo:
             os.stat("/dev/video" + `self.src`)
             #Reopens stream so camera reconnects
             self.stream.open(self.src)
+
             #Sets exposure and other camera properties for camera
             os.system("v4l2-ctl -d /dev/video" + `self.src` + " -c exposure_auto=1 -c exposure_absolute=100 -c brightness=10 -c white_balance_temperature_auto=0 -c backlight_compensation=0 -c contrast=10 -c saturation=200")
+            
             cameraOpen = True
         except OSError:
             #Releases a stream if its camera is disconnected
-            #print("Camera with source " + `self.src` + " is not connected!")
+            print("Camera with source " + `self.src` + " is not connected!")
             self.stream.release()
             cameraOpen = False
 
@@ -287,11 +288,7 @@ class ThreadedVideo:
     def update(self):
         '''Grabs new video images from the current video stream.'''
         while not self.stopped:
-            self.frameCount += 1
-            if self.opened():
-                self.grabbed = (read_video_image(self.stream), round(time.time()*1000))
-            else:
-                self.grabbed = None
+            if self.opened()
 
 # Methods
 def push_network_table(table, return_list):

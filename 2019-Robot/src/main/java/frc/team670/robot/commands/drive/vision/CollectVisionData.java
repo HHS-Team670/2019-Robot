@@ -40,7 +40,7 @@ public class CollectVisionData extends Command {
         coprocessor.turnOnBackLedRing();
         coprocessor.setTargetHeight(lowTarget);
         coprocessor.setCamera(isReversed);
-        SmartDashboard.putNumberArray("reflect_tape_data", new double[]{RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE});
+        SmartDashboard.putNumberArray("reflect_tape_data", new double[]{RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE}); // Clears vision data so we don't use old data accidentally
         coprocessor.useVision(true);
         startTime = System.currentTimeMillis();
     }

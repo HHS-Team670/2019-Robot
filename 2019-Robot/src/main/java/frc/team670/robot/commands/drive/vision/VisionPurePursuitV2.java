@@ -88,23 +88,23 @@ public class VisionPurePursuitV2 extends Command {
             return;
         }
     
-        // double ultrasonicDistance;
-        // if (!isReversed) {
-        //   ultrasonicDistance = sensors.getFrontUltrasonicDistance();
-        // } else {
-        //   ultrasonicDistance = sensors.getAdjustedBackUltrasonicDistance();
-        // }
-        // ultrasonicDistance *= Math.cos(Math.toRadians(horizontalAngle)); // use cosine to get the straight ultrasonic
-        //                                                                  // distance not the diagonal one
+        double ultrasonicDistance;
+        if (!isReversed) {
+          ultrasonicDistance = sensors.getFrontUltrasonicDistance();
+        } else {
+          ultrasonicDistance = sensors.getAdjustedBackUltrasonicDistance();
+        }
+        ultrasonicDistance *= Math.cos(Math.toRadians(horizontalAngle)); // use cosine to get the straight ultrasonic
+                                                                         // distance not the diagonal one
     
         double visionDistance = coprocessor.getDistanceToWallTarget();
     
-        straightDistance = visionDistance;
-        // if (MathUtils.doublesEqual(visionDistance, RobotConstants.VISION_ERROR_CODE)) {
-        //   straightDistance = ultrasonicDistance;
-        // } else {
-        //   straightDistance = (visionDistance < ultrasonicDistance) ? visionDistance : ultrasonicDistance;
-        // }
+        straightDistance = visionDistance; // Uses vision distance as a default
+        if (MathUtils.doublesEqual(visionDistance, RobotConstants.VISION_ERROR_CODE)) {
+          straightDistance = ultrasonicDistance;
+        } else if (Math.abs(visionDistance-ultrasonicDistance) < 10){ // Checks to make sure both are within a reasonable range of each other and then takes the smaller one
+          straightDistance = (visionDistance < ultrasonicDistance) ? visionDistance : ultrasonicDistance;
+        }
     
         if (straightDistance > 132) { // Distance is too far, must be invalid data.
             Logger.consoleLog("No Valid Vision Data or Ultrasonic Data found, command quit.");
@@ -162,14 +162,12 @@ public class VisionPurePursuitV2 extends Command {
         purePursuitTracker.setPath(path, LOOKAHEAD_DISTANCE_AT_66_INCHES * straightDistance/66);
         Robot.leds.setVisionData(true);
 
-
-
         driveBase.initBrakeMode();
         sensors.zeroYaw();
         purePursuitTracker.reset();
         Logger.consoleLog();
         executeCount = 0;
-        // purePursuitTracker.startNotifier(0.01); //Pass in period in seconds
+
         System.out.println("Start, Pose: " + poseEstimator.getPose());
     }
 
@@ -181,15 +179,16 @@ public class VisionPurePursuitV2 extends Command {
         drivePower = purePursuitTracker.update(poseEstimator.getPose(), driveBase.getLeftMustangEncoderVelocityInInchesPerSecond(), driveBase.getRightMustangEncoderVelocityInInchesPerSecond(), sensors.getRotationAngle().radians());
     
         driveBase.tankDrive(drivePower.getLeft()/60, drivePower.getRight()/60); //Returns in inches/s
-        if(executeCount % 5 == 0)
-        Logger.consoleLog("Powers (inches): leftPower: %s, rightPower: %s, Pose: %s", drivePower.getLeft(), drivePower.getRight(), poseEstimator.getPose());
+        if(executeCount % 5 == 0){
+            Logger.consoleLog("Powers (inches): leftPower: %s, rightPower: %s, Pose: %s", drivePower.getLeft(), drivePower.getRight(), poseEstimator.getPose());
+        }
         executeCount++;
     }
 
     // Make this return true when this Command no longer needs to run execute()
     @Override
     protected boolean isFinished() {
-        return purePursuitTracker.isDone();// || Robot.sensors.getUltrasonicDistance() < 15;
+        return purePursuitTracker.isDone();// || sensors.getUltrasonicDistance() < 15;
     }
 
     // Called once after isFinished returns true
@@ -202,7 +201,6 @@ public class VisionPurePursuitV2 extends Command {
         double yOffset = straightDistance + offset - poseEstimator.getPose().y;
         double angle = Math.atan(yOffset/xOffset);
 
-        // TODO make this work with ultrasonics to figure out how to point directly at the target instead of just perpendicular to the wall
         finalAngle.setValue(finalAngle.getValue()-sensors.getYawDouble()-Math.toDegrees(angle));
 
         purePursuitTracker.reset();

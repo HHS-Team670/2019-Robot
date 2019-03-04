@@ -8,12 +8,12 @@
 package frc.team670.robot.commands.drive.vision;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangCoprocessor;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.utils.MutableDouble;
+import frc.team670.robot.commands.drive.vision.VisionPurePursuitV2;
 
 public class VisionDrive extends CommandGroup {
   /**
