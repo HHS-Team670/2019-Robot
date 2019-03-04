@@ -253,9 +253,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    if (Robot.oi.getDriverController().getYButton()) {
-      Scheduler.getInstance().add(new ResetPulseWidthEncoder(wrist));
-    }
     Scheduler.getInstance().run();
   }
 
