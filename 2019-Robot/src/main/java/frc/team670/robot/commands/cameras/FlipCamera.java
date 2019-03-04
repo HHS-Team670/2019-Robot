@@ -15,7 +15,7 @@ public class FlipCamera extends InstantCommand{
     private static boolean cameraDirection = false;
     private static int camNumber = 0;
 
-    public FlipCamera(){
+    private FlipCamera(){
         super();
     }
 
