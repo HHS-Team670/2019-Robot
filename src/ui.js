@@ -2,8 +2,13 @@ var date = new Date();
 document.getElementById('big-warning').style.display = "none";
 document.getElementById('auton-chooser').style.display = "none";
 
+// initial camera settings
 var cameraMode = "double";
-var driveReversed = true;
+var driveReversed = false;
+
+// highlight the front camera since the robot will be facing forward at the start of the match
+document.getElementById('front-indicator').style.display = "inline";
+document.getElementById('back-indicator').style.display = "none";
 
 // sets default positions for robot diagram
 var angle = 0;
@@ -25,6 +30,8 @@ document.getElementById('v-crosshairs-large').style.display = "none";
 // switches between single and double camera views
 NetworkTables.addKeyListener('/SmartDashboard/driver-camera-mode', (key, value) => {
   if (value === "single") {
+    cameraMode = "single";
+    
     // hide everything to do with double camera view
     document.getElementById('camera1').style.display = "none";
     document.getElementById('camera2').style.display = "none";
@@ -36,6 +43,7 @@ NetworkTables.addKeyListener('/SmartDashboard/driver-camera-mode', (key, value) 
     // show everything to do with single camera view
     document.getElementById('camera-large').style.display = "inline";
     document.getElementById('v-crosshairs-large').style.display = "inline";
+    // show appropriate stream on the single camera
     if (driveReversed) {
       document.getElementById('camera-stream-large').src = "http://10.6.70.26:8001/?action=stream";
       document.getElementById('camera-stream-large').onerror = "this.src='http://10.6.70.26:8001/?action=stream'";
@@ -43,9 +51,9 @@ NetworkTables.addKeyListener('/SmartDashboard/driver-camera-mode', (key, value) 
       document.getElementById('camera-stream-large').src = "http://10.6.70.26:8000/?action=stream";
       document.getElementById('camera-stream-large').onerror = "this.src='http://10.6.70.26:8000/?action=stream'";
     }
-
-    cameraMode = "single";
   } else if (value === "double") {
+    cameraMode = "double";
+    
     // hide everything to do with single camera view
     document.getElementById('camera-large').style.display = "none";
     document.getElementById('v-crosshairs-large').style.display = "none";
@@ -55,6 +63,7 @@ NetworkTables.addKeyListener('/SmartDashboard/driver-camera-mode', (key, value) 
     document.getElementById('camera2').style.display = "inline";
     document.getElementById('v-crosshairs-left').style.display = "inline";
     document.getElementById('v-crosshairs-right').style.display = "inline";
+    // highlight the appropriate camera
     if (driveReversed) {
       document.getElementById('front-indicator').style.display = "inline";
     } else {
@@ -62,12 +71,10 @@ NetworkTables.addKeyListener('/SmartDashboard/driver-camera-mode', (key, value) 
     }
 
     // show the streams
-    document.getElementById('camera-stream-1').src = "http://10.6.70.26:8000/?action=stream";
-    document.getElementById('camera-stream-1').onerror = "this.src='http://10.6.70.26:8000/?action=stream'";
-    document.getElementById('camera-stream-2').src = "http://10.6.70.26:8001/?action=stream";
-    document.getElementById('camera-stream-2').onerror = "this.src='http://10.6.70.26:8001/?action=stream'";
-  
-    cameraMode = "double";
+    document.getElementById('camera-stream-1').src = "http://10.6.70.26:8001/?action=stream";
+    document.getElementById('camera-stream-1').onerror = "this.src='http://10.6.70.26:8001/?action=stream'";
+    document.getElementById('camera-stream-2').src = "http://10.6.70.26:8000/?action=stream";
+    document.getElementById('camera-stream-2').onerror = "this.src='http://10.6.70.26:8000/?action=stream'";
   }
   NetworkTables.putValue("cameraMode", cameraMode);
 });
@@ -126,6 +133,7 @@ NetworkTables.addKeyListener('/SmartDashboard/arm-extension', (key, value) => {
   }
 });
 
+// draws the elbow angle of the destination arm state
 NetworkTables.addKeyListener('/SmartDashboard/destination-elbow-angle', (key, value) => {
   if (value == null) return;
   var angle = value;
@@ -134,6 +142,7 @@ NetworkTables.addKeyListener('/SmartDashboard/destination-elbow-angle', (key, va
   document.getElementById('arm-extension-destination').style = "transform: translate(" + (Math.sin((angle) * Math.PI / 180) * armLength) + "px, " + (armLength - (Math.sin((angle+90) * Math.PI / 180) * armLength)) + "px) rotate(" + (angle + 180) + "deg)";
 });
 
+// draws the extension of the destination arm state
 NetworkTables.addKeyListener('/SmartDashboard/destination-extension-length', (key, value) => {
   if (value != null) {
     if (value <= 0) {
@@ -149,6 +158,7 @@ NetworkTables.addKeyListener('/SmartDashboard/intake-angle', (key, value) => {
   if (value != null) document.getElementById('intake').style = "transform: rotate(" + (value - 90) + "deg)";
 });
 
+// updates drawing of the claw based on status
 NetworkTables.addKeyListener('/SmartDashboard/claw-status', (key, value) => {
   if (value === "open") {
     document.getElementById('claw').style.stroke = "rgb(0, 200, 0)";
@@ -208,8 +218,9 @@ NetworkTables.addKeyListener('/SmartDashboard/vision-status', (key, value) => {
   }
 });
 
-// updates status lights for reversed drive
+// updates status lights and flip cameras for reversed drive
 NetworkTables.addKeyListener('/SmartDashboard/drive-reversed', (key, value) => {
+  // show drive reversed status in status lights
   if (value === true) {
     document.getElementById('drive-reversed-status').style.fill = "rgb(255,255,255)";
     document.getElementById('drive-reversed-status').style.stroke = "rgb(255,255,255)";
@@ -219,28 +230,28 @@ NetworkTables.addKeyListener('/SmartDashboard/drive-reversed', (key, value) => {
     document.getElementById('drive-reversed-status').style.stroke = "rgb(255,255,255)";
     driveReversed = false;
   }
+  // if currently using single camera mode display the correct stream on it
   if (cameraMode === "single") {
     if (value === true) {
-      document.getElementById('current-arm-state').innerHTML = "single back";
       document.getElementById('camera-stream-large').src = "http://10.6.70.26:8001/?action=stream";
       document.getElementById('camera-stream-large').onerror = "this.src='http://10.6.70.26:8001/?action=stream'";
+      document.getElementById('v-crosshairs-large').style = "transform: translate(50vw, 0vh); rotate(10deg)";
     } else {
-      document.getElementById('current-arm-state').innerHTML = "single front";
       document.getElementById('camera-stream-large').src = "http://10.6.70.26:8000/?action=stream";
       document.getElementById('camera-stream-large').onerror = "this.src='http://10.6.70.26:8000/?action=stream'";
+      document.getElementById('v-crosshairs-large').style = "transform: translate(50vw, 0vh); rotate(-10deg)";
     }
   } 
+  // if currently using double camera mode display the crosshairs and appropriate indicator
   if (cameraMode === "double") {
+    document.getElementById('v-crosshairs-left').style.display = "inline";
+    document.getElementById('v-crosshairs-right').style.display = "inline";
     if (value === true) {
-      document.getElementById('current-arm-state').innerHTML = "double back";
       document.getElementById('back-indicator').style.display = "none";
       document.getElementById('front-indicator').style.display = "inline";
-      document.getElementById('crosshairs').style = "transform: translate(21vw, 0vh)";
     } else {
-      document.getElementById('current-arm-state').innerHTML = "double front";
       document.getElementById('front-indicator').style.display = "none";
       document.getElementById('back-indicator').style.display = "inline";
-      document.getElementById('crosshairs').style = "transform: translate(41vw, 0vh); rotate(10deg)";
     }
   }
   
@@ -270,7 +281,6 @@ document.addEventListener("keyup", function(event) {
 
 // naming convention: UPPER_CASE for preset arm states, lower_case for other commands
 function getFromMap(key) { // mapping is more aligned with arm position on robot
-
   if (key === "w") return "toggle_intake_in";
   if (key === "y") return "toggle_intake_out";
   if (key === "t") return "run_intake_in_with_IR";
@@ -313,80 +323,4 @@ function getFromMap(key) { // mapping is more aligned with arm position on robot
   if (key === "0") return "vision_drive";
 
   return null;
-}
-
-// reads the radio buttons
-var auton = ["", "", "", "", "", "", "", ""];
-
-function readRadioButtons() {
-  auton = new Array(8);
-
-  var startHolding = document.forms["auto-chooser"].elements["start-holding"];
-  for (var i = 0, len = startHolding.length; i < len; i++) {
-    if (startHolding[i].checked) {
-      auton[0] = startHolding[i].value;
-      break;
-    }
-  }
-
-  var startChooser = document.forms["auto-chooser"].elements["start"];
-  for (var i = 0, len = startChooser.length; i < len; i++) {
-    if (startChooser[i].checked) {
-      auton[1] = startChooser[i].value;
-      break;
-    }
-  }
-
-  var target1 = document.forms['auto-chooser'].elements['target1'];
-  for (var i = 0, len = target1.length; i < len; i++) {
-    if (target1[i].checked) {
-      auton[2] = target1[i].value;
-      break;
-    }
-  }
-
-  var height1 = document.forms['auto-chooser'].elements['height1'];
-  for (var i = 0, len = height1.length; i < len; i++) {
-    if (height1[i].checked) {
-      auton[3] = height1[i].value;
-      break;
-    }
-  }
-
-  var target2 = document.forms['auto-chooser'].elements['target2'];
-  for (var i = 0, len = target2.length; i < len; i++) {
-    if (target2[i].checked) {
-      auton[4] = target2[i].value;
-      break;
-    }
-  }
-
-  var height2 = document.forms['auto-chooser'].elements['height2'];
-  for (var i = 0, len = height2.length; i < len; i++) {
-    if (height2[i].checked) {
-      auton[5] = height2[i].value;
-      break;
-    }
-  }
-
-  var target3 = document.forms['auto-chooser'].elements['target2'];
-  for (var i = 0, len = target3.length; i < len; i++) {
-    if (target3[i].checked) {
-      auton[6] = target3[i].value;
-      break;
-    }
-  }
-
-  var height3 = document.forms['auto-chooser'].elements['height3'];
-  for (var i = 0, len = height3.length; i < len; i++) {
-    if (height3[i].checked) {
-      auton[7] = height3[i].value;
-    }
-  }
-}
-
-// sends auton chooser data over networktables
-function sendAuton() {
-  readRadioButtons();
-  NetworkTables.putValue("/SmartDashboard/auton-sequence", auton);
 }
