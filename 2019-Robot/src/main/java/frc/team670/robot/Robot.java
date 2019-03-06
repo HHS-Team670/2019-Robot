@@ -7,6 +7,7 @@
 
 package frc.team670.robot;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
@@ -56,6 +57,8 @@ public class Robot extends TimedRobot {
 
   private Command autonomousCommand, operatorControl;
   private SendableChooser<Command> auton_chooser = new SendableChooser<>();
+
+  private static final double NETWORK_TABLES_UPDATE_RATE = 0.05;
   
   public Robot() {
   }
@@ -69,6 +72,8 @@ public class Robot extends TimedRobot {
     // auton_chooser.addDefault("Default Auto", new TimeDrive());
     // chooser.addObject("My Auto", new MyAutoCommand());
 
+    NetworkTableInstance networkTables = NetworkTableInstance.getDefault();
+    networkTables.setUpdateRate(NETWORK_TABLES_UPDATE_RATE);
 
     oi = new OI();
 
