@@ -54,6 +54,10 @@ returns = [ERROR, ERROR, timestamp]
 cond = Condition()
 notified = [False]
 
+vs_front=None
+vs_back=None
+frames = 0
+
 #Connection Listener for Network Tables
 def connectionListener(connected, info):
     with cond:
@@ -89,6 +93,8 @@ def main():
     table.addEntryListener(checkEnabled)
 
     #Video capture / resizing stuff
+    global vs_front
+    global vs_back
     vs_front = ThreadedVideo(screen_resize, front_capture_source).start()
     vs_back = ThreadedVideo(screen_resize, back_capture_source).start() 
 
@@ -96,22 +102,23 @@ def main():
     vert_focal_length = find_vert_focal_length(vs_front.raw_read()[0], camera_fov_vertical)
     hor_focal_length = find_hor_focal_length(vs_front.raw_read()[0], camera_fov_horizontal)
 
-    frameCount = 0
+    global frames
+    frames = 0
 
     while True:
         time.sleep(1)
 
 def checkEnabled(table, key, value, isNew):
-    print("Values: key: '%s'; value: %s; isNew: %s" % (key, value, isNew))
 
-    if key == enabled_key and value != "enabled":
+    if key == enabled_key and value != "enabled" or key != enabled_key:
         return
 
     # gets which camera to use (front or back)
-    useVision = table.getEntry(enabled_key).getString("back") #CHECK THIS
     camera = table.getEntry(camera_key).getString("back")
 
     vs = None
+    global vs_front
+    global vs_back
     print(camera)
 
     if camera == "front":
@@ -124,9 +131,9 @@ def checkEnabled(table, key, value, isNew):
         #HSV Values to detect with back LED
         min_hsv = [50, 220, 80] # Need to change according to practice field data
         max_hsv = [70, 255, 210]
-
     try:
-        frameCount += 1
+        global frames
+        frames += 1
         # Read input image from video
         input_raw = vs.raw_read()
         if input_raw is None:
@@ -135,8 +142,9 @@ def checkEnabled(table, key, value, isNew):
             push_network_table(table, returns)
             print(returns)
             table.putString("vision-status", "error")
+            table.putString(enabled_key, "disabled")
 
-            continue
+            return 
         else:
             table.putString("vision-status", "")
 
@@ -148,25 +156,24 @@ def checkEnabled(table, key, value, isNew):
 
         object_rects = find_two_important_contours(masked_image, debug=DEBUG_MODE)
         object_rect, object_rect_2 = object_rects
-
         '''
         Uncomment below if you want to save images to output for debugging
         '''
-                
-        if frameCount % 10 == 0:
-            cv2.imwrite("output/mask_%d.jpg"%frameCount, masked_image)
-            cv2.imwrite("output/frame_%d.jpg"%frameCount,input_image) # Take out later to speed up
-            for rectangle in object_rects:
+        print(object_rects)
+        cv2.imwrite("output/mask_%d.jpg"%frames, masked_image)
+        cv2.imwrite("output/frame_%d.jpg"%frames,input_image) # Take out later to speed up
+        for rectangle in object_rects:
+            if rectangle is not -1:
                 box_points = cv2.boxPoints(rectangle)
                 box_points = np.int0(box_points)
                 cv2.drawContours(input_image, [box_points], 0, (0, 255, 0), 2)
-            cv2.imwrite("output/boxed_%d.jpg"%frameCount,input_image) # Take out later to speed up
-            
+        cv2.imwrite("output/boxed_%d.jpg"%frames,input_image) # Take out later to speed up
 
         # DEBUG mode code
         if object_rect is -1 and object_rect_2 is -1:
             returns = [ERROR, ERROR, timestamp]
             push_network_table(table, returns)
+            table.putString(enabled_key, "disabled")
             print(returns)
             if DEBUG_MODE:
                 output_image = cv2.resize(input_image, (0, 0), fx=screen_resize, fy=screen_resize)
@@ -175,7 +182,7 @@ def checkEnabled(table, key, value, isNew):
                 if key == ord('q'):
                     # Quit if q key is pressed
                     return
-            continue
+            return 
 
         # if rectangles exist
         if not object_rect == -1 and not object_rect_2 == -1:
@@ -185,10 +192,10 @@ def checkEnabled(table, key, value, isNew):
             vangle = find_angle(input_image, high_point, vert_focal_length) # vangle - 'V'ertical angle
             hangle = find_angle(input_image, rect_x_midpoint, hor_focal_length, vertical=False) # hangle - 'H'orizontal angle
             returns = [hangle, vangle, timestamp]
-            print(returns)
         else:
             returns = [ERROR, ERROR, timestamp]
             
+        print(returns)
         # set and push network table
         push_network_table(table, returns)
         table.putString(enabled_key, "disabled")
@@ -212,11 +219,6 @@ def checkEnabled(table, key, value, isNew):
     except Exception as e:
         print(e)
            
-    # Release & close when done
-    vs.stop()
-    vs.stream.release()
-    cv2.destroyAllWindows()
-
 # Classes
 class ThreadedVideo:
     '''This class creates a thread for video capturing. self.stream is the capture stream'''
@@ -285,7 +287,7 @@ class ThreadedVideo:
     def update(self):
         '''Grabs new video images from the current video stream.'''
         while not self.stopped:
-            if self.opened()
+            self.opened()
 
 # Methods
 def push_network_table(table, return_list):
