@@ -122,7 +122,7 @@ public class Robot extends TimedRobot {
    */  
  @Override
   public void robotPeriodic() {
-    SmartDashboard.putNumber("gyro", (int) sensors.getAngle() % 360);
+    // SmartDashboard.putNumber("gyro", (int) sensors.getAngle() % 360);
     // SmartDashboard.putString("current-command", Scheduler.getInstance().getName());
     SmartDashboard.putString("current-arm-state", Arm.getCurrentState().toString());
     SmartDashboard.putNumber("intake-angle", intake.getAngleInDegrees());
@@ -131,7 +131,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("intake-ir-sensor", sensors.getIntakeIROutput());
     SmartDashboard.putNumber("extension-actual-length" , extension.getLengthInches());
     SmartDashboard.putNumber("arm-extension" , extension.getLengthInches() / Extension.EXTENSION_OUT_IN_INCHES);
-    SmartDashboard.putNumber("Actual Extension" , extension.getLengthInches());
+    // SmartDashboard.putNumber("Actual Extension" , extension.getLengthInches());
     SmartDashboard.putBoolean("drive-reversed-status", XboxRocketLeagueDrive.isDriveReversed());
     if (arm.getHeldItem().equals(HeldItem.HATCH)) {
       SmartDashboard.putString("claw-status", "Hatch");
@@ -145,10 +145,10 @@ public class Robot extends TimedRobot {
       SmartDashboard.putString("claw-status", "close");
     }
 
-    SmartDashboard.putNumber("Angle", sensors.getAngle());
-    SmartDashboard.putNumber("Phi", sensors.getAngleToTarget());
-    SmartDashboard.putNumber("Horizontal Angle", coprocessor.getAngleToWallTarget());
-    SmartDashboard.putNumber("Depth", coprocessor.getDistanceToWallTarget());
+    // SmartDashboard.putNumber("Angle", sensors.getAngle());
+    // SmartDashboard.putNumber("Phi", sensors.getAngleToTarget());
+    // SmartDashboard.putNumber("Horizontal Angle", coprocessor.getAngleToWallTarget());
+    // SmartDashboard.putNumber("Depth", coprocessor.getDistanceToWallTarget());
 
     // SmartDashboard.putNumber("Arbitrary Feedforward Measurement", MeasureArbitraryFeedforward.output);
 
@@ -173,7 +173,6 @@ public class Robot extends TimedRobot {
     Logger.consoleLog("Robot Disabled");
     // autonomousCommand = oi.getSelectedAutonCommand();
     driveBase.initCoastMode();
-    intake.stop();
     intake.stop();
   }
 
