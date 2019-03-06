@@ -62,8 +62,7 @@ public class CollectVisionData extends Command {
     @Override
     protected void end() {
         //coprocessor.turnOffBackLedRing();
-        System.out.println(System.currentTimeMillis() - startTime);
-        System.out.println("finished collecting data");
+        System.out.println("Time spend collecting data: " + (System.currentTimeMillis() - startTime));
         SmartDashboard.putString("vision-enabled", "disabled");
     }
 
