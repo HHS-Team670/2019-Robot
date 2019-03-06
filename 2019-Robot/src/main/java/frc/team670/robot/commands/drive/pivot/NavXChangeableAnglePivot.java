@@ -33,7 +33,7 @@ public class NavXChangeableAnglePivot extends Command {
 
 
   public NavXChangeableAnglePivot(MutableDouble angle, DriveBase driveBase, MustangSensors sensors) {
-    requires(driveBase);
+    // requires(driveBase);
     this.driveBase = driveBase;
     this.sensors = sensors;
     this.angle = angle;
@@ -77,7 +77,7 @@ public class NavXChangeableAnglePivot extends Command {
   protected void execute() {
     double output = pivotController.get();
 	  // System.out.println("Output: " + output);
-	  driveBase.tankDrive(output, -output, false);
+	  // driveBase.tankDrive(output, -output, false);
   }
 
   // Make this return true when this Command no longer needs to run execute()
@@ -95,15 +95,15 @@ public class NavXChangeableAnglePivot extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    driveBase.stop();
+    // driveBase.stop();
     System.out.println(sensors.getYawDouble());
     Logger.consoleLog("CurrentAngle: %s, TargetAngle: %s", sensors.getYawDouble(), finalAngle);  
-    boolean isReversed = XboxRocketLeagueDrive.isDriveReversed();
-    if (isReversed) {
-      Robot.leds.setReverseData(true);
-    } else {
-      Robot.leds.setForwardData(true);
-    }
+    // boolean isReversed = XboxRocketLeagueDrive.isDriveReversed();
+    // if (isReversed) {
+    //   Robot.leds.setReverseData(true);
+    // } else {
+    //   Robot.leds.setForwardData(true);
+    // }
   }
 
   // Called when another command which requires one or more of the same

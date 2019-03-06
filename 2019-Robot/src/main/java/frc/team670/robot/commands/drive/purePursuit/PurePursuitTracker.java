@@ -68,6 +68,10 @@ public class PurePursuitTracker {
 		robotTrack = RobotConstants.WHEEL_BASE;
 	}
 
+	public Path getPath(){
+		return path;
+	}
+
 	public void reset() {
 		this.lastClosestPoint = 0;
 	}
@@ -85,6 +89,9 @@ public class PurePursuitTracker {
 		boolean onLastSegment = false;
 		int closestPointIndex = getClosestPointIndex(currPose);
 		Vector lookaheadPoint = new Vector(0, 0);
+		if(path == null){
+			return new DrivePower(0,0);
+		}
 		ArrayList<Vector> robotPath = path.getRobotPath();
 		for (int i = closestPointIndex + 1; i < robotPath.size(); i++) {
 			Vector startPoint = robotPath.get(i - 1);
@@ -206,6 +213,9 @@ public class PurePursuitTracker {
 	private int getClosestPointIndex(Vector currPos) {
 		double shortestDistance = Double.MAX_VALUE;
 		int closestPoint = 0;
+		if(path == null){
+			return 0;
+		}
 		ArrayList<Vector> robotPath = path.getRobotPath();
 		for (int i = lastClosestPoint; i < robotPath.size(); i++) {
 			if (Vector.dist(robotPath.get(i), currPos) < shortestDistance) {
@@ -222,6 +232,9 @@ public class PurePursuitTracker {
 	 * @return whether or not we should finish
 	 */
 	public boolean isDone() {
+		if(path == null){
+			return true;
+		}
 		return getClosestPointIndex(poseEstimator.getPose()) == path.getRobotPath().size() - 1;
 	}
 }

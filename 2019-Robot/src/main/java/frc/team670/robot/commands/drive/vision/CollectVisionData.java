@@ -25,7 +25,7 @@ public class CollectVisionData extends Command {
     private double[] visionData;
     private long startTime;
 
-    private static final double MAX_TIME_TO_RUN = 700; // Max time to run this in ms
+    private static final double MAX_TIME_TO_RUN = 2500; // Max time to run this in ms
 
     public CollectVisionData(double[] visionData, MustangCoprocessor coprocessor, boolean lowTarget, boolean isReversed) {
         super();
@@ -37,28 +37,32 @@ public class CollectVisionData extends Command {
 
     @Override
     protected void initialize() {
-        coprocessor.turnOnBackLedRing();
+       // coprocessor.turnOnBackLedRing();
         coprocessor.setTargetHeight(lowTarget);
         coprocessor.setCamera(isReversed);
-        SmartDashboard.putNumberArray("reflect_tape_data", new double[]{RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE}); // Clears vision data so we don't use old data accidentally
+        SmartDashboard.putNumberArray("reflect_tape_vision_data", new double[]{RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE}); // Clears vision data so we don't use old data accidentally
         coprocessor.useVision(true);
         startTime = System.currentTimeMillis();
+        System.out.println(startTime);
     }
 
     @Override
     protected void execute() {
-
     }
 
     @Override
     protected boolean isFinished() {
-        return (!MathUtils.doublesEqual(visionData[2], RobotConstants.VISION_ERROR_CODE) || System.currentTimeMillis() > startTime + MAX_TIME_TO_RUN);
+        long time = System.currentTimeMillis();
+        return (!MathUtils.doublesEqual(SmartDashboard.getNumberArray("reflect_tape_vision_data", new double[]{RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE})[2], RobotConstants.VISION_ERROR_CODE) && time > startTime + 100  || time > startTime + MAX_TIME_TO_RUN);
+        // return time > startTime + MAX_TIME_TO_RUN;
     }
 
     @Override
     protected void end() {
-        coprocessor.turnOffBackLedRing();
-        SmartDashboard.putString("vision-camera", "disabled");
+        //coprocessor.turnOffBackLedRing();
+        System.out.println(System.currentTimeMillis() - startTime);
+        System.out.println("finished collecting data");
+        SmartDashboard.putString("vision-enabled", "disabled");
     }
 
     @Override

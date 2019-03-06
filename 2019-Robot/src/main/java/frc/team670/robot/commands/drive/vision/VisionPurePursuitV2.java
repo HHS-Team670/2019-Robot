@@ -51,7 +51,7 @@ public class VisionPurePursuitV2 extends Command {
      * @param finalAngle a MutableDouble object reference to the angle (using zeroed yaw) this PurePursuit command should end up at compared to the zeroed yaw.
      */
     public VisionPurePursuitV2(DriveBase driveBase, MustangSensors sensors, boolean isReversed, MutableDouble finalAngle, double offset, MustangCoprocessor coprocessor) {
-        requires(driveBase);
+        // requires(driveBase);
         
         this.driveBase = driveBase;
         this.sensors = sensors;
@@ -71,7 +71,8 @@ public class VisionPurePursuitV2 extends Command {
 
         try {
             if(MathUtils.doublesEqual(coprocessor.getVisionValues()[2], RobotConstants.VISION_ERROR_CODE)) {
-            SmartDashboard.putString("warnings", "Coprocess Camera Unplugged: Vision Down");
+                System.out.println("VPP timestamp"+ SmartDashboard.getNumberArray("reflect_tape_vision_data", new double[]{RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE})[2]);
+                SmartDashboard.putString("warnings", "Coprocess Camera Unplugged: Vision Down");
                 Logger.consoleLog("Coprocess Camera Unplugged: Vision Down");
             return;
             } 
@@ -162,7 +163,7 @@ public class VisionPurePursuitV2 extends Command {
     
         finalAngle.setValue(horizontalAngle);
         purePursuitTracker.setPath(path, LOOKAHEAD_DISTANCE_AT_66_INCHES * straightDistance/66);
-        Robot.leds.setVisionData(true);
+        // Robot.leds.setVisionData(true);
 
         driveBase.initBrakeMode();
         sensors.zeroYaw();
@@ -178,9 +179,9 @@ public class VisionPurePursuitV2 extends Command {
     protected void execute() {
         poseEstimator.update();
         DrivePower drivePower;
-        drivePower = purePursuitTracker.update(poseEstimator.getPose(), driveBase.getLeftMustangEncoderVelocityInInchesPerSecond(), driveBase.getRightMustangEncoderVelocityInInchesPerSecond(), sensors.getRotationAngle().radians());
+        drivePower = purePursuitTracker.update(poseEstimator.getPose(), 0, 0, sensors.getRotationAngle().radians());
     
-        driveBase.tankDrive(drivePower.getLeft()/60, drivePower.getRight()/60); //Returns in inches/s
+        //driveBase.tankDrive(drivePower.getLeft()/60, drivePower.getRight()/60); //Returns in inches/s
         if(executeCount % 5 == 0){
             Logger.consoleLog("Powers (inches): leftPower: %s, rightPower: %s, Pose: %s", drivePower.getLeft(), drivePower.getRight(), poseEstimator.getPose());
         }
@@ -190,7 +191,7 @@ public class VisionPurePursuitV2 extends Command {
     // Make this return true when this Command no longer needs to run execute()
     @Override
     protected boolean isFinished() {
-        return purePursuitTracker.isDone();// || sensors.getUltrasonicDistance() < 15;
+        return purePursuitTracker.isDone() || purePursuitTracker.getPath() == null; // sensors.getUltrasonicDistance() < 15;
     }
 
     // Called once after isFinished returns true
@@ -198,7 +199,7 @@ public class VisionPurePursuitV2 extends Command {
     protected void end() {
         Vector pose = poseEstimator.getPose();
         // VisionPurePursuit.disableArmRestriction();
-        driveBase.stop();
+       // driveBase.stop();
         double xOffset = endPoint.x - pose.x;
         double yOffset = endPoint.y + offset - pose.y;
         double angle = Math.toDegrees(Math.atan(yOffset/xOffset));
