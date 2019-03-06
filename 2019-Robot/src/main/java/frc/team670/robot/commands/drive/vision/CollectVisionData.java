@@ -7,6 +7,7 @@
 
 package frc.team670.robot.commands.drive.vision;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.Robot;
@@ -42,6 +43,7 @@ public class CollectVisionData extends Command {
         coprocessor.setCamera(isReversed);
         SmartDashboard.putNumberArray("reflect_tape_vision_data", new double[]{RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE}); // Clears vision data so we don't use old data accidentally
         coprocessor.useVision(true);
+        NetworkTableInstance.getDefault().flush();
         startTime = System.currentTimeMillis();
         System.out.println(startTime);
     }
