@@ -1,14 +1,11 @@
 '''
 Arjun Sampath || Kyle Fu || Rishab Borah || Navaneet Kadaba || Eshan Jain || Harinandan K
 Usage notes:
-Set DEBUG_MODE to True in order to make screens appear showing what robot sees
 Angle calculations are reliant on constants--the camera's FOV and focal length
 Depth code has been moved to the roboRIO
 Uses 2 cameras and automatically sets ports to video source 50 and 51 and resets the symlinks everytime the program runs
 Sets timestamp to VISION_ERROR_CODE and vision-status to error on SmartDashboard if the camera being used is not connected
 Automatically reconnects in code if unplug and replug camera
-You can click on a point on the output image to print out the hsv value of
-that point in debug mode. Useful for finding specific hsv color ranges.
 Pushes an array (hangle, vangle, timestamp) to network tables--for PurePursuit and other Vision code to use
 copper goes to negative
 '''
@@ -23,7 +20,6 @@ import time
 from networktables import NetworkTables
 import os
 
-DEBUG_MODE = False # NOTE MAKE this @FALSE TO MAKE NO SCREENS APPEAR
 ERROR = -99999
 
 ROBORIO_IP = "10.6.70.2"
@@ -153,37 +149,18 @@ def checkEnabled(table, key, value, isNew):
         timestamp = input_raw[1]
 
         # Find colored object / box it with a rectangle
-        masked_image = find_colored_object(input_image, debug=DEBUG_MODE)
+        masked_image = find_colored_object(input_image)
 
-        object_rects = find_two_important_contours(masked_image, debug=DEBUG_MODE)
+        object_rects = find_two_important_contours(masked_image)
         object_rect, object_rect_2 = object_rects
-        '''
-        Uncomment below if you want to save images to output for debugging
-        '''
-        print(object_rects)
-        cv2.imwrite("output/mask_%d.jpg"%frames, masked_image)
-        cv2.imwrite("output/frame_%d.jpg"%frames,input_image) # Take out later to speed up
-        for rectangle in object_rects:
-            if rectangle is not -1:
-                box_points = cv2.boxPoints(rectangle)
-                box_points = np.int0(box_points)
-                cv2.drawContours(input_image, [box_points], 0, (0, 255, 0), 2)
-        cv2.imwrite("output/boxed_%d.jpg"%frames,input_image) # Take out later to speed up
 
-        # DEBUG mode code
+        #If rectangles don't exist
         if object_rect is -1 and object_rect_2 is -1:
             returns = [ERROR, ERROR, timestamp]
             push_network_table(table, returns)
             table.putString(enabled_key, "disabled")
             print(returns)
-	    print("no targets found: " + str(time.time() - start_time))
-            if DEBUG_MODE:
-                output_image = cv2.resize(input_image, (0, 0), fx=screen_resize, fy=screen_resize)
-                cv2.imshow("Output", output_image)
-                key = cv2.waitKey(1) & 0xFF
-                if key == ord('q'):
-                    # Quit if q key is pressed
-                    return
+            print("no targets found: " + str(time.time() - start_time))
             return
 
         # if rectangles exist
@@ -200,25 +177,24 @@ def checkEnabled(table, key, value, isNew):
         # set and push network table
         push_network_table(table, returns)
         table.putString(enabled_key, "disabled")
-	print(str(time.time()-start_time))
-	print(returns)
+        print(str(time.time()-start_time))
+        print(returns)
 
-        # Create output image to display in debug mode
-        if DEBUG_MODE:
-            output_image = draw_output_image(input_image, object_rects, 0, vangle, hangle, highpoint = (int(rect_x_midpoint), int(high_point)))
-            if screen_resize != 1:
-                output_image = cv2.resize(output_image, (0, 0), fx=screen_resize, fy=screen_resize)
-            cv2.imshow("Output", output_image)
+        '''
+        Uncomment below if you want to save images to output for debugging
+        '''
+        print(object_rects)
+        cv2.imwrite("output/mask_%d.jpg"%frames, masked_image)
+        cv2.imwrite("output/frame_%d.jpg"%frames,input_image)
+        for rectangle in object_rects:
+            if rectangle is not -1:
+                box_points = cv2.boxPoints(rectangle)
+                box_points = np.int0(box_points)
+                cv2.drawContours(input_image, [box_points], 0, (0, 255, 0), 2)
+        cv2.imwrite("output/boxed_%d.jpg"%frames,input_image)
 
-            # Check for key presses
-            key = cv2.waitKey(1) & 0xFF
-            if key == ord('q'):
-                # Quit if q key is pressed
-                return
-            # Handle mouse clicks
-            # Comment this out if unneeded for maximum efficiency
-            # currently somewhat broken
-            cv2.setMouseCallback("Output", mouse_click_handler, {"input_image": input_image, "screen_resize": screen_resize})
+        print(str(time.time()-start_time))
+
     except Exception as e:
         print(e)
            
@@ -303,16 +279,6 @@ def push_network_table(table, return_list):
     if DEBUG_MODE:
         print(return_list)
 
-def get_resize_values(capture, width=1920):
-    '''
-    Returns the fx / fy resize values needed to get the correct size image.
-    Entirely aesthetic for debug mode.
-    '''
-    main_image = capture.read()[1]
-    main_image_width = main_image.shape[1]
-    return width / main_image_width
-
-
 def read_video_image(capture, scale=1):
     '''
     Takes in a video capture source and a scale value (for resizing), and
@@ -325,7 +291,7 @@ def read_video_image(capture, scale=1):
     return main_image
 
 
-def find_colored_object(image, debug=False):
+def find_colored_object(image):
     '''
     Takes in an image
     Outputs a black / white image with only the desired color object as white.
@@ -333,11 +299,9 @@ def find_colored_object(image, debug=False):
     # Find the part of the image with the specified color
     hsv_image = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     masked_image = cv2.inRange(hsv_image, np.array(min_hsv), np.array(max_hsv))
-    if debug:
-        cv2.imshow("Color Mask", masked_image)
     return masked_image
 
-def find_two_important_contours(image, debug=False):
+def find_two_important_contours(image):
     '''
     Finds the largest two contours in the inputted image (the tape strips).
     Returns the minimum area rectangle of each contour.
@@ -442,17 +406,6 @@ def find_two_important_contours(image, debug=False):
         else:
             rect2 = rect
 
-        if debug:
-            draw_image = image.copy()
-            cv2.drawContours(draw_image, contours, -1, (255, 0, 0), 2)
-            if rect is not -1:
-                box_points = cv2.boxPoints(rect)
-                box_points = np.int0(box_points)
-                cv2.drawContours(draw_image, [box_points], 0, (0, 255, 0), 2)
-            if rec2 is not -1:
-                box_2p=cv2.boxPoints(rec2)
-                box_2p = np.int0(box_2p)
-                cv2.drawContours(draw_image, [box_2p], 0, (255, 0, 0), 2)
         return [rect, rec2]
     else:
         return [-1, -1]
@@ -519,50 +472,6 @@ def find_angle(image, coord, focal_length, vertical=True):
         angle = -1 * math.degrees(math.atan((x_from_bottom - center_x) / focal_length))
 
     return angle
-
-# Debug mode methods
-def mouse_click_handler(event, x, y, flags, params):
-    '''
-    If the mouse is clicked, return the hsv values of that point.
-    Useful for figuring out precise hsv ranges / troubleshooting detection.
-    DEBUG function
-    '''
-    if event == cv2.EVENT_LBUTTONDOWN:
-        try:
-            hsv_image = cv2.cvtColor(params["input_image"], cv2.COLOR_BGR2HSV)
-            screen_resize = params["screen_resize"]
-        except NameError:
-            print("Input image not found!")
-        norm_x, norm_y = round(x/screen_resize), round(y/screen_resize)
-        h, s, v = hsv_image[norm_y][norm_x]
-        print("HSV value of point ({}, {}) is ({}, {}, {})".format(norm_x, norm_y, h, s, v))
-
-
-def draw_output_image(image, rectanglelist, depth, vangle, hangle, highpoint=None): ##edited
-    '''
-    Draws everything on the original image, and returns an image with
-    all the information found by this program.
-    DEBUG function
-    '''
-    output_image = image.copy()
-    # Get width and height of the image
-    height, width = output_image.shape[:2]
-    # Draw the rectangle that boxes in the object
-    for rectangle in rectanglelist:
-        box_points = cv2.boxPoints(rectangle)
-        box_points = np.int0(box_points)
-        cv2.drawContours(output_image, [box_points], 0, (0, 255, 0), 2)
-    # Draw the depth / angle of the object
-    cv2.putText(output_image, "%.2f inches" % depth, (10, height - 10),
-                cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 0, 255), 3)
-    cv2.putText(output_image, "%.2f degrees v" % vangle, (10, height - 60),
-                cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 255), 3)
-    cv2.putText(output_image, "%.2f degrees h" % hangle, (10, height - 110),
-                cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 255, 255), 3)
-    if highpoint is not None:
-        cv2.circle(output_image, highpoint, 10, (0, 255, 255), thickness=10)
-    return output_image
-
 
 # causes program to run main method when program is run, but allows modular import allows
 if __name__ == "__main__":
