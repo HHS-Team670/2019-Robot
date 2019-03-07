@@ -110,6 +110,7 @@ def checkEnabled(table, key, value, isNew):
         return
 
     start_time = time.time()
+    last_time = start_time
 
     # gets which camera to use (front or back)
     camera = table.getEntry(camera_key).getString("back")
@@ -134,6 +135,8 @@ def checkEnabled(table, key, value, isNew):
         frames += 1
         # Read input image from video
         input_raw = vs.raw_read()
+        last_time = time.time()
+        print("raw read time: " + str(last_time-start_time))
         if input_raw is None:
             print("Error: Capture source not found or broken.")
             returns = [ERROR, ERROR, ERROR]
@@ -150,9 +153,14 @@ def checkEnabled(table, key, value, isNew):
 
         # Find colored object / box it with a rectangle
         masked_image = find_colored_object(input_image)
+        new_time = time.time()
+        print("find colored objects time: " + str(new_time-last_time))
+        last_time = new_time
 
         object_rects = find_two_important_contours(masked_image)
         object_rect, object_rect_2 = object_rects
+        new_time = time.time()
+        print("find two important contours time: " + str(new_time - last_time))
 
         #If rectangles don't exist
         if object_rect is -1 and object_rect_2 is -1:
@@ -231,10 +239,10 @@ class ThreadedVideo:
 
     def raw_read(self):
         '''Returns the raw frame with the original video input's image size.'''
-        if self.opened():
-            self.grabbed = (read_video_image(self.stream), round(time.time()*1000))
-        else:
-            self.grabbed = None
+        #if self.opened():
+        self.grabbed = (read_video_image(self.stream), round(time.time()*1000))
+        #else:
+        #    self.grabbed = None
         
         return self.grabbed
 
@@ -260,13 +268,14 @@ class ThreadedVideo:
             print("Camera with source " + `self.src` + " is not connected!")
             self.stream.release()
             cameraOpen = False
-
+        self.raw_read()
         return cameraOpen
 
     def update(self):
         '''Grabs new video images from the current video stream.'''
         while not self.stopped:
             self.opened()
+            time.sleep(600)
 
 # Methods
 def push_network_table(table, return_list):
