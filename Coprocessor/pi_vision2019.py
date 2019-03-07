@@ -385,6 +385,8 @@ def find_two_important_contours(image, debug=False):
         rec2 = -1
         if centermost_con is not -1:
             rect = cv2.minAreaRect(centermost_con)
+        else:
+        	return [-1, -1]
 
         rect_angle = rect[2]
         if (abs(rect_angle + 75) < 15):
@@ -409,6 +411,8 @@ def find_two_important_contours(image, debug=False):
 
         if sec_center_con is not -1:
             rec2 = cv2.minAreaRect(sec_center_con)
+        else:
+        	return [rect, -1]
 
         if isLeft:
             while(rec2[0][0] <= rect[0][0]):
@@ -460,11 +464,12 @@ def find_rectangle_highpoint(rectangles):
     highest_y = 9999999
     mid_x = 0
     for rectangle in rectangles:
-        box_points = cv2.boxPoints(rectangle)
-        mid_x += (box_points[0][0] + box_points[2][0]) / 2
-        for box_point in box_points[1:]:
-            if box_point[1] < highest_y:
-                highest_y = box_point[1]
+    	if rectangle != -1:
+	        box_points = cv2.boxPoints(rectangle)
+	        mid_x += (box_points[0][0] + box_points[2][0]) / 2
+	        for box_point in box_points[1:]:
+	            if box_point[1] < highest_y:
+	                highest_y = box_point[1]
     mid_x /= len(rectangles)
 
     return (mid_x, highest_y)
