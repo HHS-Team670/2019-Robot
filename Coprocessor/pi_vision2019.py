@@ -113,6 +113,8 @@ def checkEnabled(table, key, value, isNew):
     if key == enabled_key and value != "enabled" or key != enabled_key:
         return
 
+    start_time = time.time()
+
     # gets which camera to use (front or back)
     camera = table.getEntry(camera_key).getString("back")
 
@@ -143,8 +145,7 @@ def checkEnabled(table, key, value, isNew):
             print(returns)
             table.putString("vision-status", "error")
             table.putString(enabled_key, "disabled")
-
-            return 
+            return
         else:
             table.putString("vision-status", "")
 
@@ -175,6 +176,7 @@ def checkEnabled(table, key, value, isNew):
             push_network_table(table, returns)
             table.putString(enabled_key, "disabled")
             print(returns)
+	    print("no targets found: " + str(time.time() - start_time))
             if DEBUG_MODE:
                 output_image = cv2.resize(input_image, (0, 0), fx=screen_resize, fy=screen_resize)
                 cv2.imshow("Output", output_image)
@@ -182,7 +184,7 @@ def checkEnabled(table, key, value, isNew):
                 if key == ord('q'):
                     # Quit if q key is pressed
                     return
-            return 
+            return
 
         # if rectangles exist
         if not object_rect == -1 and not object_rect_2 == -1:
@@ -194,11 +196,12 @@ def checkEnabled(table, key, value, isNew):
             returns = [hangle, vangle, timestamp]
         else:
             returns = [ERROR, ERROR, timestamp]
-            
-        print(returns)
+
         # set and push network table
         push_network_table(table, returns)
         table.putString(enabled_key, "disabled")
+	print(str(time.time()-start_time))
+	print(returns)
 
         # Create output image to display in debug mode
         if DEBUG_MODE:
@@ -296,6 +299,7 @@ def push_network_table(table, return_list):
     prints the table in Debug mode
     '''
     table.putNumberArray(NETWORK_KEY, return_list)
+    NetworkTables.flush()
     if DEBUG_MODE:
         print(return_list)
 
