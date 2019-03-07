@@ -7,6 +7,7 @@
 
 package frc.team670.robot;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
@@ -18,7 +19,6 @@ import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangCoprocessor;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.Arm;
-import frc.team670.robot.subsystems.Arm.LowHatchForward;
 import frc.team670.robot.subsystems.Arm.PlaceGrabState;
 import frc.team670.robot.subsystems.Claw;
 import frc.team670.robot.subsystems.DriveBase;
@@ -52,6 +52,8 @@ public class Robot extends TimedRobot {
 
   private Notifier updateArbitraryFeedForwards;
 
+  private static final double NETWORK_TABLES_UPDATE_RATE = 0.05;
+
   private Command autonomousCommand, operatorControl;
   private SendableChooser<Command> auton_chooser = new SendableChooser<>();
   
@@ -67,6 +69,8 @@ public class Robot extends TimedRobot {
     // auton_chooser.addDefault("Default Auto", new TimeDrive());
     // chooser.addObject("My Auto", new MyAutoCommand());
 
+    NetworkTableInstance networkTables = NetworkTableInstance.getDefault();
+    networkTables.setUpdateRate(NETWORK_TABLES_UPDATE_RATE);
 
     oi = new OI();
 

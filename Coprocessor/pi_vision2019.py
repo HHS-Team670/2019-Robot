@@ -296,7 +296,6 @@ def push_network_table(table, return_list):
     prints the table in Debug mode
     '''
     table.putNumberArray(NETWORK_KEY, return_list)
-
     if DEBUG_MODE:
         print(return_list)
 
