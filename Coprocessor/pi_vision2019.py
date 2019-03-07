@@ -130,6 +130,8 @@ def checkEnabled(table, key, value, isNew):
         #HSV Values to detect with back LED
         min_hsv = [50, 220, 80] # Need to change according to practice field data
         max_hsv = [70, 255, 210]
+    else:
+	print("Camera not set: " + camera)
     try:
         global frames
         frames += 1
@@ -241,6 +243,7 @@ class ThreadedVideo:
     def raw_read(self):
         '''Returns the raw frame with the original video input's image size.'''
         #if self.opened():
+	print("Raw Read Called")
         try:
             self.grabbed = (read_video_image(self.stream), round(time.time()*1000))
         except OSError:
