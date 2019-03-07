@@ -381,4 +381,14 @@ public class MustangSensors {
       SmartDashboard.putString("Back Right Ultrasonic: ", "BACK RIGHT ULTRASONIC IS NULL!");
     }
   }
+
+  public void sendIRDataToDashboard() {
+    if(!isIntakeIRSensorNull()) {
+      SmartDashboard.putString("Intake IR", getIntakeIROutput() + "");
+    }
+    else {
+      SmartDashboard.putString("Intake IR", "null");
+    }
+  }
+
 }

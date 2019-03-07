@@ -163,8 +163,8 @@ public class Robot extends TimedRobot {
     // extension.sendDataToDashboard();
     // wrist.sendDataToDashboard();
     // intake.sendDataToDashboard();
-    sensors.sendUltrasonicDataToDashboard();
-    driveBase.sendDIOEncoderDataToDashboard();
+    // sensors.sendUltrasonicDataToDashboard();
+    // driveBase.sendDIOEncoderDataToDashboard();
 
   }
   /**
@@ -174,7 +174,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
-    SmartDashboard.putString("robot-state", "disabledInit()");
+    SmartDashboard.putString("robot-state", "disabledPeriodic()");
     Logger.consoleLog("Robot Disabled");
     // autonomousCommand = oi.getSelectedAutonCommand();
     driveBase.initCoastMode();
@@ -183,7 +183,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    SmartDashboard.putString("robot-state", "disabledPeriodic()");
+
+    sensors.sendUltrasonicDataToDashboard();
+    driveBase.sendEncoderDataToDashboard();
+
     Scheduler.getInstance().run();
   }
 

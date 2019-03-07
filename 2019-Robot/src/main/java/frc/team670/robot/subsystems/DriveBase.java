@@ -631,20 +631,30 @@ public class DriveBase extends Subsystem {
     return rightMustangEncoder.getVelocityInches();
   }
 
-  public void sendDIOEncoderDataToDashboard() {
-    if (leftDIOEncoder != null) {
-      SmartDashboard.putNumber("Left DIO Encoder: ", leftMustangEncoder.getPositionInches());
-    }
+  public void sendEncoderDataToDashboard() {
+    // if (leftDIOEncoder != null) {
+    //   SmartDashboard.putNumber("Left DIO Encoder: ", leftMustangEncoder.getPositionInches());
+    // }
 
-    if (rightDIOEncoder != null) {
-      SmartDashboard.putNumber("Right Encoder: ", rightDIOEncoder.get());
-    }
+    // if (rightDIOEncoder != null) {
+    //   SmartDashboard.putNumber("Right Encoder: ", rightDIOEncoder.get());
+    // }
 
-    if (leftDIOEncoder == null) {
-      SmartDashboard.putString("Left DIO Encoder:", "LEFT DIO ENCODER IS NULL!");
+    // if (leftDIOEncoder == null) {
+    //   SmartDashboard.putString("Left DIO Encoder:", "LEFT DIO ENCODER IS NULL!");
+    // }
+    // if (rightDIOEncoder == null) {
+    //   SmartDashboard.putNumber("Right Encoder:", rightMustangEncoder.getPositionInches());
+    // }
+    if(leftMustangEncoder != null) {
+      SmartDashboard.putString("Left Encoder Inches", leftMustangEncoder.getPositionInches() + "");
+    } else {
+      SmartDashboard.putString("Left Encoder Inches", "null");
     }
-    if (rightDIOEncoder == null) {
-      SmartDashboard.putNumber("Right Encoder:", rightMustangEncoder.getPositionInches());
+    if(rightMustangEncoder != null) {
+      SmartDashboard.putString("Right Encoder Inches", rightMustangEncoder.getPositionInches() + "");
+    } else {
+      SmartDashboard.putString("Left Encoder Inches", "null");
     }
   }
 }
