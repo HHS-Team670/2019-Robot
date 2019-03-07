@@ -32,8 +32,8 @@ public class MustangSensors {
 
   public MustangSensors(){
     try {
-      navXMicro = new NavX(RobotMap.NAVX_PORT); 
-      isNavXNull = false;
+      // navXMicro = new NavX(RobotMap.NAVX_PORT); 
+      isNavXNull = true;
     } catch (RuntimeException ex) {
       // DriverStation.reportError("Error instantiating navX-MXP:  " + ex.getMessage(), true);
       // SmartDashboard.putString("warning", "Error instantiating navX-MXP");
