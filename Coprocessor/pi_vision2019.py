@@ -217,16 +217,17 @@ class ThreadedVideo:
         self.stream = cv2.VideoCapture(src)
         self.src = src
         self.width = 1000
-        if self.opened():
+        if self.open_camera():
             self.grabbed = (read_video_image(self.stream, resize_value), round(time.time()*1000))
         self.stopped = False
         self.frameCount = 0
         self.resize = resize_value
 
     def start(self):
-        '''Starts the thread for video processing.'''
-        self.thread = Thread(target=self.update, args=())
-        self.thread.start()
+        '''No longer need this Thread since we are taking one image at a time. Instead just open the camera.'''
+        #self.thread = Thread(target=self.update, args=())
+        #self.thread.start()
+        self.open_camera()
         return self
 
     def stop(self):
@@ -240,7 +241,11 @@ class ThreadedVideo:
     def raw_read(self):
         '''Returns the raw frame with the original video input's image size.'''
         #if self.opened():
-        self.grabbed = (read_video_image(self.stream), round(time.time()*1000))
+        try:
+            self.grabbed = (read_video_image(self.stream), round(time.time()*1000))
+        except OSError:
+            self.stream.release()
+            self.open_camera()
         #else:
         #    self.grabbed = None
         
@@ -250,7 +255,7 @@ class ThreadedVideo:
         '''Returns the OpenCV stream'''
         return self.stream
 
-    def opened(self):
+    def open_camera(self):
         '''Returns a boolean if the OpenCV stream is open'''
         cameraOpen = False;
         try:
@@ -268,13 +273,13 @@ class ThreadedVideo:
             print("Camera with source " + `self.src` + " is not connected!")
             self.stream.release()
             cameraOpen = False
-        self.raw_read()
+        self.grabbed = (read_video_image(self.stream), round(time.time()*1000))
         return cameraOpen
 
     def update(self):
         '''Grabs new video images from the current video stream.'''
         while not self.stopped:
-            self.opened()
+            self.open_camera()
             time.sleep(600)
 
 # Methods
