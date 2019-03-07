@@ -276,8 +276,6 @@ def push_network_table(table, return_list):
     '''
     table.putNumberArray(NETWORK_KEY, return_list)
     NetworkTables.flush()
-    if DEBUG_MODE:
-        print(return_list)
 
 def read_video_image(capture, scale=1):
     '''
