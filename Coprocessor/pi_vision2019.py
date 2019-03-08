@@ -224,6 +224,7 @@ class ThreadedVideo:
         self.stream = cv2.VideoCapture(src)
         self.src = src
         self.width = 1000
+        self.set_exposure()
         if self.open_camera():
             self.grabbed = (read_video_image(self.stream, resize_value), round(time.time()*1000))
         self.stopped = False
@@ -247,15 +248,11 @@ class ThreadedVideo:
 
     def raw_read(self):
         '''Returns the raw frame with the original video input's image size.'''
-        #if self.opened():
-	print("Raw Read Called")
-        try:
+        if self.opened():
+            print("Raw Read Called")
             self.grabbed = (read_video_image(self.stream), round(time.time()*1000))
-        except OSError:
-            self.stream.release()
-            self.open_camera()
-        #else:
-        #    self.grabbed = None
+        else:
+           self.grabbed = None
         
         return self.grabbed
 
@@ -263,33 +260,37 @@ class ThreadedVideo:
         '''Returns the OpenCV stream'''
         return self.stream
 
+    def set_exposure(self):
+        #Sets exposure and other camera properties for camera
+        # Exposure needs to be 6 or above on the raspberry pi. On Odroid it can be 0.01
+        os.system("v4l2-ctl -d /dev/video" + `self.src` + " -c exposure_auto=1 -c exposure_absolute=30 -c brightness=30 -c white_balance_temperature_auto=0 -c backlight_compensation=0 -c contrast=10 -c saturation=200")
+
     def open_camera(self):
         '''Returns a boolean if the OpenCV stream is open'''
         cameraOpen = False;
         try:
             #Checks if a camera is connected if symlink is not broken - if it is throws error and caught below
             os.stat("/dev/video" + `self.src`)
+            cameraOpen = True
+        except OSError:
+            cameraOpen = False
+
+        if cameraOpen == False:
+            print("Camera with source " + `self.src` + " is not connected!")
+            self.stream.release()
+
             #Reopens stream so camera reconnects
             self.stream.open(self.src)
 
-            #Sets exposure and other camera properties for camera
-            # Exposure needs to be 6 or above on the raspberry pi. On Odroid it can be 0.01
-            os.system("v4l2-ctl -d /dev/video" + `self.src` + " -c exposure_auto=1 -c exposure_absolute=30 -c brightness=30 -c white_balance_temperature_auto=0 -c backlight_compensation=0 -c contrast=10 -c saturation=200")
-            
-            cameraOpen = True
-        except OSError:
-            #Releases a stream if its camera is disconnected
-            print("Camera with source " + `self.src` + " is not connected!")
-            self.stream.release()
-            cameraOpen = False
-        self.grabbed = (read_video_image(self.stream), round(time.time()*1000))
+            self.set_exposure()
+
         return cameraOpen
 
     def update(self):
         '''Grabs new video images from the current video stream.'''
         while not self.stopped:
             self.open_camera()
-            time.sleep(600)
+            # time.sleep(600)
 
 # Methods
 def push_network_table(table, return_list):
