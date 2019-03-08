@@ -165,10 +165,10 @@ public class VisionPurePursuitV2 extends Command {
         purePursuitTracker.setPath(path, LOOKAHEAD_DISTANCE_AT_66_INCHES * straightDistance/66);
         // Robot.leds.setVisionData(true);
 
-        driveBase.initBrakeMode();
+        // driveBase.initBrakeMode();
         sensors.zeroYaw();
         purePursuitTracker.reset();
-        Logger.consoleLog();
+        // Logger.consoleLog();
         executeCount = 0;
 
         System.out.println("Start, Pose: " + poseEstimator.getPose());
