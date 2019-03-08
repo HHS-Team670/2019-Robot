@@ -270,6 +270,7 @@ class ThreadedVideo:
             self.stream.open(self.src)
 
             #Sets exposure and other camera properties for camera
+            os.system("v4l2-ctl -d /dev/video" + `self.src` + "--set-fmt-video=width=640,height=480,pixelformat=1")
             os.system("v4l2-ctl -d /dev/video" + `self.src` + " -c exposure_auto=1 -c exposure_absolute=.01 -c brightness=10 -c white_balance_temperature_auto=0 -c backlight_compensation=0 -c contrast=10 -c saturation=200")
             
             cameraOpen = True
