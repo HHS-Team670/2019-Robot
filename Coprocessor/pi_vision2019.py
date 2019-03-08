@@ -95,6 +95,8 @@ def main():
     vs_back = ThreadedVideo(screen_resize, back_capture_source).start() 
 
     # This may not need to be calculated, can use Andra's precalculated values
+    global vert_focal_length
+    global hor_focal_length
     vert_focal_length = find_vert_focal_length(vs_front.raw_read()[0], camera_fov_vertical)
     hor_focal_length = find_hor_focal_length(vs_front.raw_read()[0], camera_fov_horizontal)
 
@@ -187,13 +189,13 @@ def checkEnabled(table, key, value, isNew):
         # set and push network table
         push_network_table(table, returns)
         table.putString(enabled_key, "disabled")
-        print(str(time.time()-start_time))
-        print(returns)
+        print("Total processing time: " + str(time.time()-start_time))
+        print("Returns: " + str(returns))
 
         '''
         Uncomment below if you want to save images to output for debugging
         '''
-        print(object_rects)
+        print("Rectangles: " + str(object_rects))
         cv2.imwrite("output/mask_%d.jpg"%frames, masked_image)
         cv2.imwrite("output/frame_%d.jpg"%frames,input_image)
         for rectangle in object_rects:
@@ -203,7 +205,7 @@ def checkEnabled(table, key, value, isNew):
                 cv2.drawContours(input_image, [box_points], 0, (0, 255, 0), 2)
         cv2.imwrite("output/boxed_%d.jpg"%frames,input_image)
 
-        print(str(time.time()-start_time))
+        print("Time including image writes: " + str(time.time()-start_time))
 
     except Exception as e:
         print(e)
