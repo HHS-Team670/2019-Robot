@@ -95,6 +95,8 @@ def main():
     vs_back = ThreadedVideo(screen_resize, back_capture_source).start() 
 
     # This may not need to be calculated, can use Andra's precalculated values
+    global vert_focal_length
+    global hor_focal_length
     vert_focal_length = find_vert_focal_length(vs_front.raw_read()[0], camera_fov_vertical)
     hor_focal_length = find_hor_focal_length(vs_front.raw_read()[0], camera_fov_horizontal)
 
@@ -174,7 +176,7 @@ def checkEnabled(table, key, value, isNew):
             return
 
         # if rectangles exist
-        if not object_rect == -1 and not object_rect_2 == -1:
+        if not object_rect == -1 or not object_rect_2 == -1:
             # find_vert_angle finds the depth / angle of the object
             # find_hor_angle finds horizontal angle to object
             rect_x_midpoint, high_point = find_rectangle_highpoint(object_rects)
@@ -187,13 +189,13 @@ def checkEnabled(table, key, value, isNew):
         # set and push network table
         push_network_table(table, returns)
         table.putString(enabled_key, "disabled")
-        print(str(time.time()-start_time))
-        print(returns)
+        print("Total processing time: " + str(time.time()-start_time))
+        print("Returns: " + str(returns))
 
         '''
         Uncomment below if you want to save images to output for debugging
         '''
-        print(object_rects)
+        print("Rectangles: " + str(object_rects))
         cv2.imwrite("output/mask_%d.jpg"%frames, masked_image)
         cv2.imwrite("output/frame_%d.jpg"%frames,input_image)
         for rectangle in object_rects:
@@ -203,7 +205,7 @@ def checkEnabled(table, key, value, isNew):
                 cv2.drawContours(input_image, [box_points], 0, (0, 255, 0), 2)
         cv2.imwrite("output/boxed_%d.jpg"%frames,input_image)
 
-        print(str(time.time()-start_time))
+        print("Time including image writes: " + str(time.time()-start_time))
 
     except Exception as e:
         print(e)
@@ -268,7 +270,7 @@ class ThreadedVideo:
             self.stream.open(self.src)
 
             #Sets exposure and other camera properties for camera
-            os.system("v4l2-ctl -d /dev/video" + `self.src` + " -c exposure_auto=1 -c exposure_absolute=100 -c brightness=10 -c white_balance_temperature_auto=0 -c backlight_compensation=0 -c contrast=10 -c saturation=200")
+            os.system("v4l2-ctl -d /dev/video" + `self.src` + " -c exposure_auto=1 -c exposure_absolute=.01 -c brightness=10 -c white_balance_temperature_auto=0 -c backlight_compensation=0 -c contrast=10 -c saturation=200")
             
             cameraOpen = True
         except OSError:
@@ -434,14 +436,16 @@ def find_rectangle_highpoint(rectangles):
     # Find x midpoint and tallest y point of given rectangles
     highest_y = 9999999
     mid_x = 0
+    length = 0
     for rectangle in rectangles:
     	if rectangle != -1:
 	        box_points = cv2.boxPoints(rectangle)
 	        mid_x += (box_points[0][0] + box_points[2][0]) / 2
+	        length += 1
 	        for box_point in box_points[1:]:
 	            if box_point[1] < highest_y:
 	                highest_y = box_point[1]
-    mid_x /= len(rectangles)
+    mid_x /= length
 
     return (mid_x, highest_y)
 
