@@ -176,7 +176,7 @@ def checkEnabled(table, key, value, isNew):
             return
 
         # if rectangles exist
-        if not object_rect == -1 and not object_rect_2 == -1:
+        if not object_rect == -1 or not object_rect_2 == -1:
             # find_vert_angle finds the depth / angle of the object
             # find_hor_angle finds horizontal angle to object
             rect_x_midpoint, high_point = find_rectangle_highpoint(object_rects)
@@ -436,14 +436,16 @@ def find_rectangle_highpoint(rectangles):
     # Find x midpoint and tallest y point of given rectangles
     highest_y = 9999999
     mid_x = 0
+    length = 0
     for rectangle in rectangles:
     	if rectangle != -1:
 	        box_points = cv2.boxPoints(rectangle)
 	        mid_x += (box_points[0][0] + box_points[2][0]) / 2
+	        length += 1
 	        for box_point in box_points[1:]:
 	            if box_point[1] < highest_y:
 	                highest_y = box_point[1]
-    mid_x /= len(rectangles)
+    mid_x /= length
 
     return (mid_x, highest_y)
 
