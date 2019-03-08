@@ -161,6 +161,9 @@ def checkEnabled(table, key, value, isNew):
         print("find colored objects time: " + str(new_time-last_time))
         last_time = new_time
 
+        cv2.imwrite("output/mask_%d.jpg"%frames, masked_image)
+        cv2.imwrite("output/frame_%d.jpg"%frames,input_image)
+
         object_rects = find_two_important_contours(masked_image)
         object_rect, object_rect_2 = object_rects
         new_time = time.time()
@@ -196,8 +199,8 @@ def checkEnabled(table, key, value, isNew):
         Uncomment below if you want to save images to output for debugging
         '''
         print("Rectangles: " + str(object_rects))
-        cv2.imwrite("output/mask_%d.jpg"%frames, masked_image)
-        cv2.imwrite("output/frame_%d.jpg"%frames,input_image)
+ #       cv2.imwrite("output/mask_%d.jpg"%frames, masked_image)
+#        cv2.imwrite("output/frame_%d.jpg"%frames,input_image)
         for rectangle in object_rects:
             if rectangle is not -1:
                 box_points = cv2.boxPoints(rectangle)
@@ -270,8 +273,8 @@ class ThreadedVideo:
             self.stream.open(self.src)
 
             #Sets exposure and other camera properties for camera
-            os.system("v4l2-ctl -d /dev/video" + `self.src` + "--set-fmt-video=width=640,height=480,pixelformat=1")
-            os.system("v4l2-ctl -d /dev/video" + `self.src` + " -c exposure_auto=1 -c exposure_absolute=.01 -c brightness=10 -c white_balance_temperature_auto=0 -c backlight_compensation=0 -c contrast=10 -c saturation=200")
+            # Exposure needs to be 6 or above on the raspberry pi. On Odroid it can be 0.01
+            os.system("v4l2-ctl -d /dev/video" + `self.src` + " -c exposure_auto=1 -c exposure_absolute=30 -c brightness=30 -c white_balance_temperature_auto=0 -c backlight_compensation=0 -c contrast=10 -c saturation=200")
             
             cameraOpen = True
         except OSError:
