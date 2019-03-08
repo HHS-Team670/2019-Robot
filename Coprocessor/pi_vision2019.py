@@ -91,8 +91,8 @@ def main():
     #Video capture / resizing stuff
     global vs_front
     global vs_back
-    vs_front = ThreadedVideo(screen_resize, front_capture_source).start()
-    vs_back = ThreadedVideo(screen_resize, back_capture_source).start() 
+    vs_front = ThreadedVideo(screen_resize, front_capture_source)
+    vs_back = ThreadedVideo(screen_resize, back_capture_source)
 
     # This may not need to be calculated, can use Andra's precalculated values
     global vert_focal_length
@@ -102,6 +102,9 @@ def main():
 
     global frames
     frames = 0
+
+    vs_front.reset_stream()
+    vs_back.reset_stream()
 
     while True:
         time.sleep(1)
@@ -148,6 +151,7 @@ def checkEnabled(table, key, value, isNew):
             print(returns)
             table.putString("vision-status", "error")
             table.putString(enabled_key, "disabled")
+            vs.reset_stream()
             return
         else:
             table.putString("vision-status", "")
@@ -176,6 +180,7 @@ def checkEnabled(table, key, value, isNew):
             table.putString(enabled_key, "disabled")
             print(returns)
             print("no targets found: " + str(time.time() - start_time))
+            vs.reset_stream()
             return
 
         # if rectangles exist
@@ -209,6 +214,7 @@ def checkEnabled(table, key, value, isNew):
         cv2.imwrite("output/boxed_%d.jpg"%frames,input_image)
 
         print("Time including image writes: " + str(time.time()-start_time))
+        vs.reset_stream()
 
     except Exception as e:
         print(e)
@@ -224,48 +230,32 @@ class ThreadedVideo:
         self.stream = cv2.VideoCapture(src)
         self.src = src
         self.width = 1000
-        if self.open_camera():
-            self.grabbed = (read_video_image(self.stream, resize_value), round(time.time()*1000))
+        self.open_camera()
         self.stopped = False
         self.frameCount = 0
         self.resize = resize_value
 
-    def start(self):
-        '''No longer need this Thread since we are taking one image at a time. Instead just open the camera.'''
-        #self.thread = Thread(target=self.update, args=())
-        #self.thread.start()
-        self.open_camera()
-        return self
-
-    def stop(self):
-        '''
-        Stops the thread for video processing. For some reason the
-        entire program crashes after the q key is pressed to quit,
-        but it doesn't affect anything sooooo who cares
-        '''
-        self.stopped = True
+    def reset_stream(self):
+        self.stream.release()
+        self.stream.open(self.src)
 
     def raw_read(self):
         '''Returns the raw frame with the original video input's image size.'''
         #if self.opened():
 	print("Raw Read Called")
-        try:
-            self.grabbed = (read_video_image(self.stream), round(time.time()*1000))
-        except OSError:
+        grabbed = (read_video_image(self.stream), round(time.time()*1000))
+        if grabbed is None:
             self.stream.release()
-            self.open_camera()
-        #else:
-        #    self.grabbed = None
-        
-        return self.grabbed
+            grabbed = self.open_camera() ## open_camera grabs an image
+        return grabbed
 
     def stream(self):
         '''Returns the OpenCV stream'''
         return self.stream
 
     def open_camera(self):
-        '''Returns a boolean if the OpenCV stream is open'''
-        cameraOpen = False;
+        '''Returns a tuple with a boolean if the OpenCV stream is open and the grabbed image from the camera'''
+        print("Open Camera Called")
         try:
             #Checks if a camera is connected if symlink is not broken - if it is throws error and caught below
             os.stat("/dev/video" + `self.src`)
@@ -274,22 +264,14 @@ class ThreadedVideo:
 
             #Sets exposure and other camera properties for camera
             # Exposure needs to be 6 or above on the raspberry pi. On Odroid it can be 0.01
-            os.system("v4l2-ctl -d /dev/video" + `self.src` + " -c exposure_auto=1 -c exposure_absolute=30 -c brightness=30 -c white_balance_temperature_auto=0 -c backlight_compensation=0 -c contrast=10 -c saturation=200")
+            os.system("v4l2-ctl -d /dev/video" + `self.src` + " -c exposure_auto=1 -c exposure_absolute=20 -c brightness=30 -c white_balance_temperature_auto=0 -c backlight_compensation=0 -c contrast=10 -c saturation=200")
             
-            cameraOpen = True
         except OSError:
             #Releases a stream if its camera is disconnected
             print("Camera with source " + `self.src` + " is not connected!")
-            self.stream.release()
-            cameraOpen = False
-        self.grabbed = (read_video_image(self.stream), round(time.time()*1000))
-        return cameraOpen
-
-    def update(self):
-        '''Grabs new video images from the current video stream.'''
-        while not self.stopped:
-            self.open_camera()
-            time.sleep(600)
+            self.reset_stream()
+        grabbed = (read_video_image(self.stream), round(time.time()*1000))
+        return grabbed
 
 # Methods
 def push_network_table(table, return_list):
@@ -306,10 +288,18 @@ def read_video_image(capture, scale=1):
     outputs the current frame as an image scaled by the scale value.
     Does some blurring to make the image easier to use.
     '''
-    main_image = capture.read()[1]
+    # for x in range(5): ## Purge the video buffer so we get a new image
+    #     capture.grab()
+    result = capture.read()
+    main_image = result[1]
+    succeeded = result[0]
     #if main_image is not None:
     #    main_image = cv2.resize(main_image, (0, 0), fx=scale, fy=scale)
-    return main_image
+    if succeeded is False:
+        print("Read Video Image Failed")
+        return None
+    else:
+        return main_image
 
 
 def find_colored_object(image):
