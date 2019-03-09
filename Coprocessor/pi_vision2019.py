@@ -288,7 +288,7 @@ def read_video_image(capture, scale=1):
     outputs the current frame as an image scaled by the scale value.
     Does some blurring to make the image easier to use.
     '''
-    for x in range(5): ## Purge the video buffer so we get a new image
+    for x in range(4): ## Purge the video buffer so we get a new image
         capture.grab()
     result = capture.read()
     main_image = result[1]
