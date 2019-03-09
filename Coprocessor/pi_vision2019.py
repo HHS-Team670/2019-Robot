@@ -103,8 +103,8 @@ def main():
     global frames
     frames = 0
 
-    vs_front.reset_stream()
-    vs_back.reset_stream()
+    # vs_front.reset_stream()
+    # vs_back.reset_stream()
 
     while True:
         time.sleep(1)
@@ -151,7 +151,7 @@ def checkEnabled(table, key, value, isNew):
             print(returns)
             table.putString("vision-status", "error")
             table.putString(enabled_key, "disabled")
-            vs.reset_stream()
+            # vs.reset_stream()
             return
         else:
             table.putString("vision-status", "")
@@ -180,7 +180,7 @@ def checkEnabled(table, key, value, isNew):
             table.putString(enabled_key, "disabled")
             print(returns)
             print("no targets found: " + str(time.time() - start_time))
-            vs.reset_stream()
+            # vs.reset_stream()
             return
 
         # if rectangles exist
@@ -214,7 +214,7 @@ def checkEnabled(table, key, value, isNew):
         cv2.imwrite("output/boxed_%d.jpg"%frames,input_image)
 
         print("Time including image writes: " + str(time.time()-start_time))
-        vs.reset_stream()
+        # vs.reset_stream()
 
     except Exception as e:
         print(e)
@@ -288,8 +288,8 @@ def read_video_image(capture, scale=1):
     outputs the current frame as an image scaled by the scale value.
     Does some blurring to make the image easier to use.
     '''
-    # for x in range(5): ## Purge the video buffer so we get a new image
-    #     capture.grab()
+    for x in range(5): ## Purge the video buffer so we get a new image
+        capture.grab()
     result = capture.read()
     main_image = result[1]
     succeeded = result[0]
