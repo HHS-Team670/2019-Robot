@@ -39,8 +39,8 @@ camera_key = "vision-camera"
 enabled_key = "vision-enabled"
 
 # HSV Values to detect - DEFAULT is Front
-min_hsv = [50, 220, 80] # Need to change according to practice field data
-max_hsv = [70, 255, 210]
+min_hsv = [30, 0, 0] # Need to change according to practice field data
+max_hsv = [90, 255, 255]
 
 # Min area to make sure not to pick up noise
 MIN_AREA = 100
@@ -69,7 +69,7 @@ def main():
     os.system("sudo rm -f /dev/video" + `front_capture_source`)
     os.system("sudo rm -f /dev/video" + `back_capture_source`)
     os.system("sudo ln -s /dev/v4l/by-path/platform-3f980000.usb-usb-0:1.5:1.0-video-index0 /dev/video"+ `front_capture_source`)
-    os.system("sudo ln -s /dev/v4l/by-path/platform-3f980000.usb-usb-0:1.3:1.0-video-index0 /dev/video"+ `back_capture_source`)
+        os.system("sudo ln -s /dev/v4l/by-path/platform-3f980000.usb-usb-0:1.3:1.0-video-index0 /dev/video"+ `back_capture_source`)
 
     #Uncomment when saving images
     os.system("rm -rf output")
@@ -106,6 +106,12 @@ def main():
     # vs_front.reset_stream()
     # vs_back.reset_stream()
 
+    # input_raw = vs_front.raw_read()
+    # input_image = input_raw[0]
+    # masked_image = find_colored_object(input_image)
+    # cv2.imwrite("output/mask_%d.jpg"%frames, masked_image)
+    # cv2.imwrite("output/frame_%d.jpg"%frames,input_image)
+
     while True:
         time.sleep(1)
 
@@ -118,7 +124,7 @@ def checkEnabled(table, key, value, isNew):
     last_time = start_time
 
     # gets which camera to use (front or back)
-    camera = table.getEntry(camera_key).getString("back")
+    camera = table.getEntry(camera_key).getString("front")
 
     vs = None
     global vs_front
@@ -165,9 +171,6 @@ def checkEnabled(table, key, value, isNew):
         print("find colored objects time: " + str(new_time-last_time))
         last_time = new_time
 
-        cv2.imwrite("output/mask_%d.jpg"%frames, masked_image)
-        cv2.imwrite("output/frame_%d.jpg"%frames,input_image)
-
         object_rects = find_two_important_contours(masked_image)
         object_rect, object_rect_2 = object_rects
         new_time = time.time()
@@ -180,6 +183,8 @@ def checkEnabled(table, key, value, isNew):
             table.putString(enabled_key, "disabled")
             print(returns)
             print("no targets found: " + str(time.time() - start_time))
+            cv2.imwrite("output/mask_%d.jpg"%frames, masked_image)
+            cv2.imwrite("output/frame_%d.jpg"%frames,input_image)
             # vs.reset_stream()
             return
 
@@ -255,12 +260,13 @@ class ThreadedVideo:
 
     def open_camera(self):
         '''Returns a tuple with a boolean if the OpenCV stream is open and the grabbed image from the camera'''
-        print("Open Camera Called")
         try:
             #Checks if a camera is connected if symlink is not broken - if it is throws error and caught below
             os.stat("/dev/video" + `self.src`)
             #Reopens stream so camera reconnects
             self.stream.open(self.src)
+            self.stream.set(cv2.CAP_PROP_FRAME_WIDTH, 320)
+            self.stream.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)
 
             #Sets exposure and other camera properties for camera
             # Exposure needs to be 6 or above on the raspberry pi. On Odroid it can be 0.01
