@@ -39,8 +39,8 @@ camera_key = "vision-camera"
 enabled_key = "vision-enabled"
 
 # HSV Values to detect - DEFAULT is Front
-min_hsv = [30, 0, 0] # Need to change according to practice field data
-max_hsv = [90, 255, 255]
+min_hsv = [60, 240, 240] # Need to change according to practice field data
+max_hsv = [80, 255, 255]
 
 # Min area to make sure not to pick up noise
 MIN_AREA = 100
@@ -69,7 +69,7 @@ def main():
     os.system("sudo rm -f /dev/video" + `front_capture_source`)
     os.system("sudo rm -f /dev/video" + `back_capture_source`)
     os.system("sudo ln -s /dev/v4l/by-path/platform-3f980000.usb-usb-0:1.5:1.0-video-index0 /dev/video"+ `front_capture_source`)
-        os.system("sudo ln -s /dev/v4l/by-path/platform-3f980000.usb-usb-0:1.3:1.0-video-index0 /dev/video"+ `back_capture_source`)
+    os.system("sudo ln -s /dev/v4l/by-path/platform-3f980000.usb-usb-0:1.3:1.0-video-index0 /dev/video"+ `back_capture_source`)
 
     #Uncomment when saving images
     os.system("rm -rf output")
@@ -134,13 +134,13 @@ def checkEnabled(table, key, value, isNew):
     if camera == "front":
         vs=vs_front
         #HSV Values to detect with front LED
-        min_hsv = [50, 220, 80] # Need to change according to practice field data
-        max_hsv = [70, 255, 210]
+        min_hsv = [60, 240, 240]#[50, 220, 80] # Need to change according to practice field data
+        max_hsv = [80, 255, 255]#[70, 255, 210]
     elif camera == "back":
         vs=vs_back
         #HSV Values to detect with back LED
-        min_hsv = [50, 220, 80] # Need to change according to practice field data
-        max_hsv = [70, 255, 210]
+        min_hsv = [60, 240, 240]#[50, 220, 80] # Need to change according to practice field data
+        max_hsv = [80, 255, 255]#[70, 255, 210]
     else:
 	print("Camera not set: " + camera)
     try:
@@ -209,8 +209,8 @@ def checkEnabled(table, key, value, isNew):
         Uncomment below if you want to save images to output for debugging
         '''
         print("Rectangles: " + str(object_rects))
- #       cv2.imwrite("output/mask_%d.jpg"%frames, masked_image)
-#        cv2.imwrite("output/frame_%d.jpg"%frames,input_image)
+        cv2.imwrite("output/mask_%d.jpg"%frames, masked_image)
+        cv2.imwrite("output/frame_%d.jpg"%frames,input_image)
         for rectangle in object_rects:
             if rectangle is not -1:
                 box_points = cv2.boxPoints(rectangle)
@@ -267,6 +267,8 @@ class ThreadedVideo:
             self.stream.open(self.src)
             self.stream.set(cv2.CAP_PROP_FRAME_WIDTH, 320)
             self.stream.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)
+	    self.stream.set(cv2.CAP_PROP_FPS, 5)
+
 
             #Sets exposure and other camera properties for camera
             # Exposure needs to be 6 or above on the raspberry pi. On Odroid it can be 0.01
