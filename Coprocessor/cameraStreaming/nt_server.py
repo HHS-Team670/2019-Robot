@@ -44,7 +44,7 @@ VISION_ERROR_CODE = -9999
 
 #os.system('sudo python /home/pi/git/Mustang-Pi/cameraStreaming/watchdog.py "/home/pi/git/Mustang-Pi/cameraStreaming/mjpg_streamer_server.sh > /tmp/error_cams 2>&1" &')   
 
-os.system('sudo /home/pi/git/Coprocessor/cameraStreaming/mjpg_streamer_server.sh')
+os.system('sudo /home/pi/git/Coprocessor/cameraStreaming/mjpg_streamer_server.sh &')
 
 cam = '0'
 def valueChanged(table, key, value, isNew):
@@ -69,11 +69,6 @@ i = 0
 #sd.addEntryListener(valueChanged)
 
 while True:
-    print(i)
-    if (i%10 == 0):
-        sd.putString("driver-camera-mode", "single")
-    if (i%10 == 5):
-        sd.putString("driver-camera-mode", "double")
     sd.putString('vision-status', "none")
     if (int(os.popen('ls -l /dev/ | egrep video.$ | wc -l').read().replace('\n', '')) == 0):
         sd.putString('warnings', 'no cameras found')
