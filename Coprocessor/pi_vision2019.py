@@ -183,8 +183,8 @@ def checkEnabled(table, key, value, isNew):
             table.putString(enabled_key, "disabled")
             print(returns)
             print("no targets found: " + str(time.time() - start_time))
-            cv2.imwrite("output/mask_%d.jpg"%frames, masked_image)
-            cv2.imwrite("output/frame_%d.jpg"%frames,input_image)
+            cv2.imwrite("/home/pi/Vision/output/mask_%d.jpg"%frames, masked_image)
+            cv2.imwrite("/home/pi/Vision/output/frame_%d.jpg"%frames,input_image)
             # vs.reset_stream()
             return
 
@@ -209,14 +209,14 @@ def checkEnabled(table, key, value, isNew):
         Uncomment below if you want to save images to output for debugging
         '''
         print("Rectangles: " + str(object_rects))
-        cv2.imwrite("output/mask_%d.jpg"%frames, masked_image)
-        cv2.imwrite("output/frame_%d.jpg"%frames,input_image)
+        cv2.imwrite("/home/pi/Vision/output/mask_%d.jpg"%frames, masked_image)
+        cv2.imwrite("/home/pi/Vision/output/frame_%d.jpg"%frames,input_image)
         for rectangle in object_rects:
             if rectangle is not -1:
                 box_points = cv2.boxPoints(rectangle)
                 box_points = np.int0(box_points)
                 cv2.drawContours(input_image, [box_points], 0, (0, 255, 0), 2)
-        cv2.imwrite("output/boxed_%d.jpg"%frames,input_image)
+        cv2.imwrite("/home/pi/Vision/output/boxed_%d.jpg"%frames,input_image)
 
         print("Time including image writes: " + str(time.time()-start_time))
         # vs.reset_stream()
