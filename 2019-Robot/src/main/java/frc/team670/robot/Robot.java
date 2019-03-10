@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team670.robot.commands.drive.teleop.XboxRocketLeagueDrive;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangCoprocessor;
 import frc.team670.robot.dataCollection.MustangSensors;
@@ -126,17 +127,17 @@ public class Robot extends TimedRobot {
    */  
  @Override
   public void robotPeriodic() {
-    SmartDashboard.putNumber("gyro", 0);//(int) sensors.getAngle() % 360);
+    SmartDashboard.putNumber("gyro", (int) sensors.getAngle() % 360);
     SmartDashboard.putString("current-command", Scheduler.getInstance().getName());
-    SmartDashboard.putString("current-arm-state", "");//Arm.getCurrentState().toString());
-    SmartDashboard.putNumber("intake-angle", 0);//intake.getAngleInDegrees());
-    SmartDashboard.putNumber("elbow-angle", 0);//elbow.getAngleInDegrees());
-    SmartDashboard.putNumber("wrist-angle", 0);//wrist.getAngleInDegrees());
-    SmartDashboard.putBoolean("intake-ir-sensor", true);//sensors.getIntakeIROutput());
-    SmartDashboard.putNumber("extension-actual-length" , 0);//extension.getLengthInches());
-    SmartDashboard.putNumber("arm-extension" , 0);//extension.getLengthInches() / Extension.EXTENSION_OUT_IN_INCHES);
-    SmartDashboard.putNumber("Actual Extension" , 0);// extension.getLengthInches());
-    SmartDashboard.putBoolean("drive-reversed-status", true);// XboxRocketLeagueDrive.isDriveReversed());
+    SmartDashboard.putString("current-arm-state", Arm.getCurrentState().toString());
+    SmartDashboard.putNumber("intake-angle", intake.getAngleInDegrees());
+    SmartDashboard.putNumber("elbow-angle", elbow.getAngleInDegrees());
+    SmartDashboard.putNumber("wrist-angle", wrist.getAngleInDegrees());
+    SmartDashboard.putBoolean("intake-ir-sensor", sensors.getIntakeIROutput());
+    SmartDashboard.putNumber("extension-actual-length", extension.getLengthInches());
+    SmartDashboard.putNumber("arm-extension", extension.getLengthInches() / Extension.EXTENSION_OUT_IN_INCHES);
+    SmartDashboard.putNumber("Actual Extension", extension.getLengthInches());
+    SmartDashboard.putBoolean("drive-reversed-status", XboxRocketLeagueDrive.isDriveReversed());
     if (arm.getHeldItem().equals(HeldItem.HATCH)) {
       SmartDashboard.putString("claw-status", "Hatch");
     } else if (arm.getHeldItem().equals(HeldItem.BALL)) {
