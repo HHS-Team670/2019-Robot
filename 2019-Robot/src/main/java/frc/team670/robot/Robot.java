@@ -58,6 +58,8 @@ public class Robot extends TimedRobot {
 
   private Command autonomousCommand, operatorControl;
   private SendableChooser<Command> auton_chooser = new SendableChooser<>();
+
+  private static final double NETWORK_TABLES_UPDATE_RATE = 0.05;
   
   public Robot() {
   }
@@ -127,16 +129,16 @@ public class Robot extends TimedRobot {
    */  
  @Override
   public void robotPeriodic() {
-    SmartDashboard.putNumber("gyro", (int) sensors.getAngle() % 360);
-    SmartDashboard.putString("current-command", Scheduler.getInstance().getName());
+    // SmartDashboard.putNumber("gyro", (int) sensors.getAngle() % 360);
+    // SmartDashboard.putString("current-command", Scheduler.getInstance().getName());
     SmartDashboard.putString("current-arm-state", Arm.getCurrentState().toString());
     SmartDashboard.putNumber("intake-angle", intake.getAngleInDegrees());
     SmartDashboard.putNumber("elbow-angle", elbow.getAngleInDegrees());
     SmartDashboard.putNumber("wrist-angle", wrist.getAngleInDegrees());
     SmartDashboard.putBoolean("intake-ir-sensor", sensors.getIntakeIROutput());
-    SmartDashboard.putNumber("extension-actual-length", extension.getLengthInches());
-    SmartDashboard.putNumber("arm-extension", extension.getLengthInches() / Extension.EXTENSION_OUT_IN_INCHES);
-    SmartDashboard.putNumber("Actual Extension", extension.getLengthInches());
+    SmartDashboard.putNumber("extension-actual-length" , extension.getLengthInches());
+    SmartDashboard.putNumber("arm-extension" , extension.getLengthInches() / Extension.EXTENSION_OUT_IN_INCHES);
+    // SmartDashboard.putNumber("Actual Extension" , extension.getLengthInches());
     SmartDashboard.putBoolean("drive-reversed-status", XboxRocketLeagueDrive.isDriveReversed());
     if (arm.getHeldItem().equals(HeldItem.HATCH)) {
       SmartDashboard.putString("claw-status", "Hatch");
@@ -150,11 +152,10 @@ public class Robot extends TimedRobot {
       SmartDashboard.putString("claw-status", "close");
     }
 
-
-    SmartDashboard.putNumber("Angle", sensors.getAngle());
-    SmartDashboard.putNumber("Phi", sensors.getAngleToTarget());
-    SmartDashboard.putNumber("Horizontal Angle", coprocessor.getAngleToWallTarget());
-    SmartDashboard.putNumber("Depth", coprocessor.getDistanceToWallTarget());
+    // SmartDashboard.putNumber("Angle", sensors.getAngle());
+    // SmartDashboard.putNumber("Phi", sensors.getAngleToTarget());
+    // SmartDashboard.putNumber("Horizontal Angle", coprocessor.getAngleToWallTarget());
+    // SmartDashboard.putNumber("Depth", coprocessor.getDistanceToWallTarget());
 
     // SmartDashboard.putNumber("Arbitrary Feedforward Measurement", MeasureArbitraryFeedforward.output);
 
@@ -163,8 +164,8 @@ public class Robot extends TimedRobot {
     // extension.sendDataToDashboard();
     // wrist.sendDataToDashboard();
     // intake.sendDataToDashboard();
-    sensors.sendUltrasonicDataToDashboard();
-    driveBase.sendDIOEncoderDataToDashboard();
+    // sensors.sendUltrasonicDataToDashboard();
+    // driveBase.sendDIOEncoderDataToDashboard();
 
   }
   /**
@@ -174,7 +175,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
-    SmartDashboard.putString("robot-state", "disabledInit()");
+    SmartDashboard.putString("robot-state", "disabledPeriodic()");
     Logger.consoleLog("Robot Disabled");
     // autonomousCommand = oi.getSelectedAutonCommand();
     driveBase.initCoastMode();
@@ -183,7 +184,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-    SmartDashboard.putString("robot-state", "disabledPeriodic()");
+
+    sensors.sendUltrasonicDataToDashboard();
+    driveBase.sendEncoderDataToDashboard();
+
     Scheduler.getInstance().run();
   }
 

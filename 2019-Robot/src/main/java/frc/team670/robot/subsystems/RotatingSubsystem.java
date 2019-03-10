@@ -94,7 +94,7 @@ public abstract class RotatingSubsystem extends Subsystem implements TunableSubs
     }
 
     /**
-     * Enbales the main talon to percent output mode
+     * Puts the main talon in percent output mode
      */
     public synchronized void stop() {
         clearSetpoint();

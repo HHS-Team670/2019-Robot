@@ -54,8 +54,6 @@ public class XboxRocketLeagueDrive extends InstantCommand {
 
     if(Robot.oi.isQuickTurnPressed()){
 
-      Robot.oi.rumbleDriverController(0.2, 0.1);
-
       if(speed < -0.0001) {
         if(!isReversed) {
           Robot.driveBase.curvatureDrive(speed, -1 * steer, Robot.oi.isQuickTurnPressed());

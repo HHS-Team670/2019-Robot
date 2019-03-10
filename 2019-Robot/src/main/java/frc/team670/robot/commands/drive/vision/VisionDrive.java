@@ -25,7 +25,7 @@ public class VisionDrive extends CommandGroup {
 
     double[] visionData = new double[]{RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE};
 
-    addSequential(new CollectVisionData(visionData, coprocessor, lowTarget, isReversed));
+    addSequential(new CollectVisionData(visionData, coprocessor, lowTarget, isReversed, driveBase));
     addSequential(new VisionPurePursuitV2(driveBase, sensors, isReversed, changeableAngle, spaceFromTarget, coprocessor));   
   }
 }

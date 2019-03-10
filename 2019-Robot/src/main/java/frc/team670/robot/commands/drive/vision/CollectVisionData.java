@@ -10,9 +10,9 @@ package frc.team670.robot.commands.drive.vision;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangCoprocessor;
+import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.utils.functions.MathUtils;
 
 /**
@@ -28,8 +28,9 @@ public class CollectVisionData extends Command {
 
     private static final double MAX_TIME_TO_RUN = 2500; // Max time to run this in ms
 
-    public CollectVisionData(double[] visionData, MustangCoprocessor coprocessor, boolean lowTarget, boolean isReversed) {
+    public CollectVisionData(double[] visionData, MustangCoprocessor coprocessor, boolean lowTarget, boolean isReversed, DriveBase driveBase) {
         super();
+        requires(driveBase); // Do this so that the robot can't move during this process so vision data can be collected accurately
         this.visionData = visionData;
         this.lowTarget = lowTarget;
         this.isReversed = isReversed;
