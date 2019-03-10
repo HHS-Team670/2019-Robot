@@ -54,8 +54,6 @@ public class Robot extends TimedRobot {
 
   private Notifier updateArbitraryFeedForwards;
 
-  private static final double NETWORK_TABLES_UPDATE_RATE = 0.05;
-
   private Command autonomousCommand, operatorControl;
   private SendableChooser<Command> auton_chooser = new SendableChooser<>();
 
