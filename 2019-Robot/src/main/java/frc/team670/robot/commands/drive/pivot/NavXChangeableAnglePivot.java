@@ -51,21 +51,20 @@ public class NavXChangeableAnglePivot extends Command {
   protected void initialize() {
     System.out.println(sensors.getYawDouble());
     onTargetCount = 0;
-    // if(sensors.isNavXNull()){
-    //   cancel();
-    //   return;
-    // }
+    if(sensors.isNavXNull()){
+      cancel();
+      return;
+    }
 
-    // if(angle.getValue() < 3) {
-    //   cancel();
-    //   return;
-    // }
+    if(angle.getValue() < 3) {
+      cancel();
+      return;
+    }
 
     startAngle = sensors.getYawDouble();
     finalAngle = Pathfinder.boundHalfDegrees(startAngle + angle.getValue());
 
-    // Logger.consoleLog("StartAngle:%s FinalAngle:%s DegreesToTravel:%s", 
-    // 		startAngle, finalAngle, angle);
+    Logger.consoleLog("StartAngle:%s FinalAngle:%s DegreesToTravel:%s", startAngle, finalAngle, angle);
 
     pivotController.setSetpoint(finalAngle);
 

@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.drive.teleop.XboxRocketLeagueDrive;
-import frc.team670.robot.commands.tuning.ResetPulseWidthEncoder;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangCoprocessor;
 import frc.team670.robot.dataCollection.MustangSensors;
@@ -50,7 +49,7 @@ public class Robot extends TimedRobot {
   private static Wrist wrist = new Wrist();
   private static Extension extension = new Extension();
   public static Intake intake = new Intake();
-  public static Claw claw = new Claw();
+  public static Claw claw= new Claw();
   public static Arm arm = new Arm(elbow, wrist, extension, intake, claw);
 
   private Notifier updateArbitraryFeedForwards;
@@ -89,9 +88,8 @@ public class Robot extends TimedRobot {
     Logger.consoleLog();
     System.out.println("Robot init");
 
-    leds.socketSetup(5801);
+    leds.socketSetup(RobotConstants.LED_PORT);    
     System.out.println("LED Setup Run");
-    //leds.socketSetup(RobotConstants.LED_PORT);    
 
     // autonomousCommand = oi.getSelectedAutonCommand();
     leds.setStillDrive(true);
@@ -112,9 +110,11 @@ public class Robot extends TimedRobot {
 
     updateArbitraryFeedForwards.startPeriodic(0.01);
 
-    SmartDashboard.putNumberArray("reflect_tape_data", new double[]{RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE});
-
-    // autonomousCommand = new MeasureTrackwidth();
+    SmartDashboard.putNumberArray("reflect_tape_vision_data", new double[]{RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE});
+    
+    SmartDashboard.putString("vision-camera", "front");
+    SmartDashboard.putString("vision-enabled", "disabled");
+    SmartDashboard.putString("vision-status", "");
   }
 
   /**
@@ -157,7 +157,6 @@ public class Robot extends TimedRobot {
 
     // SmartDashboard.putNumber("Arbitrary Feedforward Measurement", MeasureArbitraryFeedforward.output);
 
-    // SmartDashboard.putString("Held Item", arm.getHeldItem().toString());
 
     // elbow.sendDataToDashboard();
     // extension.sendDataToDashboard();
@@ -219,8 +218,8 @@ public class Robot extends TimedRobot {
     Logger.consoleLog("Auton Started");
     SmartDashboard.putString("robot-state", "autonomousPeriodic()");
 
-    // Scheduler.getInstance().add(new MoveExtensionBackUntilHitsLimitSwitch(extension));
-    // arm.setCoastMode();
+    // // Scheduler.getInstance().add(new MoveExtensionBackUntilHitsLimitSwitch(extension));
+    arm.setCoastMode();
 
     if (autonomousCommand != null) {
       autonomousCommand.start();

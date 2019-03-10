@@ -80,6 +80,7 @@ public class MustangCoprocessor {
             entry = instance.getEntry(key);
             table.addEntryListener(key, (table2, key2, entry, value, flags) -> {
                 this.entry = entry;
+                System.out.println("Changed Value");
             }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
             this.key = key;
         }
@@ -214,10 +215,10 @@ public class MustangCoprocessor {
      */
     public void useVision(boolean enabled) {
         if(enabled) {
-            SmartDashboard.putString("vision-camera", "enabled");
+            SmartDashboard.putString("vision-enabled", "enabled");
         }
         else {
-            SmartDashboard.putString("vision-camera", "disabled");
+            SmartDashboard.putString("vision-enabled", "disabled");
         }
     }
 

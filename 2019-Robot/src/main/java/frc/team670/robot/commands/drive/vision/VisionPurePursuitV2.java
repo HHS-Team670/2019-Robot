@@ -71,7 +71,8 @@ public class VisionPurePursuitV2 extends Command {
 
         try {
             if(MathUtils.doublesEqual(coprocessor.getVisionValues()[2], RobotConstants.VISION_ERROR_CODE)) {
-            SmartDashboard.putString("warnings", "Coprocess Camera Unplugged: Vision Down");
+                System.out.println("VPP timestamp"+ SmartDashboard.getNumberArray("reflect_tape_vision_data", new double[]{RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE})[2]);
+                SmartDashboard.putString("warnings", "Coprocess Camera Unplugged: Vision Down");
                 Logger.consoleLog("Coprocess Camera Unplugged: Vision Down");
             return;
             } 
@@ -128,7 +129,6 @@ public class VisionPurePursuitV2 extends Command {
         // horizontal distance - when going forward a positive horizontal distance is
         // right and negative is left
         double horizontalDistance = straightDistance * Math.tan(Math.toRadians(horizontalAngle)); // x = y * tan(theta)
-        // double horizontalDistance = -18;
         double partialDistanceY = (straightDistance) * 2.0 / 5.0;
     
     
@@ -190,7 +190,7 @@ public class VisionPurePursuitV2 extends Command {
     // Make this return true when this Command no longer needs to run execute()
     @Override
     protected boolean isFinished() {
-        return purePursuitTracker.isDone();// || sensors.getUltrasonicDistance() < 15;
+        return purePursuitTracker.isDone() || purePursuitTracker.getPath() == null; // sensors.getUltrasonicDistance() < 15;
     }
 
     // Called once after isFinished returns true
@@ -198,7 +198,7 @@ public class VisionPurePursuitV2 extends Command {
     protected void end() {
         Vector pose = poseEstimator.getPose();
         // VisionPurePursuit.disableArmRestriction();
-        driveBase.stop();
+       driveBase.stop();
         double xOffset = endPoint.x - pose.x;
         double yOffset = endPoint.y + offset - pose.y;
         double angle = Math.toDegrees(Math.atan(yOffset/xOffset));
