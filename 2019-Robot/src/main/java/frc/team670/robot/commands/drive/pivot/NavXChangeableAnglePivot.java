@@ -76,7 +76,7 @@ public class NavXChangeableAnglePivot extends Command {
   protected void execute() {
     double output = pivotController.get();
 	  // System.out.println("Output: " + output);
-	  // driveBase.tankDrive(output, -output, false);
+	  driveBase.tankDrive(output, -output, false);
   }
 
   // Make this return true when this Command no longer needs to run execute()
