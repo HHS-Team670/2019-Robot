@@ -62,8 +62,8 @@ public class MustangCoprocessor {
         wallTarget = new VisionValues(NETWORK_TABLE_KEYS[0]);
         backCamera = true;
         lowTarget = true;
-        // backLedRing = new Solenoid(RobotMap.PCM_MODULE, RobotMap.BACK_LED_RING);
-        // backLedRing.set(false);
+        backLedRing = new Solenoid(RobotMap.PCM_MODULE, RobotMap.BACK_LED_RING);
+        backLedRing.set(false);
     }
 
     private class NetworkTableObject {

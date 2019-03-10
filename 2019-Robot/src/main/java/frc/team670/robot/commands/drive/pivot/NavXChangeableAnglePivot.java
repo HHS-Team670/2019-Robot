@@ -33,7 +33,7 @@ public class NavXChangeableAnglePivot extends Command {
 
 
   public NavXChangeableAnglePivot(MutableDouble angle, DriveBase driveBase, MustangSensors sensors) {
-    // requires(driveBase);
+    requires(driveBase);
     this.driveBase = driveBase;
     this.sensors = sensors;
     this.angle = angle;
@@ -51,21 +51,20 @@ public class NavXChangeableAnglePivot extends Command {
   protected void initialize() {
     System.out.println(sensors.getYawDouble());
     onTargetCount = 0;
-    // if(sensors.isNavXNull()){
-    //   cancel();
-    //   return;
-    // }
+    if(sensors.isNavXNull()){
+      cancel();
+      return;
+    }
 
-    // if(angle.getValue() < 3) {
-    //   cancel();
-    //   return;
-    // }
+    if(angle.getValue() < 3) {
+      cancel();
+      return;
+    }
 
     startAngle = sensors.getYawDouble();
     finalAngle = Pathfinder.boundHalfDegrees(startAngle + angle.getValue());
 
-    // Logger.consoleLog("StartAngle:%s FinalAngle:%s DegreesToTravel:%s", 
-    // 		startAngle, finalAngle, angle);
+    Logger.consoleLog("StartAngle:%s FinalAngle:%s DegreesToTravel:%s", startAngle, finalAngle, angle);
 
     pivotController.setSetpoint(finalAngle);
 
@@ -95,15 +94,15 @@ public class NavXChangeableAnglePivot extends Command {
   // Called once after isFinished returns true
   @Override
   protected void end() {
-    // driveBase.stop();
+    driveBase.stop();
     System.out.println(sensors.getYawDouble());
     Logger.consoleLog("CurrentAngle: %s, TargetAngle: %s", sensors.getYawDouble(), finalAngle);  
-    // boolean isReversed = XboxRocketLeagueDrive.isDriveReversed();
-    // if (isReversed) {
-    //   Robot.leds.setReverseData(true);
-    // } else {
-    //   Robot.leds.setForwardData(true);
-    // }
+    boolean isReversed = XboxRocketLeagueDrive.isDriveReversed();
+    if (isReversed) {
+      Robot.leds.setReverseData(true);
+    } else {
+      Robot.leds.setForwardData(true);
+    }
   }
 
   // Called when another command which requires one or more of the same

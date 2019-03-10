@@ -8,18 +8,19 @@
 package frc.team670.robot;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team670.robot.commands.drive.vision.VisionPurePursuitWithPivot;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangCoprocessor;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.Arm;
-import frc.team670.robot.subsystems.Arm.PlaceGrabState;
+import frc.team670.robot.subsystems.Arm.HeldItem;
 import frc.team670.robot.subsystems.Claw;
 import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.subsystems.Intake;
@@ -40,15 +41,15 @@ public class Robot extends TimedRobot {
   public static OI oi;
   public static MustangSensors sensors = new MustangSensors();
   public static MustangCoprocessor coprocessor = new MustangCoprocessor();
-  public static DriveBase driveBase;// = new DriveBase();
-  public static MustangLEDs_2019 leds;//= new MustangLEDs_2019();
+  public static DriveBase driveBase = new DriveBase();
+  public static MustangLEDs_2019 leds = new MustangLEDs_2019();
 
-  private static Elbow elbow;// = new Elbow();
-  private static Wrist wrist;// = new Wrist();
-  private static Extension extension;// = new Extension();
-  public static Intake intake;// = new Intake();
-  public static Claw claw ;//= new Claw();
-  public static Arm arm;// = new Arm(elbow, wrist, extension, intake, claw);
+  private static Elbow elbow = new Elbow();
+  private static Wrist wrist = new Wrist();
+  private static Extension extension = new Extension();
+  public static Intake intake = new Intake();
+  public static Claw claw= new Claw();
+  public static Arm arm = new Arm(elbow, wrist, extension, intake, claw);
 
   private Notifier updateArbitraryFeedForwards;
 
@@ -74,44 +75,41 @@ public class Robot extends TimedRobot {
 
     oi = new OI();
 
-    // try
-    // {
-    //     Logger.CustomLogger.setup();
-    // }
-    // catch (Throwable e) { Logger.logException(e);}
+    try
+    {
+        Logger.CustomLogger.setup();
+    }
+    catch (Throwable e) { Logger.logException(e);}
     
-    // Logger.consoleLog();
+    Logger.consoleLog();
 
-    // SmartDashboard.putData("Auto mode", auton_chooser);
-    // Logger.consoleLog();
-    // System.out.println("Robot init");
+    SmartDashboard.putData("Auto mode", auton_chooser);
+    Logger.consoleLog();
+    System.out.println("Robot init");
 
-    // leds.socketSetup(5801);
-    // System.out.println("LED Setup Run");
-    // //leds.socketSetup(RobotConstants.LED_PORT);    
+    leds.socketSetup(RobotConstants.LED_PORT);    
+    System.out.println("LED Setup Run");
 
-    // // autonomousCommand = oi.getSelectedAutonCommand();
-    // leds.setStillDrive(true);
+    // autonomousCommand = oi.getSelectedAutonCommand();
+    leds.setStillDrive(true);
 
-    // elbow.stop();
-    // wrist.stop();
-    // extension.stop();
+    elbow.stop();
+    wrist.stop();
+    extension.stop();
 
-    // // operatorControl = new ControlOperatorController(oi.getOperatorController());
-    // updateArbitraryFeedForwards = new Notifier(new Runnable() {
-    //   public void run() {
-    //     wrist.updateArbitraryFeedForward();
-    //     elbow.updateArbitraryFeedForward();
-    //     extension.updateArbitraryFeedForward();
-    //     intake.updateArbitraryFeedForward();
-    //   }
-    // });
+    // operatorControl = new ControlOperatorController(oi.getOperatorController());
+    updateArbitraryFeedForwards = new Notifier(new Runnable() {
+      public void run() {
+        wrist.updateArbitraryFeedForward();
+        elbow.updateArbitraryFeedForward();
+        extension.updateArbitraryFeedForward();
+        intake.updateArbitraryFeedForward();
+      }
+    });
 
-    // updateArbitraryFeedForwards.startPeriodic(0.01);
+    updateArbitraryFeedForwards.startPeriodic(0.01);
 
     SmartDashboard.putNumberArray("reflect_tape_vision_data", new double[]{RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE});
-
-    // autonomousCommand = new MeasureTrackwidth();
     
     SmartDashboard.putString("vision-camera", "front");
     SmartDashboard.putString("vision-enabled", "disabled");
@@ -128,28 +126,28 @@ public class Robot extends TimedRobot {
    */  
  @Override
   public void robotPeriodic() {
-    // SmartDashboard.putNumber("gyro", 0);//(int) sensors.getAngle() % 360);
-    // SmartDashboard.putString("current-command", Scheduler.getInstance().getName());
-    // SmartDashboard.putString("current-arm-state", "");//Arm.getCurrentState().toString());
-    // SmartDashboard.putNumber("intake-angle", 0);//intake.getAngleInDegrees());
-    // SmartDashboard.putNumber("elbow-angle", 0);//elbow.getAngleInDegrees());
-    // SmartDashboard.putNumber("wrist-angle", 0);//wrist.getAngleInDegrees());
-    // SmartDashboard.putBoolean("intake-ir-sensor", true);//sensors.getIntakeIROutput());
-    // SmartDashboard.putNumber("extension-actual-length" , 0);//extension.getLengthInches());
-    // SmartDashboard.putNumber("arm-extension" , 0);//extension.getLengthInches() / Extension.EXTENSION_OUT_IN_INCHES);
-    // SmartDashboard.putNumber("Actual Extension" , 0);// extension.getLengthInches());
-    // SmartDashboard.putBoolean("drive-reversed-status", true);// XboxRocketLeagueDrive.isDriveReversed());
-    // if (arm.getHeldItem().equals(HeldItem.HATCH)) {
-    //   SmartDashboard.putString("claw-status", "Hatch");
-    // } else if (arm.getHeldItem().equals(HeldItem.BALL)) {
-    //   SmartDashboard.putString("claw-status", "Ball");
-    // } else if (arm.getHeldItem().equals(HeldItem.NONE)) {
-    //   SmartDashboard.putString("claw-status", "None");
-    // } else if (claw.isOpen()) {
-    //   SmartDashboard.putString("claw-status", "open");
-    // } else if (!claw.isOpen()) {
-    //   SmartDashboard.putString("claw-status", "close");
-    // }
+    SmartDashboard.putNumber("gyro", 0);//(int) sensors.getAngle() % 360);
+    SmartDashboard.putString("current-command", Scheduler.getInstance().getName());
+    SmartDashboard.putString("current-arm-state", "");//Arm.getCurrentState().toString());
+    SmartDashboard.putNumber("intake-angle", 0);//intake.getAngleInDegrees());
+    SmartDashboard.putNumber("elbow-angle", 0);//elbow.getAngleInDegrees());
+    SmartDashboard.putNumber("wrist-angle", 0);//wrist.getAngleInDegrees());
+    SmartDashboard.putBoolean("intake-ir-sensor", true);//sensors.getIntakeIROutput());
+    SmartDashboard.putNumber("extension-actual-length" , 0);//extension.getLengthInches());
+    SmartDashboard.putNumber("arm-extension" , 0);//extension.getLengthInches() / Extension.EXTENSION_OUT_IN_INCHES);
+    SmartDashboard.putNumber("Actual Extension" , 0);// extension.getLengthInches());
+    SmartDashboard.putBoolean("drive-reversed-status", true);// XboxRocketLeagueDrive.isDriveReversed());
+    if (arm.getHeldItem().equals(HeldItem.HATCH)) {
+      SmartDashboard.putString("claw-status", "Hatch");
+    } else if (arm.getHeldItem().equals(HeldItem.BALL)) {
+      SmartDashboard.putString("claw-status", "Ball");
+    } else if (arm.getHeldItem().equals(HeldItem.NONE)) {
+      SmartDashboard.putString("claw-status", "None");
+    } else if (claw.isOpen()) {
+      SmartDashboard.putString("claw-status", "open");
+    } else if (!claw.isOpen()) {
+      SmartDashboard.putString("claw-status", "close");
+    }
 
 
     SmartDashboard.putNumber("Angle", sensors.getAngle());
@@ -159,14 +157,13 @@ public class Robot extends TimedRobot {
 
     // SmartDashboard.putNumber("Arbitrary Feedforward Measurement", MeasureArbitraryFeedforward.output);
 
-    // SmartDashboard.putString("Held Item", arm.getHeldItem().toString());
 
     // elbow.sendDataToDashboard();
     // extension.sendDataToDashboard();
     // wrist.sendDataToDashboard();
     // intake.sendDataToDashboard();
     sensors.sendUltrasonicDataToDashboard();
-    // driveBase.sendDIOEncoderDataToDashboard();
+    driveBase.sendDIOEncoderDataToDashboard();
 
   }
   /**
@@ -179,9 +176,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("robot-state", "disabledInit()");
     Logger.consoleLog("Robot Disabled");
     // autonomousCommand = oi.getSelectedAutonCommand();
-    // driveBase.initCoastMode();
-    // intake.stop();
-    // intake.stop();
+    driveBase.initCoastMode();
+    intake.stop();
   }
 
   @Override
@@ -204,38 +200,27 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
-    // if(DriverStation.getInstance().getAlliance().equals(Alliance.Red)) {
-    //   leds.changeAlliance(false);
-    // } else if (DriverStation.getInstance().getAlliance().equals(Alliance.Blue)) {
-    //   leds.changeAlliance(true);
-    // } else {
-    //   leds.changeAlliance(true);
-    // }
-    // leds.setForwardData(true);
+    if(DriverStation.getInstance().getAlliance().equals(Alliance.Red)) {
+      leds.changeAlliance(false);
+    } else if (DriverStation.getInstance().getAlliance().equals(Alliance.Blue)) {
+      leds.changeAlliance(true);
+    } else {
+      leds.changeAlliance(true);
+    }
+    leds.setForwardData(true);
 
-    // sensors.resetNavX(); // Reset NavX completely, zero the field centric based on how robot faces from start of game.
-    // driveBase.initBrakeMode();
+    sensors.resetNavX(); // Reset NavX completely, zero the field centric based on how robot faces from start of game.
+    driveBase.initBrakeMode();
 
-    // Logger.consoleLog("Auton Started");
-    // SmartDashboard.putString("robot-state", "autonomousPeriodic()");
+    Logger.consoleLog("Auton Started");
+    SmartDashboard.putString("robot-state", "autonomousPeriodic()");
 
     // // Scheduler.getInstance().add(new MoveExtensionBackUntilHitsLimitSwitch(extension));
-    // // arm.setCoastMode();
+    arm.setCoastMode();
 
-    // if (autonomousCommand != null) {
-    //   autonomousCommand.start();
-    // }
-
-    // Scheduler.getInstance().add(new VisionPurePursuitWithPivot(driveBase, coprocessor, sensors, 20, true, true));
-
-      PlaceGrabState placeGrab = null;
-    
-        double distanceFromTarget = 20; //placeGrab.getDistanceFromTarget();
-        boolean isReversed = true; //!placeGrab.getIsFront();
-        boolean isLow = true;// placeGrab.getIsLowTarget();
-
-        SmartDashboard.putString("vision-status", "");
-        Scheduler.getInstance().add(new VisionPurePursuitWithPivot(Robot.driveBase, Robot.coprocessor, Robot.sensors, distanceFromTarget, isReversed, isLow));
+    if (autonomousCommand != null) {
+      autonomousCommand.start();
+    }
 
     // if (operatorControl != null) {
     //   operatorControl.start();
@@ -253,8 +238,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     SmartDashboard.putString("robot-state", "teleopPeriodic()");
-    //leds.setForwardData(true);
-    //driveBase.initBrakeMode();
+    leds.setForwardData(true);
+    driveBase.initBrakeMode();
 
     Logger.consoleLog("Teleop Started");
     // This makes sure that the autonomous stops running when

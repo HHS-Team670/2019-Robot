@@ -38,7 +38,7 @@ public class CollectVisionData extends Command {
 
     @Override
     protected void initialize() {
-       // coprocessor.turnOnBackLedRing();
+       coprocessor.turnOnBackLedRing();
         coprocessor.setTargetHeight(lowTarget);
         coprocessor.setCamera(isReversed);
         SmartDashboard.putNumberArray("reflect_tape_vision_data", new double[]{RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE}); // Clears vision data so we don't use old data accidentally
@@ -56,12 +56,11 @@ public class CollectVisionData extends Command {
     protected boolean isFinished() {
         long time = System.currentTimeMillis();
         return (!MathUtils.doublesEqual(SmartDashboard.getNumberArray("reflect_tape_vision_data", new double[]{RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE})[2], RobotConstants.VISION_ERROR_CODE) && time > startTime + 100  || time > startTime + MAX_TIME_TO_RUN);
-        // return time > startTime + MAX_TIME_TO_RUN;
     }
 
     @Override
     protected void end() {
-        //coprocessor.turnOffBackLedRing();
+        coprocessor.turnOffBackLedRing();
         System.out.println("Time spend collecting data: " + (System.currentTimeMillis() - startTime));
         SmartDashboard.putString("vision-enabled", "disabled");
     }
