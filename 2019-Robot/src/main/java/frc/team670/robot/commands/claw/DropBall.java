@@ -33,7 +33,6 @@ public class DropBall extends Command {
   @Override
   protected void initialize() {
     SmartDashboard.putString("current-command", "DropBall");
-    claw.openClaw();
     claw.push();
     Logger.consoleLog();
   }
@@ -50,6 +49,7 @@ public class DropBall extends Command {
 
   @Override
   protected void end() {
+    claw.openClaw();
     arm.setHeldItem(HeldItem.NONE);
     super.end();
   }

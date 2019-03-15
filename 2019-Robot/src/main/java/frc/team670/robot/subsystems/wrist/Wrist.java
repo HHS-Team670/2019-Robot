@@ -35,7 +35,7 @@ public class Wrist extends BaseWrist {
   private static final double OPEN_ARBITRARY_FEEDFORWARD = 0.07; // 0.065
   private static final double CLOSED_ARBITRARY_FEEDFORWARD = 0.075; // 0.075
   private static final double ARBITRARY_FEEDFORWARD_BALL = 0.145; // 0.145
-  private static final double ARBITRARY_FEEDFORWARD_HATCH = 0.27; // 0.245
+  private static final double ARBITRARY_FEEDFORWARD_HATCH = 0.4; // 0.245
 
   private static final int OFFSET_FROM_ENCODER_ZERO = 3615;
   private static final int WRIST_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 100;

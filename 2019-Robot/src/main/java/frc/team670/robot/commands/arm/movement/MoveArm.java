@@ -27,6 +27,8 @@ public class MoveArm extends InstantCommand {
     this.destination = destination;
     this.arm = arm;
     SmartDashboard.putString("current-command", "MoveArm");
+    SmartDashboard.putString("armstate-destination", destination.toString());
+    System.out.println("...............moving to " + destination.toString());
     SmartDashboard.putString("destination-elbow-angle", destination.getElbowAngle()+"");
     SmartDashboard.putNumber("destination-extension-length", destination.getExtensionLength());
 

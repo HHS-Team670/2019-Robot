@@ -118,7 +118,7 @@ public class VisionPurePursuitV2 extends Command {
         straightDistance = straightDistance - offset;
         if (straightDistance < 0) {
             System.out.println("Too close to target!");
-            this.cancel();
+            // this.cancel();
             SmartDashboard.putString("vision-status", "error");
             return;
         }

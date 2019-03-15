@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team670.robot.commands.arm.zero.SafelyResetExtension;
 import frc.team670.robot.commands.drive.teleop.XboxRocketLeagueDrive;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangCoprocessor;
@@ -158,12 +159,12 @@ public class Robot extends TimedRobot {
     // SmartDashboard.putNumber("Arbitrary Feedforward Measurement", MeasureArbitraryFeedforward.output);
 
 
-    // elbow.sendDataToDashboard();
+    elbow.sendDataToDashboard();
     // extension.sendDataToDashboard();
     // wrist.sendDataToDashboard();
     // intake.sendDataToDashboard();
-    // sensors.sendUltrasonicDataToDashboard();
-    // driveBase.sendDIOEncoderDataToDashboard();
+    sensors.sendUltrasonicDataToDashboard();
+    driveBase.sendEncoderDataToDashboard();
 
   }
   /**
@@ -176,8 +177,12 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("robot-state", "disabledPeriodic()");
     Logger.consoleLog("Robot Disabled");
     // autonomousCommand = oi.getSelectedAutonCommand();
+    leds.setStillDrive(true);
     driveBase.initCoastMode();
     intake.stop();
+    elbow.stop();
+    extension.stop();
+    wrist.stop();
   }
 
   @Override
@@ -211,6 +216,7 @@ public class Robot extends TimedRobot {
       leds.changeAlliance(true);
     }
     leds.setForwardData(true);
+    claw.openClaw();
 
     sensors.resetNavX(); // Reset NavX completely, zero the field centric based on how robot faces from start of game.
     driveBase.initBrakeMode();
@@ -218,7 +224,7 @@ public class Robot extends TimedRobot {
     Logger.consoleLog("Auton Started");
     SmartDashboard.putString("robot-state", "autonomousPeriodic()");
 
-    // // Scheduler.getInstance().add(new MoveExtensionBackUntilHitsLimitSwitch(extension));
+    Scheduler.getInstance().add(new SafelyResetExtension());
     arm.setCoastMode();
 
     if (autonomousCommand != null) {

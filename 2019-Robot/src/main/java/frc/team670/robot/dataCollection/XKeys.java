@@ -36,11 +36,11 @@ import frc.team670.robot.subsystems.Arm.ArmState;
 import frc.team670.robot.subsystems.Arm.GrabBallLoadingStationBack;
 import frc.team670.robot.subsystems.Arm.GrabBallLoadingStationForward;
 import frc.team670.robot.subsystems.Arm.LegalState;
-import frc.team670.robot.subsystems.Arm.LowHatchBack;
-import frc.team670.robot.subsystems.Arm.LowHatchForward;
 import frc.team670.robot.subsystems.Arm.PlaceBallCargoBack;
 import frc.team670.robot.subsystems.Arm.PlaceBallCargoForward;
 import frc.team670.robot.subsystems.Arm.PlaceGrabState;
+import frc.team670.robot.subsystems.Arm.ReadyLowHatchBack;
+import frc.team670.robot.subsystems.Arm.ReadyLowHatchForward;
 import frc.team670.robot.subsystems.Arm.ReadyPlaceBallRocketLowBack;
 import frc.team670.robot.subsystems.Arm.ReadyPlaceBallRocketLowForward;
 import frc.team670.robot.subsystems.Arm.ReadyPlaceBallRocketMiddleBack;
@@ -67,6 +67,14 @@ public class XKeys {
         SmartDashboard.putString("XKEYS", "XKeys constructor");
         instance = NetworkTableInstance.getDefault();
         table = instance.getTable("SmartDashboard");
+
+        table.addEntryListener((table2, key2, entry, value, flags) -> {
+            try {System.out.println("key pressed: " + value.getString());
+            Logger.consoleLog("key pressed: " + value.getString());
+            } catch (Exception e) {
+                
+            }
+        }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
 
         table.addEntryListener("auton-sequence", (table2, key2, entry, value, flags) -> {
             if (value.getType() != NetworkTableType.kStringArray) SmartDashboard.putString("auto-sequence", "not string array");
@@ -222,10 +230,10 @@ public class XKeys {
         else if (targetState instanceof GrabBallLoadingStationBack) {
             possiblePlaceGrabState = Arm.getArmState(LegalState.GRAB_BALL_LOADINGSTATION_BACK);
         }
-        else if (targetState instanceof LowHatchForward) {
+        else if (targetState instanceof ReadyLowHatchForward) {
             possiblePlaceGrabState = Arm.getArmState(LegalState.LOW_HATCH_FORWARD);
         }
-        else if (targetState instanceof LowHatchBack) {
+        else if (targetState instanceof ReadyLowHatchBack) {
             possiblePlaceGrabState = Arm.getArmState(LegalState.LOW_HATCH_BACK);
         }
         else if (targetState instanceof PlaceBallCargoForward) {
@@ -259,6 +267,7 @@ public class XKeys {
         try {
             placeGrab = (PlaceGrabState) possiblePlaceGrabState;
         } catch (ClassCastException ex) {
+            System.out.println("Not in a Place/Grab State. State: " + placeGrab.getClass().getName());
             return;
         }
 

@@ -79,7 +79,8 @@ public class PlaceOrGrab extends CommandGroup {
       addSequential(new PickupBall(Robot.claw, Robot.arm));
     } else if (state.equals(Arm.getArmState(LegalState.GRAB_BALL_INTAKE))) { // check this
       if (!Robot.claw.isOpen()) addSequential(new OpenClaw(Robot.claw));
-      addSequential(new AutoPickupCargo(Robot.arm, Robot.intake, Robot.claw, Robot.sensors));
+      addSequential(new PickupBall(Robot.claw, Robot.arm
+      ));
     } else if (state.equals(Arm.getArmState(LegalState.GRAB_BALL_LOADINGSTATION_BACK))) { // figure this out
       if (!Robot.claw.isOpen()) addSequential(new OpenClaw(Robot.claw));
       moveArm = ArmPathGenerator.getPath(Arm.getArmState(LegalState.GRAB_BALL_LOADINGSTATION_BACK), Robot.arm);

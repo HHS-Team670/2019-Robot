@@ -33,7 +33,7 @@ public class MoveExtensionBackUntilHitsLimitSwitch extends Command {
 
   protected void execute() {
     double value = extension.getArbitraryFeedForwardAngleMultiplier() * Extension.ARBITRARY_FEEDFORWARD_CONSTANT;
-    extension.moveByPercentOutput(-0.03 + value);
+    extension.moveByPercentOutput(-0.08 + value);
   }
 
   @Override

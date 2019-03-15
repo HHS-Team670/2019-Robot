@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.commands.cameras.FlipDriverCameraMode;
+import frc.team670.robot.commands.claw.CloseClaw;
+import frc.team670.robot.commands.claw.OpenClaw;
 import frc.team670.robot.commands.drive.teleop.FlipDriveAndCamera;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.dataCollection.XKeys;
@@ -37,7 +39,7 @@ public class OI {
   private JoystickButton toggleReverseDrive, toggleDriverCameraMode;
   private JoystickButton armToNeutral;  
 
-  // private JoystickButton dropBall, grabBall;
+  private JoystickButton dropBall, grabBall;
 
   public OI() {
     driverController = new MustangController(RobotMap.DRIVER_CONTROLLER_PORT);
@@ -56,10 +58,11 @@ public class OI {
       }
     );
 
+    // FOR TESTING OPENING/CLOSING the claw
     // dropBall = new JoystickButton(driverController, XboxButtons.Y);
-    // dropBall.whenPressed(new DropBall(Robot.claw, Robot.arm));
+    // dropBall.whenPressed(new OpenClaw(Robot.claw));
     // grabBall = new JoystickButton(driverController, XboxButtons.X);
-    // grabBall.whenPressed(new PickupBall(Robot.claw, Robot.arm));
+    // grabBall.whenPressed(new CloseClaw(Robot.claw));
 
     // dropBall = new JoystickButton(driverController, XboxButtons.B);
     // dropBall.whenPressed(new InstantCommand() {

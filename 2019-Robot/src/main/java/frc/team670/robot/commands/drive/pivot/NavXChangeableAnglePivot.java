@@ -52,12 +52,14 @@ public class NavXChangeableAnglePivot extends Command {
     System.out.println(sensors.getYawDouble());
     onTargetCount = 0;
     if(sensors.isNavXNull()){
-      cancel();
+      // cancel();
+      finalAngle = startAngle;
       return;
     }
 
     if(angle.getValue() < 3) {
-      cancel();
+      // cancel();
+      finalAngle = startAngle;
       return;
     }
 

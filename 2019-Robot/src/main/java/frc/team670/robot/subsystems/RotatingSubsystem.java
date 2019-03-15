@@ -99,7 +99,7 @@ public abstract class RotatingSubsystem extends Subsystem implements TunableSubs
     public synchronized void stop() {
         clearSetpoint();
         rotator.set(ControlMode.PercentOutput, 0);
-        System.out.println("Intake Put in Percent Output");
+        System.out.println("Put in Percent Output");
     }
 
     /**

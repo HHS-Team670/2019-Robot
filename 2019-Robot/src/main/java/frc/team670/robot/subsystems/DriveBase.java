@@ -141,8 +141,8 @@ public class DriveBase extends Subsystem {
       // rightDIOEncoder.setReverseDirection(true);
     }
 
-    leftMustangEncoder = new MustangDriveBaseEncoder(leftDIOEncoder, left1.getEncoder(), false);
-    rightMustangEncoder = new MustangDriveBaseEncoder(rightDIOEncoder, right1.getEncoder(), true);
+    leftMustangEncoder = new MustangDriveBaseEncoder(null, left1.getEncoder(), false);
+    rightMustangEncoder = new MustangDriveBaseEncoder(null, right1.getEncoder(), true);
 
   }
 
