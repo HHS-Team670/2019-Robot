@@ -67,7 +67,7 @@ function createWindow() {
         client.removeListener(clientDataListener);
 
         // Add new listener with immediate callback
-        client.addListener(clientDataListener, true);
+        // client.addListener(clientDataListener, true);
 
         // Send connection message to the window if if the message is ready
         if (connectedFunc) connectedFunc();
@@ -79,10 +79,11 @@ function createWindow() {
         console.log(`Trying to connect to ${address}` + (port ? ':' + port : ''));
         console.log();
         let callback = (connected, err) => {
-            console.log('Sending status...');
-            console.log('error: ' + err);
+            // console.log('Sending status...');
+            // console.log('error: ' + err);
             mainWindow.webContents.send('connected', connected);
         };
+        console.log("address: " + address);
         if (port) {
             client.start(callback, address, port);
         } else {
@@ -116,7 +117,6 @@ function createWindow() {
     mainWindow.once('ready-to-show', () => {
         console.log('main window is ready to be shown');
         window = mainWindow;
-        console.log(window);
         mainWindow.webContents.reload();
         mainWindow.show();
     });
