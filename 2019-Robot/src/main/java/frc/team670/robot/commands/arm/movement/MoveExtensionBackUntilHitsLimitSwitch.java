@@ -22,7 +22,8 @@ public class MoveExtensionBackUntilHitsLimitSwitch extends Command {
   public MoveExtensionBackUntilHitsLimitSwitch(BaseExtension extension) {
     super(extension);
     this.extension = extension;
-    setInterruptible(false);
+    setInterruptible(true);
+    setTimeout(5);
   }
 
   // Called once when the command executes

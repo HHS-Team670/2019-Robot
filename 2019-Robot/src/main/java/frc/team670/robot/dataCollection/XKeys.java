@@ -271,7 +271,7 @@ public class XKeys {
             return;
         }
 
-        double distanceFromTarget = placeGrab.getDistanceFromTarget();
+        double distanceFromTarget = Math.abs(placeGrab.getDistanceFromTarget());
         boolean isReversed = !placeGrab.getIsFront();
         boolean isLow = placeGrab.getIsLowTarget();
 

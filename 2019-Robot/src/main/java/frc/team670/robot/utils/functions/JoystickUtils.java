@@ -14,10 +14,10 @@ public class JoystickUtils{
    * @return Smoothed out joystick input
    */
   public static double smoothInput(double joystickVal){
-    if(joystickVal > 0)
-      return joystickVal * joystickVal;
-    else
-      return joystickVal * joystickVal * -1;
+    // if(joystickVal > 0)
+    //   return joystickVal * joystickVal * joystickVal;
+    // else
+      return joystickVal * joystickVal * joystickVal;
   }
 
 }

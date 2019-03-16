@@ -98,7 +98,7 @@ public class VisionPurePursuitV2 extends Command {
         ultrasonicDistance *= Math.cos(Math.toRadians(horizontalAngle)); // use cosine to get the straight ultrasonic
                                                                          // distance not the diagonal one
     
-        double visionDistance = coprocessor.getDistanceToWallTarget();
+        double visionDistance = RobotConstants.VISION_ERROR_CODE;//coprocessor.getDistanceToWallTarget();
     
         double straightDistance = visionDistance; // Uses vision distance as a default
         if(ultrasonicDistance < 150 && ultrasonicDistance > 5) {
@@ -161,7 +161,7 @@ public class VisionPurePursuitV2 extends Command {
         Path path = generator.generatePath(isReversed);
     
         finalAngle.setValue(horizontalAngle);
-        purePursuitTracker.setPath(path, LOOKAHEAD_DISTANCE_AT_66_INCHES * straightDistance/66);
+        purePursuitTracker.setPath(path, straightDistance*1/3);
         Robot.leds.setVisionData(true);
 
         driveBase.initBrakeMode();
@@ -182,7 +182,7 @@ public class VisionPurePursuitV2 extends Command {
     
         driveBase.tankDrive(drivePower.getLeft()/60, drivePower.getRight()/60); //Returns in inches/s
         if(executeCount % 5 == 0){
-            Logger.consoleLog("Powers (inches): leftPower: %s, rightPower: %s, Pose: %s", drivePower.getLeft(), drivePower.getRight(), poseEstimator.getPose());
+            // Logger.consoleLog("Powers (inches): leftPower: %s, rightPower: %s, Pose: %s", drivePower.getLeft(), drivePower.getRight(), poseEstimator.getPose());
         }
         executeCount++;
     }

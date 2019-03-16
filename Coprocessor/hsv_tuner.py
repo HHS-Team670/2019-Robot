@@ -14,7 +14,7 @@ def mouse_click_handler(event, x, y, flags, params):
         cv2.putText(input_image, "HSV value of point ({}, {}) is ({}, {}, {})".format(norm_x, norm_y, h, s, v), (10, 535), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
 
 # Read input image from file
-input_image = cv2.imread("test.jpg") #relative or absolute file path
+input_image = cv2.imread("frame_1.jpg") #relative or absolute file path
 while True:
     cv2.imshow("HSV", input_image)
 

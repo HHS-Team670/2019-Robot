@@ -18,6 +18,6 @@ public class SafelyResetExtension extends CommandGroup {
     requires(Robot.arm.getElbow());
     addSequential(new MoveElbow(Robot.arm.getElbow(), 50.0));
     addSequential(new MoveExtensionBackUntilHitsLimitSwitch(Robot.arm.getExtension()));
-
+    // ADD IN A  MOVE TO NEUTRAL
   }
 }
