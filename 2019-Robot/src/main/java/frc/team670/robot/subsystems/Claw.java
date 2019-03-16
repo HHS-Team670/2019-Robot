@@ -34,7 +34,7 @@ public class Claw extends Subsystem {
    */
   public static final double LENGTH_IN_INCHES = 12;
 
-  private static final boolean START_HATCH = true;
+  private static final boolean START_HATCH = false;
 
   private Compressor compressor;
   private Solenoid sol0, sol1, push;
@@ -90,7 +90,7 @@ public class Claw extends Subsystem {
    * Closes the claw.
    */
   public void closeClaw() {
-    changeSolenoid(!START_HATCH);
+    changeSolenoid(START_HATCH);
     System.out.println("Close Claw Called");
   }
 
@@ -102,7 +102,7 @@ public class Claw extends Subsystem {
    * Opens the claw.
    */
   public void openClaw() {
-    changeSolenoid(START_HATCH);
+    changeSolenoid(!START_HATCH);
     System.out.println("Open Claw Called");
   }
 

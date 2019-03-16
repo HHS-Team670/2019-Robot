@@ -38,11 +38,11 @@ public class MustangCoprocessor {
 
     private static final double BACK_CAMERA_HORIZONTAL_OFFSET = 8; //inches
     private static final double BACK_CAMERA_HEIGHT = 12.25;
-    private static final double BACK_CAMERA_VERTICAL_OFFSET_ANGLE = 28; //degrees
+    private static final double BACK_CAMERA_VERTICAL_OFFSET_ANGLE = 30; //degrees
 
     private static final double FRONT_CAMERA_HORIZONTAL_OFFSET = 11.875; //inches
     private static final double FRONT_CAMERA_HEIGHT = 11.125;
-    private static final double FRONT_CAMERA_VERTICAL_OFFSET_ANGLE = 27; //degrees
+    private static final double FRONT_CAMERA_VERTICAL_OFFSET_ANGLE = 30; //degrees
 
     private boolean backCamera; // true for back camera, false for front
     private boolean lowTarget; // true for low vision taget, false for high

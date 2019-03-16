@@ -98,7 +98,7 @@ public class VisionPurePursuitV2 extends Command {
         ultrasonicDistance *= Math.cos(Math.toRadians(horizontalAngle)); // use cosine to get the straight ultrasonic
                                                                          // distance not the diagonal one
     
-        double visionDistance = RobotConstants.VISION_ERROR_CODE;//coprocessor.getDistanceToWallTarget();
+        double visionDistance = coprocessor.getDistanceToWallTarget();
     
         double straightDistance = visionDistance; // Uses vision distance as a default
         if(ultrasonicDistance < 150 && ultrasonicDistance > 5) {

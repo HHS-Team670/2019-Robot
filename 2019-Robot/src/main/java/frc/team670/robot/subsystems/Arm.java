@@ -58,7 +58,7 @@ public class Arm {
     this.extension = extension;
     this.claw = claw;
 
-    heldItem = HeldItem.NONE; // TODO set this up to reflect starting state
+    heldItem = HeldItem.BALL; // TODO set this up to reflect starting state
 
     // State Setup
     states = new HashMap<LegalState, ArmState>();
@@ -520,7 +520,7 @@ public class Arm {
   } 
   public class ReadyLowHatchBack extends ArmState {
     private ReadyLowHatchBack(Arm arm, BaseIntake intake) {
-      super(-105.935, 21, 0, false, new ArmTransition[] { new CommonTransition(LegalState.READY_LOW_HATCH_BACK, LegalState.LOW_HATCH_BACK, arm, intake),
+      super(-107.935, 15, 0, false, new ArmTransition[] { new CommonTransition(LegalState.READY_LOW_HATCH_BACK, LegalState.LOW_HATCH_BACK, arm, intake),
         new CommonTransition(LegalState.READY_LOW_HATCH_BACK, LegalState.NEUTRAL, arm, intake),
         new CommonTransition(LegalState.READY_LOW_HATCH_BACK, LegalState.READY_GRAB_HATCH_GROUND_BACK, arm, intake), 
         new CommonTransition(LegalState.READY_LOW_HATCH_BACK, LegalState.GRAB_BALL_GROUND_BACK, arm, intake), 
@@ -534,7 +534,7 @@ public class Arm {
   }
   public class LowHatchBack extends PlaceGrabState {
     private LowHatchBack(Arm arm, BaseIntake intake) {
-      super(-106, 21, 0.03, false, new ArmTransition[] { new CommonTransition(LegalState.LOW_HATCH_BACK, LegalState.READY_LOW_HATCH_BACK, arm ,intake)}, false, 10.731, true);
+      super(-108, 15, 0.03, false, new ArmTransition[] { new CommonTransition(LegalState.LOW_HATCH_BACK, LegalState.READY_LOW_HATCH_BACK, arm ,intake)}, false, 10.731, true);
     }
   }
 

@@ -151,9 +151,9 @@ public class Robot extends TimedRobot {
       SmartDashboard.putString("claw-status", "close");
     }
 
-    // SmartDashboard.putNumber("Angle", sensors.getAngle());
+    SmartDashboard.putNumber("Yaw", sensors.getYawDouble());
     // SmartDashboard.putNumber("Phi", sensors.getAngleToTarget());
-    // SmartDashboard.putNumber("Horizontal Angle", coprocessor.getAngleToWallTarget());
+    SmartDashboard.putNumber("Horizontal Angle", coprocessor.getAngleToWallTarget());
     // SmartDashboard.putNumber("Depth", coprocessor.getDistanceToWallTarget());
 
     // SmartDashboard.putNumber("Arbitrary Feedforward Measurement", MeasureArbitraryFeedforward.output);
@@ -216,7 +216,6 @@ public class Robot extends TimedRobot {
       leds.changeAlliance(true);
     }
     leds.setForwardData(true);
-    claw.openClaw();
 
     sensors.resetNavX(); // Reset NavX completely, zero the field centric based on how robot faces from start of game.
     driveBase.initBrakeMode();
