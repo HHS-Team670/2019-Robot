@@ -250,21 +250,24 @@ body.login #login {
 }
 #v-crosshairs-left {
     border-left: 1px dotted white;
-    transform: translate(20vw, 17vh) rotate(10deg);
+    transform: translate(10vw, 17vh) rotate(-15deg);
     background-color: rgba(0, 0, 0, 0);
     height: 66vh;
+    display: none;
 }
 #v-crosshairs-right {
     border-left: 1px dotted white;
     transform: translate(50vw, 17vh) rotate(-5deg);
     background-color: rgba(0, 0, 0, 0);
     height: 66vh;
+    display: none;
 }
 #v-crosshairs-large {
     border-left: 1px dotted white;
     transform: translate(33vw, 0vh) rotate(-5deg);
     background-color: rgba(0, 0, 0, 0);
     height: 100vh;
+    display: none;
 }
 #back-indicator {
     position: absolute;

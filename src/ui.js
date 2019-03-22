@@ -5,6 +5,7 @@ document.getElementById('auton-chooser').style.display = "none";
 // initial camera settings
 var cameraMode = "double";
 var driveReversed = false;
+var allKeysPressed = new Array();
 
 // highlight the front camera since the robot will be facing forward at the start of the match
 document.getElementById('front-indicator').style.display = "inline";
@@ -45,11 +46,11 @@ NetworkTables.addKeyListener('/SmartDashboard/driver-camera-mode', (key, value) 
     document.getElementById('v-crosshairs-large').style.display = "inline";
     // show appropriate stream on the single camera
     if (driveReversed) {
-      document.getElementById('camera-stream-large').src = "http://10.6.70.26:8001/?action=stream";
-      document.getElementById('camera-stream-large').onerror = "this.src='http://10.6.70.26:8001/?action=stream'";
+      document.getElementById('camera-stream-large').src = "http://10.6.70.26:443/?action=stream";
+      document.getElementById('camera-stream-large').onerror = "this.src='http://10.6.70.26:443/?action=stream'";
     } else {
-      document.getElementById('camera-stream-large').src = "http://10.6.70.26:8000/?action=stream";
-      document.getElementById('camera-stream-large').onerror = "this.src='http://10.6.70.26:8000/?action=stream'";
+      document.getElementById('camera-stream-large').src = "http://10.6.70.26:80/?action=stream";
+      document.getElementById('camera-stream-large').onerror = "this.src='http://10.6.70.26:80/?action=stream'";
     }
   } else if (value === "double") {
     cameraMode = "double";
@@ -71,10 +72,10 @@ NetworkTables.addKeyListener('/SmartDashboard/driver-camera-mode', (key, value) 
     }
 
     // show the streams
-    document.getElementById('camera-stream-1').src = "http://10.6.70.26:8001/?action=stream";
-    document.getElementById('camera-stream-1').onerror = "this.src='http://10.6.70.26:8001/?action=stream'";
-    document.getElementById('camera-stream-2').src = "http://10.6.70.26:8000/?action=stream";
-    document.getElementById('camera-stream-2').onerror = "this.src='http://10.6.70.26:8000/?action=stream'";
+    document.getElementById('camera-stream-1').src = "http://10.6.70.26:443/?action=stream";
+    document.getElementById('camera-stream-1').onerror = "this.src='http://10.6.70.26:443/?action=stream'";
+    document.getElementById('camera-stream-2').src = "http://10.6.70.26:80/?action=stream";
+    document.getElementById('camera-stream-2').onerror = "this.src='http://10.6.70.26:80/?action=stream'";
   }
   NetworkTables.putValue("cameraMode", cameraMode);
 });
@@ -113,8 +114,13 @@ NetworkTables.addKeyListener('/SmartDashboard/current-arm-state', (key, value) =
   if (value != null) document.getElementById('current-arm-state').innerHTML = value.split("$")[1].split("@")[0];
 });
 
+NetworkTables.addGlobalListener((key, value) => {
+  console.log(key + ": " + value);
+})
+
 // updates the robot diagram based on the angle of the robot's elbow
 NetworkTables.addKeyListener('/SmartDashboard/elbow-angle', (key, value) => {
+  console.log("elbow: " + value);
   if (value == null) return;
   var angle = value;
   document.getElementById('claw').style = "transform: translate(" + (Math.sin(angle * Math.PI / 180) * (parseInt(document.getElementById('arm-extension').getAttribute('height')) + armLength)) + "px, " + (armLength - Math.sin((angle+90) * Math.PI / 180) * (parseInt(document.getElementById('arm-extension').getAttribute('height')) + armLength)) + "px)";
@@ -233,12 +239,12 @@ NetworkTables.addKeyListener('/SmartDashboard/drive-reversed', (key, value) => {
   // if currently using single camera mode display the correct stream on it
   if (cameraMode === "single") {
     if (value === true) {
-      document.getElementById('camera-stream-large').src = "http://10.6.70.26:8001/?action=stream";
-      document.getElementById('camera-stream-large').onerror = "this.src='http://10.6.70.26:8001/?action=stream'";
+      document.getElementById('camera-stream-large').src = "http://10.6.70.26:443/?action=stream";
+      document.getElementById('camera-stream-large').onerror = "this.src='http://10.6.70.26:443/?action=stream'";
       document.getElementById('v-crosshairs-large').style = "transform: translate(50vw, 0vh); rotate(10deg)";
     } else {
-      document.getElementById('camera-stream-large').src = "http://10.6.70.26:8000/?action=stream";
-      document.getElementById('camera-stream-large').onerror = "this.src='http://10.6.70.26:8000/?action=stream'";
+      document.getElementById('camera-stream-large').src = "http://10.6.70.26:80/?action=stream";
+      document.getElementById('camera-stream-large').onerror = "this.src='http://10.6.70.26:80/?action=stream'";
       document.getElementById('v-crosshairs-large').style = "transform: translate(50vw, 0vh); rotate(-10deg)";
     }
   } 
@@ -265,6 +271,9 @@ document.addEventListener("keyup", function(event) {
   allKeys += pressed;
   var result = allKeys[allKeys.length - 1];
   var nextTask = getFromMap(result);
+
+  console.log(nextTask);
+  allKeysPressed.push(nextTask);
 
   // make sure the key pressed is a valid action
   if (nextTask != null) {
@@ -303,7 +312,7 @@ function getFromMap(key) { // mapping is more aligned with arm position on robot
 
   if (key === "2") return "READY_LOW_HATCH_BACK";
   if (key === "i") return "READY_PLACE_BALL_ROCKET_LOW_BACK";
-  if (key === "l") return "READY_PLACE_BALL_ROCKET_LOW_FORWARD";
+  if (key === "8") return "READY_PLACE_BALL_ROCKET_LOW_FORWARD";
   if (key === "q") return "READY_LOW_HATCH_FORWARD";
 
   if (key === "d") return "READY_GRAB_HATCH_GROUND_BACK";
