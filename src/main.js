@@ -80,7 +80,6 @@ function createWindow() {
         console.log();
         let callback = (connected, err) => {
             console.log('Sending status...');
-            console.log('error: ' + err);
             mainWindow.webContents.send('connected', connected);
         };
         if (port) {
