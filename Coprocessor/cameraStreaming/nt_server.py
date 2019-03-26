@@ -29,8 +29,8 @@ def connectionListener(connected, info):
         notified[0] = True
         cond.notify()
 
-NetworkTables.initialize(server='10.6.70.2')
-#NetworkTables.initialize()
+#NetworkTables.initialize(server='10.6.70.2')
+NetworkTables.initialize()
 NetworkTables.addConnectionListener(connectionListener, immediateNotify=True)
 
 with cond:
@@ -44,7 +44,8 @@ VISION_ERROR_CODE = -9999
 
 #os.system('sudo python /home/pi/git/Mustang-Pi/cameraStreaming/watchdog.py "/home/pi/git/Mustang-Pi/cameraStreaming/mjpg_streamer_server.sh > /tmp/error_cams 2>&1" &')   
 
-os.system('sudo /home/pi/git/Coprocessor/cameraStreaming/mjpg_streamer_server.sh &')
+#os.system('sudo /home/pi/git/Coprocessor/cameraStreaming/mjpg_streamer_server.sh &')
+os.system('sudo /home/pi/git/Coprocessor/cameraStreaming/gstreamer_script.sh &')
 
 cam = '0'
 def valueChanged(table, key, value, isNew):
@@ -69,11 +70,16 @@ i = 0
 #sd.addEntryListener(valueChanged)
 
 while True:
+    sd.putValue('destination-elbow-angle', 45)
+    sd.putValue('elbow-angle', i)
+    
     sd.putString('vision-status', "none")
     if (int(os.popen('ls -l /dev/ | egrep video.$ | wc -l').read().replace('\n', '')) == 0):
         sd.putString('warnings', 'no cameras found')
         sd.putString('vision-status', str(VISION_ERROR_CODE))
     i = i + 1
+    if (i == 360):
+        i = 0
     time.sleep(1)
 #    if (os.system('grep "cleaning up resources" /tmp/error0') == 0):
 #       os.system('sudo kill $(ps -aef | grep 8000 | grep mjpg_streamer | grep sudo | awk "{print $2}"')
