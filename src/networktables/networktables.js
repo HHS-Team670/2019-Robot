@@ -1,6 +1,6 @@
 let ipc = require('electron').ipcRenderer;
 
-console.log('in networktables.js');
+console.log('in networktables.js')
 
 var NetworkTables =
     (() => {
