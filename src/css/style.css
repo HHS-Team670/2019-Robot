@@ -61,7 +61,7 @@ header {
     position: absolute;
     bottom: 25vh;
     left: 1.5vw;
-    width: 30vw;
+    width: 12vw;
     height: 50vh;
     object-fit: fill;
     overflow: hidden;
@@ -72,8 +72,8 @@ header {
     padding: 0;
     position: absolute;
     bottom: 25vh;
-    left: 35vw;
-    width: 30vw;
+    left: 12vw;
+    width: 12vw;
     height: 50vh;
     object-fit: fill;
     overflow: hidden;
@@ -156,8 +156,8 @@ body.login #login {
 }
 #robot-diagram {
     position: absolute;
-    transform: translate(75vw, 5vh);
-    width: 25vw;
+    transform: translate(25vw, 5vh);
+    width: 75vw;
     height: 55vh;
 }
 #claw {

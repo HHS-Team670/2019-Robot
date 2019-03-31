@@ -7,9 +7,12 @@ var cameraMode = "double";
 var driveReversed = false;
 var allKeysPressed = new Array();
 
-// highlight the front camera since the robot will be facing forward at the start of the match
-document.getElementById('front-indicator').style.display = "inline";
+document.getElementById('camera1').style.display = "none";
+document.getElementById('camera2').style.display = "none";
 document.getElementById('back-indicator').style.display = "none";
+document.getElementById('front-indicator').style.display = "none";
+document.getElementById('v-crosshairs-left').style.display = "none";
+document.getElementById('v-crosshairs-right').style.display = "none";
 
 // sets default positions for robot diagram
 var angle = 0;
@@ -280,7 +283,7 @@ document.addEventListener("keyup", function(event) {
     if (nextTask.toUpperCase() === nextTask) NetworkTables.putValue('/SmartDashboard/xkeys-armstates', nextTask);
     else if (nextTask.includes("cancel")) NetworkTables.putValue('/SmartDashboard/xkeys-cancel', nextTask);
     else if (nextTask === "place" || nextTask === "grab" || nextTask === "drop_held_item" || nextTask === "toggle_held_item") NetworkTables.putValue('/SmartDashboard/xkeys-placing', nextTask);
-    else if (nextTask.includes("toggle_intake") || nextTask.includes("run_intake") || nextTask.includes("bring_intake_in")) NetworkTables.putValue('/SmartDashboard/xkeys-intake', nextTask);
+    else if (nextTask.includes("toggle_intake") || nextTask.includes("run_intake") || nextTask.includes("bring_intake_in") || nextTask.includes("bring_intake_out")) NetworkTables.putValue('/SmartDashboard/xkeys-intake', nextTask);
     else if (nextTask === "auto_pickup_ball") NetworkTables.putValue('/SmartDashboard/xkeys-autopickup', nextTask);
     else if (nextTask.includes("vision")) NetworkTables.putValue('/SmartDashboard/xkeys-visiondrive', nextTask);
     else if (nextTask.includes("claw")) NetworkTables.putValue('/SmartDashboard/xkeys-claw', nextTask);
@@ -328,6 +331,7 @@ function getFromMap(key) { // mapping is more aligned with arm position on robot
   if (key === "5") return "toggle_claw";
   if (key === "6") return "reset_extension";
   if (key === "7") return "bring_intake_in";
+  if (key === "9") return "bring_intake_out";
 
   if (key === "0") return "vision_drive";
 
