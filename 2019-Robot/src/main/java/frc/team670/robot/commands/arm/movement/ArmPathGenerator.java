@@ -89,7 +89,7 @@ public class ArmPathGenerator {
 
     // movements.addSequential(new RumbleOperatorController(Robot.oi, 0.5, 0.25));
 
-    // System.out.println("transitions: " + transitions.size());
+    System.out.println("transitions: " + transitions.toString());
 
     return movements;
   }

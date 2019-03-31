@@ -27,6 +27,10 @@ public abstract class BaseIntake extends RotatingSubsystem {
   public abstract Point2D.Double getMotionMagicDestinationCoordinates();
 
   public abstract void setRotatorNeutralMode(NeutralMode mode);
+
+  public void runIntakeUsingCurrent(int current) {
+    
+  }
   
   /** 
    * Returns the x, y coordinates of the top of the intake
@@ -43,6 +47,9 @@ public abstract class BaseIntake extends RotatingSubsystem {
 
   public boolean isDeployed() {
     return (getAngleInDegrees() > 0);
+  }
+
+  public void stopRollers() {
   }
 
 }

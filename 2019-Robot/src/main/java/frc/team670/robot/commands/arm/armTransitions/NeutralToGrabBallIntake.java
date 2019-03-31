@@ -49,7 +49,9 @@ public class NeutralToGrabBallIntake extends ArmTransition {
 
   @Override
   public void initTransition() {
+    addParallel(new MoveExtension(extension, Arm.getStates().get(LegalState.GRAB_BALL_INTAKE).getExtensionLength()));
     addSequential(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_DEPLOYED, intake));
+    addSequential(new WaitForChildren());
     if(!arm.getClaw().isOpen()){
       addParallel(new OpenClaw(arm.getClaw()));
     }

@@ -43,6 +43,12 @@ public class Intake extends BaseIntake {
 
   private static final int TICKS_PER_ROTATION = 4096;
 
+  public static final int INTAKE_RUNNING_CURRENT = 8;
+
+  // Roller
+  private static final int ROLLER_CURRENT_SLOT = 1;
+  private static final double ROLLER_CURR_P = 0.2, ROLLER_CURR_I = 0.0, ROLLER_CURR_D = 0.0;
+
   private TalonSRX roller;
   
   private Point2D.Double intakeCoord;
@@ -57,6 +63,9 @@ public class Intake extends BaseIntake {
 
     roller.setInverted(true);
     roller.setNeutralMode(NeutralMode.Coast);
+    roller.config_kP(ROLLER_CURRENT_SLOT, ROLLER_CURR_P);
+    roller.config_kI(ROLLER_CURRENT_SLOT, ROLLER_CURR_I);
+    roller.config_kD(ROLLER_CURRENT_SLOT, ROLLER_CURR_D);
 
     intakeCoord = new Point2D.Double();
 
@@ -143,6 +152,21 @@ public class Intake extends BaseIntake {
         roller.set(ControlMode.PercentOutput, power);
     }
   }
+
+  public void stopRollers() {
+    roller.set(ControlMode.PercentOutput, 0);
+  }
+
+  /**
+   * @param current Negative for backwards
+   */
+public void runIntakeUsingCurrent(int current) {
+  roller.selectProfileSlot(ROLLER_CURRENT_SLOT, 0);
+  if(getAngleInDegrees() > 0) {
+    roller.set(ControlMode.Current, current);
+}
+}
+
   /**
    * Converts an intake angle into ticks
    */

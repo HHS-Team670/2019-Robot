@@ -7,11 +7,10 @@
 
 package frc.team670.robot.commands.intake;
 
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.team670.robot.commands.arm.armTransitions.GrabBallIntakeToNeutral;
 import frc.team670.robot.commands.arm.movement.ArmPathGenerator;
-import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.commands.claw.OpenClaw;
 import frc.team670.robot.commands.claw.PickupBall;
 import frc.team670.robot.dataCollection.MustangSensors;
@@ -35,11 +34,11 @@ public class AutoPickupCargo extends CommandGroup {
       addParallel(new OpenClaw(claw));
     CommandGroup moveArm = ArmPathGenerator.getPath(Arm.getStates().get(LegalState.GRAB_BALL_INTAKE), arm);
     addSequential(moveArm);
-    addSequential(new RunIntakeInWithIR(intake, sensors));
-    addParallel(new TimedRunIntake(Claw.TIME_TO_MOVE, Intake.PICKUP_RUNNING_POWER, intake, true));
+    addSequential(new RunIntakeInWithBeamBreak(intake, sensors));
+    addParallel(new TimedRunIntake(Claw.TIME_TO_MOVE, 0.15, intake, true));
     addSequential(new PickupBall(claw, arm));
-    addSequential(new StopIntakeRollers(intake));
-    moveArm = ArmPathGenerator.getPath(Arm.getStates().get(LegalState.NEUTRAL), arm);
+    addParallel(new TimedRunIntake(Claw.TIME_TO_MOVE, 0.15, intake, true));
+    moveArm = ArmPathGenerator.getPath(Arm.getStates().get(LegalState.GRAB_BALL_INTAKE), Arm.getStates().get(LegalState.NEUTRAL), arm);
     addSequential(moveArm);
   }
 }

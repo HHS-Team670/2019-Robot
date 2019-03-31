@@ -15,14 +15,14 @@ import frc.team670.robot.subsystems.Intake;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.dataCollection.XKeys;
 
-public class RunIntakeInWithIR extends Command {
+public class RunIntakeInWithBeamBreak extends Command {
 
   private BaseIntake intake;
   private MustangSensors sensors;
 
   private boolean hasBeenTriggered;
 
-  public RunIntakeInWithIR(BaseIntake intake, MustangSensors sensors) {
+  public RunIntakeInWithBeamBreak(BaseIntake intake, MustangSensors sensors) {
     requires(intake);
     this.intake = intake;
     this.sensors = sensors;
@@ -39,20 +39,23 @@ public class RunIntakeInWithIR extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    intake.runIntakeUsingCurrent(Intake.INTAKE_RUNNING_CURRENT);
-
+  
     // If the IR sensor has been tripped and it is for the first time
-    if (!sensors.isIntakeIRSensorNull() && sensors.getIntakeIROutput() && !hasBeenTriggered) {
+    if (!sensors.isIntakeBeamBreakNull() && !sensors.getIntakeBeamBreakOutput() && !hasBeenTriggered) {
       hasBeenTriggered = true;
-      setTimeout(0.23 + timeSinceInitialized());
+      intake.runIntakeUsingCurrent(Intake.INTAKE_RUNNING_CURRENT/2);
+      setTimeout(0.3 + timeSinceInitialized());
+    }else{
+      intake.runIntakeUsingCurrent(Intake.INTAKE_RUNNING_CURRENT);
     }
+    // SmartDashboard.putBoolean("BeamBrake Triggered", hasBeenTriggered); 
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
     // If 0.5 seconds has passed since the IR sensor was first tripped
-    if (!sensors.isIntakeIRSensorNull()) {
+    if (!sensors.isIntakeBeamBreakNull()) {
       return (isTimedOut());
     }
 

@@ -21,6 +21,7 @@ public class MustangSensors {
   private NavX navXMicro = null;
   private boolean isNavXNull;
   private DigitalInput intakeIRSensor;
+  private DigitalInput intakeBeamBreak;
   public static final double NAVX_ERROR_CODE = -40001;
   public static final double ULTRASONIC_ERROR_CODE = 99999;
 
@@ -47,6 +48,14 @@ public class MustangSensors {
       // DriverStation.reportError("Error instantiating intakeIRSensor: " + ex.getMessage(), true);
       // SmartDashboard.putString("warning", "Error instantiating intakeIRSensor");
       intakeIRSensor = null;
+    }
+
+    try {
+      intakeBeamBreak = new DigitalInput(RobotMap.INTAKE_BEAM_BREAK_DIO_PORT);
+    } catch (RuntimeException ex) {
+      // DriverStation.reportError("Error instantiating intakeIRSensor: " + ex.getMessage(), true);
+      // SmartDashboard.putString("warning", "Error instantiating intakeIRSensor");
+      intakeBeamBreak = null;
     }
 
     try {
@@ -340,12 +349,24 @@ public class MustangSensors {
     return false;
   }
 
+  public boolean getIntakeBeamBreakOutput(){
+    if(intakeBeamBreak != null){
+      return intakeBeamBreak.get(); // .get() Returns true if triggered, false if not
+    }
+    return false;
+  }
+
 
   /**
    * Returns the intake IR sensor
    */
   public boolean isIntakeIRSensorNull(){
     return intakeIRSensor == null;
+  }
+
+
+  public boolean isIntakeBeamBreakNull(){
+    return intakeBeamBreak == null;
   }
 
   /**
@@ -382,12 +403,13 @@ public class MustangSensors {
     }
   }
 
-  public void sendIRDataToDashboard() {
-    if(!isIntakeIRSensorNull()) {
-      SmartDashboard.putString("Intake IR", getIntakeIROutput() + "");
+  public void sendBreamBreakDataToDashboard() {
+    if(!isIntakeBeamBreakNull()) {
+      // SmartDashboard.putString("Intake IR", getIntakeIROutput() + "");
+      SmartDashboard.putString("Intake Beam Break", getIntakeBeamBreakOutput() + "");
     }
     else {
-      SmartDashboard.putString("Intake IR", "null");
+      SmartDashboard.putString("Intake Beam Break", "null");
     }
   }
 

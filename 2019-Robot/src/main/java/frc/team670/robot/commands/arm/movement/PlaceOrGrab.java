@@ -25,12 +25,15 @@ import frc.team670.robot.subsystems.Arm.LegalState;
 public class PlaceOrGrab extends CommandGroup {
   private CommandGroup moveArm;
 
+  private static final double DIP_DEGREES = 8;
+
   /**
    * Moves the arm and claw to do the right thing based on the current arm state
    * @param state the current LegalState of the arm
    * @param isPlacing whether or not an object is being placed (true if placing, false if grabbing)
    */
   public PlaceOrGrab(boolean isPlacing) {
+
     SmartDashboard.putString("current-command", "PlaceOrGrab");
     ArmState state = Arm.getTargetState();
     if (state.equals(Arm.getArmState(LegalState.PLACE_BALL_CARGOSHIP_BACK))) {
@@ -66,14 +69,20 @@ public class PlaceOrGrab extends CommandGroup {
       moveArm = ArmPathGenerator.getPath(Arm.getArmState(LegalState.PLACE_HATCH_ROCKET_MIDDLE_BACK), Robot.arm);
       addSequential(moveArm);
       addSequential(new DropHatch(Robot.claw, Robot.arm));
-      moveArm = ArmPathGenerator.getPath(Arm.getArmState(LegalState.PLACE_HATCH_ROCKET_MIDDLE_BACK), state, Robot.arm);
-      addSequential(moveArm);
+      // Retract, then move
+      addSequential(new MoveWrist(Robot.arm.getWrist(), Arm.getArmState(LegalState.PLACE_HATCH_ROCKET_MIDDLE_BACK).getWristAngle() + DIP_DEGREES));
+      addSequential(new MoveExtension(Robot.arm.getExtension(), 7));
+      // moveArm = ArmPathGenerator.getPath(Arm.getArmState(LegalState.PLACE_HATCH_ROCKET_MIDDLE_BACK), state, Robot.arm);
+      // addSequential(moveArm);
     } else if (state.equals(Arm.getArmState(LegalState.READY_PLACE_HATCH_ROCKET_MIDDLE_FORWARD))) {
       moveArm = ArmPathGenerator.getPath(Arm.getArmState(LegalState.PLACE_HATCH_ROCKET_MIDDLE_FORWARD), Robot.arm);
       addSequential(moveArm);
       addSequential(new DropHatch(Robot.claw, Robot.arm));
-      moveArm = ArmPathGenerator.getPath(Arm.getArmState(LegalState.PLACE_HATCH_ROCKET_MIDDLE_FORWARD), state, Robot.arm);
-      addSequential(moveArm);
+      // Retract, then move
+      addSequential(new MoveWrist(Robot.arm.getWrist(), Arm.getArmState(LegalState.READY_PLACE_HATCH_ROCKET_MIDDLE_FORWARD).getWristAngle() - DIP_DEGREES));
+      addSequential(new MoveExtension(Robot.arm.getExtension(), 6));
+      // moveArm = ArmPathGenerator.getPath(Arm.getArmState(LegalState.PLACE_HATCH_ROCKET_MIDDLE_FORWARD), state, Robot.arm);
+      // addSequential(moveArm);
     } else if (state.equals(Arm.getArmState(LegalState.GRAB_BALL_GROUND_BACK))) {
       if (Robot.claw.isOpen()) addSequential(new OpenClaw(Robot.claw));
       addSequential(new PickupBall(Robot.claw, Robot.arm));
@@ -100,8 +109,10 @@ public class PlaceOrGrab extends CommandGroup {
         moveArm = ArmPathGenerator.getPath(Arm.getArmState(LegalState.LOW_HATCH_BACK), Robot.arm);
         addSequential(moveArm);
         addSequential(new DropHatch(Robot.claw, Robot.arm));
-        moveArm = ArmPathGenerator.getPath(Arm.getArmState(LegalState.LOW_HATCH_BACK), state, Robot.arm);
-        addSequential(moveArm);
+        // Remove the move, dip claw instead
+        addSequential(new MoveWrist(Robot.arm.getWrist(), Arm.getArmState(LegalState.LOW_HATCH_BACK).getWristAngle() - DIP_DEGREES));
+        // moveArm = ArmPathGenerator.getPath(Arm.getArmState(LegalState.LOW_HATCH_BACK), state, Robot.arm);
+        // addSequential(moveArm);
       } else {
         if (Robot.claw.isOpen()) addSequential(new CloseClaw(Robot.claw));
         moveArm = ArmPathGenerator.getPath(Arm.getArmState(LegalState.LOW_HATCH_BACK), Robot.arm);
@@ -115,14 +126,17 @@ public class PlaceOrGrab extends CommandGroup {
         moveArm = ArmPathGenerator.getPath(Arm.getArmState(LegalState.LOW_HATCH_FORWARD), Robot.arm);
         addSequential(moveArm);
         addSequential(new DropHatch(Robot.claw, Robot.arm));
-        moveArm = ArmPathGenerator.getPath(Arm.getArmState(LegalState.READY_LOW_HATCH_FORWARD), state, Robot.arm);
-        addSequential(moveArm);
+        //Drop wrist and retract extension
+        addSequential(new MoveWrist(Robot.arm.getWrist(), Arm.getArmState(LegalState.LOW_HATCH_FORWARD).getWristAngle() + DIP_DEGREES));
+        addSequential(new MoveExtension(Robot.arm.getExtension(), 1));
+        // moveArm = ArmPathGenerator.getPath(Arm.getArmState(LegalState.LOW_HATCH_FORWARD), state, Robot.arm);
+        // addSequential(moveArm);
       } else {
         if (Robot.claw.isOpen()) addSequential(new CloseClaw(Robot.claw));
         moveArm = ArmPathGenerator.getPath(Arm.getArmState(LegalState.LOW_HATCH_FORWARD), Robot.arm);
         addSequential(moveArm);
         addSequential(new GrabHatch(Robot.claw, Robot.arm));
-        moveArm = ArmPathGenerator.getPath(Arm.getArmState(LegalState.READY_LOW_HATCH_FORWARD), state, Robot.arm);
+        moveArm = ArmPathGenerator.getPath(Arm.getArmState(LegalState.LOW_HATCH_FORWARD), state, Robot.arm);
         addSequential(moveArm);
       }
     }

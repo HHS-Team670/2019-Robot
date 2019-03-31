@@ -100,6 +100,7 @@ public class XKeys {
             else if (s.equals("toggle_intake_in")) runIntakeIn();
             else if (s.equals("toggle_intake_out")) runIntakeOut();
             else if (s.equals("bring_intake_in")) bringInIntake();
+            else if (s.equals("bring_intake_out")) bringOutIntake();
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-autopickup", (table2, key2, entry, value, flags) -> {
             autoPickupBall();
@@ -308,6 +309,10 @@ public class XKeys {
 
     private void bringInIntake() {
         Scheduler.getInstance().add(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_IN, Robot.intake));
+    }
+
+    private void bringOutIntake() {
+        Scheduler.getInstance().add(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_DEPLOYED, Robot.intake));
     }
 
 

@@ -59,6 +59,8 @@ public class Robot extends TimedRobot {
   private SendableChooser<Command> auton_chooser = new SendableChooser<>();
 
   private static final double NETWORK_TABLES_UPDATE_RATE = 0.05;
+
+  private boolean firstTimeEnteringTeleop;
   
   public Robot() {
   }
@@ -163,7 +165,7 @@ public class Robot extends TimedRobot {
     // extension.sendDataToDashboard();
     // wrist.sendDataToDashboard();
     // intake.sendDataToDashboard();
-    sensors.sendUltrasonicDataToDashboard();
+    sensors.sendBreamBreakDataToDashboard();
     driveBase.sendEncoderDataToDashboard();
 
   }
@@ -178,7 +180,7 @@ public class Robot extends TimedRobot {
     Logger.consoleLog("Robot Disabled");
     // autonomousCommand = oi.getSelectedAutonCommand();
     leds.setStillDrive(true);
-    driveBase.initCoastMode();
+    // driveBase.initCoastMode();
     intake.stop();
     elbow.stop();
     extension.stop();
@@ -248,6 +250,10 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("robot-state", "teleopPeriodic()");
     leds.setForwardData(true);
     driveBase.initBrakeMode();
+
+    if(DriverStation.getInstance().getMatchTime() < 130) {
+      Scheduler.getInstance().add(new SafelyResetExtension());
+    }
 
     Logger.consoleLog("Teleop Started");
     // This makes sure that the autonomous stops running when
