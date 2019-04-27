@@ -20,6 +20,7 @@ import frc.team670.robot.commands.CancelAllCommands;
 import frc.team670.robot.commands.arm.ToggleHeldItem;
 import frc.team670.robot.commands.arm.movement.CancelArmMovement;
 import frc.team670.robot.commands.arm.movement.MoveArm;
+import frc.team670.robot.commands.arm.movement.MoveExtensionBackUntilHitsLimitSwitch;
 import frc.team670.robot.commands.arm.movement.PlaceOrGrab;
 import frc.team670.robot.commands.claw.ToggleClaw;
 import frc.team670.robot.commands.claw.YeetHeldItem;
@@ -27,13 +28,26 @@ import frc.team670.robot.commands.drive.vision.CancelDriveBase;
 import frc.team670.robot.commands.drive.vision.VisionPurePursuitWithPivot;
 import frc.team670.robot.commands.intake.AutoPickupCargo;
 import frc.team670.robot.commands.intake.ButtonRunIntake;
+import frc.team670.robot.commands.intake.MoveIntakeToSetpointAngle;
 import frc.team670.robot.commands.intake.RunIntakeInWithIR;
 import frc.team670.robot.commands.intake.StopIntakeRollers;
 import frc.team670.robot.subsystems.Arm;
 import frc.team670.robot.subsystems.Arm.ArmState;
+import frc.team670.robot.subsystems.Arm.GrabBallLoadingStationBack;
+import frc.team670.robot.subsystems.Arm.GrabBallLoadingStationForward;
 import frc.team670.robot.subsystems.Arm.LegalState;
+import frc.team670.robot.subsystems.Arm.PlaceBallCargoBack;
+import frc.team670.robot.subsystems.Arm.PlaceBallCargoForward;
 import frc.team670.robot.subsystems.Arm.PlaceGrabState;
+import frc.team670.robot.subsystems.Arm.ReadyLowHatchBack;
+import frc.team670.robot.subsystems.Arm.ReadyLowHatchForward;
+import frc.team670.robot.subsystems.Arm.ReadyPlaceBallRocketLowBack;
+import frc.team670.robot.subsystems.Arm.ReadyPlaceBallRocketLowForward;
+import frc.team670.robot.subsystems.Arm.ReadyPlaceBallRocketMiddleBack;
+import frc.team670.robot.subsystems.Arm.ReadyPlaceHatchRocketMiddleBack;
+import frc.team670.robot.subsystems.Arm.ReadyPlaceHatchRocketMiddleForward;
 import frc.team670.robot.subsystems.Intake;
+import frc.team670.robot.utils.Logger;
 
 
 /**
@@ -53,6 +67,14 @@ public class XKeys {
         SmartDashboard.putString("XKEYS", "XKeys constructor");
         instance = NetworkTableInstance.getDefault();
         table = instance.getTable("SmartDashboard");
+
+        table.addEntryListener((table2, key2, entry, value, flags) -> {
+            try {System.out.println("key pressed: " + value.getString());
+            Logger.consoleLog("key pressed: " + value.getString());
+            } catch (Exception e) {
+                
+            }
+        }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
 
         table.addEntryListener("auton-sequence", (table2, key2, entry, value, flags) -> {
             if (value.getType() != NetworkTableType.kStringArray) SmartDashboard.putString("auto-sequence", "not string array");
@@ -77,6 +99,8 @@ public class XKeys {
             if (s.equals("run_intake_in_with_IR")) runIntakeInWithIR();
             else if (s.equals("toggle_intake_in")) runIntakeIn();
             else if (s.equals("toggle_intake_out")) runIntakeOut();
+            else if (s.equals("bring_intake_in")) bringInIntake();
+            else if (s.equals("bring_intake_out")) bringOutIntake();
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-autopickup", (table2, key2, entry, value, flags) -> {
             autoPickupBall();
@@ -86,6 +110,9 @@ public class XKeys {
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-claw", (table2, key2, entry, value, flags) -> {
             toggleClaw();
+        }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
+        table.addEntryListener("xkeys-extension", (table2, key2, entry, value, flags) -> {
+            moveExtensionBackUntilHitsLimitSwitch();
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-cancel", (table2, key2, entry, value, flags) -> {
             if (value.getType() != NetworkTableType.kString) return;
@@ -108,6 +135,7 @@ public class XKeys {
         if (in.equals("READY_PLACE_HATCH_ROCKET_MIDDLE_FORWARD")) legalState = LegalState.READY_PLACE_HATCH_ROCKET_MIDDLE_FORWARD;
         if (in.equals("READY_PLACE_BALL_ROCKET_MIDDLE_BACK")) legalState = LegalState.READY_PLACE_BALL_ROCKET_MIDDLE_BACK;
         if (in.equals("GRAB_BALL_LOADINGSTATION_BACK")) legalState = LegalState.GRAB_BALL_LOADINGSTATION_BACK;
+        if (in.equals("READY_GRAB_HATCH_GROUND_BACK")) legalState = LegalState.GRAB_HATCH_GROUND_BACK;
         if (in.equals("GRAB_BALL_LOADINGSTATION_FORWARD")) legalState = LegalState.GRAB_BALL_LOADINGSTATION_FORWARD;
         if (in.equals("PLACE_BALL_CARGOSHIP_BACK")) legalState = LegalState.PLACE_BALL_CARGOSHIP_BACK;
         if (in.equals("PLACE_BALL_CARGOSHIP_FORWARD")) legalState = LegalState.PLACE_BALL_CARGOSHIP_FORWARD;
@@ -182,6 +210,7 @@ public class XKeys {
     }
 
     private void toggleHeldItem() {
+        System.out.println("Toggle Held Item");
         Scheduler.getInstance().add(new ToggleHeldItem(Robot.arm));
     }
 
@@ -194,16 +223,58 @@ public class XKeys {
     }
 
     private void visionDrive(){
-        PlaceGrabState placeGrabState = null;
+        ArmState possiblePlaceGrabState = null;
+        ArmState targetState = Arm.getTargetState();
+        if(targetState instanceof GrabBallLoadingStationForward) {
+            possiblePlaceGrabState = Arm.getArmState(LegalState.GRAB_BALL_LOADINGSTATION_FORWARD);
+        }
+        else if (targetState instanceof GrabBallLoadingStationBack) {
+            possiblePlaceGrabState = Arm.getArmState(LegalState.GRAB_BALL_LOADINGSTATION_BACK);
+        }
+        else if (targetState instanceof ReadyLowHatchForward) {
+            possiblePlaceGrabState = Arm.getArmState(LegalState.LOW_HATCH_FORWARD);
+        }
+        else if (targetState instanceof ReadyLowHatchBack) {
+            possiblePlaceGrabState = Arm.getArmState(LegalState.LOW_HATCH_BACK);
+        }
+        else if (targetState instanceof PlaceBallCargoForward) {
+            possiblePlaceGrabState = Arm.getArmState(LegalState.PLACE_BALL_CARGOSHIP_FORWARD);
+        }
+        else if (targetState instanceof PlaceBallCargoBack) {
+            possiblePlaceGrabState = Arm.getArmState(LegalState.PLACE_BALL_CARGOSHIP_BACK);
+        }
+        else if (targetState instanceof ReadyPlaceHatchRocketMiddleForward) {
+            possiblePlaceGrabState = Arm.getArmState(LegalState.PLACE_HATCH_ROCKET_MIDDLE_FORWARD);
+        }
+        else if (targetState instanceof ReadyPlaceHatchRocketMiddleBack) {
+            possiblePlaceGrabState = Arm.getArmState(LegalState.PLACE_HATCH_ROCKET_MIDDLE_BACK);
+        }
+        else if (targetState instanceof ReadyPlaceBallRocketLowForward) {
+            possiblePlaceGrabState = Arm.getArmState(LegalState.PLACE_BALL_ROCKET_LOW_FORWARD);
+        }
+        else if (targetState instanceof ReadyPlaceBallRocketLowBack) {
+            possiblePlaceGrabState = Arm.getArmState(LegalState.PLACE_BALL_ROCKET_LOW_BACK);
+        }
+        else if (targetState instanceof ReadyPlaceBallRocketMiddleBack) {
+            possiblePlaceGrabState = Arm.getArmState(LegalState.PLACE_BALL_ROCKET_MIDDLE_BACK);
+        }
+        else {
+            Logger.consoleLog("Target state is not a possible to place state");
+            return;
+        }
+        
+        PlaceGrabState placeGrab = null;
+
         try {
-             placeGrabState = (PlaceGrabState) Arm.getTargetState();
+            placeGrab = (PlaceGrabState) possiblePlaceGrabState;
         } catch (ClassCastException ex) {
+            System.out.println("Not in a Place/Grab State. State: " + placeGrab.getClass().getName());
             return;
         }
 
-        double distanceFromTarget = placeGrabState.getDistanceFromTarget();
-        boolean isReversed = !placeGrabState.getIsFront();
-        boolean isLow = placeGrabState.getIsLowTarget();
+        double distanceFromTarget = Math.abs(placeGrab.getDistanceFromTarget());
+        boolean isReversed = !placeGrab.getIsFront();
+        boolean isLow = placeGrab.getIsLowTarget();
 
         SmartDashboard.putString("vision-status", "");
         Scheduler.getInstance().add(new VisionPurePursuitWithPivot(Robot.driveBase, Robot.coprocessor, Robot.sensors, distanceFromTarget, isReversed, isLow));
@@ -215,6 +286,10 @@ public class XKeys {
 
     private void toggleClaw() {
         Scheduler.getInstance().add(new ToggleClaw(Robot.claw));
+    }
+
+    private void moveExtensionBackUntilHitsLimitSwitch(){
+        Scheduler.getInstance().add(new MoveExtensionBackUntilHitsLimitSwitch(Robot.arm.getExtension()));
     }
     
     public static void setToggleIn(boolean toggleInBoolean){
@@ -230,6 +305,14 @@ public class XKeys {
     public static void setBothToggles(boolean bothTogglesBoolean){
         toggleIn = bothTogglesBoolean;
         toggleOut = bothTogglesBoolean;
+    }
+
+    private void bringInIntake() {
+        Scheduler.getInstance().add(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_IN, Robot.intake));
+    }
+
+    private void bringOutIntake() {
+        Scheduler.getInstance().add(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_DEPLOYED, Robot.intake));
     }
 
 

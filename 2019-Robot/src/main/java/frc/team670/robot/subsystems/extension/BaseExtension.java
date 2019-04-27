@@ -39,6 +39,8 @@ public abstract class BaseExtension extends Subsystem implements ExtensionInterf
 
   public abstract double getArbitraryFeedForwardAngleMultiplier();
 
-  public abstract void resetPositionBasedOnLimitSwitchTripping();
+  public abstract void warnifLimitHit();
+
+  public abstract void resetLimitSwitch();
 
 }

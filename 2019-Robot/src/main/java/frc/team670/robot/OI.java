@@ -7,16 +7,15 @@
 
 package frc.team670.robot;
 
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team670.robot.commands.arm.EnableArmBrakeMode;
-import frc.team670.robot.commands.arm.EnableArmCoastMode;
 import frc.team670.robot.commands.arm.movement.MoveArm;
-import frc.team670.robot.commands.cameras.FlipCamera;
+import frc.team670.robot.commands.cameras.FlipDriverCameraMode;
+import frc.team670.robot.commands.claw.CloseClaw;
+import frc.team670.robot.commands.claw.OpenClaw;
 import frc.team670.robot.commands.drive.teleop.FlipDriveAndCamera;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.dataCollection.XKeys;
@@ -32,17 +31,15 @@ import frc.team670.robot.utils.MustangController.XboxButtons;
 public class OI {
 
   // Controllers/Joysticks
-  // private Joystick rightStick, arcadeButtons;
   private MustangController driverController;
 
   private XKeys xkeys;
 
   // Buttons
-  private JoystickButton toggleReverseDrive;
+  private JoystickButton toggleReverseDrive, toggleDriverCameraMode;
+  private JoystickButton armToNeutral;  
 
-  private JoystickButton enableBrakeMode, enableCoastMode;
-  private JoystickButton armToNeutral;
-  
+  private JoystickButton dropBall, grabBall;
 
   public OI() {
     driverController = new MustangController(RobotMap.DRIVER_CONTROLLER_PORT);
@@ -50,6 +47,8 @@ public class OI {
     xkeys = new XKeys();
     toggleReverseDrive = new JoystickButton(driverController, XboxButtons.LEFT_BUMPER);
     toggleReverseDrive.whenPressed(new FlipDriveAndCamera());
+    toggleDriverCameraMode = new JoystickButton(driverController, XboxButtons.B);
+    toggleDriverCameraMode.whenPressed(new FlipDriverCameraMode());
     armToNeutral = new JoystickButton(driverController, XboxButtons.A);
     armToNeutral.whenPressed(
       new InstantCommand() {
@@ -58,8 +57,21 @@ public class OI {
         }
       }
     );
-  }
 
+    // FOR TESTING OPENING/CLOSING the claw
+    // dropBall = new JoystickButton(driverController, XboxButtons.Y);
+    // dropBall.whenPressed(new OpenClaw(Robot.claw));
+    // grabBall = new JoystickButton(driverController, XboxButtons.X);
+    // grabBall.whenPressed(new CloseClaw(Robot.claw));
+
+    // dropBall = new JoystickButton(driverController, XboxButtons.B);
+    // dropBall.whenPressed(new InstantCommand() {
+    //   protected void initialize() {
+    //     Robot.claw.togglePush();
+    //   }
+    // });
+
+  }
   /**
    * Sets the rumble on the driver controller
    * 

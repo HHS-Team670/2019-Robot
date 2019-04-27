@@ -24,24 +24,30 @@ public class Intake extends BaseIntake {
 
   public static final double DISTANCE_FROM_ARM_ZERO = 28;
 
-  private static final int ROLLER_CONTINUOUS_CURRENT = 30, ROLLER_PEAK_CURRENT = 0;
+  private static final int ROLLER_CONTINUOUS_CURRENT = 30, ROLLER_PEAK_CURRENT = 40;
 
   public static final int INTAKE_ANGLE_IN = -90, INTAKE_ANGLE_DEPLOYED = 90;
   public static final double INTAKE_FIXED_LENGTH_IN_INCHES = 11.25, INTAKE_ROTATING_LENGTH_IN_INCHES = 14;
   private static final double MAX_BASE_OUTPUT = 0.75;
-  private static final double kF = 0, kP = 0.35, kI = 0, kD = 0;
+  private static final double kF = 0, kP = 0.45, kI = 0, kD = 0;
 
   // Motion Magic
   private static final int kPIDLoopIdx = 0, MOTION_MAGIC_SLOT = 0, kTimeoutMs = 0;
   private static final int OFFSET_FROM_ENCODER_ZERO = 426;
   private static final int FORWARD_SOFT_LIMIT = 932, REVERSE_SOFT_LIMIT = -979;
   private static final int CONTINUOUS_CURRENT_LIMIT = 20, PEAK_CURRENT_LIMIT = 0;
-  private final static int INTAKE_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 120,  INTAKE_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_SECOND = 400;
+  private final static int INTAKE_MOTIONMAGIC_VELOCITY_SENSOR_UNITS_PER_100MS = 200,  INTAKE_MOTIONMAGIC_ACCELERATION_SENSOR_UNITS_PER_SECOND = 1200;
   private static final int QUAD_ENCODER_MAX = FORWARD_SOFT_LIMIT + 300, QUAD_ENCODER_MIN = REVERSE_SOFT_LIMIT - 300;
 
   private static final double ARBITRARY_FEED_FORWARD = 0.175;
 
   private static final int TICKS_PER_ROTATION = 4096;
+
+  public static final int INTAKE_RUNNING_CURRENT = 8;
+
+  // Roller
+  private static final int ROLLER_CURRENT_SLOT = 1;
+  private static final double ROLLER_CURR_P = 0.2, ROLLER_CURR_I = 0.0, ROLLER_CURR_D = 0.0;
 
   private TalonSRX roller;
   
@@ -57,10 +63,14 @@ public class Intake extends BaseIntake {
 
     roller.setInverted(true);
     roller.setNeutralMode(NeutralMode.Coast);
+    roller.config_kP(ROLLER_CURRENT_SLOT, ROLLER_CURR_P);
+    roller.config_kI(ROLLER_CURRENT_SLOT, ROLLER_CURR_I);
+    roller.config_kD(ROLLER_CURRENT_SLOT, ROLLER_CURR_D);
 
     intakeCoord = new Point2D.Double();
 
     rotator.setInverted(true);
+    rotator.configPeakCurrentDuration(300);
     // rotator.setSensorPhase(true); // Positive is inwards movement, negative is outward
 
     // if(rotatorSensorCollection.isRevLimitSwitchClosed() && !rotatorSensorCollection.isFwdLimitSwitchClosed()) {
@@ -142,6 +152,21 @@ public class Intake extends BaseIntake {
         roller.set(ControlMode.PercentOutput, power);
     }
   }
+
+  public void stopRollers() {
+    roller.set(ControlMode.PercentOutput, 0);
+  }
+
+  /**
+   * @param current Negative for backwards
+   */
+public void runIntakeUsingCurrent(int current) {
+  roller.selectProfileSlot(ROLLER_CURRENT_SLOT, 0);
+  if(getAngleInDegrees() > 0) {
+    roller.set(ControlMode.Current, current);
+}
+}
+
   /**
    * Converts an intake angle into ticks
    */

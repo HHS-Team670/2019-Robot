@@ -30,8 +30,8 @@ public class RobotMap {
 
   //Encoders
       //Drivebase
-  public static final int LEFT_ENCODER_CHANNEL_A = 4; // These are properly set
-  public static final int LEFT_ENCODER_CHANNEL_B = 5;
+  public static final int LEFT_ENCODER_CHANNEL_A = 0; // These are properly set
+  public static final int LEFT_ENCODER_CHANNEL_B = 1;
   public static final int RIGHT_ENCODER_CHANNEL_A = 2;
   public static final int RIGHT_ENCODER_CHANNEL_B = 3;
 
@@ -55,13 +55,14 @@ public class RobotMap {
   // Sensors
   public final static Port NAVX_PORT = SerialPort.Port.kUSB;  
 
-  public static final int FRONT_ULTRASONIC_TRIGGER_PIN = 20; // TODO set these
-  public static final int FRONT_ULTRASONIC_ECHO_PIN = 21;
-  public static final int BACK_LEFT_ULTRASONIC_TRIGGER_PIN = 0;
-  public static final int BACK_LEFT_ULTRASONIC_ECHO_PIN = 1;
-  public static final int BACK_RIGHT_ULTRASONIC_TRIGGER_PIN = 9;
-  public static final int BACK_RIGHT_ULTRASONIC_ECHO_PIN = 8;
-  public final static int INTAKE_IR_DIO_PORT = 2;
+  public static final int FRONT_ULTRASONIC_TRIGGER_PIN = 8; // TODO set these
+  public static final int FRONT_ULTRASONIC_ECHO_PIN = 9;
+  public static final int BACK_LEFT_ULTRASONIC_TRIGGER_PIN = 4;
+  public static final int BACK_LEFT_ULTRASONIC_ECHO_PIN = 5;
+  public static final int BACK_RIGHT_ULTRASONIC_TRIGGER_PIN = 6;
+  public static final int BACK_RIGHT_ULTRASONIC_ECHO_PIN = 7;
+  public final static int INTAKE_IR_DIO_PORT = 10;
+  public final static int INTAKE_BEAM_BREAK_DIO_PORT = 11;
 
 
   // Joysticks
@@ -72,5 +73,7 @@ public class RobotMap {
   public static final int INTAKE_BASE_TALON = 7;
   public static final int INTAKE_ROLLER_TALON = 4;
 
+  /** PCM Port of the back LED ring (super bright one) */
+  public static int BACK_LED_RING = 4;
 
 }

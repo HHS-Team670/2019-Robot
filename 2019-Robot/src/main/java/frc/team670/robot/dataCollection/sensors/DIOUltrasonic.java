@@ -2,7 +2,6 @@ package frc.team670.robot.dataCollection.sensors;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DigitalOutput;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Ultrasonic;
 import frc.team670.robot.Robot;
 /**
@@ -29,15 +28,7 @@ public class DIOUltrasonic {
 
         this.horizontalOffset = horizontalOffset;
 
-        try {
-         ultrasonic =  new Ultrasonic(triggerPin, echoPin);
-        } catch (RuntimeException ex){
-            // System.out.println();
-            ultrasonic = null;
-            DriverStation.reportError("Ultrasonic error", true);
-        }
-
-        ultrasonic.setAutomaticMode(true);
+        ultrasonic = new Ultrasonic(triggerPin, echoPin);
     }
 
     /**
@@ -49,7 +40,7 @@ public class DIOUltrasonic {
         double distance = getUnadjustedDistance();
         // Untested Math below
         double phi = Robot.sensors.getAngleToTarget();
-        distance = distance - (horizontalOffset * Math.tan(Math.toRadians(phi)));
+        distance = distance + (horizontalOffset * Math.tan(Math.toRadians(phi)));
         return distance;
     }
 
@@ -57,11 +48,11 @@ public class DIOUltrasonic {
      * Gets the ultrasonic distance unadjusted for offset and angle to target
      */
     public double getUnadjustedDistance() {
-        if (ultrasonic != null){
         return ultrasonic.getRangeInches();
-        }   else {
-            return ULTRASONIC_ERROR_CODE;
-        }
+    }
+
+    public void setUltrasonicAutomaticMode(boolean automaticMode){
+        ultrasonic.setAutomaticMode(automaticMode);
     }
 
 

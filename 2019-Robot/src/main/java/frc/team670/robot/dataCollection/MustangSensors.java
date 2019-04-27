@@ -21,6 +21,7 @@ public class MustangSensors {
   private NavX navXMicro = null;
   private boolean isNavXNull;
   private DigitalInput intakeIRSensor;
+  private DigitalInput intakeBeamBreak;
   public static final double NAVX_ERROR_CODE = -40001;
   public static final double ULTRASONIC_ERROR_CODE = 99999;
 
@@ -50,6 +51,14 @@ public class MustangSensors {
     }
 
     try {
+      intakeBeamBreak = new DigitalInput(RobotMap.INTAKE_BEAM_BREAK_DIO_PORT);
+    } catch (RuntimeException ex) {
+      // DriverStation.reportError("Error instantiating intakeIRSensor: " + ex.getMessage(), true);
+      // SmartDashboard.putString("warning", "Error instantiating intakeIRSensor");
+      intakeBeamBreak = null;
+    }
+
+    try {
       frontUltrasonic = new DIOUltrasonic(RobotMap.FRONT_ULTRASONIC_TRIGGER_PIN, RobotMap.FRONT_ULTRASONIC_ECHO_PIN, FRONT_ULTRA_OFFSET);
     } catch (RuntimeException ex) {
       // DriverStation.reportError("Error instantiating front ultrasonic: " + ex.getMessage(), true);
@@ -72,6 +81,8 @@ public class MustangSensors {
       // SmartDashboard.putString("warning", "Error instantiating back right ultrasonic");
       backRightUltrasonic = null;
     }
+
+    frontUltrasonic.setUltrasonicAutomaticMode(true); // This will set it for all the sensors. WPI should definitely have made this method static.
   }
 
   /*
@@ -143,15 +154,19 @@ public class MustangSensors {
     double backRight = getBackRightUltrasonicUnadjustedDistance();
     double adjustedDistance = (backLeft < backRight) ? backLeft : backRight; // Take the one that is least;
 
+    // Below check if both sensors are getting valid data, if not pick the one that seems right, or return the error code
+    if(backLeft >= 150 && backRight >= 150) {
+      return ULTRASONIC_ERROR_CODE;
+    }
+    else if(backRight < 150 && backLeft > 150){
+      return backRight;
+    }
+    else if(backLeft < 150 && backRight > 150){
+      return backLeft;
+    }
+
     if(Math.abs(backRight-backLeft) <= 10){
       adjustedDistance = (backLeft+backRight)/2.0; //average both if they're essentially the same
-    }
-    // Below see if one sensor is getting generally valid data - then use the adjusted distance from that ultrasonic
-    else if(backLeft > 132 && backRight <= 120){
-      adjustedDistance = getBackRightUltrasonicDistance();
-    }
-    else if(backRight > 132 && backLeft <= 120){
-      adjustedDistance = getBackLeftUltrasonicDistance();
     }
 
     return adjustedDistance;
@@ -293,7 +308,7 @@ public class MustangSensors {
     }
 
     // Front cargo ship
-    else if(fieldCentricAngle > 347 && fieldCentricAngle <= 14){
+    else if(fieldCentricAngle > 347 || fieldCentricAngle <= 14){
       target_angle = 0;
     }
 
@@ -334,12 +349,24 @@ public class MustangSensors {
     return false;
   }
 
+  public boolean getIntakeBeamBreakOutput(){
+    if(intakeBeamBreak != null){
+      return intakeBeamBreak.get(); // .get() Returns true if triggered, false if not
+    }
+    return false;
+  }
+
 
   /**
    * Returns the intake IR sensor
    */
   public boolean isIntakeIRSensorNull(){
     return intakeIRSensor == null;
+  }
+
+
+  public boolean isIntakeBeamBreakNull(){
+    return intakeBeamBreak == null;
   }
 
   /**
@@ -372,7 +399,18 @@ public class MustangSensors {
     if(backRightUltrasonic != null) { 
       SmartDashboard.putNumber("Back Right Ultrasonic: ", backRightUltrasonic.getUnadjustedDistance());
     } else if (backRightUltrasonic == null) {
-      SmartDashboard.putString("Back RIGHT Ultrasonic: ", "BACK RIGHT ULTRASONIC IS NULL!");
+      SmartDashboard.putString("Back Right Ultrasonic: ", "BACK RIGHT ULTRASONIC IS NULL!");
     }
   }
+
+  public void sendBreamBreakDataToDashboard() {
+    if(!isIntakeBeamBreakNull()) {
+      // SmartDashboard.putString("Intake IR", getIntakeIROutput() + "");
+      SmartDashboard.putString("Intake Beam Break", getIntakeBeamBreakOutput() + "");
+    }
+    else {
+      SmartDashboard.putString("Intake Beam Break", "null");
+    }
+  }
+
 }

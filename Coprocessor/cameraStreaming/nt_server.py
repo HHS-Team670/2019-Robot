@@ -30,6 +30,7 @@ def connectionListener(connected, info):
         cond.notify()
 
 NetworkTables.initialize(server='10.6.70.2')
+#NetworkTables.initialize()
 NetworkTables.addConnectionListener(connectionListener, immediateNotify=True)
 
 with cond:
@@ -41,19 +42,27 @@ with cond:
 sd = NetworkTables.getTable("SmartDashboard")
 VISION_ERROR_CODE = -9999
 
-os.system('sudo python /home/pi/git/Mustang-Pi/cameraStreaming/watchdog.py "/home/pi/git/Mustang-Pi/cameraStreaming/mjpg_streamer_server.sh cam0 > /tmp/error0 2>&1" &')   
-os.system('sudo python /home/pi/git/Mustang-Pi/cameraStreaming/watchdog.py "/home/pi/git/Mustang-Pi/cameraStreaming/mjpg_streamer_server.sh cam1 > /tmp/error1 2>&1" &')   
+#os.system('sudo python /home/pi/git/Mustang-Pi/cameraStreaming/watchdog.py "/home/pi/git/Mustang-Pi/cameraStreaming/mjpg_streamer_server.sh > /tmp/error_cams 2>&1" &')   
+
+os.system('sudo /home/pi/git/Coprocessor/cameraStreaming/mjpg_streamer_server.sh &')
 
 cam = '0'
 def valueChanged(table, key, value, isNew):
     global cam
-    if (key=='camera-source' and value=='next'):
-        os.system('sudo killall mjpg_streamer')
-        cam = int(cam)
-        numCams = int(os.popen('ls -l /dev/ | egrep video.$ | wc -l').read().replace('\n', ''))
-        cam = (cam + 1) % numCams
-        cam = str(cam)
-        sd.putString('camera-source', 'flipped')
+    if (key=='camera-source'):
+        ids = os.popen('sudo ps -aef | grep watchdog | awk \'{print $2}\'').read().split('\n')
+        for i in ids:
+            print ('>>> id: ', i)
+            if i != ids[len(ids)-1]:
+                os.system('sudo kill -9 ' + i) 
+        stream_ids = os.popen('sudo ps -aef | grep mjpg | awk \'{print $2}\'').read().split('\n')
+        for i in stream_ids:
+            print('>>> stream id: ', i)
+            if i != stream_ids[len(stream_ids)-1]:
+                os.system('sudo kill -9 ' + i)
+        
+        cam = value
+        os.system('sudo python /home/pi/git/Mustang-Pi/cameraStreaming/watchdog.py "/home/pi/git/Mustang-Pi/cameraStreaming/mjpg_streamer_server.sh cam' + cam + ' > /tmp/error' + cam + ' 2>&1" &')   
 
 i = 0
 
@@ -64,6 +73,7 @@ while True:
     if (int(os.popen('ls -l /dev/ | egrep video.$ | wc -l').read().replace('\n', '')) == 0):
         sd.putString('warnings', 'no cameras found')
         sd.putString('vision-status', str(VISION_ERROR_CODE))
+    i = i + 1
     time.sleep(1)
-    if (os.system('grep "cleaning up resources" /tmp/error0') == 0):
-        os.system('sudo kill $(ps -aef | grep 8000 | grep mjpg_streamer | grep sudo | awk "{print $2}"')
+#    if (os.system('grep "cleaning up resources" /tmp/error0') == 0):
+#       os.system('sudo kill $(ps -aef | grep 8000 | grep mjpg_streamer | grep sudo | awk "{print $2}"')

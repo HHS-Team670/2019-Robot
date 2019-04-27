@@ -5,34 +5,33 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.team670.robot.commands.drive.teleop;
+package frc.team670.robot.commands.cameras;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
-import frc.team670.robot.commands.drive.teleop.XboxRocketLeagueDrive;
-import frc.team670.robot.utils.Logger;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.Robot;
 
 /**
- * Flips the direction of the drive: forward or reversed.
+ * Flips between single camera and double camera on the dashboard
  */
-public class FlipDriveDirection extends InstantCommand {
+public class FlipDriverCameraMode extends InstantCommand {
+  /**
+   * Add your docs here.
+   */
+  private static boolean doubleCamera = true;
 
-  public FlipDriveDirection() {
+  public FlipDriverCameraMode() {
     super();
+    // Use requires() here to declare subsystem dependencies
+    // eg. requires(chassis);
   }
 
   // Called once when the command executes
   @Override
   protected void initialize() {
-    boolean isReversed = XboxRocketLeagueDrive.isDriveReversed();
-    if (!isReversed) {
-      Robot.leds.setReverseData(true);
-    } else {
-      Robot.leds.setForwardData(true);
-    }
-    XboxRocketLeagueDrive.setDriveReversed(!isReversed);
+    doubleCamera = !doubleCamera;
+    SmartDashboard.putString("driver-camera-mode", doubleCamera ? "double" : "single");
     Robot.oi.rumbleDriverController(0.7, 0.2);
-    Logger.consoleLog("Flipped Drive: %s", (!isReversed));
   }
 
 }

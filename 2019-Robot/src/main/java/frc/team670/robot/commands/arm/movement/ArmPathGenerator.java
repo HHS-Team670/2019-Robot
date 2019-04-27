@@ -50,8 +50,6 @@ public class ArmPathGenerator {
       @Override
       protected void end() { // The created path will set the Arm's state to wherever it moved after finishing
         Arm.setState(destination);
-        SmartDashboard.putString("current-command", "MoveArm finished");
-        SmartDashboard.putString("movearm-finished", "finished");
       }
 
       @Override
@@ -91,7 +89,7 @@ public class ArmPathGenerator {
 
     // movements.addSequential(new RumbleOperatorController(Robot.oi, 0.5, 0.25));
 
-    // System.out.println("transitions: " + transitions.size());
+    System.out.println("transitions: " + transitions.toString());
 
     return movements;
   }

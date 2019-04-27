@@ -33,10 +33,8 @@ public class OpenClaw extends Command {
   // Called just before this Command runs the first time
   @Override
   protected void initialize() {
-    if(!claw.isOpen()) {
-      claw.openClaw();
-      Robot.arm.setHeldItem(HeldItem.NONE);
-    }
+    claw.openClaw();
+    Robot.arm.setHeldItem(HeldItem.NONE);
     Logger.consoleLog();
   }
 

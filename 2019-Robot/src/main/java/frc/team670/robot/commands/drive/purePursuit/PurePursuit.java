@@ -8,7 +8,6 @@
 package frc.team670.robot.commands.drive.purePursuit;
 
 import edu.wpi.first.wpilibj.command.Command;
-import frc.team670.robot.commands.drive.vision.VisionPurePursuit;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.utils.Logger;
@@ -25,18 +24,25 @@ public class PurePursuit extends Command {
   private MustangSensors sensors;
   private int executeCount;
   private MutableDouble finalAngle;
+  private double yDistance;
+  private double xDistance;
+  private double offset;
 
   /**
    * @param finalAngle a MutableDouble object reference to the angle (using zeroed yaw) this PurePursuit command should end up at compared to the zeroed yaw.
    */
-  public PurePursuit(Path path, DriveBase driveBase, MustangSensors sensors, PoseEstimator estimator, boolean isReversed, MutableDouble finalAngle) {
+  public PurePursuit(Path path, DriveBase driveBase, MustangSensors sensors, PoseEstimator estimator, boolean isReversed, MutableDouble finalAngle, double yDistance, double xDistance, double offset) {
    this.driveBase = driveBase;
    this.sensors = sensors;
    this.poseEstimator = estimator;
    this.finalAngle = finalAngle;
+
+   this.yDistance = yDistance;
+   this.xDistance = xDistance;
+   this.offset = offset;
   
    purePursuitTracker = new PurePursuitTracker(poseEstimator, driveBase, sensors, isReversed);
-   purePursuitTracker.setPath(path, LOOKAHEAD_DISTANCE_AT_66_INCHES * 40/66);
+   purePursuitTracker.setPath(path, LOOKAHEAD_DISTANCE_AT_66_INCHES * yDistance/66);
    requires(driveBase);
   }
 
@@ -55,8 +61,6 @@ public class PurePursuit extends Command {
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    //FOLLOWING MOVED TO PurePursuitTracker as a Notifier
-
     poseEstimator.update();
     DrivePower drivePower;
 
@@ -80,7 +84,10 @@ public class PurePursuit extends Command {
     Logger.consoleLog("Pose: %s ", poseEstimator.getPose());
     // VisionPurePursuit.disableArmRestriction();
     driveBase.setSparkVelocityControl(0,0);
-    finalAngle.setValue(finalAngle.getValue() - sensors.getYawDouble());
+    double xOffset = xDistance - poseEstimator.getPose().x;
+    double yOffset = yDistance + offset - poseEstimator.getPose().y;
+    double angle = Math.atan(yOffset/xOffset);
+    finalAngle.setValue(finalAngle.getValue()-sensors.getYawDouble()-Math.toDegrees(angle));
     // purePursuitTracker.stopNotifier();
     purePursuitTracker.reset();
   }

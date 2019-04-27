@@ -25,15 +25,17 @@ public class MustangDriveBaseEncoder implements PIDSource {
     private Encoder dioEncoder;
     private CANEncoder sparkEncoder;
     private boolean isDIOEncoder;
+    private boolean isSparkMAXInverted;
 
     /**
      * @param dioEncoder the DIO Encoder used for this side of the drivebase
      * @param sparkEncoder the Spark Encoder associatd for this side of the drivebase
      */
-    public MustangDriveBaseEncoder(Encoder dioEncoder, CANEncoder sparkEncoder) {
+    public MustangDriveBaseEncoder(Encoder dioEncoder, CANEncoder sparkEncoder, boolean isSparkMAXInverted) {
         this.dioEncoder = dioEncoder;
         this.sparkEncoder = sparkEncoder;
         type = PIDSourceType.kDisplacement;
+        this.isSparkMAXInverted = isSparkMAXInverted;
         isDIOEncoder = (dioEncoder != null);
     }
 
@@ -45,7 +47,7 @@ public class MustangDriveBaseEncoder implements PIDSource {
             if (isDIOEncoder) {
                 return dioEncoder.get();
             }
-            return (int) (sparkEncoder.getPosition() / RobotConstants.SPARK_TICKS_PER_ROTATION);
+            return (isSparkMAXInverted ? -1 : 1) * (int) (sparkEncoder.getPosition() / RobotConstants.SPARK_TICKS_PER_ROTATION);
         }  
         catch(RuntimeException e) {
             return 0;
@@ -60,7 +62,7 @@ public class MustangDriveBaseEncoder implements PIDSource {
             if (isDIOEncoder) {
                 return DriveBase.convertDriveBaseTicksToInches(dioEncoder.get());
             }
-            return -1 * DriveBase.convertSparkRevolutionsToInches(sparkEncoder.getPosition());
+            return (isSparkMAXInverted ? -1 : 1) * DriveBase.convertSparkRevolutionsToInches(sparkEncoder.getPosition());
         }
         catch(RuntimeException e) {
             return 0;
@@ -76,7 +78,7 @@ public class MustangDriveBaseEncoder implements PIDSource {
             if (isDIOEncoder) {
                 return dioEncoder.getRate();
             }
-            return (DriveBase.convertDriveBaseTicksToInches(sparkEncoder.getVelocity() / RobotConstants.SPARK_TICKS_PER_ROTATION) / 60);
+            return (isSparkMAXInverted ? -1 : 1) * (DriveBase.convertDriveBaseTicksToInches(sparkEncoder.getVelocity() / RobotConstants.SPARK_TICKS_PER_ROTATION) / 60);
         }
         catch(RuntimeException e) {
             return 0;
@@ -91,7 +93,7 @@ public class MustangDriveBaseEncoder implements PIDSource {
             if (isDIOEncoder) {
                 return DriveBase.convertInchesToDriveBaseTicks(dioEncoder.getRate());
             }
-            return (sparkEncoder.getVelocity() / RobotConstants.SPARK_TICKS_PER_ROTATION / 60);
+            return (isSparkMAXInverted ? -1 : 1) * (sparkEncoder.getVelocity() / RobotConstants.SPARK_TICKS_PER_ROTATION / 60);
         }
         catch(RuntimeException e) {
             return 0;

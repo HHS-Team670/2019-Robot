@@ -21,9 +21,12 @@ import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.MutableDouble;
 import frc.team670.robot.utils.functions.MathUtils;
 import frc.team670.robot.utils.math.Vector;
+import frc.team670.robot.Robot;
+
 
 /**
  * Starts a Pure Pursuit path based off vision data
+ * @deprecated Replaced by VisionPurePursuitV2 which combines this with PurePursuit into one Command
  */
 public class VisionPurePursuit extends CommandGroup {
 
@@ -41,18 +44,8 @@ public class VisionPurePursuit extends CommandGroup {
    * @param finalAngle The mutable double for the desired final angle. Should be set by this command so a Pivot can finish it from the surrounding CommandGroup.
    */
   public VisionPurePursuit(DriveBase driveBase, MustangCoprocessor coprocessor, MustangSensors sensors,
-      double spaceFromTarget, boolean isReversed, boolean lowTarget, MutableDouble finalAngle) {
+      double spaceFromTarget, boolean isReversed, MutableDouble finalAngle) {
     super();
-
-    driveBase.initBrakeMode();
-    coprocessor.setTargetHeight(lowTarget);
-
-    coprocessor.setCamera(isReversed);
-    // try {
-    //   Thread.sleep(35);
-    // } catch (InterruptedException e) {
-    //   e.printStackTrace();
-    // }
 
     try {
       if(MathUtils.doublesEqual(coprocessor.getVisionValues()[2], RobotConstants.VISION_ERROR_CODE)) {
@@ -68,7 +61,7 @@ public class VisionPurePursuit extends CommandGroup {
     System.out.println("HorizontalAngle: " + horizontalAngle);
     if (MathUtils.doublesEqual(horizontalAngle, RobotConstants.VISION_ERROR_CODE)) {
       Logger.consoleLog("No Valid Vision Data found, command quit.");
-      SmartDashboard.putString("vision-status", "error");
+      SmartDashboard.putString("vision-status", "invalid-data");
       SmartDashboard.putString("warnings", "Vision Target Not Found");
       return;
     }
@@ -91,12 +84,11 @@ public class VisionPurePursuit extends CommandGroup {
     //   straightDistance = (visionDistance < ultrasonicDistance) ? visionDistance : ultrasonicDistance;
     // }
 
-    // if (straightDistance > 132) { // Distance is too far, must be invalid data.
-    //   Logger.consoleLog("No Valid Vision Data or Ultrasonic Data found, command quit.");
-    //   SmartDashboard.putString("vision-status", "");
-    //   return;
-    // }
-
+    if (straightDistance > 132) { // Distance is too far, must be invalid data.
+      Logger.consoleLog("No Valid Vision Data or Ultrasonic Data found, command quit.");
+      SmartDashboard.putString("vision-status", "invalid-data");
+      return;
+    }
 
     straightDistance = straightDistance - spaceFromTarget;
     if (straightDistance < 0) {
@@ -114,6 +106,7 @@ public class VisionPurePursuit extends CommandGroup {
     double horizontalDistance = straightDistance * Math.tan(Math.toRadians(horizontalAngle)); // x = y * tan(theta)
     // double horizontalDistance = -18;
     double partialDistanceY = (straightDistance) * 2.0 / 5.0;
+
 
     System.out.println("straightDist: " + straightDistance + ", horizontalDistance: " + horizontalDistance);
     if (isReversed) { // Flip all of these to match our coord system when looking out the back
@@ -144,8 +137,8 @@ public class VisionPurePursuit extends CommandGroup {
     Path path = generator.generatePath(isReversed);
 
     finalAngle.setValue(horizontalAngle);
-    PurePursuit command = new PurePursuit(path, driveBase, sensors, poseEstimator, isReversed, finalAngle);
-
+    PurePursuit command = new PurePursuit(path, driveBase, sensors, poseEstimator, isReversed, finalAngle, straightDistance, horizontalDistance, spaceFromTarget);
+    Robot.leds.setVisionData(true);
     addSequential(command);
   }
 

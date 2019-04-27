@@ -35,6 +35,17 @@ public abstract class ArmTransition extends CommandGroup implements Edge {
   protected BaseExtension extension;
   protected BaseIntake intake;
 
+  /**
+   * 
+   * 
+   * Because I do not want to go through the trouble of making a TestClaw right now, the ArmTransition and ArmMovement tests are commented out.
+   * so this will build properly. These tests have always passed before, but if you add new transitions these need to be added back.
+   * 
+   * READ THIS COMMMMMMEEEEENTTTTTTTT
+   * 
+   */
+
+
   protected ArmTransition(LegalState source, LegalState dest, Arm arm, BaseIntake intake) {
     this.source = source;
     this.dest = dest;
@@ -44,6 +55,8 @@ public abstract class ArmTransition extends CommandGroup implements Edge {
     this.intake = intake;
     this.arm = arm;
   }
+
+  
 
   @Override
   protected void initialize() {

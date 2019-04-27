@@ -47,6 +47,9 @@ public class MoveIntakeToSetpointAngle extends Command {
   @Override
   protected void execute() {
     // Logger.consoleLog("currentIntakeAngle:%s", intake.getAngleInDegrees());
+    if(setpointInDegrees < 0) {
+      intake.runIntake(0.8, false);
+    }
 
     loggingIterationCounter++;
   }
@@ -69,6 +72,7 @@ public class MoveIntakeToSetpointAngle extends Command {
   protected void end() {
     intake.stop();
     intake.setRotatorNeutralMode(NeutralMode.Coast);
+    intake.stopRollers();
     // Logger.consoleLog("endIntakeAngle:%s", intake.getAngleInDegrees());
     // System.out.println("FINISHED MOVE INTAKE");
   }

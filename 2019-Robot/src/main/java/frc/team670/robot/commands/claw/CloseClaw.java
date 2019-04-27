@@ -28,10 +28,8 @@ public class CloseClaw extends Command {
   // Called once when the command executes
   @Override
   protected void initialize() {
-    if(claw.isOpen()) {
-      Robot.arm.setHeldItem(HeldItem.NONE);
-      claw.closeClaw();
-    }
+    claw.closeClaw();
+    Robot.arm.setHeldItem(HeldItem.NONE);
     Logger.consoleLog();
   }
 

@@ -22,7 +22,8 @@ public class MoveExtensionBackUntilHitsLimitSwitch extends Command {
   public MoveExtensionBackUntilHitsLimitSwitch(BaseExtension extension) {
     super(extension);
     this.extension = extension;
-    setInterruptible(false);
+    setInterruptible(true);
+    setTimeout(5);
   }
 
   // Called once when the command executes
@@ -33,7 +34,7 @@ public class MoveExtensionBackUntilHitsLimitSwitch extends Command {
 
   protected void execute() {
     double value = extension.getArbitraryFeedForwardAngleMultiplier() * Extension.ARBITRARY_FEEDFORWARD_CONSTANT;
-    extension.moveByPercentOutput(-0.03 + value);
+    extension.moveByPercentOutput(-0.08 + value);
   }
 
   @Override
@@ -43,7 +44,7 @@ public class MoveExtensionBackUntilHitsLimitSwitch extends Command {
 
   protected void end(){
     extension.stop();
-    extension.resetPositionBasedOnLimitSwitchTripping();
+    extension.resetLimitSwitch();
   }
 
   @Override

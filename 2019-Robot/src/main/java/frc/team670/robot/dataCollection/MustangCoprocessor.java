@@ -9,9 +9,11 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.NetworkTableType;
 import edu.wpi.first.wpilibj.PIDSource;
 import edu.wpi.first.wpilibj.PIDSourceType;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
+import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.utils.functions.MathUtils;
 
 /**
@@ -22,6 +24,7 @@ public class MustangCoprocessor {
 
     private HashMap<String, NetworkTableObject> entries;
 
+    private Solenoid backLedRing;
     private VisionValues wallTarget; 
 
     // The keys for the NetworkTable entries that the raspberry pi is putting up. Ensure that these are placed on the raspi also. Maybe make a shared config file
@@ -33,13 +36,13 @@ public class MustangCoprocessor {
     public static final double HIGH_TARGET_HEIGHT = 39.125; //inches
     public static final double LOW_TARGET_HEIGHT = 31.5; //inches
 
-    private static final double BACK_CAMERA_HORIZONTAL_OFFSET = -7.875; //inches
-    private static final double BACK_CAMERA_HEIGHT = 12.375;
-    private static final double BACK_CAMERA_VERTICAL_OFFSET_ANGLE = 29; //degrees
+    private static final double BACK_CAMERA_HORIZONTAL_OFFSET = 8; //inches
+    private static final double BACK_CAMERA_HEIGHT = 12.25;
+    private static final double BACK_CAMERA_VERTICAL_OFFSET_ANGLE = 30; //degrees
 
-    private static final double FRONT_CAMERA_HORIZONTAL_OFFSET = 5.25; //inches
-    private static final double FRONT_CAMERA_HEIGHT = 7.25;
-    private static final double FRONT_CAMERA_VERTICAL_OFFSET_ANGLE = 27; //degrees
+    private static final double FRONT_CAMERA_HORIZONTAL_OFFSET = 11.875; //inches
+    private static final double FRONT_CAMERA_HEIGHT = 11.125;
+    private static final double FRONT_CAMERA_VERTICAL_OFFSET_ANGLE = 30; //degrees
 
     private boolean backCamera; // true for back camera, false for front
     private boolean lowTarget; // true for low vision taget, false for high
@@ -59,6 +62,8 @@ public class MustangCoprocessor {
         wallTarget = new VisionValues(NETWORK_TABLE_KEYS[0]);
         backCamera = true;
         lowTarget = true;
+        backLedRing = new Solenoid(RobotMap.PCM_MODULE, RobotMap.BACK_LED_RING);
+        backLedRing.set(false);
     }
 
     private class NetworkTableObject {
@@ -75,6 +80,7 @@ public class MustangCoprocessor {
             entry = instance.getEntry(key);
             table.addEntryListener(key, (table2, key2, entry, value, flags) -> {
                 this.entry = entry;
+                System.out.println("Changed Value");
             }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
             this.key = key;
         }
@@ -117,24 +123,13 @@ public class MustangCoprocessor {
      * Returns distance to the target from the center of the robot
      */
     public double getDistanceToWallTarget() {
-        double hangle_offset = wallTarget.getHAngle();
-        double hangle_offset_radians = Math.toRadians(hangle_offset);
-        if(MathUtils.doublesEqual(hangle_offset, RobotConstants.VISION_ERROR_CODE)){
+        double depth_offset = getOffsetDepth();
+        if(MathUtils.doublesEqual(depth_offset, RobotConstants.VISION_ERROR_CODE)){
             return RobotConstants.VISION_ERROR_CODE;
         }
-        double depth_offset = getOffsetDepth();
         double real_depth = depth_offset;
         double phi = Robot.sensors.getAngleToTarget();
-        double alpha = 90 - hangle_offset - phi;
-        double y = (depth_offset * Math.tan(hangle_offset_radians) * Math.sin(Math.toRadians(phi)))/ (Math.sin(Math.toRadians(alpha)));
-        double diagonalOffsetToTarget = (depth_offset / Math.cos(hangle_offset_radians)) + y;
-        double temp = cameraHorizontalOffset*cameraHorizontalOffset + diagonalOffsetToTarget * diagonalOffsetToTarget - (2 * cameraHorizontalOffset * diagonalOffsetToTarget * Math.cos(Math.PI/2 - hangle_offset_radians));
-        double realDiagonalToTarget = Math.sqrt(temp);
-        double beta = Math.toDegrees(Math.asin((cameraHorizontalOffset * Math.sin(Math.PI/2 - hangle_offset_radians) / realDiagonalToTarget)));
-        double real_angle = 90 - beta - phi;
-        double omega = alpha + beta;
-        double tempAngle = 180 - omega - real_angle;
-        real_depth = (Math.sin(Math.toRadians(omega)) * realDiagonalToTarget) / Math.sin(Math.toRadians(tempAngle));
+        real_depth = real_depth + (cameraHorizontalOffset * Math.tan(Math.toRadians(phi)));
         
         return real_depth;
     }
@@ -148,6 +143,7 @@ public class MustangCoprocessor {
         double targetHeight = lowTarget ? LOW_TARGET_HEIGHT : HIGH_TARGET_HEIGHT;
         double offset_depth = (targetHeight - cameraHeight) / Math.tan(Math.toRadians(vangle));
         //offset_depth = offset_depth / Math.cos(Math.toRadians(Math.abs(hangle))); - This finds the diagonal distance
+        SmartDashboard.putNumber("Depth To Camera", offset_depth);
         return offset_depth;
     }
 
@@ -167,15 +163,14 @@ public class MustangCoprocessor {
         double depth_offset = getOffsetDepth();
         double phi = Robot.sensors.getAngleToTarget();
         double alpha = 90 - hangle_offset - phi;
-        double y = (depth_offset * Math.tan(hangle_offset_radians) * Math.sin(Math.toRadians(phi)))/ (Math.sin(Math.toRadians(alpha)));
-        double diagonalOffsetToTarget = (depth_offset / Math.cos(hangle_offset_radians)) + y;
-        double temp = cameraHorizontalOffset*cameraHorizontalOffset + diagonalOffsetToTarget * diagonalOffsetToTarget - (2 * cameraHorizontalOffset * diagonalOffsetToTarget * Math.cos(Math.PI/2 - hangle_offset_radians));
+        double y = (depth_offset * Math.sin(Math.toRadians(90-phi)))/ (Math.sin(Math.toRadians(alpha)));
+        double temp = cameraHorizontalOffset*cameraHorizontalOffset + y * y - (2 * cameraHorizontalOffset * y * Math.cos(Math.PI/2 - hangle_offset_radians));
         double realDiagonalToTarget = Math.sqrt(temp);
-        double beta = Math.toDegrees(Math.asin((cameraHorizontalOffset * Math.sin(Math.PI/2 - hangle_offset_radians) / realDiagonalToTarget)));
-        double real_angle = 90 - beta - phi;
-
-        if(phi < 0)
-            real_angle = hangle_offset + (hangle_offset- real_angle);
+        double beta = Math.toDegrees(Math.asin((y * Math.sin(Math.PI/2 - hangle_offset_radians) / realDiagonalToTarget)));
+        double real_angle = beta-90;
+    
+        // if(hangle_offset <0)
+            // real_angle *= -1; //Angle returned is always negative because of arcsins range so multiply by -1 if hangle was positive
         return (real_angle);
     }
 
@@ -211,6 +206,19 @@ public class MustangCoprocessor {
             verticalCameraOffsetAngle = FRONT_CAMERA_VERTICAL_OFFSET_ANGLE; //degrees
             cameraHeight = FRONT_CAMERA_HEIGHT; //degrees
             SmartDashboard.putString("vision-camera", "front");
+        }
+    }
+
+    /**
+     * Sets whether to use vision
+     * @param enabled true for vision, false for no vision
+     */
+    public void useVision(boolean enabled) {
+        if(enabled) {
+            SmartDashboard.putString("vision-enabled", "enabled");
+        }
+        else {
+            SmartDashboard.putString("vision-enabled", "disabled");
         }
     }
 
@@ -310,6 +318,14 @@ public class MustangCoprocessor {
             double result = entries.get(key).getValue()[index];
             return result;
         }
+    }
+
+    public void turnOnBackLedRing() {
+        backLedRing.set(true);
+    }
+
+    public void turnOffBackLedRing() {
+        backLedRing.set(false);
     }
 
 }

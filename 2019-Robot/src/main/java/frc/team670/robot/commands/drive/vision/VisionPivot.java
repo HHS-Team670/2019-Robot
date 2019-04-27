@@ -8,22 +8,31 @@
 package frc.team670.robot.commands.drive.vision;
 
 import edu.wpi.first.wpilibj.command.CommandGroup;
+import edu.wpi.first.wpilibj.command.InstantCommand;
+import frc.team670.robot.commands.drive.pivot.NavXChangeableAnglePivot;
+import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangCoprocessor;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.utils.MutableDouble;
 
-public class VisionPurePursuitWithPivot extends CommandGroup {
-
-  public VisionPurePursuitWithPivot(DriveBase driveBase, MustangCoprocessor coprocessor, MustangSensors sensors,
+public class VisionPivot extends CommandGroup {
+  /**
+   * Add your docs here.
+   */
+  public VisionPivot(DriveBase driveBase, MustangCoprocessor coprocessor, MustangSensors sensors,
   double spaceFromTarget, boolean isReversed, boolean lowTarget) {
 
-    MutableDouble changeableAngle = new MutableDouble(0);
+    double[] visionData = new double[]{RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE};
 
-    // addSequential(new NavXChangeableAnglePivot(new MutableDouble(sensors.getAngleToTarget()), driveBase, sensors));
-    addSequential(new VisionPivot(driveBase, coprocessor, sensors, spaceFromTarget, isReversed, lowTarget));
-    // System.out.println("Phi: " + sensors.getAngleToTarget());
-    //addSequential(new VisionDrive(driveBase, coprocessor, sensors, spaceFromTarget, isReversed, lowTarget, changeableAngle));
-    // addSequential(new NavXChangeableAnglePivot(changeableAngle, driveBase, sensors));
+    MutableDouble changeableAngle = new MutableDouble(0);
+    addSequential(new CollectVisionData(visionData, coprocessor, lowTarget, isReversed, driveBase));
+    addSequential(new InstantCommand() {
+      protected void initialize() {
+        changeableAngle.setValue(coprocessor.getAngleToWallTarget());
+      }
+    });
+    addSequential(new NavXChangeableAnglePivot(changeableAngle, driveBase, sensors, isReversed));
+
   }
 }

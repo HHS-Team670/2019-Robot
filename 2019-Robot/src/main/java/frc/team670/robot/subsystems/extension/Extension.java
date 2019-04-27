@@ -34,7 +34,7 @@ public class Extension extends BaseExtension {
   private static final int POSITION_SLOT = 1;
   private final double P_P = 0.1, P_I = 0.0, P_D = 0.0, P_F = 0.0, RAMP_RATE = 0.1;
   private static final double EXTENSION_POWER = 0.75; // TODO set this for Extension movement when climbing
-  private static final int CONTINUOUS_CURRENT_LIMIT = 20, PEAK_CURRENT_LIMIT = 0;
+  private static final int CONTINUOUS_CURRENT_LIMIT = 10, PEAK_CURRENT_LIMIT = 20;
 
   private static final int START_POSITION_TICKS = 0; // TODO set this. Start position needed since extension has no absolute encoder
 
@@ -61,7 +61,7 @@ public class Extension extends BaseExtension {
 
   private static final int OFFSET_FROM_ENCODER_ZERO = 0;
 
-  private Notifier resetPositionBasedOnLimitSwitchTrippingNotifier;
+  private Notifier warningWhenLimitTripped;
 
 
   public Extension() {
@@ -100,6 +100,8 @@ public class Extension extends BaseExtension {
     extensionMotor.configPeakOutputForward(MAX_EXTENSION_OUTPUT, RobotConstants.kTimeoutMs);
     extensionMotor.configPeakOutputReverse(-MAX_EXTENSION_OUTPUT, RobotConstants.kTimeoutMs);
 
+    extensionMotor.configPeakCurrentDuration(300);
+
     if(getReverseLimitSwitchTripped()) {
       extensionMotor.setSelectedSensorPosition(EXTENSION_IN_POS);
     }
@@ -126,12 +128,12 @@ public class Extension extends BaseExtension {
     extensionMotor.getSensorCollection().setQuadraturePosition(START_POSITION_TICKS, 0); // The Extension 
     stop();
 
-    resetPositionBasedOnLimitSwitchTrippingNotifier = new Notifier(new Runnable() {
+    warningWhenLimitTripped = new Notifier(new Runnable() {
       public void run() {
-        resetPositionBasedOnLimitSwitchTripping();
+        warnifLimitHit();
       }
     });
-    resetPositionBasedOnLimitSwitchTrippingNotifier.startPeriodic(0.25);
+    warningWhenLimitTripped.startPeriodic(0.25);
 
   }
 
@@ -257,12 +259,11 @@ public class Extension extends BaseExtension {
     }
   }
 
-  public void resetPositionBasedOnLimitSwitchTripping() {
-    if (getReverseLimitSwitchTripped()) {
-      setSelectedSensorPosition(Extension.EXTENSION_IN_POS);
-    } else if (getForwardLimitSwitchTripped()) {
-      setSelectedSensorPosition(Extension.EXTENSION_OUT_POS);
-    }
+  public void warnifLimitHit() {
+    if (getForwardLimitSwitchTripped())
+      SmartDashboard.putString("warning", "EXTENSION FORWARD LIMIT SWITCH TRIPPED");
+    if (getReverseLimitSwitchTripped())
+      SmartDashboard.putString("warning", "EXTENSION REVERSE LIMIT SWITCH TRIPPED");
   }
 
   public double getArbitraryFeedForwardAngleMultiplier() {
@@ -328,6 +329,16 @@ public class Extension extends BaseExtension {
 
   private void setSelectedSensorPosition(int sensorPos) {
     extensionMotor.setSelectedSensorPosition(sensorPos);
+  }
+
+  public void resetLimitSwitch(){
+    if(getForwardLimitSwitchTripped()){
+      extensionMotor.setSelectedSensorPosition(Extension.EXTENSION_OUT_POS);
+    }
+
+    if(getReverseLimitSwitchTripped()){
+      extensionMotor.setSelectedSensorPosition(Extension.EXTENSION_IN_POS);
+    }
   }
 
 

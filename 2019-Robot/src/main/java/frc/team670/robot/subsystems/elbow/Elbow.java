@@ -28,7 +28,7 @@ public class Elbow extends BaseElbow {
 
   // Current
   private static final int CURRENT_CONTROL_SLOT = 1;
-  private static final int CLIMBING_CONTINUOUS_CURRENT_LIMIT = 35, NORMAL_CONTINUOUS_CURRENT_LIMIT = 33, PEAK_CURRENT_LIMIT = 0; // TODO set current limit in Amps
+  private static final int CLIMBING_CONTINUOUS_CURRENT_LIMIT = 35, NORMAL_CONTINUOUS_CURRENT_LIMIT = 17, PEAK_CURRENT_LIMIT = 33; // TODO set current limit in Amps
   private static final double CURRENT_P = 0.2, CURRENT_I = 0.0, CURRENT_D = 0.0, CURRENT_F = 0.0; // TODO Check these constants
   // Motion Magic
   private static final int kPIDLoopIdx = 0, MOTION_MAGIC_SLOT = 0, kTimeoutMs = 0;
@@ -80,6 +80,8 @@ public class Elbow extends BaseElbow {
     rotator.configPeakOutputReverse(-MAX_ELBOW_OUTPUT, RobotConstants.kTimeoutMs);
 
     rotator.configAllowableClosedloopError(MOTION_MAGIC_SLOT, CLOSED_LOOP_ALLOWABLE_ERROR);
+
+    rotator.configPeakCurrentDuration(300);
 
     rotator.setInverted(false);
     elbowRotationSlave.setInverted(false);

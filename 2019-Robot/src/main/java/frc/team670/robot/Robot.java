@@ -7,21 +7,22 @@
 
 package frc.team670.robot;
 
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team670.robot.commands.ControlOperatorController;
+import frc.team670.robot.commands.arm.zero.SafelyResetExtension;
 import frc.team670.robot.commands.drive.teleop.XboxRocketLeagueDrive;
-import frc.team670.robot.commands.drive.vision.VisionPurePursuitWithPivot;
-import frc.team670.robot.commands.tuning.ResetPulseWidthEncoder;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangCoprocessor;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.Arm;
+import frc.team670.robot.subsystems.Arm.HeldItem;
 import frc.team670.robot.subsystems.Claw;
 import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.subsystems.Intake;
@@ -30,7 +31,6 @@ import frc.team670.robot.subsystems.elbow.Elbow;
 import frc.team670.robot.subsystems.extension.Extension;
 import frc.team670.robot.subsystems.wrist.Wrist;
 import frc.team670.robot.utils.Logger;
-import frc.team670.robot.utils.functions.MathUtils;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -50,20 +50,18 @@ public class Robot extends TimedRobot {
   private static Wrist wrist = new Wrist();
   private static Extension extension = new Extension();
   public static Intake intake = new Intake();
-  public static Claw claw = new Claw();
+  public static Claw claw= new Claw();
   public static Arm arm = new Arm(elbow, wrist, extension, intake, claw);
 
   private Notifier updateArbitraryFeedForwards;
-  private Notifier checkVisionLock;
-
-
 
   private Command autonomousCommand, operatorControl;
   private SendableChooser<Command> auton_chooser = new SendableChooser<>();
-  public static SendableChooser<Boolean> pid_chooser = new SendableChooser<>();
-  
-  private Timer timer;
 
+  private static final double NETWORK_TABLES_UPDATE_RATE = 0.05;
+
+  private boolean firstTimeEnteringTeleop;
+  
   public Robot() {
   }
 
@@ -76,6 +74,8 @@ public class Robot extends TimedRobot {
     // auton_chooser.addDefault("Default Auto", new TimeDrive());
     // chooser.addObject("My Auto", new MyAutoCommand());
 
+    NetworkTableInstance networkTables = NetworkTableInstance.getDefault();
+    networkTables.setUpdateRate(NETWORK_TABLES_UPDATE_RATE);
 
     oi = new OI();
 
@@ -91,21 +91,15 @@ public class Robot extends TimedRobot {
     Logger.consoleLog();
     System.out.println("Robot init");
 
-    leds.socketSetup(5801);
+    leds.socketSetup(RobotConstants.LED_PORT);    
     System.out.println("LED Setup Run");
-    //leds.socketSetup(RobotConstants.LED_PORT);    
-
-    // Setup to receive PID values from smart dashboard
-    pid_chooser.setDefaultOption("false", false);
-    pid_chooser.addOption("true", true);
-    // SmartDashboard.putData("PID Inputs from Dashboard?", pid_chooser);
-    // SmartDashboard.putNumber("P", 0);
-    // SmartDashboard.putNumber("I", 0);
-    // SmartDashboard.putNumber("D", 0);
-    // SmartDashboard.putNumber("KA", 0);
 
     // autonomousCommand = oi.getSelectedAutonCommand();
-    timer = new Timer();
+    leds.setStillDrive(true);
+
+    elbow.stop();
+    wrist.stop();
+    extension.stop();
 
     // operatorControl = new ControlOperatorController(oi.getOperatorController());
     updateArbitraryFeedForwards = new Notifier(new Runnable() {
@@ -117,25 +111,13 @@ public class Robot extends TimedRobot {
       }
     });
 
-    checkVisionLock = new Notifier(new Runnable() {
-      public void run() {
-        if(!MathUtils.doublesEqual(coprocessor.getAngleToWallTarget(), RobotConstants.VISION_ERROR_CODE)) {
-          leds.setVisionData(true);
-        } else {
-          boolean isReversed = XboxRocketLeagueDrive.isDriveReversed();
-          if (isReversed) {
-            Robot.leds.setReverseData(true);
-          } else {
-            Robot.leds.setForwardData(true);
-          }
-        }
-      }
-    });
-    checkVisionLock.startPeriodic(0.2);
-
     updateArbitraryFeedForwards.startPeriodic(0.01);
 
-    // autonomousCommand = new MeasureTrackwidth();
+    SmartDashboard.putNumberArray("reflect_tape_vision_data", new double[]{RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE,RobotConstants.VISION_ERROR_CODE});
+    
+    SmartDashboard.putString("vision-camera", "front");
+    SmartDashboard.putString("vision-enabled", "disabled");
+    SmartDashboard.putString("vision-status", "");
   }
 
   /**
@@ -148,7 +130,7 @@ public class Robot extends TimedRobot {
    */  
  @Override
   public void robotPeriodic() {
-    SmartDashboard.putNumber("gyro", (int) sensors.getAngle() % 360);
+    // SmartDashboard.putNumber("gyro", (int) sensors.getAngle() % 360);
     // SmartDashboard.putString("current-command", Scheduler.getInstance().getName());
     SmartDashboard.putString("current-arm-state", Arm.getCurrentState().toString());
     SmartDashboard.putNumber("intake-angle", intake.getAngleInDegrees());
@@ -157,24 +139,34 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("intake-ir-sensor", sensors.getIntakeIROutput());
     SmartDashboard.putNumber("extension-actual-length" , extension.getLengthInches());
     SmartDashboard.putNumber("arm-extension" , extension.getLengthInches() / Extension.EXTENSION_OUT_IN_INCHES);
-    SmartDashboard.putNumber("Actual Extension" , extension.getLengthInches());
+    // SmartDashboard.putNumber("Actual Extension" , extension.getLengthInches());
     SmartDashboard.putBoolean("drive-reversed-status", XboxRocketLeagueDrive.isDriveReversed());
+    if (arm.getHeldItem().equals(HeldItem.HATCH)) {
+      SmartDashboard.putString("claw-status", "Hatch");
+    } else if (arm.getHeldItem().equals(HeldItem.BALL)) {
+      SmartDashboard.putString("claw-status", "Ball");
+    } else if (arm.getHeldItem().equals(HeldItem.NONE)) {
+      SmartDashboard.putString("claw-status", "None");
+    } else if (claw.isOpen()) {
+      SmartDashboard.putString("claw-status", "open");
+    } else if (!claw.isOpen()) {
+      SmartDashboard.putString("claw-status", "close");
+    }
 
-    SmartDashboard.putNumber("Angle", sensors.getAngle());
-    SmartDashboard.putNumber("Phi", sensors.getAngleToTarget());
+    SmartDashboard.putNumber("Yaw", sensors.getYawDouble());
+    // SmartDashboard.putNumber("Phi", sensors.getAngleToTarget());
     SmartDashboard.putNumber("Horizontal Angle", coprocessor.getAngleToWallTarget());
-    SmartDashboard.putNumber("Depth", coprocessor.getDistanceToWallTarget());
+    // SmartDashboard.putNumber("Depth", coprocessor.getDistanceToWallTarget());
 
     // SmartDashboard.putNumber("Arbitrary Feedforward Measurement", MeasureArbitraryFeedforward.output);
 
-    // SmartDashboard.putString("Held Item", arm.getHeldItem().toString());
 
-    // elbow.sendDataToDashboard();
+    elbow.sendDataToDashboard();
     // extension.sendDataToDashboard();
     // wrist.sendDataToDashboard();
     // intake.sendDataToDashboard();
-    sensors.sendUltrasonicDataToDashboard();
-    driveBase.sendDIOEncoderDataToDashboard();
+    sensors.sendBreamBreakDataToDashboard();
+    driveBase.sendEncoderDataToDashboard();
 
   }
   /**
@@ -184,18 +176,23 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
-    SmartDashboard.putString("robot-state", "disabledInit()");
+    SmartDashboard.putString("robot-state", "disabledPeriodic()");
     Logger.consoleLog("Robot Disabled");
     // autonomousCommand = oi.getSelectedAutonCommand();
-    driveBase.initCoastMode();
+    leds.setStillDrive(true);
+    // driveBase.initCoastMode();
     intake.stop();
-    timer.stop();
-    intake.stop();
+    elbow.stop();
+    extension.stop();
+    wrist.stop();
   }
 
   @Override
   public void disabledPeriodic() {
-    SmartDashboard.putString("robot-state", "disabledPeriodic()");
+
+    sensors.sendUltrasonicDataToDashboard();
+    driveBase.sendEncoderDataToDashboard();
+
     Scheduler.getInstance().run();
   }
 
@@ -213,34 +210,23 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
-    // sensors.resetNavX(); // Reset NavX completely, zero the field centric based on how robot faces from start of game.
+    if(DriverStation.getInstance().getAlliance().equals(Alliance.Red)) {
+      leds.changeAlliance(false);
+    } else if (DriverStation.getInstance().getAlliance().equals(Alliance.Blue)) {
+      leds.changeAlliance(true);
+    } else {
+      leds.changeAlliance(true);
+    }
+    leds.setForwardData(true);
 
-    // driveBase.initBrakeMode();
+    sensors.resetNavX(); // Reset NavX completely, zero the field centric based on how robot faces from start of game.
+    driveBase.initBrakeMode();
 
-    // SmartDashboard.putString("robot-state", "autonomousInit()");
+    Logger.consoleLog("Auton Started");
+    SmartDashboard.putString("robot-state", "autonomousPeriodic()");
 
-    // if(DriverStation.getInstance().getAlliance().equals(Alliance.Red)) {
-    //   leds.changeAlliance(false);
-    // } else if (DriverStation.getInstance().getAlliance().equals(Alliance.Blue)) {
-    //   leds.changeAlliance(true);
-    // } else {
-    //   leds.changeAlliance(true);
-    // }
-
-    // Logger.consoleLog("Auton Started");
-    // timer.start();
-
-    // Scheduler.getInstance().add(new MoveExtensionBackUntilHitsLimitSwitch(extension));
-    // arm.setCoastMode();
-
-    // TODO: robot crashing when trying to load path
-    // autonomousCommand = oi.getSelectedAutonCommand();
-    // autonomousCommand = new RunIntake(intake, sensors, true);
-    // schedule the autonomous command (example)
-
-    autonomousCommand = new VisionPurePursuitWithPivot(driveBase, coprocessor, sensors, 6, true, true);
-      // autonomousCommand = new TestVelocityDrive(20, 20);'
-    // autonomousCommand = new NavXChangeableAnglePivot(new MutableDouble(15), driveBase, sensors);
+    Scheduler.getInstance().add(new SafelyResetExtension());
+    arm.setCoastMode();
 
     if (autonomousCommand != null) {
       autonomousCommand.start();
@@ -256,18 +242,18 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-    // SmartDashboard.putString("robot-state", "autonomousPeriodic()");
-    // SmartDashboard.putNumber("game-time", (int) timer.get());
     Scheduler.getInstance().run();
   }
 
   @Override
   public void teleopInit() {
-    SmartDashboard.putString("robot-state", "teleopInit()");
-
+    SmartDashboard.putString("robot-state", "teleopPeriodic()");
+    leds.setForwardData(true);
     driveBase.initBrakeMode();
 
-    leds.setForwardData(true);
+    if(DriverStation.getInstance().getMatchTime() < 130) {
+      Scheduler.getInstance().add(new SafelyResetExtension());
+    }
 
     Logger.consoleLog("Teleop Started");
     // This makes sure that the autonomous stops running when
@@ -284,11 +270,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    SmartDashboard.putString("robot-state", "teleopPeriodic()");
-    SmartDashboard.putNumber("game-time", (int) timer.get());
-    if (Robot.oi.getDriverController().getYButton()) {
-      Scheduler.getInstance().add(new ResetPulseWidthEncoder(wrist));
-    }
     Scheduler.getInstance().run();
   }
 
