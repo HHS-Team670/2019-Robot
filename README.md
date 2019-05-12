@@ -1,5 +1,5 @@
 # 2019-Robot
-Code for Team 670's 2019 "Destination: Deep Space" FIRST Robotics Competition Robot (yet unnamed).
+Code for Team 670's 2019 "Destination: Deep Space" FIRST Robotics Competition Robot "*The Flex*".
 
 ## Repository Organization:<br/>
 - 2019-Robot: Java code and files to be deployed to run on the RoboRIO that are organized and deployed with GradleRIO<br/>
