@@ -30,7 +30,7 @@ public class Wrist extends BaseWrist {
 
   // Motion Magic
   private static final int kPIDLoopIdx = 0, MOTION_MAGIC_SLOT = 0, kTimeoutMs = 0;
-  private static final double MM_F = 0, MM_P = 1.5, MM_I = 0.0, MM_D = 50;
+  private static final double MM_F = 0, MM_P = 0.65, MM_I = 0.0, MM_D = 30;
   private static final int MM_IZONE = 0;
   private static final double OPEN_ARBITRARY_FEEDFORWARD = 0.07; // 0.065
   private static final double CLOSED_ARBITRARY_FEEDFORWARD = 0.075; // 0.075
