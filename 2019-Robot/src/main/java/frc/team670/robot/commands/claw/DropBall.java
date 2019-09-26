@@ -49,7 +49,7 @@ public class DropBall extends Command {
 
   @Override
   protected void end() {
-    claw.openClaw();
+    claw.togglePush();
     arm.setHeldItem(HeldItem.NONE);
     super.end();
   }
