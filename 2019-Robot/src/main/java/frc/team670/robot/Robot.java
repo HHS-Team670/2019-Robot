@@ -31,6 +31,11 @@ import frc.team670.robot.subsystems.elbow.Elbow;
 import frc.team670.robot.subsystems.extension.Extension;
 import frc.team670.robot.subsystems.wrist.Wrist;
 import frc.team670.robot.utils.Logger;
+import edu.wpi.first.wpilibj.geometry.*;
+import edu.wpi.first.wpilibj.trajectory.*;
+import edu.wpi.first.wpilibj.controller.RamseteController;
+import edu.wpi.first.wpilibj2.command.*;
+
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -209,28 +214,47 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+   // Create config for trajectory
+    TrajectoryConfig config =
+    new TrajectoryConfig(kMaxSpeedMetersPerSecond, kMaxAccelerationMetersPerSecondSquared)
+       // Add kinematics to ensure max speed is actually obeyed
+       .setKinematics(kDriveKinematics);
 
-    if(DriverStation.getInstance().getAlliance().equals(Alliance.Red)) {
-      leds.changeAlliance(false);
-    } else if (DriverStation.getInstance().getAlliance().equals(Alliance.Blue)) {
-      leds.changeAlliance(true);
-    } else {
-      leds.changeAlliance(true);
-    }
-    leds.setForwardData(true);
+// An example trajectory to follow.  All units in meters.
+Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+   // Start at the origin facing the +X direction
+   new Pose2d(0, 0, new Rotation2d(0)),
+   // Pass through these two interior waypoints, making an 's' curve path
+   List.of(
+       new Translation2d(1, 1),
+       new Translation2d(2, -1)
+   ),
+   // End 3 meters straight ahead of where we started, facing forward
+   new Pose2d(3, 0, new Rotation2d(0)),
+   // Pass config
+   config
+);
 
-    sensors.resetNavX(); // Reset NavX completely, zero the field centric based on how robot faces from start of game.
-    driveBase.initBrakeMode();
+RamseteCommand ramseteCommand = new RamseteCommand(
+   exampleTrajectory,
+   m_robotDrive::getPose,
+   new RamseteController(kRamseteB, kRamseteZeta),
+   ksVolts,
+   kvVoltSecondsPerMeter,
+   kaVoltSecondsSquaredPerMeter,
+   kDriveKinematics,
+   m_robotDrive.getLeftEncoder()::getRate,
+   m_robotDrive.getRightEncoder()::getRate,
+   new PIDController(kPDriveVel, 0, 0),
+   new PIDController(kPDriveVel, 0, 0),
+   // RamseteCommand passes volts to the callback
+   m_robotDrive::tankDriveVolts,
+   m_robotDrive);
 
-    Logger.consoleLog("Auton Started");
-    SmartDashboard.putString("robot-state", "autonomousPeriodic()");
+// Run path following command, then stop at the end.
+    autonomousCommand = ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
+    autonomousCommand.start();
 
-    Scheduler.getInstance().add(new SafelyResetExtension());
-    arm.setCoastMode();
-
-    if (autonomousCommand != null) {
-      autonomousCommand.start();
-    }
 
     // if (operatorControl != null) {
     //   operatorControl.start();
