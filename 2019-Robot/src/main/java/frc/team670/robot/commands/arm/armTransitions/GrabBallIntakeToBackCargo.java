@@ -54,7 +54,7 @@ public class GrabBallIntakeToBackCargo extends ArmTransition {
     addParallel(new MoveWrist(wrist, Arm.getStates().get(LegalState.PLACE_BALL_CARGOSHIP_BACK).getWristAngle()));
     addParallel(new MoveElbow(elbow, Arm.getStates().get(LegalState.PLACE_BALL_CARGOSHIP_BACK).getElbowAngle()));
     addParallel(new MoveExtension(extension, Arm.getStates().get(LegalState.PLACE_BALL_CARGOSHIP_BACK).getExtensionLength()));
-    addSequential(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_IN, intake));
+    //addSequential(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_IN, intake));
     addSequential(new WaitForChildren());
    
   }
