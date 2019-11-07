@@ -11,7 +11,7 @@
         {
             "groupId": "com.revrobotics.frc",
             "artifactId": "SparkMax-java",
-            "version": "1.0.26"
+            "version": "1.4.1"
         }
     ],
     "jniDependencies": [],
@@ -19,7 +19,7 @@
         {
             "groupId": "com.revrobotics.frc",
             "artifactId": "SparkMax-cpp",
-            "version": "1.0.26",
+            "version": "1.4.1",
             "libName": "libSparkMax",
             "headerClassifier": "headers",
             "sharedLibrary": false,

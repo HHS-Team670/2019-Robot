@@ -500,7 +500,8 @@ public class DriveBase extends Subsystem {
    */
   public void setRampRate(List<CANSparkMax> motors, double rampRate) {
     for (CANSparkMax m : motors) {
-      m.setRampRate(rampRate);
+      m.setClosedLoopRampRate(rampRate);
+      m.setOpenLoopRampRate(rampRate);
     }
   }
 
