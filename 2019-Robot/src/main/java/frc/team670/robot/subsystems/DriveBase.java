@@ -29,7 +29,12 @@ import frc.team670.robot.commands.drive.teleop.XboxRocketLeagueDrive;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.dataCollection.sensors.MustangDriveBaseEncoder;
-
+import frc.team670.robot.dataCollection.sensors.NavX;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 /**
  * Represents a tank drive base.
  * 
@@ -46,6 +51,8 @@ public class DriveBase extends Subsystem {
   private List<CANSparkMax> allMotors;
   private MustangDriveBaseEncoder leftMustangEncoder, rightMustangEncoder;
   private Encoder leftDIOEncoder, rightDIOEncoder;
+  private DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(RobotConstants.kDriveKinematics);
+  private NavX navXMicro;
 
   private static final double drivebaseGearRatio = 8.45;
 
@@ -143,6 +150,7 @@ public class DriveBase extends Subsystem {
 
     leftMustangEncoder = new MustangDriveBaseEncoder(null, left1.getEncoder(), false);
     rightMustangEncoder = new MustangDriveBaseEncoder(null, right1.getEncoder(), true);
+    navXMicro = new NavX(RobotMap.NAVX_PORT);
 
   }
 
@@ -500,7 +508,8 @@ public class DriveBase extends Subsystem {
    */
   public void setRampRate(List<CANSparkMax> motors, double rampRate) {
     for (CANSparkMax m : motors) {
-      m.setRampRate(rampRate);
+      m.setClosedLoopRampRate(rampRate);
+      m.setOpenLoopRampRate(rampRate);
     }
   }
 
@@ -657,4 +666,50 @@ public class DriveBase extends Subsystem {
       SmartDashboard.putString("Left Encoder Inches", "null");
     }
   }
+
+    
+  @Override
+  public void periodic() {
+    // Update the odometry in the periodic block
+    m_odometry.update(Rotation2d.fromDegrees(getHeading()),
+                                  new DifferentialDriveWheelSpeeds(
+                                      leftDIOEncoder.getRate(),
+                                      rightDIOEncoder.getRate()
+                                  ));
+  }
+
+  /**
+   * Returns the currently-estimated pose of the robot.
+   *
+   * @return The pose.
+   */
+  public Pose2d getPose() {
+    return m_odometry.getPoseMeters();
+  }
+
+  /**
+   * Resets the odometry to the specified pose.
+   *
+   * @param pose The pose to which to set the odometry.
+   */
+  public void resetOdometry(Pose2d pose) {
+    m_odometry.resetPosition(pose);
+  }
+  
+  /**
+   * Zeroes the heading of the robot.
+   */
+  public void zeroHeading() {
+    navXMicro.reset();
+  }
+
+  /**
+   * Returns the heading of the robot.
+   *
+   * @return the robot's heading in degrees, from 180 to 180
+   */
+  public double getHeading() {
+    return Math.IEEEremainder(navXMicro.getAngle(), 360) * (RobotConstants.kNavXReversed ? -1. : 1.);
+  }
+
 }

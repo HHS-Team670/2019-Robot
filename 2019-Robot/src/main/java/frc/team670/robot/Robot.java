@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -31,10 +30,19 @@ import frc.team670.robot.subsystems.elbow.Elbow;
 import frc.team670.robot.subsystems.extension.Extension;
 import frc.team670.robot.subsystems.wrist.Wrist;
 import frc.team670.robot.utils.Logger;
-import edu.wpi.first.wpilibj.geometry.*;
-import edu.wpi.first.wpilibj.trajectory.*;
+
+import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.RamseteController;
-import edu.wpi.first.wpilibj2.command.*;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import java.util.List;
 
 
 /**
@@ -216,9 +224,9 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
    // Create config for trajectory
     TrajectoryConfig config =
-    new TrajectoryConfig(kMaxSpeedMetersPerSecond, kMaxAccelerationMetersPerSecondSquared)
+    new TrajectoryConfig(RobotConstants.kMaxSpeedMetersPerSecond, RobotConstants.kMaxAccelerationMetersPerSecondSquared)
        // Add kinematics to ensure max speed is actually obeyed
-       .setKinematics(kDriveKinematics);
+       .setKinematics(RobotConstants.kDriveKinematics);
 
 // An example trajectory to follow.  All units in meters.
 Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
@@ -233,26 +241,26 @@ Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
    new Pose2d(3, 0, new Rotation2d(0)),
    // Pass config
    config
-);
+    );
 
 RamseteCommand ramseteCommand = new RamseteCommand(
    exampleTrajectory,
-   m_robotDrive::getPose,
-   new RamseteController(kRamseteB, kRamseteZeta),
-   ksVolts,
-   kvVoltSecondsPerMeter,
-   kaVoltSecondsSquaredPerMeter,
-   kDriveKinematics,
-   m_robotDrive.getLeftEncoder()::getRate,
-   m_robotDrive.getRightEncoder()::getRate,
-   new PIDController(kPDriveVel, 0, 0),
-   new PIDController(kPDriveVel, 0, 0),
+   driveBase::getPose,
+   new RamseteController(RobotConstants.kRamseteB, RobotConstants.kRamseteZeta),
+   RobotConstants.ksVolts,
+   RobotConstants.kvVoltSecondsPerMeter,
+   RobotConstants.kaVoltSecondsSquaredPerMeter,
+   RobotConstants.kDriveKinematics,
+   driveBase.getLeftDIOEncoder()::getRate,
+   driveBase.getRightDIOEncoder()::getRate,
+   new PIDController(RobotConstants.kPDriveVel, 0, 0),
+   new PIDController(RobotConstants.kPDriveVel, 0, 0),
    // RamseteCommand passes volts to the callback
-   m_robotDrive::tankDriveVolts,
-   m_robotDrive);
+   driveBase::tankDriveVolts,
+   driveBase);
 
 // Run path following command, then stop at the end.
-    autonomousCommand = ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
+    autonomousCommand = ramseteCommand.andThen(() -> driveBase.tankDrive(0, 0));
     autonomousCommand.start();
 
 

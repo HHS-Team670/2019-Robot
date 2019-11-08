@@ -1,5 +1,8 @@
 package frc.team670.robot.constants;
 
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveKinematicsConstraint;
+
 public class RobotConstants {
 
     // Robot Dimensions
@@ -54,5 +57,29 @@ public class RobotConstants {
 
     // Different values/encoder positions to set arm to
     public static int ARM_RESET_TIMEOUTMS = 0;
+
+    // TODO: Change these values below based on characterization, convert to inches
+    public static final double ksVolts = 1;
+    public static final double kvVoltSecondsPerMeter = .8;
+    public static final double kaVoltSecondsSquaredPerMeter = .15;
+
+    public static final double kTrackwidthMeters = 0.6;
+
+    // Example value only - as above, this must be tuned for your drive!
+    public static final DifferentialDriveKinematics kDriveKinematics =
+    new DifferentialDriveKinematics(kTrackwidthMeters);
+    public static final double kPDriveVel = .5;
+    public static final double kMaxSpeedMetersPerSecond = 3;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 3;
+
+    public static final DifferentialDriveKinematicsConstraint kAutoPathConstraints =
+        new DifferentialDriveKinematicsConstraint(kDriveKinematics,
+                                                  kMaxSpeedMetersPerSecond);
+
+    // Reasonable baseline values for a RAMSETE follower in units of meters and seconds
+    ///TODO: Change to inches
+    public static final double kRamseteB = 2;
+    public static final double kRamseteZeta = .7;
+    public static final boolean kNavXReversed = true;
 
 }

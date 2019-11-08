@@ -381,4 +381,22 @@ public class PIDController implements Sendable, AutoCloseable {
       m_setpoint = MathUtils.clamp(m_setpoint, m_minimumInput, m_maximumInput);
     }
   }
+
+  public void setName(String name) {
+
+  }
+  
+  public void setSubsystem(String subsystem) {
+
+  }
+
+  public String getName() {
+    return "PIDController";
+  }
+  
+  public String getSubsystem(){
+    return null;
+  }
+
+  
 }
