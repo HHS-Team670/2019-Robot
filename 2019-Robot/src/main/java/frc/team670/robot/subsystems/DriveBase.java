@@ -21,6 +21,7 @@ import com.revrobotics.ControlType;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -30,6 +31,7 @@ import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.dataCollection.sensors.MustangDriveBaseEncoder;
 import frc.team670.robot.dataCollection.sensors.NavX;
+import frc.team670.robot.utils.Logger;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
@@ -66,6 +68,10 @@ public class DriveBase extends Subsystem {
     left2 = new CANSparkMax(RobotMap.SPARK_LEFT_MOTOR_2, CANSparkMaxLowLevel.MotorType.kBrushless);
     right1 = new CANSparkMax(RobotMap.SPARK_RIGHT_MOTOR_1, CANSparkMaxLowLevel.MotorType.kBrushless);
     right2 = new CANSparkMax(RobotMap.SPARK_RIGHT_MOTOR_2, CANSparkMaxLowLevel.MotorType.kBrushless);
+
+    double sparkMaxVelocityConversionFactor = RobotConstants.DRIVEBASE_INCHES_PER_ROTATION / 60;//(double)RobotConstants.SPARK_TICKS_PER_ROTATION;
+    left1.getEncoder().setVelocityConversionFactor(sparkMaxVelocityConversionFactor);
+    right1.getEncoder().setVelocityConversionFactor(sparkMaxVelocityConversionFactor);
 
     allMotors = new ArrayList<CANSparkMax>();
     leftControllers = Arrays.asList(left1, left2);
@@ -168,6 +174,11 @@ public class DriveBase extends Subsystem {
     tankDrive(leftSpeed, rightSpeed, false);
   }
 
+  // https://github.com/wpilibsuite/allwpilib/blob/master/wpilibj/src/main/java/edu/wpi/first/wpilibj/SpeedController.java#L32
+  public void tankDriveVoltage(double leftVoltage, double rightVoltage) {
+    tankDrive(leftVoltage / RobotController.getBatteryVoltage(), -rightVoltage / RobotController.getBatteryVoltage());
+  }
+
   public void initBrakeMode() {
     setMotorsBrakeMode(allMotors, IdleMode.kBrake);
   }
@@ -250,6 +261,13 @@ public class DriveBase extends Subsystem {
   }
 
 
+  public CANEncoder getLeftEncoder() {
+    return left1.getEncoder();
+  }
+
+  public CANEncoder getRightEncoder() {
+    return right1.getEncoder();
+  }
 
   /**
    * Returns the left DIO Encoder
@@ -671,10 +689,11 @@ public class DriveBase extends Subsystem {
   @Override
   public void periodic() {
     // Update the odometry in the periodic block
+    Logger.consoleLog("LeftEncoderVelocity: %s, RightEncoderVelocity: %s", getLeftEncoder().getVelocity(), getRightEncoder().getVelocity());
     m_odometry.update(Rotation2d.fromDegrees(getHeading()),
                                   new DifferentialDriveWheelSpeeds(
-                                      leftDIOEncoder.getRate(),
-                                      rightDIOEncoder.getRate()
+                                      getLeftEncoder().getVelocity(),
+                                      getRightEncoder().getVelocity()
                                   ));
   }
 

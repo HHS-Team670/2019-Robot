@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import frc.team670.robot.utils.Logger;
 
 import static edu.wpi.first.wpilibj.util.ErrorMessages.requireNonNullParam;
 
@@ -117,7 +118,7 @@ public class RamseteCommand extends CommandBase {
 
     m_usePID = true;
 
-    addRequirements(requirements);
+    //addRequirements(requirements);
   }
 
   /**
@@ -212,7 +213,8 @@ public class RamseteCommand extends CommandBase {
       leftOutput = leftSpeedSetpoint;
       rightOutput = rightSpeedSetpoint;
     }
-
+    Logger.consoleLog("LeftspeedSetPoint: %s, Left Speed: %s, LeftOutput: %s, rightSpeedSetPoint: %s Right Speed: %s rightOutput: %s", leftSpeedSetpoint, m_leftSpeed.getAsDouble(), leftOutput, rightSpeedSetpoint, m_rightSpeed.getAsDouble(), rightOutput);
+    Logger.consoleLog("Pose: %s", m_pose.get().toString());
     m_output.accept(leftOutput, rightOutput);
 
     m_prevTime = curTime;

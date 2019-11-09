@@ -224,44 +224,50 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
    // Create config for trajectory
     TrajectoryConfig config =
-    new TrajectoryConfig(RobotConstants.kMaxSpeedMetersPerSecond, RobotConstants.kMaxAccelerationMetersPerSecondSquared)
+    new TrajectoryConfig(RobotConstants.kMaxSpeedInchesPerSecond, RobotConstants.kMaxAccelerationInchesPerSecondSquared)
        // Add kinematics to ensure max speed is actually obeyed
        .setKinematics(RobotConstants.kDriveKinematics);
 
-// An example trajectory to follow.  All units in meters.
+// An example trajectory to follow.  All units in inches.
 Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
    // Start at the origin facing the +X direction
    new Pose2d(0, 0, new Rotation2d(0)),
    // Pass through these two interior waypoints, making an 's' curve path
    List.of(
-       new Translation2d(1, 1),
-       new Translation2d(2, -1)
+      new Translation2d(54, 0)
+      //  new Translation2d(36, 36),
+      //  new Translation2d(72, -36)
    ),
-   // End 3 meters straight ahead of where we started, facing forward
-   new Pose2d(3, 0, new Rotation2d(0)),
+   // End 3 yards straight ahead of where we started, facing forward
+   new Pose2d(108, 0, new Rotation2d(0)),
    // Pass config
    config
     );
 
-RamseteCommand ramseteCommand = new RamseteCommand(
-   exampleTrajectory,
-   driveBase::getPose,
-   new RamseteController(RobotConstants.kRamseteB, RobotConstants.kRamseteZeta),
-   RobotConstants.ksVolts,
-   RobotConstants.kvVoltSecondsPerMeter,
-   RobotConstants.kaVoltSecondsSquaredPerMeter,
-   RobotConstants.kDriveKinematics,
-   driveBase.getLeftDIOEncoder()::getRate,
-   driveBase.getRightDIOEncoder()::getRate,
-   new PIDController(RobotConstants.kPDriveVel, 0, 0),
-   new PIDController(RobotConstants.kPDriveVel, 0, 0),
-   // RamseteCommand passes volts to the callback
-   driveBase::tankDriveVolts,
-   driveBase);
+  // DriveBase extends wpilibj.command.Subsystem whereas the v2 Command infrastructure
+  // requires a class that implements wpilibj2.command.Subsystem. So for now just passing a null.
+  // If we go down this road, we'll have to buy in to v2 Commands or backport this Command
+  edu.wpi.first.wpilibj2.command.Subsystem meetingTheRequirement = null;
+
+  RamseteCommand ramseteCommand = new RamseteCommand(
+    exampleTrajectory,
+    driveBase::getPose,
+    new RamseteController(RobotConstants.kRamseteB, RobotConstants.kRamseteZeta),
+    RobotConstants.ksVolts,
+    RobotConstants.kvVoltSecondsPerMeter,
+    RobotConstants.kaVoltSecondsSquaredPerMeter,
+    RobotConstants.kDriveKinematics,
+    driveBase.getLeftEncoder()::getVelocity,
+    driveBase.getRightEncoder()::getVelocity,
+    new PIDController(RobotConstants.kPDriveVel, 0, 0),
+    new PIDController(RobotConstants.kPDriveVel, 0, 0),
+    // RamseteCommand passes volts to the callback
+    driveBase::tankDriveVoltage,
+    meetingTheRequirement);
 
 // Run path following command, then stop at the end.
     autonomousCommand = ramseteCommand.andThen(() -> driveBase.tankDrive(0, 0));
-    autonomousCommand.start();
+    autonomousCommand.schedule();
 
 
     // if (operatorControl != null) {
@@ -274,7 +280,8 @@ RamseteCommand ramseteCommand = new RamseteCommand(
    */
   @Override
   public void autonomousPeriodic() {
-    Scheduler.getInstance().run();
+    Robot.driveBase.periodic();
+    edu.wpi.first.wpilibj2.command.CommandScheduler.getInstance().run();
   }
 
   @Override
