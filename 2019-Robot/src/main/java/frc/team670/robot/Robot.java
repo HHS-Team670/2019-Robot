@@ -234,16 +234,17 @@ Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
    new Pose2d(0, 0, new Rotation2d(0)),
    // Pass through these two interior waypoints, making an 's' curve path
    List.of(
-      new Translation2d(54, 0)
+      new Translation2d(18, 0)
       //  new Translation2d(36, 36),
       //  new Translation2d(72, -36)
    ),
    // End 3 yards straight ahead of where we started, facing forward
-   new Pose2d(108, 0, new Rotation2d(0)),
+   new Pose2d(36, 0, new Rotation2d(0)),
    // Pass config
    config
     );
 
+    System.out.println(exampleTrajectory.toString());
   // DriveBase extends wpilibj.command.Subsystem whereas the v2 Command infrastructure
   // requires a class that implements wpilibj2.command.Subsystem. So for now just passing a null.
   // If we go down this road, we'll have to buy in to v2 Commands or backport this Command

@@ -71,7 +71,7 @@ public class DriveBase extends Subsystem {
 
     double sparkMaxVelocityConversionFactor = RobotConstants.DRIVEBASE_INCHES_PER_ROTATION / 60;//(double)RobotConstants.SPARK_TICKS_PER_ROTATION;
     left1.getEncoder().setVelocityConversionFactor(sparkMaxVelocityConversionFactor);
-    right1.getEncoder().setVelocityConversionFactor(sparkMaxVelocityConversionFactor);
+    right1.getEncoder().setVelocityConversionFactor(-sparkMaxVelocityConversionFactor);
 
     allMotors = new ArrayList<CANSparkMax>();
     leftControllers = Arrays.asList(left1, left2);
