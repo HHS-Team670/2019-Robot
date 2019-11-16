@@ -176,7 +176,7 @@ public class DriveBase extends Subsystem {
 
   // https://github.com/wpilibsuite/allwpilib/blob/master/wpilibj/src/main/java/edu/wpi/first/wpilibj/SpeedController.java#L32
   public void tankDriveVoltage(double leftVoltage, double rightVoltage) {
-    tankDrive(leftVoltage / RobotController.getBatteryVoltage(), -rightVoltage / RobotController.getBatteryVoltage());
+    tankDrive(leftVoltage / RobotController.getBatteryVoltage(), rightVoltage / RobotController.getBatteryVoltage());
   }
 
   public void initBrakeMode() {
