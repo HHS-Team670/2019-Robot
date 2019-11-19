@@ -71,8 +71,9 @@ public class DriveBase extends Subsystem {
 
     double sparkMaxVelocityConversionFactor = RobotConstants.DRIVEBASE_INCHES_PER_ROTATION / 60;//(double)RobotConstants.SPARK_TICKS_PER_ROTATION;
     left1.getEncoder().setVelocityConversionFactor(sparkMaxVelocityConversionFactor);
-    right1.getEncoder().setVelocityConversionFactor(-sparkMaxVelocityConversionFactor);
-
+    right1.getEncoder().setVelocityConversionFactor(sparkMaxVelocityConversionFactor); //Do not invert for right side
+    left2.getEncoder().setVelocityConversionFactor(sparkMaxVelocityConversionFactor);
+    right2.getEncoder().setVelocityConversionFactor(sparkMaxVelocityConversionFactor);
     allMotors = new ArrayList<CANSparkMax>();
     leftControllers = Arrays.asList(left1, left2);
     rightControllers = Arrays.asList(right1, right2);
@@ -683,6 +684,14 @@ public class DriveBase extends Subsystem {
     } else {
       SmartDashboard.putString("Left Encoder Inches", "null");
     }
+    SmartDashboard.putString("Left M Position Ticks", left1.getEncoder().getPosition() + "");
+    SmartDashboard.putString("Left M Velocity Ticks", left1.getEncoder().getVelocity() + "");
+    SmartDashboard.putString("Left S Position Ticks", left2.getEncoder().getPosition() + "");
+    SmartDashboard.putString("Left S Velocity Ticks", left2.getEncoder().getVelocity() + "");
+    SmartDashboard.putString("Right M Position Ticks", right1.getEncoder().getPosition() + "");
+    SmartDashboard.putString("Right M Velocity Ticks", right1.getEncoder().getVelocity() + "");
+    SmartDashboard.putString("Right S Position Ticks", right2.getEncoder().getPosition() + "");
+    SmartDashboard.putString("Right S Velocity Ticks", right2.getEncoder().getVelocity() + "");
   }
 
     
@@ -713,6 +722,10 @@ public class DriveBase extends Subsystem {
    */
   public void resetOdometry(Pose2d pose) {
     m_odometry.resetPosition(pose);
+  }
+
+  public void resetOdometry(){
+    m_odometry = new DifferentialDriveOdometry(RobotConstants.kDriveKinematics);
   }
   
   /**

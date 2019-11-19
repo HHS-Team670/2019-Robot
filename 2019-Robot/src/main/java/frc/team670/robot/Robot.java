@@ -222,6 +222,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    driveBase.resetOdometry();
    // Create config for trajectory
     TrajectoryConfig config =
     new TrajectoryConfig(RobotConstants.kMaxSpeedInchesPerSecond, RobotConstants.kMaxAccelerationInchesPerSecondSquared)
@@ -234,12 +235,12 @@ Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
    new Pose2d(0, 0, new Rotation2d(0)),
    // Pass through these two interior waypoints, making an 's' curve path
    List.of(
-      new Translation2d(18, 0)
+      new Translation2d(54, 0)
       //  new Translation2d(36, 36),
       //  new Translation2d(72, -36)
    ),
    // End 3 yards straight ahead of where we started, facing forward
-   new Pose2d(36, 0, new Rotation2d(0)),
+   new Pose2d(108, 0, new Rotation2d(0)),
    // Pass config
    config
     );

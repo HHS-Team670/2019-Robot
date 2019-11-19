@@ -68,7 +68,7 @@ public class RobotConstants {
     // Example value only - as above, this must be tuned for your drive!
     public static final DifferentialDriveKinematics kDriveKinematics =
         new DifferentialDriveKinematics(kTrackwidthInches);
-    public static final double kPDriveVel = .5;
+    public static final double kPDriveVel = .15;
     public static final double kMaxSpeedInchesPerSecond = 12;
     public static final double kMaxAccelerationInchesPerSecondSquared = 12;
 
@@ -78,7 +78,7 @@ public class RobotConstants {
 
     // Reasonable baseline values for a RAMSETE follower in units of meters and seconds
     ///TODO: Change to inches
-    public static final double kRamseteB = 2/393.7;
+    public static final double kRamseteB = 2/39.37;
     public static final double kRamseteZeta = .7/39.37;
     public static final boolean kNavXReversed = true;
 
