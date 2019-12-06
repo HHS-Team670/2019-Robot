@@ -30,14 +30,17 @@ public class TimeDrive extends Command {
   @Override
   protected void initialize() {
     setTimeout(seconds);
-    Logger.consoleLog("Speed: %s Seconds: %s", speed, seconds);
+    // Robot.driveBase.LogLeftMotorInfo();
+    // Robot.driveBase.LogRightMotorInfo();
+
+    Robot.driveBase.tankDrive(speed, speed, false);
+    //Logger.consoleLog("Speed: %s Seconds: %s", speed, seconds);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() { 
-    Robot.driveBase.tankDrive(speed, speed, false);
-    Logger.consoleLog();
+    Robot.driveBase.feedWatchDog();
 
   }
 
@@ -52,6 +55,8 @@ public class TimeDrive extends Command {
   protected void end() {
     Robot.driveBase.stop();
     Logger.consoleLog("Speed: %s Seconds: %s", speed, seconds);
+    // Robot.driveBase.LogLeftMotorInfo();
+    // Robot.driveBase.LogRightMotorInfo();
   }
 
   // Called when another command which requires one or more of the same

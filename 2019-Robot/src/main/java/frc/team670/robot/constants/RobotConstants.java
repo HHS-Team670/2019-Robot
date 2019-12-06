@@ -14,7 +14,10 @@ public class RobotConstants {
     /** Drive Base Wheel Diameter in Inches */
     public static final double DRIVE_BASE_WHEEL_DIAMETER = 6;
     /** Inches per rotation of the NEO motors on the drivebase */
-    public static final double DRIVEBASE_INCHES_PER_ROTATION = 1/DRIVEBASE_GEAR_RATIO * DRIVE_BASE_WHEEL_DIAMETER * Math.PI;
+    public static final double DRIVEBASE_INCHES_PER_ROTATION = (1/DRIVEBASE_GEAR_RATIO) * DRIVE_BASE_WHEEL_DIAMETER * Math.PI;
+
+    public static final double DRIVEBASE_METERS_PER_ROTATION = (1/DRIVEBASE_GEAR_RATIO) * DRIVE_BASE_WHEEL_DIAMETER * Math.PI * 0.0254;
+
     /** The number of ticks per rotation of a drivebase wheel for the DIO Encoders  */
     public static final int DIO_TICKS_PER_ROTATION = 1024;
     /** The number of ticks per inch of wheel travel */
@@ -58,28 +61,33 @@ public class RobotConstants {
     // Different values/encoder positions to set arm to
     public static int ARM_RESET_TIMEOUTMS = 0;
 
-    public static final double ksVolts = 0.147;
-    public static final double kvVoltSecondsPerMeter = 0.0572;
-    public static final double kaVoltSecondsSquaredPerMeter = 0.0214;
+    public static final double ksVolts = 0.11; //0.224;
+    public static final double kvVoltSecondsPerMeter = 2.27; //2.22;
+    public static final double kaVoltSecondsSquaredPerMeter = 0.765; // 0.715;
 
     // "WHEEL_BASE" is really track width
     public static final double kTrackwidthInches = WHEEL_BASE;
+    public static final double kTrackwidthMeters = WHEEL_BASE * 0.0254;
 
     // Example value only - as above, this must be tuned for your drive!
     public static final DifferentialDriveKinematics kDriveKinematics =
-        new DifferentialDriveKinematics(kTrackwidthInches);
-    public static final double kPDriveVel = .15;
+        new DifferentialDriveKinematics(kTrackwidthMeters);
+    public static final double kPDriveVel = 4;
+    public static final double kIDriveVel = 0.00;
+    public static final double kDDriveVel = 0.0;
     public static final double kMaxSpeedInchesPerSecond = 12;
     public static final double kMaxAccelerationInchesPerSecondSquared = 12;
 
+    public static final double kMaxSpeedMetersPerSecond = 1; //0.305;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 1; //0.305;
+
     public static final DifferentialDriveKinematicsConstraint kAutoPathConstraints =
         new DifferentialDriveKinematicsConstraint(kDriveKinematics,
-                                                  kMaxSpeedInchesPerSecond);
+                                                  kMaxSpeedMetersPerSecond);
 
     // Reasonable baseline values for a RAMSETE follower in units of meters and seconds
-    ///TODO: Change to inches
-    public static final double kRamseteB = 2/39.37;
-    public static final double kRamseteZeta = .7/39.37;
+    public static final double kRamseteB = 2;
+    public static final double kRamseteZeta = .7;
     public static final boolean kNavXReversed = true;
 
 }

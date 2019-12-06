@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.arm.zero.SafelyResetExtension;
 import frc.team670.robot.commands.drive.teleop.XboxRocketLeagueDrive;
+import frc.team670.robot.commands.drive.straight.TimeDrive;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangCoprocessor;
 import frc.team670.robot.dataCollection.MustangSensors;
@@ -98,10 +99,10 @@ public class Robot extends TimedRobot {
     }
     catch (Throwable e) { Logger.logException(e);}
     
-    Logger.consoleLog();
+    //Logger.consoleLog();
 
     SmartDashboard.putData("Auto mode", auton_chooser);
-    Logger.consoleLog();
+    //Logger.consoleLog();
     System.out.println("Robot init");
 
     leds.socketSetup(RobotConstants.LED_PORT);    
@@ -145,40 +146,40 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     // SmartDashboard.putNumber("gyro", (int) sensors.getAngle() % 360);
     // SmartDashboard.putString("current-command", Scheduler.getInstance().getName());
-    SmartDashboard.putString("current-arm-state", Arm.getCurrentState().toString());
-    SmartDashboard.putNumber("intake-angle", intake.getAngleInDegrees());
-    SmartDashboard.putNumber("elbow-angle", elbow.getAngleInDegrees());
-    SmartDashboard.putNumber("wrist-angle", wrist.getAngleInDegrees());
-    SmartDashboard.putBoolean("intake-ir-sensor", sensors.getIntakeIROutput());
-    SmartDashboard.putNumber("extension-actual-length" , extension.getLengthInches());
-    SmartDashboard.putNumber("arm-extension" , extension.getLengthInches() / Extension.EXTENSION_OUT_IN_INCHES);
-    // SmartDashboard.putNumber("Actual Extension" , extension.getLengthInches());
-    SmartDashboard.putBoolean("drive-reversed-status", XboxRocketLeagueDrive.isDriveReversed());
-    if (arm.getHeldItem().equals(HeldItem.HATCH)) {
-      SmartDashboard.putString("claw-status", "Hatch");
-    } else if (arm.getHeldItem().equals(HeldItem.BALL)) {
-      SmartDashboard.putString("claw-status", "Ball");
-    } else if (arm.getHeldItem().equals(HeldItem.NONE)) {
-      SmartDashboard.putString("claw-status", "None");
-    } else if (claw.isOpen()) {
-      SmartDashboard.putString("claw-status", "open");
-    } else if (!claw.isOpen()) {
-      SmartDashboard.putString("claw-status", "close");
-    }
+    // SmartDashboard.putString("current-arm-state", Arm.getCurrentState().toString());
+    // SmartDashboard.putNumber("intake-angle", intake.getAngleInDegrees());
+    // SmartDashboard.putNumber("elbow-angle", elbow.getAngleInDegrees());
+    // SmartDashboard.putNumber("wrist-angle", wrist.getAngleInDegrees());
+    // SmartDashboard.putBoolean("intake-ir-sensor", sensors.getIntakeIROutput());
+    // SmartDashboard.putNumber("extension-actual-length" , extension.getLengthInches());
+    // SmartDashboard.putNumber("arm-extension" , extension.getLengthInches() / Extension.EXTENSION_OUT_IN_INCHES);
+    // // SmartDashboard.putNumber("Actual Extension" , extension.getLengthInches());
+    // SmartDashboard.putBoolean("drive-reversed-status", XboxRocketLeagueDrive.isDriveReversed());
+    // if (arm.getHeldItem().equals(HeldItem.HATCH)) {
+    //   SmartDashboard.putString("claw-status", "Hatch");
+    // } else if (arm.getHeldItem().equals(HeldItem.BALL)) {
+    //   SmartDashboard.putString("claw-status", "Ball");
+    // } else if (arm.getHeldItem().equals(HeldItem.NONE)) {
+    //   SmartDashboard.putString("claw-status", "None");
+    // } else if (claw.isOpen()) {
+    //   SmartDashboard.putString("claw-status", "open");
+    // } else if (!claw.isOpen()) {
+    //   SmartDashboard.putString("claw-status", "close");
+    // }
 
-    SmartDashboard.putNumber("Yaw", sensors.getYawDouble());
-    // SmartDashboard.putNumber("Phi", sensors.getAngleToTarget());
-    SmartDashboard.putNumber("Horizontal Angle", coprocessor.getAngleToWallTarget());
-    // SmartDashboard.putNumber("Depth", coprocessor.getDistanceToWallTarget());
+    // SmartDashboard.putNumber("Yaw", sensors.getYawDouble());
+    // // SmartDashboard.putNumber("Phi", sensors.getAngleToTarget());
+    // SmartDashboard.putNumber("Horizontal Angle", coprocessor.getAngleToWallTarget());
+    // // SmartDashboard.putNumber("Depth", coprocessor.getDistanceToWallTarget());
 
-    // SmartDashboard.putNumber("Arbitrary Feedforward Measurement", MeasureArbitraryFeedforward.output);
+    // // SmartDashboard.putNumber("Arbitrary Feedforward Measurement", MeasureArbitraryFeedforward.output);
 
 
-    elbow.sendDataToDashboard();
-    // extension.sendDataToDashboard();
-    // wrist.sendDataToDashboard();
-    // intake.sendDataToDashboard();
-    sensors.sendBreamBreakDataToDashboard();
+    // elbow.sendDataToDashboard();
+    // // extension.sendDataToDashboard();
+    // // wrist.sendDataToDashboard();
+    // // intake.sendDataToDashboard();
+    // sensors.sendBreamBreakDataToDashboard();
     driveBase.sendEncoderDataToDashboard();
 
   }
@@ -189,7 +190,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
-    SmartDashboard.putString("robot-state", "disabledPeriodic()");
+    //SmartDashboard.putString("robot-state", "disabledPeriodic()");
     Logger.consoleLog("Robot Disabled");
     // autonomousCommand = oi.getSelectedAutonCommand();
     leds.setStillDrive(true);
@@ -204,7 +205,7 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {
 
     sensors.sendUltrasonicDataToDashboard();
-    driveBase.sendEncoderDataToDashboard();
+    //driveBase.sendEncoderDataToDashboard();
 
     Scheduler.getInstance().run();
   }
@@ -225,22 +226,22 @@ public class Robot extends TimedRobot {
     driveBase.resetOdometry();
    // Create config for trajectory
     TrajectoryConfig config =
-    new TrajectoryConfig(RobotConstants.kMaxSpeedInchesPerSecond, RobotConstants.kMaxAccelerationInchesPerSecondSquared)
+    new TrajectoryConfig(RobotConstants.kMaxSpeedMetersPerSecond, RobotConstants.kMaxAccelerationMetersPerSecondSquared)
        // Add kinematics to ensure max speed is actually obeyed
-       .setKinematics(RobotConstants.kDriveKinematics);
+       .setKinematics(RobotConstants.kDriveKinematics).addConstraint(RobotConstants.kAutoPathConstraints);
 
-// An example trajectory to follow.  All units in inches.
+// An example trajectory to follow.  All units in meters.
 Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
    // Start at the origin facing the +X direction
    new Pose2d(0, 0, new Rotation2d(0)),
    // Pass through these two interior waypoints, making an 's' curve path
    List.of(
-      new Translation2d(54, 0)
-      //  new Translation2d(36, 36),
-      //  new Translation2d(72, -36)
+      new Translation2d(1.5 , 0)
+    //  new Translation2d(2, 2),
+    //  new Translation2d(4, -2)
    ),
-   // End 3 yards straight ahead of where we started, facing forward
-   new Pose2d(108, 0, new Rotation2d(0)),
+   // End 3 m straight ahead of where we started, facing forward
+   new Pose2d(6, 0, new Rotation2d(0)),
    // Pass config
    config
     );
@@ -261,8 +262,8 @@ Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
     RobotConstants.kDriveKinematics,
     driveBase.getLeftEncoder()::getVelocity,
     driveBase.getRightEncoder()::getVelocity,
-    new PIDController(RobotConstants.kPDriveVel, 0, 0),
-    new PIDController(RobotConstants.kPDriveVel, 0, 0),
+    new PIDController(RobotConstants.kPDriveVel, RobotConstants.kIDriveVel, RobotConstants.kDDriveVel),
+    new PIDController(RobotConstants.kPDriveVel, RobotConstants.kIDriveVel, RobotConstants.kDDriveVel),
     // RamseteCommand passes volts to the callback
     driveBase::tankDriveVoltage,
     meetingTheRequirement);
@@ -275,6 +276,9 @@ Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
     // if (operatorControl != null) {
     //   operatorControl.start();
     // }
+
+    //Scheduler.getInstance().add(new TimeDrive(20, 0.8));
+ 
   }
 
   /**
@@ -284,6 +288,7 @@ Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
   public void autonomousPeriodic() {
     Robot.driveBase.periodic();
     edu.wpi.first.wpilibj2.command.CommandScheduler.getInstance().run();
+   // Scheduler.getInstance().run();
   }
 
   @Override
