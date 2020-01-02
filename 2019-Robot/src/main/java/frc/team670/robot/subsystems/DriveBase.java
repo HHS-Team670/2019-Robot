@@ -30,6 +30,14 @@ import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.dataCollection.sensors.MustangDriveBaseEncoder;
 
+import frc.team670.robot.dataCollection.sensors.NavX;
+import frc.team670.robot.utils.Logger;
+import frc.team670.robot.utils.math.Rotation;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 /**
  * Represents a tank drive base.
  * 
@@ -47,6 +55,9 @@ public class DriveBase extends Subsystem {
   private MustangDriveBaseEncoder leftMustangEncoder, rightMustangEncoder;
   private Encoder leftDIOEncoder, rightDIOEncoder;
 
+  private DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeading()), new Pose2d(0, 0, new Rotation2d())) ;
+  private NavX navXMicro;
+
   private static final double drivebaseGearRatio = 8.45;
 
   private final double P_P = 0.1, P_I = 1E-4, P_D = 1, P_FF = 0; // Position PID Values. Set based off the default in
@@ -60,6 +71,24 @@ public class DriveBase extends Subsystem {
     right1 = new CANSparkMax(RobotMap.SPARK_RIGHT_MOTOR_1, CANSparkMaxLowLevel.MotorType.kBrushless);
     right2 = new CANSparkMax(RobotMap.SPARK_RIGHT_MOTOR_2, CANSparkMaxLowLevel.MotorType.kBrushless);
 
+  left1.restoreFactoryDefaults();
+    left2.restoreFactoryDefaults();
+    right1.restoreFactoryDefaults();
+    right2.restoreFactoryDefaults();
+
+
+    leftEncoder = left1.getEncoder();
+    rightEncoder = right1.getEncoder();
+
+    LogLeftMotorInfo();
+    LogRightMotorInfo();
+    
+    double sparkMaxVelocityConversionFactor = RobotConstants.DRIVEBASE_METERS_PER_ROTATION / 60;//(double)RobotConstants.SPARK_TICKS_PER_ROTATION;
+    left1.getEncoder().setVelocityConversionFactor(sparkMaxVelocityConversionFactor);
+    right1.getEncoder().setVelocityConversionFactor(sparkMaxVelocityConversionFactor); //Do not invert for right side
+    left2.getEncoder().setVelocityConversionFactor(sparkMaxVelocityConversionFactor);
+    right2.getEncoder().setVelocityConversionFactor(sparkMaxVelocityConversionFactor);
+    // these are commented cuuz library being used is
     allMotors = new ArrayList<CANSparkMax>();
     leftControllers = Arrays.asList(left1, left2);
     rightControllers = Arrays.asList(right1, right2);
@@ -658,4 +687,83 @@ public class DriveBase extends Subsystem {
       SmartDashboard.putString("Left Encoder Inches", "null");
     }
   }
+    SmartDashboard.putString("Left M Position Ticks", "0"); leftEncoder.getPosition(); //+ "");
+    SmartDashboard.putString("Left M Velocity Ticks", "0"); //left1.getEncoder().getVelocity() + "");
+    SmartDashboard.putString("Left S Position Ticks", "0"); //left2.getEncoder().getPosition() + "");
+    SmartDashboard.putString("Left S Velocity Ticks", "0"); //left2.getEncoder().getVelocity() + "");
+    SmartDashboard.putString("Right M Position Ticks", "0"); //right1.getEncoder().getPosition() + "");
+    SmartDashboard.putString("Right M Velocity Ticks", "0"); //right1.getEncoder().getVelocity() + "");
+    SmartDashboard.putString("Right S Position Ticks", "0"); //right2.getEncoder().getPosition() + "");
+    SmartDashboard.putString("Right S Velocity Ticks", "0"); //right2.getEncoder().getVelocity() + "");
+    leftEncoder.getPosition();
+    leftEncoder.getVelocity();
+    rightEncoder.getPosition();
+    rightEncoder.getVelocity();
+  }
+
+    
+  @Override
+  public void periodic() {
+    // Update the odometry in the periodic block
+   // Logger.consoleLog("LeftEncoderVelocity: %s, RightEncoderVelocity: %s", getLeftEncoder().getVelocity(), getRightEncoder().getVelocity());
+    m_odometry.update(Rotation2d.fromDegrees(getHeading()), leftEncoder.getPosition(), rightEncoder.getPosition());                
+  }
+
+  /**
+   * Returns the currently-estimated pose of the robot.
+   *
+   * @return The pose.
+   */
+  public Pose2d getPose() {
+    return m_odometry.getPoseMeters();
+  }
+
+  /**
+   * Resets the odometry to the specified pose.
+   *
+   * @param pose The pose to which to set the odometry.
+   */
+  public void resetOdometry(Pose2d pose) {
+    m_odometry.resetPosition(pose, Rotation2d.fromDegrees(getHeading()));
+  }
+
+  public void resetOdometry(){
+    m_odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeading()), new Pose2d(0, 0, new Rotation2d()));
+    zeroHeading();
+    leftEncoder.setPosition(0);
+    rightEncoder.setPosition(0);
+  }
+  
+  /**
+   * Zeroes the heading of the robot.
+   */
+  public void zeroHeading() {
+    navXMicro.reset();
+  }
+
+  /**
+   * Returns the heading of the robot.
+   *
+   * @return the robot's heading in degrees, from 180 to 180
+   */
+  public double getHeading() {
+    return Math.IEEEremainder(navXMicro.getAngle(), 360) * (RobotConstants.kNavXReversed ? -1. : 1.);
+  }
+
+  public void LogLeftMotorInfo(){
+    Logger.consoleLog("ClosedLoopRampRate1 %s, OpenLoopRampRate1 %s", left1.getClosedLoopRampRate(), left1.getOpenLoopRampRate());
+    Logger.consoleLog("ClosedLoopRampRate2 %s, OpenLoopRampRate2 %s", left2.getClosedLoopRampRate(), left2.getClosedLoopRampRate());
+  }
+
+  public void LogRightMotorInfo(){
+    Logger.consoleLog("ClosedLoopRampRate1 %s, OpenLoopRampRate1 %s", right1.getClosedLoopRampRate(), right1.getOpenLoopRampRate());
+    Logger.consoleLog("ClosedLoopRampRate2 %s, OpenLoopRampRate2 %s", right2.getClosedLoopRampRate(), right2.getClosedLoopRampRate());
+  }
+
+  public DifferentialDriveWheelSpeeds getWheelSpeeds(){
+    return new DifferentialDriveWheelSpeeds(leftEncoder.getVelocity(), rightEncoder.getVelocity());
+  }
+
+
+
 }

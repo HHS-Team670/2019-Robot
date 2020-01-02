@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import org.opencv.core.MatOfPoint;
+//import org.opencv.core.MatOfPoint;
 import edu.wpi.first.wpilibj.DriverStation;
 
 /**
@@ -119,7 +119,7 @@ public class MustangLEDs_2019 {
 			while (true) {
 				Socket socketClient = null;
 				DataOutputStream output = null;
-				ArrayList<MatOfPoint> gpgArray = new ArrayList<MatOfPoint>();
+				//ArrayList<MatOfPoint> gpgArray = new ArrayList<MatOfPoint>();
 				while (socketClient == null) { // Attempts until client is found
 
 					System.out.println("Waiting for LED client connection");

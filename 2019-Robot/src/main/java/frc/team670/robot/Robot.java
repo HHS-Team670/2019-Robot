@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.trajectory.constraint.*;
 import frc.team670.robot.commands.arm.zero.SafelyResetExtension;
 import frc.team670.robot.commands.drive.teleop.XboxRocketLeagueDrive;
 import frc.team670.robot.constants.RobotConstants;
@@ -31,6 +32,21 @@ import frc.team670.robot.subsystems.elbow.Elbow;
 import frc.team670.robot.subsystems.extension.Extension;
 import frc.team670.robot.subsystems.wrist.Wrist;
 import frc.team670.robot.utils.Logger;
+
+import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.controller.RamseteController;
+import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import java.util.List;
+
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -209,6 +225,59 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    driveBase.resetOdometry();
+
+    var autoVoltageConstraint =
+    new DifferentialDriveVoltageConstraint(
+        new SimpleMotorFeedforward(RobotConstants.ksVolts,
+                                   RobotConstants.kvVoltSecondsPerMeter,
+                                   RobotConstants.kaVoltSecondsSquaredPerMeter),
+        RobotConstants.kDriveKinematics,
+        10);
+   // Create config for trajectory
+    TrajectoryConfig config =
+    new TrajectoryConfig(RobotConstants.kMaxSpeedMetersPerSecond, RobotConstants.kMaxAccelerationMetersPerSecondSquared)
+       // Add kinematics to ensure max speed is actually obeyed
+       .setKinematics(RobotConstants.kDriveKinematics).addConstraint(RobotConstants.kAutoPathConstraints);
+
+// An example trajectory to follow.  All units in meters.
+Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+   // Start at the origin facing the +X direction
+   new Pose2d(0, 0, new Rotation2d(0)),
+   // Pass through these two interior waypoints, making an 's' curve path
+   List.of(
+      // new Translation2d(3, 0)
+     new Translation2d(1, 1),
+     new Translation2d(2, -1)
+   ),
+   // End 3 m straight ahead of where we started, facing forward
+   new Pose2d(3, 0, new Rotation2d(0)),
+   // Pass config
+   config
+    );
+
+    System.out.println(exampleTrajectory.toString());
+  // DriveBase extends wpilibj.command.Subsystem whereas the v2 Command infrastructure
+  // requires a class that implements wpilibj2.command.Subsystem. So for now just passing a null.
+  // If we go down this road, we'll have to buy in to v2 Commands or backport this Command
+  edu.wpi.first.wpilibj2.command.Subsystem meetingTheRequirement = null;
+
+  RamseteCommand ramseteCommand = new RamseteCommand(
+    exampleTrajectory,
+    driveBase::getPose,
+    new RamseteController(RobotConstants.kRamseteB, RobotConstants.kRamseteZeta),
+    new SimpleMotorFeedforward(RobotConstants.ksVolts, RobotConstants.kvVoltSecondsPerMeter, RobotConstants.kaVoltSecondsSquaredPerMeter),
+    RobotConstants.kDriveKinematics,
+    driveBase::getWheelSpeeds,
+    new PIDController(RobotConstants.kPDriveVel, RobotConstants.kIDriveVel, RobotConstants.kDDriveVel),
+    new PIDController(RobotConstants.kPDriveVel, RobotConstants.kIDriveVel, RobotConstants.kDDriveVel),
+    // RamseteCommand passes volts to the callback
+    driveBase::tankDriveVoltage,
+    meetingTheRequirement);
+
+// Run path following command, then stop at the end.
+    autonomousCommand = ramseteCommand.andThen(() -> driveBase.tankDrive(0, 0));
+    autonomousCommand.schedule();
 
     if(DriverStation.getInstance().getAlliance().equals(Alliance.Red)) {
       leds.changeAlliance(false);
