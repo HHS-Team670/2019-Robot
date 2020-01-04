@@ -7,7 +7,7 @@
 
 package frc.team670.robot.commands.drive.pivot;
 
-import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.command.Command;
 import frc.team670.robot.commands.drive.teleop.XboxRocketLeagueDrive;
 import frc.team670.robot.constants.RobotConstants;
@@ -42,12 +42,14 @@ public class NavXChangeableAnglePivot extends Command {
     this.angle = angle;
     this.reversed = reversed;
 
-    pivotController = new PIDController(P, I, D,sensors.getZeroableNavXPIDSource(), new NullPIDOutput());
+    pivotController = new PIDController(P, I, D); //sensors.getZeroableNavXPIDSource(), new NullPIDOutput());
 
-    pivotController.setInputRange(-180, 180);
-    pivotController.setOutputRange(-0.17, 0.17);
-    pivotController.setAbsoluteTolerance(ABSOLUTE_TOLERANCE);
-    pivotController.setContinuous(true);
+    pivotController.enableContinuousInput(-180, 180);
+    // pivotController.setInputRange(-180, 180);
+    pivotController.setIntegratorRange(-0.17, 0.17);
+    // pivotController.setOutputRange(-0.17, 0.17); 
+    pivotController.setTolerance(ABSOLUTE_TOLERANCE);
+    // pivotController.setContinuous(true);
     setTimeout(1.6);
   }
 
@@ -86,7 +88,7 @@ public class NavXChangeableAnglePivot extends Command {
 
     pivotController.setSetpoint(finalAngle);
 
-    pivotController.enable();
+    // pivotController.enable();
   }
 
   // Called repeatedly when this Command is scheduled to run
@@ -107,7 +109,7 @@ public class NavXChangeableAnglePivot extends Command {
 		//   onTargetCount = 0;
 	  // }
 	  // return (onTargetCount > 3);
-    return pivotController.onTarget() || isTimedOut();
+    return pivotController.atSetpoint() || isTimedOut();
   }
 
   // Called once after isFinished returns true

@@ -43,7 +43,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  * 
  * @author shaylandias
  */
-public class DriveBase extends Subsystem {
+public class DriveBase extends SubsystemBase {
 
   private static final int VELOCITY_PID_SLOT = 1, ENCODERS_PID_SLOT = 2;
 
@@ -54,6 +54,7 @@ public class DriveBase extends Subsystem {
   private List<CANSparkMax> allMotors;
   private MustangDriveBaseEncoder leftMustangEncoder, rightMustangEncoder;
   private Encoder leftDIOEncoder, rightDIOEncoder;
+  private CANEncoder leftEncoder, rightEncoder;
 
   private DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeading()), new Pose2d(0, 0, new Rotation2d())) ;
   private NavX navXMicro;
@@ -686,8 +687,8 @@ public class DriveBase extends Subsystem {
     } else {
       SmartDashboard.putString("Left Encoder Inches", "null");
     }
-  }
-    SmartDashboard.putString("Left M Position Ticks", "0"); leftEncoder.getPosition(); //+ "");
+
+    SmartDashboard.putString("Left M Position Ticks", "0"); //leftEncoder.getPosition(); + "");
     SmartDashboard.putString("Left M Velocity Ticks", "0"); //left1.getEncoder().getVelocity() + "");
     SmartDashboard.putString("Left S Position Ticks", "0"); //left2.getEncoder().getPosition() + "");
     SmartDashboard.putString("Left S Velocity Ticks", "0"); //left2.getEncoder().getVelocity() + "");
