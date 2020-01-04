@@ -7,14 +7,14 @@
 
 package frc.team670.robot.commands.drive.straight;
 
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.team670.robot.Robot;
 import frc.team670.robot.utils.Logger;
 
 /**
  * An example command.  You can replace me with your own command.
  */
-public class TimeDrive extends Command {
+public class TimeDrive extends CommandBase {
 
     private double speed, seconds;
     private int executeCounter;
@@ -23,19 +23,19 @@ public class TimeDrive extends Command {
     this.speed = speed;
     this.seconds = seconds;
     executeCounter = 0;
-    requires(Robot.driveBase);
+    addRequirements(Robot.driveBase);
   }
 
   // Called just before this Command runs the first time
   @Override
-  protected void initialize() {
-    setTimeout(seconds);
+  public void initialize() {
+    set(seconds);
     Logger.consoleLog("Speed: %s Seconds: %s", speed, seconds);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
-  protected void execute() { 
+  public void execute() { 
     Robot.driveBase.tankDrive(speed, speed, false);
     Logger.consoleLog();
 
@@ -43,21 +43,23 @@ public class TimeDrive extends Command {
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
-  protected boolean isFinished() {
+  public boolean isFinished() {
     return isTimedOut();
   }
 
   // Called once after isFinished returns true
   @Override
-  protected void end() {
+  public void end(boolean interrupted) {
     Robot.driveBase.stop();
     Logger.consoleLog("Speed: %s Seconds: %s", speed, seconds);
   }
 
+/*
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
-  protected void interrupted() {
+  public void interrupted() {
     end();
   }
+  */
 }

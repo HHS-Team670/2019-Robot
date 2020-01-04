@@ -7,68 +7,71 @@
 
 package frc.team670.robot.commands.drive.straight;
 
-import edu.wpi.first.wpilibj.PIDController;
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.team670.robot.Robot;
 import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.utils.Logger;
 
-public class MustangEncoderDrive extends Command {
+public class MustangEncoderDrive extends CommandBase {
   private PIDController leftPIDController;
   private PIDController rightPIDController;
-  private int P, I, D, FF, ticksToTravel, tolerance = 300;
+  private int P, I, D, ticksToTravel, tolerance = 300; //FF
 
   public MustangEncoderDrive(int inchesToTravel) {
-    requires(Robot.driveBase);
+    addRequirements(Robot.driveBase);
     ticksToTravel = DriveBase.convertInchesToDriveBaseTicks(inchesToTravel);
 
-    leftPIDController = new PIDController(P, I, D, FF, Robot.driveBase.getLeftMustangDriveBaseEncoder(), Robot.driveBase.getLeftControllers().get(0));
-    rightPIDController = new PIDController(P, I, D, FF, Robot.driveBase.getRightMustangDriveBaseEncoder(), Robot.driveBase.getRightControllers().get(0));
+    leftPIDController = new PIDController(P, I, D);// FF, Robot.driveBase.getLeftMustangDriveBaseEncoder(), Robot.driveBase.getLeftControllers().get(0));
+    rightPIDController = new PIDController(P, I, D);// FF, Robot.driveBase.getRightMustangDriveBaseEncoder(), Robot.driveBase.getRightControllers().get(0));
   }
 
   // Called just before this Command runs the first time
   @Override
-  protected void initialize() {
-    leftPIDController.setOutputRange(-1, 1);
-    rightPIDController.setOutputRange(-1, 1);
+  public void initialize() {
+    leftPIDController.setIntegratorRange(-1, 1);
+    //leftPIDController.setOutputRange(-1, 1);
+    rightPIDController.setIntegratorRange(-1, 1);
+    //rightPIDController.setOutputRange(-1, 1);
 
-    leftPIDController.setAbsoluteTolerance(tolerance);
-    rightPIDController.setAbsoluteTolerance(tolerance);
+    leftPIDController.setTolerance(tolerance);
+    rightPIDController.setTolerance(tolerance);
 
     leftPIDController.setSetpoint(ticksToTravel);
     rightPIDController.setSetpoint(ticksToTravel);
 
     Logger.consoleLog("leftStartingPosition:%s rightStartingPosition:%s ", Robot.driveBase.getLeftMustangEncoderPositionInTicks(), Robot.driveBase.getRightMustangEncoderPositionInTicks());
 
-    leftPIDController.enable();
-    rightPIDController.enable();
+    // leftPIDController.enable();
+    // rightPIDController.enable();
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
-  protected void execute() {
+  public void execute() {
     Logger.consoleLog("leftCurrentPosition:%s rightCurrentPosition:%s ", Robot.driveBase.getLeftMustangEncoderPositionInTicks(), Robot.driveBase.getRightMustangEncoderPositionInTicks());
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
-  protected boolean isFinished() {
-    return (leftPIDController.onTarget() && rightPIDController.onTarget());
+  public boolean isFinished() {
+    return (leftPIDController.atSetpoint() && rightPIDController.atSetpoint());
   }
 
   // Called once after isFinished returns true
   @Override
-  protected void end() {
+  public void end(boolean interrupted) {
     Robot.driveBase.stop();
 
     Logger.consoleLog("leftEndingPosition:%s rightEndingPosition:%s ", Robot.driveBase.getLeftMustangEncoderPositionInTicks(), Robot.driveBase.getRightMustangEncoderPositionInTicks());
   }
-
+/*
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
-  protected void interrupted() {
+  public void interrupted() {
     end();
     Logger.consoleLog("Interrupted");
   }
+  */
 }
