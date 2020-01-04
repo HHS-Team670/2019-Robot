@@ -101,24 +101,24 @@ public abstract class CommandGroupBase extends CommandBase implements Command {
     return new ParallelCommandGroup(commands);
   }
 
-  // /**
-  //  * Factory method for {@link ParallelRaceGroup}, included for brevity/convenience.
-  //  *
-  //  * @param commands the commands to include
-  //  * @return the command group
-  //  */
-  // public static CommandGroupBase race(Command... commands) {
-  //   return new ParallelRaceGroup(commands);
-  // }
+  /**
+   * Factory method for {@link ParallelRaceGroup}, included for brevity/convenience.
+   *
+   * @param commands the commands to include
+   * @return the command group
+   */
+  public static CommandGroupBase race(Command... commands) {
+    return new ParallelRaceGroup(commands);
+  }
 
-  // /**
-  //  * Factory method for {@link ParallelDeadlineGroup}, included for brevity/convenience.
-  //  *
-  //  * @param deadline the deadline command
-  //  * @param commands the commands to include
-  //  * @return the command group
-  //  */
-  // public static CommandGroupBase deadline(Command deadline, Command... commands) {
-  //   return new ParallelDeadlineGroup(deadline, commands);
-  // }
+  /**
+   * Factory method for {@link ParallelDeadlineGroup}, included for brevity/convenience.
+   *
+   * @param deadline the deadline command
+   * @param commands the commands to include
+   * @return the command group
+   */
+  public static CommandGroupBase deadline(Command deadline, Command... commands) {
+    return new ParallelDeadlineGroup(deadline, commands);
+  }
 }

@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.trajectory.constraint.*;
 import frc.team670.robot.commands.arm.zero.SafelyResetExtension;
 import frc.team670.robot.commands.drive.teleop.XboxRocketLeagueDrive;
 import frc.team670.robot.commands.drive.straight.TimeDrive;
@@ -43,6 +45,8 @@ import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.Subsystem;
+
 import java.util.List;
 
 
@@ -205,7 +209,7 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {
 
     sensors.sendUltrasonicDataToDashboard();
-    //driveBase.sendEncoderDataToDashboard();
+    // driveBase.sendEncoderDataToDashboard();
 
     Scheduler.getInstance().run();
   }
@@ -223,12 +227,22 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    double kP = SmartDashboard.getNumber("kp", 4);
     driveBase.resetOdometry();
+
+    var autoVoltageConstraint =
+    new DifferentialDriveVoltageConstraint(
+        new SimpleMotorFeedforward(RobotConstants.ksVolts,
+                                   RobotConstants.kvVoltSecondsPerMeter,
+                                   RobotConstants.kaVoltSecondsSquaredPerMeter),
+        RobotConstants.kDriveKinematics,
+        10);
    // Create config for trajectory
     TrajectoryConfig config =
     new TrajectoryConfig(RobotConstants.kMaxSpeedMetersPerSecond, RobotConstants.kMaxAccelerationMetersPerSecondSquared)
        // Add kinematics to ensure max speed is actually obeyed
-       .setKinematics(RobotConstants.kDriveKinematics).addConstraint(RobotConstants.kAutoPathConstraints);
+       .setKinematics(RobotConstants.kDriveKinematics).addConstraint(RobotConstants.kAutoPathConstraints)
+       .addConstraint(autoVoltageConstraint);
 
 // An example trajectory to follow.  All units in meters.
 Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
@@ -236,12 +250,12 @@ Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
    new Pose2d(0, 0, new Rotation2d(0)),
    // Pass through these two interior waypoints, making an 's' curve path
    List.of(
-      new Translation2d(3, 0)
-     // new Translation2d(2, 2),
-     // new Translation2d(4, -2)
+      // new Translation2d(1, 0)
+     new Translation2d(1, 1),
+     new Translation2d(2, -1)
    ),
    // End 3 m straight ahead of where we started, facing forward
-   new Pose2d(6, 0, new Rotation2d(0)),
+   new Pose2d(3, 0, new Rotation2d(0)),
    // Pass config
    config
     );
@@ -250,20 +264,18 @@ Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
   // DriveBase extends wpilibj.command.Subsystem whereas the v2 Command infrastructure
   // requires a class that implements wpilibj2.command.Subsystem. So for now just passing a null.
   // If we go down this road, we'll have to buy in to v2 Commands or backport this Command
-  edu.wpi.first.wpilibj2.command.Subsystem meetingTheRequirement = null;
+  edu.wpi.first.wpilibj2.command.Subsystem meetingTheRequirement = new Subsystem() {
+  };
 
   RamseteCommand ramseteCommand = new RamseteCommand(
     exampleTrajectory,
     driveBase::getPose,
     new RamseteController(RobotConstants.kRamseteB, RobotConstants.kRamseteZeta),
-    RobotConstants.ksVolts,
-    RobotConstants.kvVoltSecondsPerMeter,
-    RobotConstants.kaVoltSecondsSquaredPerMeter,
+    new SimpleMotorFeedforward(RobotConstants.ksVolts, RobotConstants.kvVoltSecondsPerMeter, RobotConstants.kaVoltSecondsSquaredPerMeter),
     RobotConstants.kDriveKinematics,
-    driveBase.getLeftEncoder()::getVelocity,
-    driveBase.getRightEncoder()::getVelocity,
-    new PIDController(RobotConstants.kPDriveVel, RobotConstants.kIDriveVel, RobotConstants.kDDriveVel),
-    new PIDController(RobotConstants.kPDriveVel, RobotConstants.kIDriveVel, RobotConstants.kDDriveVel),
+    driveBase::getWheelSpeeds,
+    new PIDController(kP, RobotConstants.kIDriveVel, RobotConstants.kDDriveVel),
+    new PIDController(kP, RobotConstants.kIDriveVel, RobotConstants.kDDriveVel),
     // RamseteCommand passes volts to the callback
     driveBase::tankDriveVoltage,
     meetingTheRequirement);
@@ -279,7 +291,7 @@ Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
 
     //Scheduler.getInstance().add(new TimeDrive(20, 0.8));
  
-  }
+    }
 
   /**
    * This function is called periodically during autonomous.

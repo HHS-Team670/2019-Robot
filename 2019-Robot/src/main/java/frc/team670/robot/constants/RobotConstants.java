@@ -61,9 +61,9 @@ public class RobotConstants {
     // Different values/encoder positions to set arm to
     public static int ARM_RESET_TIMEOUTMS = 0;
 
-    public static final double ksVolts = 0.11; //0.224;
-    public static final double kvVoltSecondsPerMeter = 2.27; //2.22;
-    public static final double kaVoltSecondsSquaredPerMeter = 0.765; // 0.715;
+    public static final double ksVolts = 0.134; //0.224;
+    public static final double kvVoltSecondsPerMeter = 2.26; //2.22;
+    public static final double kaVoltSecondsSquaredPerMeter = 0.766; // 0.715;
 
     // "WHEEL_BASE" is really track width
     public static final double kTrackwidthInches = WHEEL_BASE;
@@ -78,8 +78,8 @@ public class RobotConstants {
     public static final double kMaxSpeedInchesPerSecond = 12;
     public static final double kMaxAccelerationInchesPerSecondSquared = 12;
 
-    public static final double kMaxSpeedMetersPerSecond = 4;//1; //0.305;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 4;//1; //0.305;
+    public static final double kMaxSpeedMetersPerSecond = 0.75;//1; //0.305;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 0.75;//1; //0.305;
 
     public static final DifferentialDriveKinematicsConstraint kAutoPathConstraints =
         new DifferentialDriveKinematicsConstraint(kDriveKinematics,

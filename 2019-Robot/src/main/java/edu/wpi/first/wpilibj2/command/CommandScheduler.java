@@ -35,7 +35,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableRegistry;
  * Subsystem#periodic()} methods to be called and for their default commands to be scheduled.
  */
 @SuppressWarnings({"PMD.GodClass", "PMD.TooManyMethods", "PMD.TooManyFields"})
-public final class CommandScheduler {
+public final class CommandScheduler implements Sendable {
   /**
    * The Singleton Instance.
    */
@@ -89,8 +89,8 @@ public final class CommandScheduler {
 
 
   CommandScheduler() {
-    HAL.report(tResourceType.kResourceType_Command, tInstances.kCommand_Scheduler);
-   // SendableRegistry.addLW(this, "Scheduler");
+   // HAL.report(tResourceType.kResourceType_Command, tInstances.kCommand2_Scheduler);
+    SendableRegistry.addLW(this, "Scheduler");
   }
 
   /**
@@ -470,40 +470,40 @@ public final class CommandScheduler {
     m_finishActions.add(action);
   }
 
-  // @Override
-  // public void initSendable(SendableBuilder builder) {
-  //   builder.setSmartDashboardType("Scheduler");
-  //   m_namesEntry = builder.getEntry("Names");
-  //   m_idsEntry = builder.getEntry("Ids");
-  //   m_cancelEntry = builder.getEntry("Cancel");
-  //   builder.setUpdateTable(() -> {
+  @Override
+  public void initSendable(SendableBuilder builder) {
+    builder.setSmartDashboardType("Scheduler");
+    m_namesEntry = builder.getEntry("Names");
+    m_idsEntry = builder.getEntry("Ids");
+    m_cancelEntry = builder.getEntry("Cancel");
+    builder.setUpdateTable(() -> {
 
-  //     if (m_namesEntry == null || m_idsEntry == null || m_cancelEntry == null) {
-  //       return;
-  //     }
+      if (m_namesEntry == null || m_idsEntry == null || m_cancelEntry == null) {
+        return;
+      }
 
-  //     Map<Double, Command> ids = new LinkedHashMap<>();
+      Map<Double, Command> ids = new LinkedHashMap<>();
 
 
-  //     for (Command command : m_scheduledCommands.keySet()) {
-  //       ids.put((double) command.hashCode(), command);
-  //     }
+      for (Command command : m_scheduledCommands.keySet()) {
+        ids.put((double) command.hashCode(), command);
+      }
 
-  //     double[] toCancel = m_cancelEntry.getDoubleArray(new double[0]);
-  //     if (toCancel.length > 0) {
-  //       for (double hash : toCancel) {
-  //         cancel(ids.get(hash));
-  //         ids.remove(hash);
-  //       }
-  //       m_cancelEntry.setDoubleArray(new double[0]);
-  //     }
+      double[] toCancel = m_cancelEntry.getDoubleArray(new double[0]);
+      if (toCancel.length > 0) {
+        for (double hash : toCancel) {
+          cancel(ids.get(hash));
+          ids.remove(hash);
+        }
+        m_cancelEntry.setDoubleArray(new double[0]);
+      }
 
-  //     List<String> names = new ArrayList<>();
+      List<String> names = new ArrayList<>();
 
-  //     ids.values().forEach(command -> names.add(command.getName()));
+      ids.values().forEach(command -> names.add(command.getName()));
 
-  //     m_namesEntry.setStringArray(names.toArray(new String[0]));
-  //     m_idsEntry.setNumberArray(ids.keySet().toArray(new Double[0]));
-  //   });
-  // }
+      m_namesEntry.setStringArray(names.toArray(new String[0]));
+      m_idsEntry.setNumberArray(ids.keySet().toArray(new Double[0]));
+    });
+  }
 }

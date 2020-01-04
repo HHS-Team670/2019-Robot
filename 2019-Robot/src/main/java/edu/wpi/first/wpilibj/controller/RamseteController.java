@@ -1,3 +1,10 @@
+/*----------------------------------------------------------------------------*/
+/* Copyright (c) 2019 FIRST. All Rights Reserved.                             */
+/* Open Source Software - may be modified and shared by FRC teams. The code   */
+/* must be accompanied by the FIRST BSD license file in the root directory of */
+/* the project.                                                               */
+/*----------------------------------------------------------------------------*/
+
 package edu.wpi.first.wpilibj.controller;
 
 import edu.wpi.first.wpilibj.geometry.Pose2d;
@@ -54,6 +61,15 @@ public class RamseteController {
   public RamseteController(double b, double zeta) {
     m_b = b;
     m_zeta = zeta;
+  }
+
+  /**
+   * Construct a Ramsete unicycle controller. The default arguments for
+   * b and zeta of 2.0 and 0.7 have been well-tested to produce desireable
+   * results.
+   */
+  public RamseteController() {
+    this(2.0, 0.7);
   }
 
   /**
