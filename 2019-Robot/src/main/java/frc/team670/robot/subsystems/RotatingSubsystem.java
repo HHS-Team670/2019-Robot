@@ -14,12 +14,12 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /**
  * Superclass for intake, elbow, wrist, and extension
  */
-public abstract class RotatingSubsystem extends Subsystem implements TunableSubsystem {
+public abstract class RotatingSubsystem extends SubsystemBase implements TunableSubsystem {
     protected static final int NO_SETPOINT = 99999;
     protected TalonSRX rotator;
     protected int setpoint;

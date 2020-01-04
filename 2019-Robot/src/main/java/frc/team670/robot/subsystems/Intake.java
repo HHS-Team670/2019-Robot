@@ -197,10 +197,10 @@ public void runIntakeUsingCurrent(int current) {
     SmartDashboard.putNumber("Intake Quadrature Ticks", getPositionTicks());
   }
 
-  @Override
-  public void initDefaultCommand() {
+  // @Override
+  // public void initDefaultCommand() {
 
-  }
+  // }
 
   @Override
   public double getAngleInDegrees() {

@@ -19,7 +19,7 @@ public abstract class BaseIntake extends RotatingSubsystem {
   }
 
   @Override
-  public abstract void initDefaultCommand();
+  //public abstract void initDefaultCommand();
 
   /**
    * Should return the setpoint coordinates for the motion magic on the base motor

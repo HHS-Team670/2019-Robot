@@ -24,9 +24,9 @@ public abstract class BaseElbow extends RotatingSubsystem implements ElbowInterf
 
   public abstract double getReverseSoftLimitAngle();
 
-  @Override
-  protected void initDefaultCommand() {
+  // @Override
+  // protected void initDefaultCommand() {
     
-  }
+  // }
 
 }

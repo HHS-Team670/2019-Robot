@@ -7,52 +7,53 @@
 
 package frc.team670.robot.commands.tuning;
 
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.team670.robot.subsystems.RotatingSubsystem;
 import frc.team670.robot.utils.functions.MathUtils;
 
-public class MoveRotatorToSetpoint extends Command {
+public class MoveRotatorToSetpoint extends CommandBase {
 
   private RotatingSubsystem rotatingSubsystem;
   private double setpointAngle;
 
   public MoveRotatorToSetpoint(RotatingSubsystem rotatingSubsystem, double setpointAngle) {
-    requires(rotatingSubsystem);
+    addRequirements(rotatingSubsystem);
     this.rotatingSubsystem = rotatingSubsystem;
     this.setpointAngle = setpointAngle;
   }
 
   // Called just before this Command runs the first time
   @Override
-  protected void initialize() {
+  public void initialize() {
     rotatingSubsystem.setMotionMagicSetpointAngle(setpointAngle);
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
-  protected void execute() {
+  public void execute() {
 
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
-  protected boolean isFinished() {
+  public boolean isFinished() {
     //Need to change this if you want to stop
     return false;
   }
 
   // Called once after isFinished returns true
   @Override
-  protected void end() {
+  public void end(boolean interrupted) {
     rotatingSubsystem.stop();
     rotatingSubsystem.clearSetpoint();
   }
-
+/*
   // Called when another command which requires one or more of the same
   // subsystems is scheduled to run
   @Override
   protected void interrupted() {
     end();
   }
+  */
 }
 

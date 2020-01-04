@@ -119,10 +119,10 @@ public class Elbow extends BaseElbow {
     return convertElbowTicksToDegrees(getPositionTicks());
   }
 
-  @Override
-  public void initDefaultCommand() {
-    // setDefaultCommand(new JoystickElbow(this));
-  }
+  // @Override
+  // public void initDefaultCommand() {
+  //   // setDefaultCommand(new JoystickElbow(this));
+  // }
 
   @Override
   public boolean isForwardLimitPressed() {
