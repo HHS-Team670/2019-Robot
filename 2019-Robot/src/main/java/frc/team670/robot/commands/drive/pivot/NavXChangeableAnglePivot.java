@@ -9,6 +9,7 @@ package frc.team670.robot.commands.drive.pivot;
 
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.team670.robot.commands.drive.teleop.XboxRocketLeagueDrive;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangSensors;
@@ -20,7 +21,7 @@ import frc.team670.robot.utils.functions.MathUtils;
 import frc.team670.robot.Robot;
 import jaci.pathfinder.Pathfinder;
 
-public class NavXChangeableAnglePivot extends Command {
+public class NavXChangeableAnglePivot extends CommandBase {
 
   private DriveBase driveBase;
   private MustangSensors sensors;
@@ -36,7 +37,7 @@ public class NavXChangeableAnglePivot extends Command {
 
 
   public NavXChangeableAnglePivot(MutableDouble angle, DriveBase driveBase, MustangSensors sensors, boolean reversed) {
-    requires(driveBase);
+    addRequirements(driveBase);
     this.driveBase = driveBase;
     this.sensors = sensors;
     this.angle = angle;
@@ -50,12 +51,12 @@ public class NavXChangeableAnglePivot extends Command {
     // pivotController.setOutputRange(-0.17, 0.17); 
     pivotController.setTolerance(ABSOLUTE_TOLERANCE);
     // pivotController.setContinuous(true);
-    setTimeout(1.6);
+    withTimeout(1.6);
   }
 
   // Called just before this Command runs the first time
   @Override
-  protected void initialize() {
+  public void initialize() {
     // sensors.zeroYaw();
     System.out.println(sensors.getYawDouble());
     onTargetCount = 0;
@@ -93,7 +94,7 @@ public class NavXChangeableAnglePivot extends Command {
 
   // Called repeatedly when this Command is scheduled to run
   @Override
-  protected void execute() {
+  public void execute() {
     double output = pivotController.get();
     // output += output < 0 ? -0.03 : 0.03; // Arbitrary feedforward
 	  System.out.println("Output: " + output);
@@ -101,20 +102,20 @@ public class NavXChangeableAnglePivot extends Command {
   }
 
   // Make this return true when this Command no longer needs to run execute()
-  @Override
-  protected boolean isFinished() {
+
+  public boolean isFinished() {
     // if(pivotController.onTarget()) {
 		//   onTargetCount ++;
 	  // } else {
 		//   onTargetCount = 0;
 	  // }
 	  // return (onTargetCount > 3);
-    return pivotController.atSetpoint() || isTimedOut();
+    return pivotController.atSetpoint(); //|| isTimedOut();
   }
 
   // Called once after isFinished returns true
   @Override
-  protected void end() {
+  public void end(boolean interrupted) {
     driveBase.stop();
     System.out.println(sensors.getYawDouble());
     Logger.consoleLog("CurrentAngle: %s, TargetAngle: %s", sensors.getYawDouble(), finalAngle);  
@@ -126,11 +127,11 @@ public class NavXChangeableAnglePivot extends Command {
     }
   }
 
-  // Called when another command which requires one or more of the same
-  // subsystems is scheduled to run
-  @Override
-  protected void interrupted() {
-    end();
-		Logger.consoleLog();
-  }
+  // // Called when another command which requires one or more of the same
+  // // subsystems is scheduled to run
+  // // @Override
+  // public void interrupted() {
+  //   end();
+	// 	Logger.consoleLog();
+  // }
 }
