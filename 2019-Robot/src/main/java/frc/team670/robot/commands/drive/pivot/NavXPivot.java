@@ -7,8 +7,9 @@
 
 package frc.team670.robot.commands.drive.pivot;
 
-import edu.wpi.first.wpilibj.PIDController;
+import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.team670.robot.Robot;
 import frc.team670.robot.dataCollection.NullPIDOutput;
 import frc.team670.robot.utils.Logger;
@@ -17,7 +18,7 @@ import jaci.pathfinder.Pathfinder;
 /**
  * An example command.  You can replace me with your own command.
  */
-public class NavXPivot extends Command {
+public class NavXPivot extends CommandBase {
 
 	private double finalAngle, startAngle, angle, leftSpeed, rightSpeed;
 	protected double endingSpeed = 0.2;
@@ -30,19 +31,21 @@ public class NavXPivot extends Command {
 
 	this.angle = angle;
 	
-	pivotController = new PIDController(P, I, D, Robot.sensors.getZeroableNavXPIDSource(), new NullPIDOutput());
+	pivotController = new PIDController(P, I, D); //, Robot.sensors.getZeroableNavXPIDSource(), new NullPIDOutput());
 
-	pivotController.setInputRange(-180, 180);
-	pivotController.setOutputRange(-1, 1);
-	pivotController.setAbsoluteTolerance(5);
-	pivotController.setContinuous(true);
+	pivotController.enableContinuousInput(-180, 180);
+	// pivotController.setInputRange(-180, 180);
+	pivotController.setIntegratorRange(-0.17, 0.17);
+	// pivotController.setOutputRange(-1, 1);
+	pivotController.setTolerance(5);
+	// pivotController.setContinuous(true);
 
-	requires(Robot.driveBase);
+	addRequirements(Robot.driveBase);
   }
 
   // Called just before this Command runs the first time
   @Override
-  protected void initialize() {
+  public void initialize() {
 
 	if(Robot.sensors.isNavXNull()){
 		super.cancel();
@@ -57,12 +60,12 @@ public class NavXPivot extends Command {
 
 	pivotController.setSetpoint(finalAngle);
 
-	pivotController.enable();
+	// pivotController.enable();
   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
-  protected void execute() {
+  public void execute() {
 	
 	double output = pivotController.get();
 	// System.out.println("Output: " + output);
@@ -74,30 +77,30 @@ public class NavXPivot extends Command {
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
-  protected boolean isFinished() {
+  public boolean isFinished() {
 	//   if(pivotController.onTarget()) {
 	// 	  onTargetCount ++;
 	//   } else {
 	// 	  onTargetCount = 0;
 	//   }
 	// return (onTargetCount > 10);
-	return pivotController.onTarget();
+	return pivotController.atSetpoint();
   }
 
 
   // Called once after isFinished returns true
   @Override
-  protected void end() {
+  public void end(boolean interrupted) {
 		Robot.driveBase.stop();
 		Logger.consoleLog("CurrentAngle: %s, TargetAngle", Robot.sensors.getYawDouble(), finalAngle);
   }
 
-  // Called when another command which requires one or more of the same
-  // subsystems is scheduled to run
-  @Override
-  protected void interrupted() {
-		end();
-		Logger.consoleLog();
-	}
+//   // Called when another command which requires one or more of the same
+//   // subsystems is scheduled to run
+//   @Override
+//   public void interrupted() {
+// 		end();
+// 		Logger.consoleLog();
+// 	}
 	
 }

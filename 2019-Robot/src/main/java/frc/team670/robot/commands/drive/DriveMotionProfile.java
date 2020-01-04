@@ -16,7 +16,7 @@ import java.io.IOException;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.Robot;
 import frc.team670.robot.constants.RobotConstants;
@@ -35,7 +35,7 @@ import jaci.pathfinder.modifiers.TankModifier;
  *  Don't use stupid waypoints because code crashes if Pathfinder fails
  */
 
-public class DriveMotionProfile extends Command {
+public class DriveMotionProfile extends CommandBase {
 
   private Waypoint[] waypoints = new Waypoint[]{new Waypoint(0, 0, 0)};
   private Trajectory.Config config;
@@ -65,7 +65,7 @@ public class DriveMotionProfile extends Command {
    * Drives a Pathfinder Motion Profile using set Waypoints
    */
   public DriveMotionProfile(Waypoint[] waypoints, boolean isReversed) {
-    requires(Robot.driveBase);
+    addRequirements(Robot.driveBase);
 
     this.isReversed = isReversed;
 
@@ -101,7 +101,7 @@ public class DriveMotionProfile extends Command {
       String csv = "csv";
       boolean encoderFollowersSet = false;
 
-      requires(Robot.driveBase);
+      addRequirements(Robot.driveBase);
 
       String leftPathname = Filesystem.getDeployDirectory() + "/output/" + fileName.replace(".pf1", ".left.pf1");
       String rightPathname = Filesystem.getDeployDirectory() + "/output/" + fileName.replace(".pf1", ".right.pf1");
@@ -169,7 +169,7 @@ public class DriveMotionProfile extends Command {
 
   // Called just before this Command runs the first time
   @Override
-  protected void initialize() {
+  public void initialize() {
 
     // Zeroes the NavX to avoid errors with pathing direction.
     Robot.sensors.zeroYaw();
@@ -226,7 +226,7 @@ public class DriveMotionProfile extends Command {
 
   // Called repeatedly when this Command is scheduled to run
   @Override
-  protected void execute() {
+  public void execute() {
 
     int leftEncoder, rightEncoder;
 
@@ -291,14 +291,14 @@ public class DriveMotionProfile extends Command {
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
-  protected boolean isFinished() {
+  public boolean isFinished() {
     //This should probably be made to take into account robot speed as well in case the robot hits something and is unable to move further.
     return left.isFinished() && right.isFinished();
   }
 
   // Called once after isFinished returns true
   @Override
-  protected void end() {
+  public void end(boolean interrupted) {
     Robot.driveBase.stop();
     if(!Robot.sensors.isNavXNull())
        Logger.consoleLog("EndingAngle: %s, LeftTicksTraveled: %s, RightTicksTraveled: %s, DistanceTraveled: %s", Pathfinder.boundHalfDegrees(Robot.sensors.getYawDoubleForPathfinder()), 
@@ -307,12 +307,12 @@ public class DriveMotionProfile extends Command {
        Logger.consoleLog("LeftTicksTraveled: %s, RightTicksTraveled: %s, DistanceTraveled: %s", (Robot.driveBase.getLeftMustangEncoderPositionInTicks() - initialLeftEncoder), (Robot.driveBase.getRightMustangEncoderPositionInTicks() - initialRightEncoder), DriveBase.convertDriveBaseTicksToInches(MathUtils.average((double)(Robot.driveBase.getLeftMustangEncoderPositionInTicks() - initialLeftEncoder), (double)(Robot.driveBase.getRightMustangEncoderPositionInTicks() - initialRightEncoder))));
   }
 
-  // Called when another command which requires one or more of the same
-  // subsystems is scheduled to run
-  @Override
-  protected void interrupted() {
-    Logger.consoleLog() ;
-    end();
-  }
+  // // Called when another command which requires one or more of the same
+  // // subsystems is scheduled to run
+  // @Override
+  // protected void interrupted() {
+  //   Logger.consoleLog() ;
+  //   end();
+  // }
 
 }

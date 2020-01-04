@@ -7,7 +7,7 @@
 
 package frc.team670.robot.commands.drive.teleop;
 
-import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.Robot;
 import frc.team670.robot.utils.functions.JoystickUtils;
@@ -28,12 +28,12 @@ public class XboxRocketLeagueDrive extends InstantCommand {
     SMOOTH_ROCKET_LEAGUE_STEER = true;
     SMOOTH_ROCKET_LEAGUE_TRIGGER = true;
     isReversed = false;
-    requires(Robot.driveBase);
+    addRequirements(Robot.driveBase);
   }
 
   // Called once when the command executes
   @Override
-  protected void initialize() {
+  public void initialize() {
     // Sets the speed to the reading given by the trigger axes on the controller. Left is positive, but we multiply
     // by -1 to reverse that because we want right trigger to correspond to forward.
     double speed = -1 * (Robot.oi.getDriverController().getLeftTriggerAxis() - Robot.oi.getDriverController().getRightTriggerAxis()); 

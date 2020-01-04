@@ -1,6 +1,6 @@
 package frc.team670.robot.commands.drive;
 
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import frc.team670.robot.Robot;
@@ -13,19 +13,19 @@ import frc.team670.robot.subsystems.DriveBase;
 /**
  * Pivots the robot in a circle ten times then outputs 
  */
-public class MeasureTrackwidth extends Command {
+public class MeasureTrackwidth extends CommandBase {
 
   private final double totalAngleToDrive = -10 * 360;
   private int initialLeftEncoder, initialRightEncoder;
   private double initialAngle, goalAngle;
 
   public MeasureTrackwidth() {
-    requires(Robot.driveBase);
+    addRequirements(Robot.driveBase);
   }
 
   // Called just before this Command runs the first time
   @Override
-  protected void initialize() {
+  public void initialize() {
     initialLeftEncoder = Robot.driveBase.getLeftMustangEncoderPositionInTicks();
     initialRightEncoder = Robot.driveBase.getRightMustangEncoderPositionInTicks();
     initialAngle = Robot.sensors.getYawDouble();
@@ -38,7 +38,7 @@ public class MeasureTrackwidth extends Command {
 
   // Called repeatedly when this Command is scheduled to run
   @Override
-  protected void execute() {
+  public void execute() {
     Robot.driveBase.tankDrive(-0.3, 0.3);
     Logger.consoleLog("Current Angle: " + Robot.sensors.getAngle() + "");
     Logger.consoleLog("Goal Angle: " + goalAngle + "");
@@ -46,13 +46,13 @@ public class MeasureTrackwidth extends Command {
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
-  protected boolean isFinished() {
+  public boolean isFinished() {
     return Robot.sensors.getAngle() < goalAngle;
   }
 
   // Called once after isFinished returns true
   @Override
-  protected void end() {
+  public void end(boolean interrupted) {
 
     double overShoot = Robot.sensors.getYawDouble() - initialAngle;
     double leftDistance = Robot.driveBase.getLeftMustangEncoderPositionInTicks() - initialLeftEncoder;
@@ -75,10 +75,10 @@ public class MeasureTrackwidth extends Command {
     Logger.consoleLog("Average Diameter (inches): " + ((leftDiameter + rightDiameter)/2));
   }
 
-  // Called when another command which requires one or more of the same
-  // subsystems is scheduled to run
-  @Override
-  protected void interrupted() {
-    Logger.consoleLog("Interrupted Measure Wheelbase");
-  }
+  // // Called when another command which requires one or more of the same
+  // // subsystems is scheduled to run
+  // @Override
+  // protected void interrupted() {
+  //   Logger.consoleLog("Interrupted Measure Wheelbase");
+  // }
 }

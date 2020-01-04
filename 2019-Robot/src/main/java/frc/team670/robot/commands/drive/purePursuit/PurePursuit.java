@@ -7,14 +7,14 @@
 
 package frc.team670.robot.commands.drive.purePursuit;
 
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.team670.robot.dataCollection.MustangSensors;
 import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.utils.Logger;
 import frc.team670.robot.utils.MutableDouble;
 import frc.team670.robot.utils.math.DrivePower;
 
-public class PurePursuit extends Command {
+public class PurePursuit extends CommandBase {
 
   private static final double LOOKAHEAD_DISTANCE_AT_66_INCHES = 15;
 
@@ -43,12 +43,12 @@ public class PurePursuit extends Command {
   
    purePursuitTracker = new PurePursuitTracker(poseEstimator, driveBase, sensors, isReversed);
    purePursuitTracker.setPath(path, LOOKAHEAD_DISTANCE_AT_66_INCHES * yDistance/66);
-   requires(driveBase);
+   addRequirements(driveBase);
   }
 
   // Called just before this Command runs the first time
   @Override
-  protected void initialize() {
+  public void initialize() {
     driveBase.initBrakeMode();
     sensors.zeroYaw();
     purePursuitTracker.reset();
@@ -60,7 +60,7 @@ public class PurePursuit extends Command {
 
   // Called repeatedly when this Command is scheduled to run
   @Override
-  protected void execute() {
+  public void execute() {
     poseEstimator.update();
     DrivePower drivePower;
 
@@ -74,13 +74,13 @@ public class PurePursuit extends Command {
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
-  protected boolean isFinished() {
+  public boolean isFinished() {
     return purePursuitTracker.isDone();// || Robot.sensors.getUltrasonicDistance() < 15;
   }
 
   // Called once after isFinished returns true
   @Override
-  protected void end() {
+  public void end(boolean interrupted) {
     Logger.consoleLog("Pose: %s ", poseEstimator.getPose());
     // VisionPurePursuit.disableArmRestriction();
     driveBase.setSparkVelocityControl(0,0);
@@ -92,11 +92,11 @@ public class PurePursuit extends Command {
     purePursuitTracker.reset();
   }
 
-  // Called when another command which requires one or more of the same
-  // subsystems is scheduled to run
-  @Override
-  protected void interrupted() {
-    end();
-    Logger.consoleLog();
-  }
+  // // Called when another command which requires one or more of the same
+  // // subsystems is scheduled to run
+  // @Override
+  // protected void interrupted() {
+  //   end();
+  //   Logger.consoleLog();
+  // }
 }
