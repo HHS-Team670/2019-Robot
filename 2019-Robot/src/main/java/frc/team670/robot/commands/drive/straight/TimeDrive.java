@@ -29,7 +29,8 @@ public class TimeDrive extends CommandBase {
   // Called just before this Command runs the first time
   @Override
   public void initialize() {
-    set(seconds);
+    withTimeout(seconds);
+    //setTimeout(seconds);
     Logger.consoleLog("Speed: %s Seconds: %s", speed, seconds);
   }
 
@@ -44,6 +45,8 @@ public class TimeDrive extends CommandBase {
   // Make this return true when this Command no longer needs to run execute()
   @Override
   public boolean isFinished() {
+    
+    //TODO find command that replaces isTimedOut() in 2020 wpilib
     return isTimedOut();
   }
 
