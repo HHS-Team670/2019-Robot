@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.Robot;
-import frc.team670.robot.commands.BuildAuton;
+// import frc.team670.robot.commands.BuildAuton;
 import frc.team670.robot.commands.CancelAllCommands;
 import frc.team670.robot.commands.arm.ToggleHeldItem;
 import frc.team670.robot.commands.arm.movement.CancelArmMovement;
@@ -25,7 +25,7 @@ import frc.team670.robot.commands.arm.movement.PlaceOrGrab;
 import frc.team670.robot.commands.claw.ToggleClaw;
 import frc.team670.robot.commands.claw.YeetHeldItem;
 import frc.team670.robot.commands.drive.vision.CancelDriveBase;
-import frc.team670.robot.commands.drive.vision.VisionPurePursuitWithPivot;
+// import frc.team670.robot.commands.drive.vision.VisionPurePursuitWithPivot;
 import frc.team670.robot.commands.intake.AutoPickupCargo;
 import frc.team670.robot.commands.intake.ButtonRunIntake;
 import frc.team670.robot.commands.intake.MoveIntakeToSetpointAngle;
@@ -79,7 +79,7 @@ public class XKeys {
         table.addEntryListener("auton-sequence", (table2, key2, entry, value, flags) -> {
             if (value.getType() != NetworkTableType.kStringArray) SmartDashboard.putString("auto-sequence", "not string array");
             SmartDashboard.putString("auto-sequence", "building auton");
-            autonCommand = new BuildAuton(value.getStringArray(), Robot.arm);
+            // autonCommand = new BuildAuton(value.getStringArray(), Robot.arm);
         }, EntryListenerFlags.kNew | EntryListenerFlags.kUpdate);
         table.addEntryListener("xkeys-armstates", (table2, key2, entry, value, flags) -> {
             if (value.getType() != NetworkTableType.kString) return;
@@ -277,7 +277,7 @@ public class XKeys {
         boolean isLow = placeGrab.getIsLowTarget();
 
         SmartDashboard.putString("vision-status", "");
-        Scheduler.getInstance().add(new VisionPurePursuitWithPivot(Robot.driveBase, Robot.coprocessor, Robot.sensors, distanceFromTarget, isReversed, isLow));
+        // Scheduler.getInstance().add(new VisionPurePursuitWithPivot(Robot.driveBase, Robot.coprocessor, Robot.sensors, distanceFromTarget, isReversed, isLow));
     }
 
     private void dropHeldItem() {

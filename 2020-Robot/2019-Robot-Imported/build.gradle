@@ -37,6 +37,13 @@ deploy {
     }
 }
 
+repositories{
+    mavenCentral()
+    maven {
+        url "./localMaven"
+    }
+}
+
 // Set this to true to enable desktop support.
 def includeDesktopSupport = false
 
