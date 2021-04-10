@@ -22,6 +22,7 @@ public class XboxRocketLeagueDrive extends InstantCommand {
 
    private final boolean SMOOTH_ROCKET_LEAGUE_STEER, SMOOTH_ROCKET_LEAGUE_TRIGGER;
    private static boolean isReversed;
+   private static boolean isChildSafe;
 
   public XboxRocketLeagueDrive() {
     super();
@@ -36,7 +37,9 @@ public class XboxRocketLeagueDrive extends InstantCommand {
   protected void initialize() {
     // Sets the speed to the reading given by the trigger axes on the controller. Left is positive, but we multiply
     // by -1 to reverse that because we want right trigger to correspond to forward.
-    double speed = -1 * (Robot.oi.getDriverController().getLeftTriggerAxis() - Robot.oi.getDriverController().getRightTriggerAxis()); 
+    double multiplier = isChildSafe ? -0.3 : -1;
+
+    double speed = multiplier * (Robot.oi.getDriverController().getLeftTriggerAxis() - Robot.oi.getDriverController().getRightTriggerAxis()); 
     double steer = Robot.oi.getDriverController().getLeftStickX(); 
 
     // Decides whether or not to smooth the Steering and Trigger. Smoothing helps reduce jerkiness when driving.
@@ -86,6 +89,14 @@ public class XboxRocketLeagueDrive extends InstantCommand {
 
   public static boolean isDriveReversed() {
     return isReversed;
+  }
+
+  public static boolean isChildSafe() {
+    return isChildSafe;
+  }
+
+  public static void setChildSafe(boolean isChildSafe) {
+    XboxRocketLeagueDrive.isChildSafe = isChildSafe;
   }
 
   public static void setDriveReversed(boolean reversed) {

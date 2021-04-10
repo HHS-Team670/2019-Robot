@@ -17,6 +17,7 @@ import frc.team670.robot.commands.cameras.FlipDriverCameraMode;
 import frc.team670.robot.commands.claw.CloseClaw;
 import frc.team670.robot.commands.claw.OpenClaw;
 import frc.team670.robot.commands.drive.teleop.FlipDriveAndCamera;
+import frc.team670.robot.commands.drive.teleop.ToggleDriveSafe;
 import frc.team670.robot.constants.RobotMap;
 import frc.team670.robot.dataCollection.XKeys;
 import frc.team670.robot.subsystems.Arm;
@@ -36,7 +37,7 @@ public class OI {
   private XKeys xkeys;
 
   // Buttons
-  private JoystickButton toggleReverseDrive, toggleDriverCameraMode;
+  private JoystickButton toggleReverseDrive, toggleDriverCameraMode, toggleChildSafe;
   private JoystickButton armToNeutral;  
 
   private JoystickButton dropBall, grabBall;
@@ -47,6 +48,8 @@ public class OI {
     xkeys = new XKeys();
     toggleReverseDrive = new JoystickButton(driverController, XboxButtons.LEFT_BUMPER);
     toggleReverseDrive.whenPressed(new FlipDriveAndCamera());
+    toggleChildSafe = new JoystickButton(driverController, XboxButtons.X);
+    toggleChildSafe.whenPressed(new ToggleDriveSafe());
     toggleDriverCameraMode = new JoystickButton(driverController, XboxButtons.B);
     toggleDriverCameraMode.whenPressed(new FlipDriverCameraMode());
     armToNeutral = new JoystickButton(driverController, XboxButtons.A);
