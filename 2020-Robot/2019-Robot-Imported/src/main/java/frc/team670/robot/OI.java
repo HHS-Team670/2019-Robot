@@ -25,7 +25,7 @@ import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
-import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import frc.team670.robot.commands.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.commands.cameras.FlipDriverCameraMode;
@@ -130,6 +130,8 @@ public class OI {
   //CHEESE
     //https://docs.wpilib.org/en/stable/docs/software/examples-tutorials/trajectory-tutorial/creating-following-trajectory.html
   public SequentialCommandGroup getAutonCommand2021(DriveBase driveBase){
+    
+    //TODO: FIND CONSTANTS IN EXPERIMENATTION BRANCH
     double leftKsVolts = 0.246;
     double kvVoltSecondsPerMeter = 2.1;
     double leftKaVoltSecondsSquaredPerMeter = 0.2;
@@ -139,6 +141,8 @@ public class OI {
     double kRamseteB = 2;
     double kRamseteZeta = .7;
     double leftKPDriveVel = 6;
+    double rightKPDriveVel = 2.4;
+    double rightKsVolts = 0.12;
 
     DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(
       kTrackwidthMeters);
@@ -173,19 +177,17 @@ public class OI {
         config
     );
 
-    RamseteCommand ramseteCommand = new RamseteCommand(
+     RamseteCommand ramseteCommand = new RamseteCommand(
         exampleTrajectory,
-        // driveBase::getPose,
-        driveBase.getPose(),
+        driveBase::getPose,
         new RamseteController(kRamseteB, kRamseteZeta),
-        //made for left
-        new SimpleMotorFeedforward(leftKsVolts,
+        new SimpleMotorFeedforward(leftksVolts,
                                    kvVoltSecondsPerMeter,
-                                   leftKaVoltSecondsSquaredPerMeter),
-        kDriveKinematics,
+                                   leftkaVoltSecondsSquaredPerMeter),
+        DriveConstants.kDriveKinematics,
         driveBase::getWheelSpeeds,
         new PIDController(leftKPDriveVel, 0, 0),
-        new PIDController(leftKPDriveVel, 0, 0),
+        new PIDController(rightKPDriveVel 0, 0),
         // RamseteCommand passes volts to the callback
         driveBase::tankDriveVolts,
         driveBase
@@ -195,7 +197,7 @@ public class OI {
     driveBase.resetOdometry(exampleTrajectory.getInitialPose());
 
     // Run path following command, then stop at the end.
-    return ramseteCommand.andThen(() -> driveBase.tankDriveVolts(0, 0));
+    return ramseteCommand.andThen(() -> driveBase.tankDriveVoltage(0, 0));
     
   }
 
