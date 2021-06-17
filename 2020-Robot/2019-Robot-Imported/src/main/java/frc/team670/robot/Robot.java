@@ -94,6 +94,7 @@ public class Robot extends TimedRobot {
     leds.socketSetup(RobotConstants.LED_PORT);    
     System.out.println("LED Setup Run");
 
+    //CHEESE so i can find
     // autonomousCommand = oi.getSelectedAutonCommand();
     leds.setStillDrive(true);
 
