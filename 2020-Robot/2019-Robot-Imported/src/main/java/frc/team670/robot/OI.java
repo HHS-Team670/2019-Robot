@@ -146,6 +146,7 @@ public class OI {
     double leftKPDriveVel = 6;
     double rightKPDriveVel = 2.4;
     double rightKsVolts = 0.12;
+    double rightKaVoltSecondsSquaredPerMeter = 0.1;
 
     DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(
       kTrackwidthMeters);
@@ -190,9 +191,9 @@ public class OI {
         new SimpleMotorFeedforward(leftKsVolts,
                                    kvVoltSecondsPerMeter,
                                    leftKaVoltSecondsSquaredPerMeter),
-                                   new SimpleMotorFeedforward(leftKsVolts,
+        new SimpleMotorFeedforward(rightKsVolts,
                                    kvVoltSecondsPerMeter,
-                                   leftKaVoltSecondsSquaredPerMeter),
+                                   rightKaVoltSecondsSquaredPerMeter),
         kDriveKinematics,
         // simpleMotorFeedforward,
         driveBase::getWheelSpeeds,

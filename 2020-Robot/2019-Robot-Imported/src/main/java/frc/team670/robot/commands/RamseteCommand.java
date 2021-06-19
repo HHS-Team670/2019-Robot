@@ -10,6 +10,7 @@ package frc.team670.robot.commands;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
+import frc.team670.robot.subsystems.DriveBase;
 import frc.team670.robot.utils.Logger;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -91,7 +92,7 @@ public class RamseteCommand extends CommandBase {
                         PIDController leftController,
                         PIDController rightController,
                         BiConsumer<Double, Double> outputVolts,
-                        Subsystem... requirements) {
+                        DriveBase requirements) {
     m_trajectory = requireNonNullParam(trajectory, "trajectory", "RamseteCommand");
     m_pose = requireNonNullParam(pose, "pose", "RamseteCommand");
     m_follower = requireNonNullParam(controller, "controller", "RamseteCommand");
@@ -105,7 +106,7 @@ public class RamseteCommand extends CommandBase {
 
     m_usePID = true;
 
-    addRequirements(requirements);
+    addRequirements((Subsystem) requirements);
   }
 
   
