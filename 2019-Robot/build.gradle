@@ -49,6 +49,10 @@ repositories {
 dependencies {
     compile wpi.deps.wpilib()
     compile wpi.deps.vendor.java()
+    compile "org.ejml:ejml-simple:0.38"
+    compile "com.fasterxml.jackson.core:jackson-annotations:2.10.0"
+    compile "com.fasterxml.jackson.core:jackson-core:2.10.0"
+    compile "com.fasterxml.jackson.core:jackson-databind:2.10.0"
     nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
     nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
     // compile 'org.ghrobotics:FalconLibrary:2019.1.5'

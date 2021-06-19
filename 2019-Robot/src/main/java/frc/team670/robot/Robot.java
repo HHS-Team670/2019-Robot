@@ -12,12 +12,14 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.trajectory.constraint.*;
 import frc.team670.robot.commands.arm.zero.SafelyResetExtension;
 import frc.team670.robot.commands.drive.teleop.XboxRocketLeagueDrive;
+import frc.team670.robot.commands.drive.straight.TimeDrive;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangCoprocessor;
 import frc.team670.robot.dataCollection.MustangSensors;
@@ -31,6 +33,22 @@ import frc.team670.robot.subsystems.elbow.Elbow;
 import frc.team670.robot.subsystems.extension.Extension;
 import frc.team670.robot.subsystems.wrist.Wrist;
 import frc.team670.robot.utils.Logger;
+
+import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.controller.RamseteController;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.Subsystem;
+
+import java.util.List;
+
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -85,10 +103,10 @@ public class Robot extends TimedRobot {
     }
     catch (Throwable e) { Logger.logException(e);}
     
-    Logger.consoleLog();
+    //Logger.consoleLog();
 
     SmartDashboard.putData("Auto mode", auton_chooser);
-    Logger.consoleLog();
+    //Logger.consoleLog();
     System.out.println("Robot init");
 
     leds.socketSetup(RobotConstants.LED_PORT);    
@@ -132,40 +150,40 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     // SmartDashboard.putNumber("gyro", (int) sensors.getAngle() % 360);
     // SmartDashboard.putString("current-command", Scheduler.getInstance().getName());
-    SmartDashboard.putString("current-arm-state", Arm.getCurrentState().toString());
-    SmartDashboard.putNumber("intake-angle", intake.getAngleInDegrees());
-    SmartDashboard.putNumber("elbow-angle", elbow.getAngleInDegrees());
-    SmartDashboard.putNumber("wrist-angle", wrist.getAngleInDegrees());
-    SmartDashboard.putBoolean("intake-ir-sensor", sensors.getIntakeIROutput());
-    SmartDashboard.putNumber("extension-actual-length" , extension.getLengthInches());
-    SmartDashboard.putNumber("arm-extension" , extension.getLengthInches() / Extension.EXTENSION_OUT_IN_INCHES);
-    // SmartDashboard.putNumber("Actual Extension" , extension.getLengthInches());
-    SmartDashboard.putBoolean("drive-reversed-status", XboxRocketLeagueDrive.isDriveReversed());
-    if (arm.getHeldItem().equals(HeldItem.HATCH)) {
-      SmartDashboard.putString("claw-status", "Hatch");
-    } else if (arm.getHeldItem().equals(HeldItem.BALL)) {
-      SmartDashboard.putString("claw-status", "Ball");
-    } else if (arm.getHeldItem().equals(HeldItem.NONE)) {
-      SmartDashboard.putString("claw-status", "None");
-    } else if (claw.isOpen()) {
-      SmartDashboard.putString("claw-status", "open");
-    } else if (!claw.isOpen()) {
-      SmartDashboard.putString("claw-status", "close");
-    }
+    // SmartDashboard.putString("current-arm-state", Arm.getCurrentState().toString());
+    // SmartDashboard.putNumber("intake-angle", intake.getAngleInDegrees());
+    // SmartDashboard.putNumber("elbow-angle", elbow.getAngleInDegrees());
+    // SmartDashboard.putNumber("wrist-angle", wrist.getAngleInDegrees());
+    // SmartDashboard.putBoolean("intake-ir-sensor", sensors.getIntakeIROutput());
+    // SmartDashboard.putNumber("extension-actual-length" , extension.getLengthInches());
+    // SmartDashboard.putNumber("arm-extension" , extension.getLengthInches() / Extension.EXTENSION_OUT_IN_INCHES);
+    // // SmartDashboard.putNumber("Actual Extension" , extension.getLengthInches());
+    // SmartDashboard.putBoolean("drive-reversed-status", XboxRocketLeagueDrive.isDriveReversed());
+    // if (arm.getHeldItem().equals(HeldItem.HATCH)) {
+    //   SmartDashboard.putString("claw-status", "Hatch");
+    // } else if (arm.getHeldItem().equals(HeldItem.BALL)) {
+    //   SmartDashboard.putString("claw-status", "Ball");
+    // } else if (arm.getHeldItem().equals(HeldItem.NONE)) {
+    //   SmartDashboard.putString("claw-status", "None");
+    // } else if (claw.isOpen()) {
+    //   SmartDashboard.putString("claw-status", "open");
+    // } else if (!claw.isOpen()) {
+    //   SmartDashboard.putString("claw-status", "close");
+    // }
 
-    SmartDashboard.putNumber("Yaw", sensors.getYawDouble());
-    // SmartDashboard.putNumber("Phi", sensors.getAngleToTarget());
-    SmartDashboard.putNumber("Horizontal Angle", coprocessor.getAngleToWallTarget());
-    // SmartDashboard.putNumber("Depth", coprocessor.getDistanceToWallTarget());
+    // SmartDashboard.putNumber("Yaw", sensors.getYawDouble());
+    // // SmartDashboard.putNumber("Phi", sensors.getAngleToTarget());
+    // SmartDashboard.putNumber("Horizontal Angle", coprocessor.getAngleToWallTarget());
+    // // SmartDashboard.putNumber("Depth", coprocessor.getDistanceToWallTarget());
 
-    // SmartDashboard.putNumber("Arbitrary Feedforward Measurement", MeasureArbitraryFeedforward.output);
+    // // SmartDashboard.putNumber("Arbitrary Feedforward Measurement", MeasureArbitraryFeedforward.output);
 
 
-    elbow.sendDataToDashboard();
-    // extension.sendDataToDashboard();
-    // wrist.sendDataToDashboard();
-    // intake.sendDataToDashboard();
-    sensors.sendBreamBreakDataToDashboard();
+    // elbow.sendDataToDashboard();
+    // // extension.sendDataToDashboard();
+    // // wrist.sendDataToDashboard();
+    // // intake.sendDataToDashboard();
+    // sensors.sendBreamBreakDataToDashboard();
     driveBase.sendEncoderDataToDashboard();
 
   }
@@ -176,7 +194,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
-    SmartDashboard.putString("robot-state", "disabledPeriodic()");
+    //SmartDashboard.putString("robot-state", "disabledPeriodic()");
     Logger.consoleLog("Robot Disabled");
     // autonomousCommand = oi.getSelectedAutonCommand();
     leds.setStillDrive(true);
@@ -191,7 +209,7 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {
 
     sensors.sendUltrasonicDataToDashboard();
-    driveBase.sendEncoderDataToDashboard();
+    // driveBase.sendEncoderDataToDashboard();
 
     Scheduler.getInstance().run();
   }
@@ -209,40 +227,80 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    double kP = SmartDashboard.getNumber("kp", 4);
+    driveBase.resetOdometry();
 
-    if(DriverStation.getInstance().getAlliance().equals(Alliance.Red)) {
-      leds.changeAlliance(false);
-    } else if (DriverStation.getInstance().getAlliance().equals(Alliance.Blue)) {
-      leds.changeAlliance(true);
-    } else {
-      leds.changeAlliance(true);
-    }
-    leds.setForwardData(true);
+    var autoVoltageConstraint =
+    new DifferentialDriveVoltageConstraint(
+        new SimpleMotorFeedforward(RobotConstants.ksVolts,
+                                   RobotConstants.kvVoltSecondsPerMeter,
+                                   RobotConstants.kaVoltSecondsSquaredPerMeter),
+        RobotConstants.kDriveKinematics,
+        10);
+   // Create config for trajectory
+    TrajectoryConfig config =
+    new TrajectoryConfig(RobotConstants.kMaxSpeedMetersPerSecond, RobotConstants.kMaxAccelerationMetersPerSecondSquared)
+       // Add kinematics to ensure max speed is actually obeyed
+       .setKinematics(RobotConstants.kDriveKinematics).addConstraint(RobotConstants.kAutoPathConstraints)
+       .addConstraint(autoVoltageConstraint);
 
-    sensors.resetNavX(); // Reset NavX completely, zero the field centric based on how robot faces from start of game.
-    driveBase.initBrakeMode();
+// An example trajectory to follow.  All units in meters.
+Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+   // Start at the origin facing the +X direction
+   new Pose2d(0, 0, new Rotation2d(0)),
+   // Pass through these two interior waypoints, making an 's' curve path
+   List.of(
+      // new Translation2d(1, 0)
+     new Translation2d(1, 1),
+     new Translation2d(2, -1)
+   ),
+   // End 3 m straight ahead of where we started, facing forward
+   new Pose2d(3, 0, new Rotation2d(0)),
+   // Pass config
+   config
+    );
 
-    Logger.consoleLog("Auton Started");
-    SmartDashboard.putString("robot-state", "autonomousPeriodic()");
+    System.out.println(exampleTrajectory.toString());
+  // DriveBase extends wpilibj.command.Subsystem whereas the v2 Command infrastructure
+  // requires a class that implements wpilibj2.command.Subsystem. So for now just passing a null.
+  // If we go down this road, we'll have to buy in to v2 Commands or backport this Command
+  edu.wpi.first.wpilibj2.command.Subsystem meetingTheRequirement = new Subsystem() {
+  };
 
-    Scheduler.getInstance().add(new SafelyResetExtension());
-    arm.setCoastMode();
+  RamseteCommand ramseteCommand = new RamseteCommand(
+    exampleTrajectory,
+    driveBase::getPose,
+    new RamseteController(RobotConstants.kRamseteB, RobotConstants.kRamseteZeta),
+    new SimpleMotorFeedforward(RobotConstants.ksVolts, RobotConstants.kvVoltSecondsPerMeter, RobotConstants.kaVoltSecondsSquaredPerMeter),
+    RobotConstants.kDriveKinematics,
+    driveBase::getWheelSpeeds,
+    new PIDController(kP, RobotConstants.kIDriveVel, RobotConstants.kDDriveVel),
+    new PIDController(kP, RobotConstants.kIDriveVel, RobotConstants.kDDriveVel),
+    // RamseteCommand passes volts to the callback
+    driveBase::tankDriveVoltage,
+    meetingTheRequirement);
 
-    if (autonomousCommand != null) {
-      autonomousCommand.start();
-    }
+// Run path following command, then stop at the end.
+    autonomousCommand = ramseteCommand.andThen(() -> driveBase.tankDrive(0, 0));
+    autonomousCommand.schedule();
+
 
     // if (operatorControl != null) {
     //   operatorControl.start();
     // }
-  }
+
+    //Scheduler.getInstance().add(new TimeDrive(20, 0.8));
+ 
+    }
 
   /**
    * This function is called periodically during autonomous.
    */
   @Override
   public void autonomousPeriodic() {
-    Scheduler.getInstance().run();
+    Robot.driveBase.periodic();
+    edu.wpi.first.wpilibj2.command.CommandScheduler.getInstance().run();
+   // Scheduler.getInstance().run();
   }
 
   @Override

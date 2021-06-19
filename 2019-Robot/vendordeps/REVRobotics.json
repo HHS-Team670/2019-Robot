@@ -1,7 +1,7 @@
 {
     "fileName": "REVRobotics.json",
     "name": "REVRobotics",
-    "version": "1.0.26",
+    "version": "1.5.0",
     "uuid": "c16ed09f-23df-4beb-87e8-460bd7fa9924",
     "mavenUrls": [
         "http://www.revrobotics.com/content/sw/max/sdk/maven/"
