@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
@@ -27,6 +28,7 @@ import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import frc.team670.robot.commands.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.commands.cameras.FlipDriverCameraMode;
 import frc.team670.robot.commands.claw.CloseClaw;
@@ -129,8 +131,9 @@ public class OI {
 
   //CHEESE
     //https://docs.wpilib.org/en/stable/docs/software/examples-tutorials/trajectory-tutorial/creating-following-trajectory.html
-  public SequentialCommandGroup getAutonCommand2021(DriveBase driveBase){
-    
+    public SequentialCommandGroup getAutonCommand2021(DriveBase driveBase){
+      // public SequentialCommandGroup getAutonCommand2021(Subsystem driveBase){
+
     //TODO: FIND CONSTANTS IN EXPERIMENATTION BRANCH
     double leftKsVolts = 0.246;
     double kvVoltSecondsPerMeter = 2.1;
@@ -146,6 +149,7 @@ public class OI {
 
     DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(
       kTrackwidthMeters);
+    SimpleMotorFeedforward simpleMotorFeedforward = new SimpleMotorFeedforward(leftKsVolts, kvVoltSecondsPerMeter);
     // Create a voltage constraint to ensure we don't accelerate too fast
     //set to left values
     var autoVoltageConstraint =
@@ -177,6 +181,8 @@ public class OI {
         config
     );
 
+    exampleTrajectory = null;
+
      RamseteCommand ramseteCommand = new RamseteCommand(
         exampleTrajectory,
         driveBase::getPose,
@@ -184,12 +190,16 @@ public class OI {
         new SimpleMotorFeedforward(leftKsVolts,
                                    kvVoltSecondsPerMeter,
                                    leftKaVoltSecondsSquaredPerMeter),
+                                   new SimpleMotorFeedforward(leftKsVolts,
+                                   kvVoltSecondsPerMeter,
+                                   leftKaVoltSecondsSquaredPerMeter),
         kDriveKinematics,
+        // simpleMotorFeedforward,
         driveBase::getWheelSpeeds,
         new PIDController(leftKPDriveVel, 0, 0),
-        new PIDController(rightKPDriveVel 0, 0),
+        new PIDController(rightKPDriveVel, 0, 0),
         // RamseteCommand passes volts to the callback
-        driveBase::tankDriveVolts,
+        driveBase::tankDriveVoltage,
         driveBase
     );
 
