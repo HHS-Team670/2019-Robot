@@ -7,18 +7,14 @@
 
 package frc.team670.robot;
 
-import java.net.ProtocolException;
-
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.command.Command;
-import edu.wpi.first.wpilibj.command.CommandGroup;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.CancelAllCommands;
 import frc.team670.robot.commands.arm.movement.MoveArm;
-import frc.team670.robot.commands.arm.movement.MoveExtensionBackUntilHitsLimitSwitch;
 import frc.team670.robot.commands.arm.movement.PlaceOrGrab;
 import frc.team670.robot.commands.cameras.FlipDriverCameraMode;
 import frc.team670.robot.commands.claw.ToggleClaw;
@@ -57,7 +53,11 @@ public class OI {
   // public static JoystickButton dropHeldItem = new JoystickButton(getOperatorController(), 11);
   public static JoystickButton toggleClaw = new JoystickButton(getOperatorController(), 1);
   public static JoystickButton autoPickupBall = new JoystickButton(getOperatorController(), 3);
-  public static JoystickButton middleArm = new JoystickButton(getOperatorController(), 7);
+  public static JoystickButton middleForwardArm = new JoystickButton(getOperatorController(), 7);
+  public static JoystickButton backMiddleBall = new JoystickButton(getOperatorController(), 9);
+  public static JoystickButton neutral = new JoystickButton(getOperatorController(), 11);
+
+
   // Buttons
   public JoystickButton toggleReverseDrive, toggleDriverCameraMode, toggleChildSafe;
   public JoystickButton armToNeutral;  
@@ -84,7 +84,16 @@ public class OI {
     // dropHeldItem.whenPressed(new ToggleClaw(Robot.claw));
     autoPickupBall.whenPressed(new AutoPickupCargo(Robot.arm, Robot.intake, Robot.claw, Robot.sensors));
     toggleClaw.whenPressed(new ToggleClaw(Robot.claw));
-    middleArm.whenPressed(new MoveArm())
+    middleForwardArm.whenPressed(new MoveArm(Robot.arm.getArmState(LegalState.READY_PLACE_HATCH_ROCKET_MIDDLE_FORWARD), Robot.arm));
+    backMiddleBall.whenPressed(new MoveArm(Robot.arm.getArmState(LegalState.READY_PLACE_BALL_ROCKET_MIDDLE_BACK), Robot.arm));
+    neutral.whenPressed(new MoveArm(Robot.arm.getArmState(LegalState.NEUTRAL), Robot.arm));
+
+    // 9 back middle ball.
+    // 8 forward high ball.
+    // 10 back high ball.
+    // 11 neutral 
+    // 12 all the way back
+
 
     
     armToNeutral = new JoystickButton(driverController, XboxButtons.A);
