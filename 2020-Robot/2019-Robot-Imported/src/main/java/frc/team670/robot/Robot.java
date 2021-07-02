@@ -255,14 +255,6 @@ public class Robot extends TimedRobot {
     SmartDashboard.putString("robot-state", "teleopPeriodic()");
     leds.setForwardData(true);
     driveBase.initBrakeMode();
-    
-    oi.bringOutIntake.whenPressed(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_DEPLOYED, Robot.intake));
-    oi.bringInIntake.whenPressed(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_IN, Robot.intake));
-    oi.runIntakeIn.whenPressed(new ButtonRunIntake(intake, Intake.RUNNING_POWER, true));
-    oi.runIntakeOut.whenPressed((new ButtonRunIntake(intake, Intake.RUNNING_POWER, false)));
-    oi.dropHeldItem.whenPressed(new ToggleClaw(Robot.claw));
-    oi.toggleClaw.toggleWhenPressed(new ToggleHeldItem(Robot.arm));
-    oi.autoPickupBall.whenPressed(new AutoPickupCargo(Robot.arm, Robot.intake, Robot.claw, Robot.sensors));
 
     if(DriverStation.getInstance().getMatchTime() < 130) {
       Scheduler.getInstance().add(new SafelyResetExtension());
@@ -276,6 +268,14 @@ public class Robot extends TimedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
+
+    oi.bringOutIntake.whenPressed(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_DEPLOYED, Robot.intake));
+    oi.bringInIntake.whenPressed(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_IN, Robot.intake));
+    oi.runIntakeIn.whenPressed(new ButtonRunIntake(intake, Intake.RUNNING_POWER, true));
+    oi.runIntakeOut.whenPressed((new ButtonRunIntake(intake, Intake.RUNNING_POWER, false)));
+    oi.dropHeldItem.whenPressed(new ToggleClaw(Robot.claw));
+    oi.toggleClaw.toggleWhenPressed(new ToggleHeldItem(Robot.arm));
+    oi.autoPickupBall.whenPressed(new AutoPickupCargo(Robot.arm, Robot.intake, Robot.claw, Robot.sensors));
   }
 
   /**

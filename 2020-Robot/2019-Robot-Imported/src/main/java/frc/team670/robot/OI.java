@@ -69,7 +69,7 @@ public class OI {
   public OI() {
     driverController = new MustangController(RobotMap.DRIVER_CONTROLLER_PORT);
     operatorController = new MustangController(RobotMap.OPERATOR_CONTROLLER_PORT);
-    //xkeys = new XKeys();
+    xkeys = new XKeys();
     toggleReverseDrive = new JoystickButton(driverController, XboxButtons.LEFT_BUMPER);
     toggleReverseDrive.whenPressed(new FlipDriveAndCamera());
     toggleChildSafe = new JoystickButton(driverController, XboxButtons.X);
