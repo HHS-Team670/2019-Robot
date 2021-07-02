@@ -50,17 +50,17 @@ public class OI {
   private XKeys xkeys;
 
   //operator buttons
-  public static JoystickButton bringOutIntake = new JoystickButton(getOperatorController(), 2);
-  public static JoystickButton bringInIntake = new JoystickButton(getOperatorController(), 4);
-  public static JoystickButton runIntakeIn = new JoystickButton(getOperatorController(), 6);
-  public static JoystickButton runIntakeOut = new JoystickButton(getOperatorController(), 5);
-  public static JoystickButton dropHeldItem = new JoystickButton(getOperatorController(), 11);
-  public static JoystickButton toggleClaw = new JoystickButton(getOperatorController(), 7);
-  public static JoystickButton autoPickupBall = new JoystickButton(getOperatorController(), 3);
+  private static JoystickButton bringOutIntake = new JoystickButton(getOperatorController(), 1);
+  private static JoystickButton bringInIntake = new JoystickButton(getOperatorController(), 2);
+  private static JoystickButton runIntakeIn = new JoystickButton(getOperatorController(), 3);
+  private static JoystickButton runIntakeOut = new JoystickButton(getOperatorController(), 5);
+  private static JoystickButton dropHeldItem = new JoystickButton(getOperatorController(), 6);
+  private static JoystickButton toggleClaw = new JoystickButton(getOperatorController(), 7);
+  private static JoystickButton autoPickupBall = new JoystickButton(getOperatorController(), 11);
 
   // Buttons
-  public JoystickButton toggleReverseDrive, toggleDriverCameraMode, toggleChildSafe;
-  public JoystickButton armToNeutral;  
+  private JoystickButton toggleReverseDrive, toggleDriverCameraMode, toggleChildSafe;
+  private JoystickButton armToNeutral;  
 
   private JoystickButton dropBall, grabBall;
 

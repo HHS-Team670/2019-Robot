@@ -16,13 +16,8 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.team670.robot.commands.arm.ToggleHeldItem;
 import frc.team670.robot.commands.arm.zero.SafelyResetExtension;
-import frc.team670.robot.commands.claw.ToggleClaw;
 import frc.team670.robot.commands.drive.teleop.XboxRocketLeagueDrive;
-import frc.team670.robot.commands.intake.AutoPickupCargo;
-import frc.team670.robot.commands.intake.ButtonRunIntake;
-import frc.team670.robot.commands.intake.MoveIntakeToSetpointAngle;
 import frc.team670.robot.constants.RobotConstants;
 import frc.team670.robot.dataCollection.MustangCoprocessor;
 import frc.team670.robot.dataCollection.MustangSensors;
@@ -268,14 +263,6 @@ public class Robot extends TimedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.cancel();
     }
-
-    oi.bringOutIntake.whenPressed(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_DEPLOYED, Robot.intake));
-    oi.bringInIntake.whenPressed(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_IN, Robot.intake));
-    oi.runIntakeIn.whenPressed(new ButtonRunIntake(intake, Intake.RUNNING_POWER, true));
-    oi.runIntakeOut.whenPressed((new ButtonRunIntake(intake, Intake.RUNNING_POWER, false)));
-    oi.dropHeldItem.whenPressed(new ToggleClaw(Robot.claw));
-    oi.toggleClaw.toggleWhenPressed(new ToggleHeldItem(Robot.arm));
-    oi.autoPickupBall.whenPressed(new AutoPickupCargo(Robot.arm, Robot.intake, Robot.claw, Robot.sensors));
   }
 
   /**
