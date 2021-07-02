@@ -54,10 +54,10 @@ public class OI {
   public static JoystickButton bringInIntake = new JoystickButton(getOperatorController(), 4);
   public static JoystickButton runIntakeIn = new JoystickButton(getOperatorController(), 6);
   public static JoystickButton runIntakeOut = new JoystickButton(getOperatorController(), 5);
-  // public static JoystickButton dropHeldItem = new JoystickButton(getOperatorController(), 11);
-  public static JoystickButton toggleClaw = new JoystickButton(getOperatorController(), 1);
+  public static JoystickButton dropHeldItem = new JoystickButton(getOperatorController(), 11);
+  public static JoystickButton toggleClaw = new JoystickButton(getOperatorController(), 7);
   public static JoystickButton autoPickupBall = new JoystickButton(getOperatorController(), 3);
-  public static JoystickButton middleArm = new JoystickButton(getOperatorController(), 7);
+
   // Buttons
   public JoystickButton toggleReverseDrive, toggleDriverCameraMode, toggleChildSafe;
   public JoystickButton armToNeutral;  
@@ -76,16 +76,6 @@ public class OI {
     toggleChildSafe.whenPressed(new ToggleDriveSafe());
     toggleDriverCameraMode = new JoystickButton(driverController, XboxButtons.B);
     toggleDriverCameraMode.whenPressed(new FlipDriverCameraMode());
-
-    bringOutIntake.whenPressed(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_DEPLOYED, Robot.intake));
-    bringInIntake.whenPressed(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_IN, Robot.intake));
-    runIntakeIn.whenPressed(new ButtonRunIntake(Robot.intake, Intake.RUNNING_POWER, true));
-    runIntakeOut.whenPressed((new ButtonRunIntake(Robot.intake, Intake.RUNNING_POWER, false)));
-    // dropHeldItem.whenPressed(new ToggleClaw(Robot.claw));
-    autoPickupBall.whenPressed(new AutoPickupCargo(Robot.arm, Robot.intake, Robot.claw, Robot.sensors));
-    toggleClaw.whenPressed(new ToggleClaw(Robot.claw));
-    middleArm.whenPressed(new MoveArm())
-
     
     armToNeutral = new JoystickButton(driverController, XboxButtons.A);
     armToNeutral.whenPressed(
@@ -108,6 +98,16 @@ public class OI {
     //     Robot.claw.togglePush();
     //   }
     // });
+
+    bringOutIntake.whenPressed(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_DEPLOYED, Robot.intake));
+    bringInIntake.whenPressed(new MoveIntakeToSetpointAngle(Intake.INTAKE_ANGLE_IN, Robot.intake));
+    runIntakeIn.whenReleased(new ButtonRunIntake(Robot.intake, Intake.RUNNING_POWER, true));
+    runIntakeOut.whenPressed(new ButtonRunIntake(Robot.intake, Intake.RUNNING_POWER, false));
+
+    dropHeldItem.whenPressed(new YeetHeldItem(Robot.claw, Robot.arm));
+    toggleClaw.whenPressed(new ToggleClaw(Robot.claw));
+    autoPickupBall.whenPressed(new AutoPickupCargo(Robot.arm, Robot.intake, Robot.claw, Robot.sensors));
+
   }
   /**
    * Sets the rumble on the driver controller
