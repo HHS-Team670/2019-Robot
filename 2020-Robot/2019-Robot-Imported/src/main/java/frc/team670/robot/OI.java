@@ -48,15 +48,15 @@ public class OI {
   //operator buttons
   public static JoystickButton bringOutIntake = new JoystickButton(getOperatorController(), 2);
   public static JoystickButton bringInIntake = new JoystickButton(getOperatorController(), 4);
-  public static JoystickButton runIntakeIn = new JoystickButton(getOperatorController(), 6);
-  public static JoystickButton runIntakeOut = new JoystickButton(getOperatorController(), 5);
+  public static JoystickButton runIntakeIn = new JoystickButton(getOperatorController(), 5);
+  public static JoystickButton runIntakeOut = new JoystickButton(getOperatorController(), 6);
   // public static JoystickButton dropHeldItem = new JoystickButton(getOperatorController(), 11);
   public static JoystickButton toggleClaw = new JoystickButton(getOperatorController(), 1);
   public static JoystickButton autoPickupBall = new JoystickButton(getOperatorController(), 3);
   public static JoystickButton middleForwardArm = new JoystickButton(getOperatorController(), 7);
   public static JoystickButton backMiddleBall = new JoystickButton(getOperatorController(), 9);
   public static JoystickButton neutral = new JoystickButton(getOperatorController(), 11);
-
+  public static JoystickButton stow = new JoystickButton(getOperatorController(), 12);
 
   // Buttons
   public JoystickButton toggleReverseDrive, toggleDriverCameraMode, toggleChildSafe;
@@ -84,16 +84,24 @@ public class OI {
     // dropHeldItem.whenPressed(new ToggleClaw(Robot.claw));
     autoPickupBall.whenPressed(new AutoPickupCargo(Robot.arm, Robot.intake, Robot.claw, Robot.sensors));
     toggleClaw.whenPressed(new ToggleClaw(Robot.claw));
-    middleForwardArm.whenPressed(new MoveArm(Robot.arm.getArmState(LegalState.READY_PLACE_HATCH_ROCKET_MIDDLE_FORWARD), Robot.arm));
-    backMiddleBall.whenPressed(new MoveArm(Robot.arm.getArmState(LegalState.READY_PLACE_BALL_ROCKET_MIDDLE_BACK), Robot.arm));
-    neutral.whenPressed(new MoveArm(Robot.arm.getArmState(LegalState.NEUTRAL), Robot.arm));
-
+    
+    middleForwardArm.whenPressed(new MoveArm(getArmState("READY_PLACE_HATCH_ROCKET_MIDDLE_FORWARD"), Robot.arm));
+    backMiddleBall.whenPressed(new MoveArm(getArmState("READY_PLACE_BALL_ROCKET_MIDDLE_BACK"), Robot.arm));
+    neutral.whenPressed(new MoveArm(getArmState("NEUTRAL"), Robot.arm));
+    stow.whenPressed(new MoveArm(getArmState("STOW"), Robot.arm));
+    
+    // middleForwardArm.whenPressed(new MoveArm(Robot.arm.getArmState(LegalState.READY_PLACE_HATCH_ROCKET_MIDDLE_FORWARD), Robot.arm));
+    // backMiddleBall.whenPressed(new MoveArm(Robot.arm.getArmState(LegalState.READY_PLACE_BALL_ROCKET_MIDDLE_BACK), Robot.arm));
+    // neutral.whenPressed(new MoveArm(Robot.arm.getArmState(LegalState.NEUTRAL), Robot.arm));
+    // stow.whenPressed(new MoveArm(Robot.arm.getArmState(LegalState.STOW), Robot.arm));
+    
     // 9 back middle ball.
     // 8 forward high ball.
     // 10 back high ball.
     // 11 neutral 
     // 12 all the way back
 
+    
 
     
     armToNeutral = new JoystickButton(driverController, XboxButtons.A);
@@ -118,6 +126,7 @@ public class OI {
     //   }
     // });
   }
+
   /**
    * Sets the rumble on the driver controller
    * 
