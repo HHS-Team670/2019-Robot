@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.Robot;
 import frc.team670.robot.utils.functions.JoystickUtils;
-import frc.team670.robot.utils.functions.MathUtils;
 
  
 
@@ -24,7 +23,6 @@ public class XboxRocketLeagueDrive extends InstantCommand {
    private final boolean SMOOTH_ROCKET_LEAGUE_STEER, SMOOTH_ROCKET_LEAGUE_TRIGGER;
    private static boolean isReversed;
    private static boolean isChildSafe;
-   private static double MAXSPEED = 0.85;
 
   public XboxRocketLeagueDrive() {
     super();
@@ -39,13 +37,10 @@ public class XboxRocketLeagueDrive extends InstantCommand {
   protected void initialize() {
     // Sets the speed to the reading given by the trigger axes on the controller. Left is positive, but we multiply
     // by -1 to reverse that because we want right trigger to correspond to forward.
+    double multiplier = isChildSafe ? -0.3 : -1;
 
-    double speed = -1 * (Robot.oi.getDriverController().getLeftTriggerAxis() - Robot.oi.getDriverController().getRightTriggerAxis()); 
+    double speed = multiplier * (Robot.oi.getDriverController().getLeftTriggerAxis() - Robot.oi.getDriverController().getRightTriggerAxis()); 
     double steer = Robot.oi.getDriverController().getLeftStickX(); 
-
-    if(isChildSafe && speed > MAXSPEED){
-      speed = 0;
-    }
 
     // Decides whether or not to smooth the Steering and Trigger. Smoothing helps reduce jerkiness when driving.
     // tankDrive actually does this for us automatically, so npo need to do it ourselves
@@ -102,7 +97,6 @@ public class XboxRocketLeagueDrive extends InstantCommand {
 
   public static void setChildSafe(boolean isChildSafe) {
     XboxRocketLeagueDrive.isChildSafe = isChildSafe;
-    SmartDashboard.putBoolean("drive-safe", isChildSafe);
   }
 
   public static void setDriveReversed(boolean reversed) {

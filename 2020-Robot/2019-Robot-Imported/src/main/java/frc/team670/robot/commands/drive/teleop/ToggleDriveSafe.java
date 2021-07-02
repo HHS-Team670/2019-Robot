@@ -26,7 +26,7 @@ public class ToggleDriveSafe extends InstantCommand {
   protected void initialize() {
     boolean isChildSafe = XboxRocketLeagueDrive.isChildSafe();
     
-    XboxRocketLeagueDrive.setChildSafe(!isChildSafe);
+    XboxRocketLeagueDrive.setDriveReversed(!isChildSafe);
     Logger.consoleLog("Toggled ChildSafeMode: %s", (!isChildSafe));
   }
 

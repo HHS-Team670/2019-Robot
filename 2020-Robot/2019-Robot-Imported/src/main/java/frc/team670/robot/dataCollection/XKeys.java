@@ -61,7 +61,7 @@ public class XKeys {
     private NetworkTableInstance instance;
     private NetworkTable table;
     private Command autonCommand;
-    public static boolean toggleIn = true, toggleOut = false;
+    private static boolean toggleIn = true, toggleOut = false;
 
     public XKeys() {
         SmartDashboard.putString("XKEYS", "XKeys constructor");
