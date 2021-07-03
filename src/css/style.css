@@ -1,0 +1,285 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+::-webkit-scrollbar {
+    display: none;
+}
+body {
+    font: 16px sans-serif;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    color: white;
+    overflow: hidden;
+    background: #222;
+}
+button, input[type="text"], input[type="number"], .select-container, select {
+    color: white;
+    background: #444;
+    border: none;
+    font-size: 14px;
+    padding: 6px 8px;
+    cursor: pointer;
+    outline: 0;
+}
+.select-container {
+    padding: 0;
+    display: inline-block;
+}
+select {
+    border: none;
+    background: none;
+    color: white;
+    height: 25px;
+}
+input[type="text"], input[type="number"] {
+    cursor: text;
+}
+input[type="checkbox"] {
+    -webkit-filter: saturate(0);
+    filter: saturate(0);
+}
+/* Major interface panes, aside, article, header, etc. */
+body > * {
+    padding: 10px;
+    position: fixed;
+    overflow: scroll;
+    background: #222;
+}
+header {
+    width: 20vw;
+    height: 20vh;
+    top: 0;
+    left: 30vw;
+    color: white;
+}
+#camera1 {
+    padding: 0;
+    position: absolute;
+    bottom: 25vh;
+    left: 1.5vw;
+    width: 12vw;
+    height: 50vh;
+    object-fit: fill;
+    overflow: hidden;
+    background-color: #333;
+    background-size: cover;
+}
+#camera2 {
+    padding: 0;
+    position: absolute;
+    bottom: 25vh;
+    left: 12vw;
+    width: 12vw;
+    height: 50vh;
+    object-fit: fill;
+    overflow: hidden;
+    background-color: #333;
+    background-size: cover;
+}
+#camera-large {
+    padding: 0;
+    position: absolute;
+    bottom: 2.5vh;
+    left: 0.5vw;
+    width: 66vw;
+    height: 95vh;
+    object-fit: fill;
+    overflow: hidden;
+    background-color: #333;
+    background-size: cover;
+}
+#camera-texts {
+    position: absolute;
+    width: 5vw;
+    height: 6vh;
+    transform: translate(1vw, 89vh);
+}
+svg * {
+    stroke: white;
+    fill: #222;
+    stroke-width: 2;
+    -webkit-transform-origin: center;
+    -ms-transform-origin: center;
+    transform-origin: center;
+}
+text {
+    font-size: 16px;
+    letter-spacing: 2px;
+    stroke: none;
+    fill: white;
+}
+#login {
+    position: fixed;
+    display: none;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 2;
+}
+body.login #login {
+    display: flex;
+}
+#login :disabled {
+    opacity: 0.6;
+}
+#login > * {
+    height: 40px;
+}
+#login > button {
+    margin-left: 5px;
+}
+#robot-info {
+  position: absolute;
+  transform: translate(90vw, 70vh);
+  font-size: 12pt;
+}
+#status-lights {
+  position: absolute;
+  transform: translate(70vw, 75vh);
+  z-index: 1;
+}
+#warning-info {
+    position: absolute;
+    transform: translate(75vw, 90vh);
+    width: 40vw;
+    height: 10vh;
+    z-index: 1;
+}
+#robot-diagram {
+    position: absolute;
+    transform: translate(25vw, 5vh);
+    width: 75vw;
+    height: 55vh;
+}
+#claw {
+    position: absolute;
+    transform-origin: bottom center;
+    transform: rotate(90deg);
+}
+#arm-base {
+    transform-origin: top center;
+    transform: rotate(180deg);
+}
+#arm-extension {
+    transform-origin: top center;
+    transform: rotate(180deg);
+}
+#arm {
+    transform-origin: bottom center;
+}
+#claw-destination {
+    position: absolute;
+    transform-origin: bottom center;
+    transform: rotate(90deg);
+    stroke-opacity: 0.3;
+    stroke: rgb(0,200,0);
+}
+#arm-extension-destination {
+    transform-origin: top center;
+    transform: rotate(180deg);
+    stroke-opacity: 0.3;
+    stroke: rgb(0,200,0);
+}
+#arm-destination {
+    transform-origin: bottom center;
+    stroke-opacity: 0.3;
+    stroke: rgb(0,200,0);
+}
+#intake {
+    transform-origin: bottom left;
+    /* transform: rotate(180deg); */
+}
+#auton-chooser {
+    position: relative;
+    transform: translate(60vw, 0vh);
+    width: 40vw;
+    height: 65vh;
+}
+#start-holding {
+    position: absolute;
+}
+#start-position {
+    position: absolute;
+    transform: translate(0px, 50px);
+}
+#target-1 {
+    position: absolute;
+    transform: translate(90px);
+}
+#height-1 {
+    position: absolute;
+    transform: translate(calc(90px), 275px);
+}
+#target-2 {
+    position: absolute;
+    transform: translate(calc(90px + 125px));
+}
+#height-2 {
+    position: absolute;
+    transform: translate(calc(90px + 125px), 45px);
+}
+#target-3 {
+    position: absolute;
+    transform: translate(calc(90px + 125px + 130px));
+}
+#height-3 {
+    position: absolute;
+    transform: translate(calc(90px + 125px + 130px), 275px);
+}
+#confirm-button {
+    position: absolute;
+    transform: translate(calc(90px + 125px + 130px + 100px), 275px);
+}
+
+#big-warning {
+    position: absolute;
+    background: red;
+    transform: translate(70vw, 10vh);
+    width: 30vw;
+    height: 20vh;
+    z-index: 1;
+}
+#v-crosshairs-left {
+    border-left: 1px dotted white;
+    transform: translate(10vw, 17vh) rotate(-15deg);
+    background-color: rgba(0, 0, 0, 0);
+    height: 66vh;
+    display: none;
+}
+#v-crosshairs-right {
+    border-left: 1px dotted white;
+    transform: translate(50vw, 17vh) rotate(-5deg);
+    background-color: rgba(0, 0, 0, 0);
+    height: 66vh;
+    display: none;
+}
+#v-crosshairs-large {
+    border-left: 1px dotted white;
+    transform: translate(33vw, 0vh) rotate(-5deg);
+    background-color: rgba(0, 0, 0, 0);
+    height: 100vh;
+    display: none;
+}
+#back-indicator {
+    position: absolute;
+    transform: translate(0vw, 21vh);
+}
+#front-indicator {
+    position: absolute;
+    transform: translate(33.5vw, 21vh);
+}
+#current-text {
+    position: absolute;
+    width: 25vw;
+    height: 8vh;
+    transform: translate(75vw, 60vh);
+}
