@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.team670.robot.commands.arm.movement.MoveArm;
 import frc.team670.robot.commands.cameras.FlipDriverCameraMode;
+import frc.team670.robot.commands.claw.ToggleClaw;
 import frc.team670.robot.commands.drive.teleop.FlipDriveAndCamera;
 import frc.team670.robot.commands.drive.teleop.ToggleDriveSafe;
 import frc.team670.robot.commands.intake.AutoPickupCargo;
@@ -71,6 +72,7 @@ public class OI {
     toggleDriverCameraMode = new JoystickButton(driverController, XboxButtons.B);
     toggleDriverCameraMode.whenPressed(new FlipDriverCameraMode());
     armToNeutral = new JoystickButton(driverController, XboxButtons.A);
+    toggleClaw.whenPressed(new ToggleClaw(Robot.claw));
     armToNeutral.whenPressed(
       new InstantCommand() {
         protected void initialize() {
